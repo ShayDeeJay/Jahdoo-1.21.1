@@ -8,13 +8,13 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ETERNAL_WIZARD;
 
 public class SummonEternalWizardAbility extends Ability {
@@ -67,8 +67,8 @@ public class SummonEternalWizardAbility extends Ability {
     }
 
     public static void summonMinionSound(Player player, Vec3 location) {
-        Helpers.getSoundWithPositionV(player.level(), player.position(), ElementReg.vitality().sound(), 1, 1f);
-        Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 2, 0.8F);
+        JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), ElementReg.vitality().sound(), 1, 1f);
+        JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 2, 0.8F);
     }
 
     @Override

@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.registers.*;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -59,7 +59,7 @@ public class IceSpear extends AbstractArrow implements GeoEntity {
         this.reapplyPosition();
         if(this.getOwner() != null) {
             var player = this.getOwner();
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                 (LivingEntity) player, (float) getProperty(DAMAGE), true, MAGIC_DAMAGE_MULTIPLIER, FROST_MAGIC_DAMAGE_MULTIPLIER
             );
         }

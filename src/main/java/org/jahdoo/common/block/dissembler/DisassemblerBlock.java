@@ -27,11 +27,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
+import org.shaydee.shaydeeapi.block.BlockInteractionHandler;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.common.block.wand_manager.WandManagerBlock.setOuterRingPulse;
@@ -118,7 +118,7 @@ public class DisassemblerBlock extends BaseEntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof DisassemblerBlockEntity tableEntity)) return ItemInteractionResult.FAIL;
         var hands = player.getItemInHand(hand);
-        var outputItemHandler = tableEntity.outputItemHandler;
+        var outputItemHandler = tableEntity.getOutputItemHandler();
         var getOutputSlot = outputItemHandler.getStackInSlot(0);
         var getOutputSlot1 = outputItemHandler.getStackInSlot(1);
         if(!getOutputSlot.isEmpty() || !getOutputSlot1.isEmpty()){
@@ -145,9 +145,9 @@ public class DisassemblerBlock extends BaseEntityBlock {
         double radius
     ) {
         if (stack.getItem() instanceof JahdooItem || stack.isEmpty() && player.isShiftKeyDown()) {
-            if(!stack.isEmpty()) Helpers.getSoundWithPosition(level, pos, soundEvent, 1, 1.2f);
-            BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler, 0, player, hand);
-            var stackInSlot = augmentStation.inputItemHandler.getStackInSlot(0);
+            if(!stack.isEmpty()) Helpers.getSoundWithPosition(level, pos, soundEvent, SoundSource.BLOCKS, 1F, 1.2f);
+            BlockInteractionHandler.swapItemsWithHand(augmentStation.getInputItemHandler(), 0, player, hand);
+            var stackInSlot = augmentStation.getInputItemHandler().getStackInSlot(0);
             var type = stackInSlot.get(CUSTOM_MODEL_DATA);
             if (type != null) {
                 setOuterRingPulse(level, type.value(), pos, yOffset, lifetime, speed, radius);

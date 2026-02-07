@@ -7,7 +7,7 @@ import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -15,7 +15,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 
 public class BlockBombAbility extends AbstractBlockAbility {
 
-    public static final ResourceLocation abilityId = Helpers.res("block_bomb");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("block_bomb");
     public static final String EXPLOSION_RANGE = "Explosion Radius";
     public static final String BLOCK_DROP_CHANCE = "Block Drop Chance";
 

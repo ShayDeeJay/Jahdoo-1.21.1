@@ -7,9 +7,9 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.slots.InventorySlots;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 public abstract class AbstractInternalContainer extends AbstractContainerMenu {
 

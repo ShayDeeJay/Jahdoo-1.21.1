@@ -20,7 +20,7 @@ import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getRuneData;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.trial_nexus.rarity.RarityAttributes.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
@@ -148,15 +148,22 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     }
 
     public static @NotNull String romanNumeralConverter(int number) {
-        return switch (number) {
-            case 1 -> "II";
-            case 2 -> "III";
-            case 3 -> "IV";
-            case 4 -> "V";
-            case 5 -> "VI";
-            default -> "I";
-        };
+        return NUMERALS.get(number);
     }
+
+    public static final List<String> NUMERALS = List.of(
+        "I",   // index 0, default or number 0
+        "II",  // index 1
+        "III", // index 2
+        "IV",  // index 3
+        "V",   // index 4
+        "VI",  // index 5
+        "VII", // index 6
+        "VIII",// index 7
+        "IX",  // index 8
+        "X",   // index 9
+        "XI"   // index 10
+    );
 
     //Debug using use on item
     public static void debugRarity(Player player){

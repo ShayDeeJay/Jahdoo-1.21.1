@@ -10,11 +10,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.client.JahdooToast;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class JahdooToastS2CP implements CustomPacketPayload {
 
-    public static final Type<JahdooToastS2CP> TYPE = new Type<>(Helpers.res("client_toast"));
+    public static final Type<JahdooToastS2CP> TYPE = new Type<>(JahdooHelpers.res("client_toast"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, JahdooToastS2CP> STREAM_CODEC =
         CustomPacketPayload.codec(JahdooToastS2CP::toBytes, JahdooToastS2CP::new);

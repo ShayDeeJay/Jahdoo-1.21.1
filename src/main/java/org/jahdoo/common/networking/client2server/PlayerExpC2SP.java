@@ -6,10 +6,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class PlayerExpC2SP implements CustomPacketPayload {
-    public static final Type<PlayerExpC2SP> TYPE = new Type<>(Helpers.res("experience_sync"));
+    public static final Type<PlayerExpC2SP> TYPE = new Type<>(JahdooHelpers.res("experience_sync"));
     public static final StreamCodec<RegistryFriendlyByteBuf, PlayerExpC2SP> STREAM_CODEC = CustomPacketPayload.codec(PlayerExpC2SP::toBytes, PlayerExpC2SP::new);
     int level;
 

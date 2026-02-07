@@ -6,12 +6,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 
 public class MageFlightSyncS2CP implements CustomPacketPayload {
-    public static final Type<MageFlightSyncS2CP> TYPE = new Type<>(Helpers.res("sync_mage_flight"));
+    public static final Type<MageFlightSyncS2CP> TYPE = new Type<>(JahdooHelpers.res("sync_mage_flight"));
     public static final StreamCodec<RegistryFriendlyByteBuf, MageFlightSyncS2CP> STREAM_CODEC = CustomPacketPayload.codec(MageFlightSyncS2CP::toBytes, MageFlightSyncS2CP::new);
 
     private final int jumpTickCounter;

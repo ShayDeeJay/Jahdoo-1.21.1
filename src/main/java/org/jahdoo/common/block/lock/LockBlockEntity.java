@@ -8,14 +8,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
 
 import java.util.List;
 import java.util.Objects;
@@ -60,17 +61,17 @@ public class LockBlockEntity extends SyncedBlockEntity {
         if(level == null) return;
         var instance = level.getData(INSTANCE_DATA);
         var instanceData = switch (getDifficulty){
-            case Helpers.MEDIUM -> InstanceData.setMediumData(instance);
-            case Helpers.HARD -> InstanceData.setHardData(instance);
+            case JahdooHelpers.MEDIUM -> InstanceData.setMediumData(instance);
+            case JahdooHelpers.HARD -> InstanceData.setHardData(instance);
             default -> InstanceData.setEasyData(instance);
         };
 
         level.setData(INSTANCE_DATA, instanceData);
-        Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundReg.SWORD_THUD.get(), 1, 1.4F);
-        Helpers.sendPacketsToPlayerDistance(getBlockPos().getCenter(), 400, level,
+        Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundReg.SWORD_THUD.get(), SoundSource.BLOCKS, 1F, 1.4F);
+        JahdooHelpers.sendPacketsToPlayerDistance(getBlockPos().getCenter(), 400, level,
             (serverPlayer) -> {
                 serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(10, 30, 20));
-                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(Helpers.withStyleComponent("BEGIN", getFromLevel(level).getColor())));
+                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(JahdooHelpers.withStyleComponent("BEGIN", getFromLevel(instanceData).getColor())));
             }
         );
 
@@ -109,20 +110,20 @@ public class LockBlockEntity extends SyncedBlockEntity {
             if(data == null) return;
             var data1 = data.getData(INSTANCE_DATA);
             switch (data1.getDifficulty()){
-                case Helpers.EASY -> {
+                case JahdooHelpers.EASY -> {
                     var rarityForNeg = List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000));
-                    if (Maths.percentageChance(30)) this.negativeBoon = toSyncable(withRarityNegative(getRarity(rarityForNeg)), getRarity(rarityForNeg));
+                    if (org.shaydee.shaydeeapi.Maths.percentageChance(30)) this.negativeBoon = toSyncable(withRarityNegative(getRarity(rarityForNeg)), getRarity(rarityForNeg));
                     this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
                 }
-                case Helpers.MEDIUM -> {
+                case JahdooHelpers.MEDIUM -> {
                     this.negativeBoon = toSyncable(randomNegative(), getRarity());
-                    if (Maths.percentageChance(70)) this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
+                    if (org.shaydee.shaydeeapi.Maths.percentageChance(70)) this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
                 }
-                case Helpers.HARD -> {
+                case JahdooHelpers.HARD -> {
                     var rarityForNeg = List.of(Pair.of(EPIC, 1), Pair.of(LEGENDARY, 5500), Pair.of(MYTHIC, 6000));
                     var rarityForPos = List.of(Pair.of(RARE, 1), Pair.of(LEGENDARY, 5000), Pair.of(MYTHIC, 6000));
                     this.negativeBoon = toSyncable(withRarityNegative(getRarity()), getRarity(rarityForNeg));
-                    if (Maths.percentageChance(50)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(rarityForPos)), getRarity(rarityForNeg));
+                    if (org.shaydee.shaydeeapi.Maths.percentageChance(50)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(rarityForPos)), getRarity(rarityForNeg));
                 }
             }
         }

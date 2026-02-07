@@ -73,21 +73,21 @@ public class ServerBusEvents {
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(BLOCK, TANK_BE.get(), (blockEntity, side) -> blockEntity.inputItemHandler);
+        event.registerBlockEntity(BLOCK, TANK_BE.get(), (blockEntity, side) -> blockEntity.getInputItemHandler());
 
-        event.registerBlockEntity(BLOCK, MODULAR_CHAOS_CUBE_BE.get(), (blockEntity, side) -> blockEntity.inputItemHandler);
+        event.registerBlockEntity(BLOCK, MODULAR_CHAOS_CUBE_BE.get(), (blockEntity, side) -> blockEntity.getInputItemHandler());
 
         event.registerBlockEntity(
             BLOCK, CREATOR_BE.get(),(blockEntity, side) -> {
-                if (side == Direction.DOWN) return blockEntity.outputItemHandler;
-                return blockEntity.inputItemHandler;
+                if (side == Direction.DOWN) return blockEntity.getOutputItemHandler();
+                return blockEntity.getInputItemHandler();
             }
         );
 
         event.registerBlockEntity(
               BLOCK, INFUSER_BE.get(), (blockEntity, side) -> {
-                  if (side == Direction.UP) return blockEntity.inputItemHandler;
-                  return blockEntity.outputItemHandler;
+                  if (side == Direction.UP) return blockEntity.getInputItemHandler();
+                  return blockEntity.getOutputItemHandler();
               }
         );
     }

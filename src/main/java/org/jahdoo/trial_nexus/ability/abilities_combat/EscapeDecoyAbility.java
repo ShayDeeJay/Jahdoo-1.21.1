@@ -11,7 +11,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.registers.EffectReg;
@@ -24,7 +24,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
 
 public class EscapeDecoyAbility extends Ability {
-    public static final ResourceLocation abilityId = Helpers.res("escape_decoy");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("escape_decoy");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -94,8 +94,8 @@ public class EscapeDecoyAbility extends Ability {
         player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 0));
         player.addEffect(new JahdooMobEffect(EffectReg.CLIMBER, duration, 1));
 
-        Helpers.getSoundWithPositionV(player.level(), player.position(), getElemenType().sound(), 1, 0.8f);
-        Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 2, 0.6F);
+        JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), getElemenType().sound(), 1, 0.8f);
+        JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 2, 0.6F);
 
         var yaw = Math.toDegrees(Math.atan2(lookVector.z, lookVector.x)) + 270.0;
         decoy.setYRot((float) yaw);

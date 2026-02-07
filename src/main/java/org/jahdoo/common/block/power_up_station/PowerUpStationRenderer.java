@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -61,7 +61,7 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
         var current = CoreData.getFilled(render);
 
         var colour = PowerUpStation.colourByState(entity.getBlockState().getValue(TYPE));
-        renderName(dispatcher.camera.rotation(), Helpers.withStyleComponent(current + "/" + required, colour), stack, source, 1.8);
+        renderName(dispatcher.camera.rotation(), JahdooHelpers.withStyleComponent(current + "/" + required, colour), stack, source, 1.8);
 
         stack.pushPose();
         var ticks = getInstance().level.getGameTime();
@@ -80,7 +80,7 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
             source,
             255,
             min(1.4f,  ticks + partialTick),
-            Helpers.res("textures/entity/shield.png"), colour
+            JahdooHelpers.res("textures/entity/shield.png"), colour
         );
         stack.popPose();
 

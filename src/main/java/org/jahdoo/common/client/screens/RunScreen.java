@@ -13,7 +13,7 @@ import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,6 @@ import static org.jahdoo.trial_nexus.utils.ColourStore.BRONZE_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.GOLD_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.PLATINUM_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SILVER_COIN;
-import static org.jahdoo.trial_nexus.utils.Maths.*;
 
 public class RunScreen extends AbstractPanableScreen {
 
@@ -199,7 +198,7 @@ public class RunScreen extends AbstractPanableScreen {
 
         pose.pushPose();
         pose.scale(scale, scale, scale);
-        graphics.drawCenteredString(getMinecraft().font, Helpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
+        graphics.drawCenteredString(getMinecraft().font, JahdooHelpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
         pose.popPose();
 
         if(runData != null) {
@@ -233,7 +232,7 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Trial No", trialData.getPastRuns().indexOf(runData) + 1 + "", uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
-        allComponents.add(new StatEntry(componentTemplate("Difficulty", Helpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
+        allComponents.add(new StatEntry(componentTemplate("Difficulty", JahdooHelpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Player Level", String.valueOf(runData.getStat(PLAYER_LEVEL)), uiColour()), null));
 
         var died = runData.died();
@@ -248,7 +247,7 @@ public class RunScreen extends AbstractPanableScreen {
             allComponents.add(new StatEntry(componentTemplate("Quest Status", (completed ? "Completed" : "Failed"), statusColour), null));
         }
 
-        allComponents.add(new StatEntry(componentTemplate("Run Time", ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
+        allComponents.add(new StatEntry(componentTemplate("Run Time", org.shaydee.shaydeeapi.Maths.ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
         allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
         allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(RunData.ROOMS_CLEARED) + "", AETHER_BLUE), Icons.ROOMS_CLEARED));
         allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED), Icons.HORDE));
@@ -271,10 +270,10 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(spacer);
 
         // Mob multipliers
-        allComponents.add(new StatEntry(componentTemplate("Mob Health","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Armor","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Damage","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Speed","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Health","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Armor","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Damage","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Speed","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
 
         // Mob counts / composition
         allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", AETHER_BLUE), Icons.HORDE));
@@ -297,8 +296,8 @@ public class RunScreen extends AbstractPanableScreen {
     }
 
     public static MutableComponent componentTemplate(String header, String stat, int statColour, int headerColour){
-        var preMob = Helpers.withStyleComponent(header + ": ", headerColour);
-        var valueMob = Helpers.withStyleComponent(stat, statColour);
+        var preMob = JahdooHelpers.withStyleComponent(header + ": ", headerColour);
+        var valueMob = JahdooHelpers.withStyleComponent(stat, statColour);
         return preMob.copy().append(valueMob);
     }
 

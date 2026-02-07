@@ -13,12 +13,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.CustomModelData;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
@@ -46,7 +46,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         var blockState = chestEntity.getBlockState();
         var direction =  blockState.getValue(LootChestBlock.FACING);
         var jahdooRarity = KeyItem.getJahdooRarity(new CustomModelData(chestEntity.getRarity));
-        var displayName = Helpers.withStyleComponent(jahdooRarity.getSerializedName(), jahdooRarity.getColour());
+        var displayName = JahdooHelpers.withStyleComponent(jahdooRarity.getSerializedName(), jahdooRarity.getColour());
 
         if(chestEntity.canRender()) {
             renderName(chestEntity, displayName, poseStack, bufferSource, direction, partialTick);
@@ -58,10 +58,10 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
 
     public static void roomData(SyncedBlockEntity entity, PoseStack pPoseStack, MultiBufferSource bufferSource, EntityRenderDispatcher dispatcher, float partialTicks) {
         var offWhite = ColourStore.EXPERIENCE_GREEN;
-        var displayName = Helpers.withStyleComponent("" + (entity.saveInt + 1), offWhite);
+        var displayName = JahdooHelpers.withStyleComponent("" + (entity.getSaveInt() + 1), offWhite);
         pPoseStack.pushPose();
 
-        var scale = Math.sin(((entity.privateTicks + partialTicks) / 10.0F)) * 0.2F + 5;
+        var scale = Math.sin(((entity.getPrivateTicks() + partialTicks) / 10.0F)) * 0.2F + 5;
         pPoseStack.translate(0.5, scale, 0.5);
         var scale1 = (float) scale * 2;
         pPoseStack.scale(scale1, scale1, scale1);
@@ -74,7 +74,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
 
-        var text = Helpers.withStyleComponent("Room", ColourStore.SUB_HEADER_COLOUR);
+        var text = JahdooHelpers.withStyleComponent("Room", ColourStore.SUB_HEADER_COLOUR);
         var f2 = (float)(-font.width(text) / 2);
 
         font.drawInBatch(text, f2, -10, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
@@ -86,7 +86,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
     protected void renderName(LootChestEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, Direction direction, float partialTicks) {
         pPoseStack.pushPose();
         var uniqueOffset = (entity.getRarity ) * 0.5 ; // Or another unique value per entity
-        var scale = Math.sin(((entity.privateTicks + partialTicks) / 10.0F) + uniqueOffset) * 0.08F + 1.4;
+        var scale = Math.sin(((entity.getPrivateTicks() + partialTicks) / 10.0F) + uniqueOffset) * 0.08F + 1.4;
 
         pPoseStack.translate(0, scale, 0);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(direction == EAST || direction == WEST ? direction.getOpposite().toYRot() : direction.toYRot()));
@@ -104,7 +104,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
     protected void renderNameReverse(LootChestEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, Direction direction, float partialTicks) {
         pPoseStack.pushPose();
         var uniqueOffset = (entity.getRarity ) * 0.5 ; // Or another unique value per entity
-        var scale = Math.sin(((entity.privateTicks + partialTicks) / 10.0F) + uniqueOffset) * 0.08F + 1.4;
+        var scale = Math.sin(((entity.getPrivateTicks() + partialTicks) / 10.0F) + uniqueOffset) * 0.08F + 1.4;
 
         pPoseStack.translate(0, scale, 0);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(direction == EAST || direction == WEST ? direction.toYRot() : direction.getOpposite().toYRot()));

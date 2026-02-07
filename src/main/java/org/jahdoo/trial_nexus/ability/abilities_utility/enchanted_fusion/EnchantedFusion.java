@@ -11,7 +11,7 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
@@ -20,7 +20,7 @@ import static org.jahdoo.common.registers.mod.ElementReg.utility;
 
 public class EnchantedFusion extends AbstractUtilityProjectile {
 
-    private static final ResourceLocation abilityId = Helpers.res("enchanted_fusion_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("enchanted_fusion_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

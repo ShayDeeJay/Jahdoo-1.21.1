@@ -3,6 +3,8 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.boltz;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -11,7 +13,7 @@ import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
@@ -19,15 +21,16 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 
 public class Boltz extends DefaultEntityBehaviour {
 
-    private static final ResourceLocation abilityId = Helpers.res("boltz_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("boltz_property");
     private double effectChance;
     private double effectStrength;
     private double effectDuration;
@@ -86,10 +89,14 @@ public class Boltz extends DefaultEntityBehaviour {
         return new Boltz();
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         this.dischargeEffect();
-        Helpers.getSoundWithPosition(this.element.level(), blockHitResult.getBlockPos(), SoundReg.EXPLOSION.get(),0.2f,2f);
+        sharedSound(SoundReg.EXPLOSION.get(), 0.2F, 2F);
         this.element.discard();
     }
 
@@ -98,8 +105,7 @@ public class Boltz extends DefaultEntityBehaviour {
         LivingEntity owner = (LivingEntity) this.element.getOwner();
         if(DefaultEntityBehaviour.canDamageEntity(hitEntity, (LivingEntity) this.element.getOwner())){
             DamageUtils.damageWithJahdoo(hitEntity, owner, (float) this.damage, getElementType().damageTypeResourceKey());
-
-            Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.FROST_ABILITY.get(), 0.1f);
+            sharedSound(SoundReg.FROST_ABILITY.get(), 0.1F, 1F);
         }
     }
 
@@ -189,8 +195,8 @@ public class Boltz extends DefaultEntityBehaviour {
             ParticleStore.ELECTRIC_PARTICLE, this.getElementType(), Random.nextInt(2,8), 1.2f, this.dischargeRadius/10
         );
 
-        var velocityA = Helpers.getRandomParticleVelocity(projectile, 0.1);
-        var velocityB = Helpers.getRandomParticleVelocity(projectile, 0.05);
+        var velocityA = JahdooHelpers.getRandomParticleVelocity(projectile, 0.1);
+        var velocityB = JahdooHelpers.getRandomParticleVelocity(projectile, 0.05);
 
         PositionFinders.getRandomSphericalPositions(projectile, radius, numberOfPoints,
             position -> {

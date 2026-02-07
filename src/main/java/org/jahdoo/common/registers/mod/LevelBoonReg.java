@@ -12,7 +12,7 @@ import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.boon.level_boons.negative.*;
 import org.jahdoo.trial_nexus.boon.level_boons.positive.*;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 public class LevelBoonReg {
 
-    public static final ResourceKey<Registry<AbstractLevelBoon>> LEVEL_BOON_REGISTRY_KEY = ResourceKey.createRegistryKey(Helpers.res("level_boon"));
+    public static final ResourceKey<Registry<AbstractLevelBoon>> LEVEL_BOON_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("level_boon"));
     private static final DeferredRegister<AbstractLevelBoon> LEVEL_BOON = DeferredRegister.create(LEVEL_BOON_REGISTRY_KEY, JahdooMod.MOD_ID);
     public static final Registry<AbstractLevelBoon> REGISTRY =  new RegistryBuilder<>(LEVEL_BOON_REGISTRY_KEY).create();
 
@@ -35,11 +35,11 @@ public class LevelBoonReg {
     }
 
     public static AbstractLevelBoon randomPositive() {
-        return Helpers.listRandom(getAllPositive());
+        return JahdooHelpers.listRandom(getAllPositive());
     }
 
     public static AbstractLevelBoon randomNegative() {
-        return Helpers.listRandom(getAllNegative());
+        return JahdooHelpers.listRandom(getAllNegative());
     }
 
     public static List<AbstractLevelBoon> getAllPositive() {
@@ -62,7 +62,7 @@ public class LevelBoonReg {
             .filter(a -> a.getStampIndex() != -1)
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return Helpers.listRandom(element);
+        return JahdooHelpers.listRandom(element);
     }
 
     public static AbstractLevelBoon withRarityNegative(JahdooRarity rarity) {
@@ -71,7 +71,7 @@ public class LevelBoonReg {
             .filter(a -> !a.isPositive())
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return Helpers.listRandom(element);
+        return JahdooHelpers.listRandom(element);
     }
 
     public static AbstractLevelBoon withRarityPositive(JahdooRarity rarity) {
@@ -80,7 +80,7 @@ public class LevelBoonReg {
             .filter(AbstractLevelBoon::isPositive)
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return Helpers.listRandom(element);
+        return JahdooHelpers.listRandom(element);
     }
 
     public static Optional<AbstractLevelBoon> fromId(String typeId) {
@@ -91,9 +91,28 @@ public class LevelBoonReg {
         return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
     }
 
+    public static Optional<AbstractLevelBoon> positiveFromId(String typeId) {
+        var element = REGISTRY
+            .stream()
+            .filter(AbstractLevelBoon::isPositive)
+            .filter(a -> Objects.equals(a.id(), typeId))
+            .toList();
+        return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
+    }
+
+
+    public static Optional<AbstractLevelBoon> negativeFromId(String typeId) {
+        var element = REGISTRY
+            .stream()
+            .filter(a -> !a.isPositive())
+            .filter(a -> Objects.equals(a.id(), typeId))
+            .toList();
+        return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
+    }
+
     public static AbstractLevelBoon random() {
         var list = REGISTRY.stream().toList();
-        return Helpers.listRandom(list);
+        return JahdooHelpers.listRandom(list);
     }
 
     //Negative
@@ -102,6 +121,9 @@ public class LevelBoonReg {
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> SPEED =
         registerElement(MobSpeed::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> KNOCKBACK =
+        registerElement(MobKnockback::new);
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> DAMAGE =
         registerElement(MobDamage::new);

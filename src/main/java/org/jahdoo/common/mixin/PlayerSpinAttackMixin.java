@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.common.registers.EffectReg.FROST_EFFECT;
 
 @Mixin(Player.class)

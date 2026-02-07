@@ -40,9 +40,8 @@ import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.registers.AttributeReg.replaceOrAddAttribute;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
-import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.filterList;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.filterList;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> {
 
@@ -205,8 +204,8 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var startY1 = startY + 35;
         var colour = 0xb97700;
         var potential = getPotential() > 0;
-        var reRoll = withStyleComponent(potential ? "Re-Roll" : "Unmodifiable", potential ? colour : ColourStore.HEADER_COLOUR);
-        boxMaker(guiGraphics, startX1, startY1, potential ? 30 : 42, 9, BORDER_COLOUR, fadeBlack(0.9f));
+        var reRoll = withStyleComponent(potential ? "Re-Roll" : "Unmodifiable", potential ? colour : org.shaydee.shaydeeapi.Colours.getHeaderColour());
+        boxMaker(guiGraphics, startX1, startY1, potential ? 30 : 42, 9, org.shaydee.shaydeeapi.Colours.getBorderColour(), fadeBlack(0.9f));
         guiGraphics.drawString(this.font, reRoll, startX + 126, startY + 40, 0);
     }
 
@@ -233,7 +232,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                 default -> attributes.getDamageRange();
             };
             var headerBuilder = "(" + first.getFirst() + "%" + " - " + first.getSecond() + "%" + ")";
-            return withStyleComponent(headerBuilder, BORDER_COLOUR);
+            return withStyleComponent(headerBuilder, org.shaydee.shaydeeapi.Colours.getBorderColour());
         }
         return Component.empty();
     }
@@ -276,7 +275,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var offsetY = -27;
         var potential = getPotential();
         if(!showInventory && isHovering && potential > 0){
-            boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, BORDER_COLOUR, fadeBlack(0.6f));
+            boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, org.shaydee.shaydeeapi.Colours.getBorderColour(), fadeBlack(0.6f));
             drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
             guiGraphics.drawCenteredString(font, "Exp Cost", mouseX + offsetX, mouseY + 4 + offsetY, -1);
             drawStringWithBackground(guiGraphics, this.font, expLvl, i, startY + 69, 0, 8453920, true);
@@ -395,7 +394,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                         var range = getModifierRange(wandManager, components.getString());
                         var posX = this.width / 2 - 28 + shiftX;
                         var posY1 = this.height / 2 - 64 + spacer.get() + shiftY;
-                        guiGraphics.drawString(this.font, range, posX, posY1, ColourStore.HEADER_COLOUR);
+                        guiGraphics.drawString(this.font, range, posX, posY1, org.shaydee.shaydeeapi.Colours.getHeaderColour());
                     }
                     spacer.set(spacer.get() + (!skip ? 24 : 15));
                     if (widthProperties < font.width(components)) widthProperties = font.width(components);

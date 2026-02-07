@@ -1,7 +1,7 @@
 package org.jahdoo.common.entities.explosive_barrel;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import software.bernie.geckolib.model.GeoModel;
 
 
@@ -9,7 +9,7 @@ public class ExplosiveBarrelModel extends GeoModel<ExplosiveBarrel> {
 
     @Override
     public ResourceLocation getModelResource(ExplosiveBarrel animatable) {
-        return Helpers.res("geo/entity/damage_barrel.geo.json");
+        return JahdooHelpers.res("geo/entity/damage_barrel.geo.json");
     }
 
     @Override
@@ -21,12 +21,12 @@ public class ExplosiveBarrelModel extends GeoModel<ExplosiveBarrel> {
             default -> "vitality_barrel";
         };
 
-        return Helpers.res("textures/entity/damage_barrel/" + type + ".png");
+        return JahdooHelpers.res("textures/entity/damage_barrel/" + type + ".png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(ExplosiveBarrel animatable) {
-        return Helpers.res("animations/entity/damage_barrel.animation.json");
+        return JahdooHelpers.res("animations/entity/damage_barrel.animation.json");
     }
 
 }

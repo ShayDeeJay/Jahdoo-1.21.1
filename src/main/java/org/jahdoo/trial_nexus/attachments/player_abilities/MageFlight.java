@@ -16,14 +16,16 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
+import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class MageFlight implements IAttachment {
 
@@ -108,10 +110,10 @@ public class MageFlight implements IAttachment {
 
         if (player.tickCount % 6 == 0) {
             Helpers.getSoundWithPosition(
-                player.level(), player.blockPosition(), SoundReg.LEVITATE.get(), 1f, Random.nextFloat(1, 1.5F)
+                player.level(), player.position(), SoundReg.LEVITATE.get(), PLAYERS, 1f, Random.nextFloat(1, 1.5F)
             );
             Helpers.getSoundWithPosition(
-                player.level(), player.blockPosition(), SoundReg.HEAL.get(), 0.5f, Random.nextFloat(1, 1.5F)
+                player.level(), player.position(), SoundReg.HEAL.get(), PLAYERS, 0.5f, Random.nextFloat(1, 1.5F)
             );
         }
     }
@@ -119,7 +121,7 @@ public class MageFlight implements IAttachment {
     public void serverFlight(Player player){
         if(player.isCreative() || player.isSpectator()) return;
 
-        var wandItem = Helpers.getUsedItem(player);
+        var wandItem = JahdooHelpers.getUsedItem(player);
         var manaSystem = player.getData(CASTER_DATA);
         if (cancelAttempt(player)) return;
 

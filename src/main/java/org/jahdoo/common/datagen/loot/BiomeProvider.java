@@ -8,7 +8,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +23,7 @@ public class BiomeProvider extends DatapackBuiltinEntriesProvider {
         new RegistrySetBuilder().add(Registries.BIOME, BiomeProvider::bootstrap);
 
     public static void bootstrap(BootstrapContext<Biome> ctx) {
-        ctx.register(BIOME_SOURCE, Helpers.newBiome());
+        ctx.register(BIOME_SOURCE, JahdooHelpers.newBiome());
     }
 
     public BiomeProvider(

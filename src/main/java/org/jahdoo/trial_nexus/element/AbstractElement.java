@@ -8,11 +8,11 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
+import org.shaydee.shaydeeapi.Helpers;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.capitaliseFirst;
 import static org.jahdoo.common.particle.ParticleStore.*;
 
 public abstract class AbstractElement {
@@ -57,7 +57,7 @@ public abstract class AbstractElement {
     public abstract String elementDescription();
 
     public String name(){
-        return capitaliseFirst(abilityResource().getPath().intern());
+        return Helpers.stringIdToName(abilityResource().getPath().intern());
     }
 
     public final String setAbilityId() {

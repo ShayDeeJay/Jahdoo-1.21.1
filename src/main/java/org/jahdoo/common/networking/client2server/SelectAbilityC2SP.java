@@ -6,7 +6,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 
@@ -14,7 +14,7 @@ import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 
 public class SelectAbilityC2SP implements CustomPacketPayload {
 
-    public static final Type<SelectAbilityC2SP> TYPE = new Type<>(Helpers.res("selected_ability"));
+    public static final Type<SelectAbilityC2SP> TYPE = new Type<>(JahdooHelpers.res("selected_ability"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SelectAbilityC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(SelectAbilityC2SP::toBytes, SelectAbilityC2SP::new);

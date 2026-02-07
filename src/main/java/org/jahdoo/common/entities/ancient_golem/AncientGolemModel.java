@@ -56,55 +56,73 @@ public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel
         this.animateIdlePose(ageInTicks);
         this.animate(entity.smash, SMASH_ANIM, ageInTicks);
         this.animate(entity.jump, MODEL_NEW_ANIMATION, ageInTicks);
-        this.animate(entity.normal, NORMAL_ATTACK_ANIM, ageInTicks);
+        this.animate(entity.normal, NORMAL_ATTACK, ageInTicks);
     }
 
     private void animateWalk(float limbSwing, float limbSwingAmount) {
-        var f = Math.min(0.5F, 3.0F * limbSwingAmount);
-        var f1 = limbSwing * 0.8662F;
-        var f2 = Mth.cos(f1);
-        var f3 = Mth.sin(f1);
-        var f4 = Math.min(0.35F, f);
+        float speed = 0.46F; // slower = heavier
+        float swing = limbSwing * speed;
+        float amt = Math.min(limbSwingAmount, 1.0F);
 
-        this.head.zRot += 0.3F * f3 * f;
-        this.body.zRot = 0.1F * f3 * f;
-        this.body.xRot = 0.1F * f2 * f4;
+        float step = Mth.sin(swing);
+        float stepAbs = Math.abs(step);
 
-        this.rightLeg.xRot = -1.8F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
-        this.leftLeg.xRot = 1.8F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
+        // Legs (short, heavy)
+        float legRot = Mth.cos(swing) * 0.9F * amt;
+        this.rightLeg.xRot = legRot;
+        this.leftLeg.xRot = -legRot;
 
-        this.leftArm.xRot = -(1.3f * f2 * f) * (limbSwingAmount > 0.8 ? 1.5f : limbSwingAmount);
-        this.leftArm.zRot = 0.0F;
+        // Hip shove
+        float hipForward = step * 1.6F * amt;
+        this.rightLeg.z = -hipForward;
+        this.leftLeg.z = hipForward;
 
-        this.rightArm.xRot = (1.3f * f2 * f) * (limbSwingAmount > 0.8 ? 1.5f : limbSwingAmount);
-        this.rightArm.zRot = 0.0F;
+        // Arms (delayed, minimal)
+        float armLag = Mth.cos(swing - 0.6F) * 0.6F * amt;
+        this.rightArm.xRot = armLag;
+        this.leftArm.xRot = -armLag;
+
+        // Body slam + lean
+        this.body.xRot = -0.25F + (stepAbs * 0.12F * amt);
+        this.body.y += stepAbs * 0.35F * amt;
+
+        // Subtle torso yaw
+        this.body.yRot = step * 0.08F * amt;
+
+        // Head inertia
+        this.head.xRot -= step * 0.05F * amt;
+        this.head.yRot -= step * 0.04F * amt;
+
         this.resetArmPoses();
     }
 
     private void animateIdlePose(float ageInTicks) {
-        var f = ageInTicks * 0.1F;
-        var f1 = Mth.cos(f);
-        var f2 = Mth.sin(f);
-        var var10000 = this.head;
-        var10000.zRot += 0.04F * f1 ;
-        var10000 = this.head;
-        var10000.xRot += 0.06F * f2;
-        var10000 = this.body;
-        var10000.zRot += 0.015F * f2;
-        var10000 = this.body;
-        var10000.xRot += 0.015F * f1  - 0.2F;
-        var10000 = this.body;
-        var10000.yRot += 0.115F * f1 ;
-        var10000 = this.rightArm;
-        var10000.xRot += 0.225F * f1;
-        var10000.zRot  = 0.125F ;
-        var10000 = this.leftArm;
-        var10000.xRot += -0.125F * f1;
-        var10000.zRot = -0.125F ;
-        var10000 = this.rightLeg;
-//        var10000.xRot += -0.125F * f1;
-        var10000.zRot = 0.125F ;
-        var10000.yRot = 0.425F ;
+        float t = ageInTicks * 0.08F;
+        float sway = Mth.sin(t);
+        float breathe = Mth.cos(t * 0.7F);
+
+        // Head
+        this.head.xRot += 0.06F * breathe;
+        this.head.zRot += 0.04F * sway;
+
+        // Body (slouched + swaying)
+        this.body.xRot += -0.28F + 0.025F * breathe;
+        this.body.zRot += 0.04F * sway;
+        this.body.yRot += 0.06F * sway;
+
+        // Head counterbalance
+        this.head.yRot -= this.body.yRot * 0.7F;
+        this.head.zRot -= this.body.zRot * 0.6F;
+
+        // Arms (relaxed)
+        this.rightArm.xRot += 0.1F * breathe;
+        this.leftArm.xRot += -0.1F * breathe;
+        this.rightArm.zRot = 0.1F + 0.01F * sway;
+        this.leftArm.zRot = -0.1F - 0.01F * sway;
+
+        // Hips shift weight
+        this.rightLeg.z = 0.9F * sway;
+        this.leftLeg.z = -0.9F * sway;
     }
 
 }

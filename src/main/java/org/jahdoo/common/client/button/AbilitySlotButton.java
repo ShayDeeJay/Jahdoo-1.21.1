@@ -12,20 +12,20 @@ import org.jahdoo.common.client.screens.AbstractPanableScreen;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Colours;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+import static org.jahdoo.common.client.Icons.ABILITY_BACKGROUND;
 import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
 
 public class AbilitySlotButton extends ImageButton {
 
-    private float sizes;
     private final boolean isSelected;
     private final boolean showHover;
     private final int defaultSize;
@@ -35,25 +35,25 @@ public class AbilitySlotButton extends ImageButton {
     private final String label;
     private final int slotIndex;
     private final boolean validSlot;
+    private final boolean canPress;
+    private static final WidgetSprites SPRITES = new WidgetSprites(ABILITY_BACKGROUND, ABILITY_BACKGROUND);
 
     public AbilitySlotButton(
         int pX,
         int pY,
-        WidgetSprites sprites,
         int size,
-        OnPress pOnPress,
-        boolean isSelected,
-        @Nullable ResourceLocation buttonOverlay,
-        String label,
-        int scale,
-        boolean showHover,
         int slotIndex,
-        boolean validSlot
+        String label,
+        boolean isSelected,
+        boolean showHover,
+        boolean validSlot,
+        boolean canPress,
+        @Nullable ResourceLocation buttonOverlay,
+        OnPress pOnPress
     ) {
-        super(pX, pY, size, size, sprites, pOnPress);
+        super(pX, pY, size, size, SPRITES, pOnPress);
         this.defaultSize = size;
-        this.sizes = size;
-        this.totalSize = size + scale;
+        this.totalSize = size ;
         this.pOnPress = pOnPress;
         this.isSelected = isSelected;
         this.buttonOverlay = buttonOverlay;
@@ -61,79 +61,90 @@ public class AbilitySlotButton extends ImageButton {
         this.showHover = showHover;
         this.slotIndex = slotIndex;
         this.validSlot = validSlot;
-    }
-
-    public float easeInOutCubic(float t) {
-        return t < 0.5f ? 4 * t * t * t : 1 - (float) Math.pow(-2 * t + 2, 3) / 2;
+        this.canPress = canPress;
     }
 
     @Override
     protected boolean isValidClickButton(int button) {
-        return !isSelected;
+        return canPress;
     }
 
     @Override
     public void playDownSound(SoundManager handler) {
-        if(validSlot){
+        if(validSlot && canPress){
             handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1));
         }
     }
 
     @Override
     public void onPress() {
-        this.sizes = defaultSize;
         pOnPress.onPress(this);
     }
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
-        var normalizedTick = (sizes - defaultSize) / (totalSize - defaultSize);
-        var easedTick = easeInOutCubic(normalizedTick);
-        var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
-        var offset = (easedValue - defaultSize) / 2;
         var mc = Minecraft.getInstance();
         var player = mc.player;
-
         if(player == null) return;
-//        var slots = player.getData(AttachmentReg.CASTER_DATA.get());
-//        var validSlot = slotIndex < slots.getAllowedSlots();
+
         var colourFaded = FastColor.ARGB32.color(190, AbstractPanableScreen.uiColour());
-
-        if(isSelected) sizes = totalSize;
-        this.setSize((int) sizes-4, (int) sizes-4);
-
         var i1 = this.totalSize / 2 - 3;
+        renderNameAndBackground(graphics, mc, i1, colourFaded, defaultSize);
+        outlineSelectedButton(graphics, i1, colourFaded);
+        onIsHovered(graphics, mouseX, mouseY, mc, defaultSize);
+        showIconOrIndex(graphics, defaultSize, mc, i1);
+    }
+
+    private void renderNameAndBackground(GuiGraphics graphics, Minecraft mc, int i1, int colourFaded, int easedValue) {
         graphics.drawCenteredString(mc.font, label, this.getX() + i1 + 3, this.getY() + totalSize + 3, isSelected ? colourFaded : ColourStore.SUB_HEADER_COLOUR);
-        graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
+        graphics.blit(this.sprites.enabled(), this.getX(), this.getY(), 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
+    }
 
-        if(isSelected) {
-            boxMaker(graphics, this.getX() + 3, this.getY() + 3, i1, i1, colourFaded, 0, 0);
-        }
-
+    private void onIsHovered(GuiGraphics graphics, int mouseX, int mouseY, Minecraft mc, int easedValue) {
         if (this.isMouseOver(mouseX, mouseY)) {
-            if(!validSlot){
-                var prefix = Helpers.withStyleComponent("Requires Level: ", HEADER_COLOUR);
-                var level = Helpers.withStyleComponent(((slotIndex - 1) * CasterData.UNLOCKED_AT)  + "", ColourStore.SUB_HEADER_COLOUR);
-                graphics.renderTooltip(mc.font, List.of(prefix.copy().append(level)), Optional.empty(), mouseX, mouseY);
-            }
-            sizes = Math.min(sizes + 2f, totalSize);
-            var i = 0;
-            graphics.pose().pushPose();
-            graphics.pose().translate(0,0,2);
-            if(showHover && validSlot){
-                graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
-            }
-            graphics.pose().popPose();
-        } else {
-            if (sizes > defaultSize) sizes -= 2f;
+            showLevelUnlock(graphics, mouseX, mouseY, mc);
+            overlayHoverBorder(graphics, easedValue);
         }
+    }
 
+    private void outlineSelectedButton(GuiGraphics graphics, int i1, int colourFaded) {
+        if(!isSelected) return;
+        boxMaker(graphics, this.getX() + 3, this.getY() + 3, i1, i1, colourFaded, 0, 0);
+    }
+
+    private void showIconOrIndex(GuiGraphics graphics, int easedValue, Minecraft mc, int i1) {
         var i = easedValue/3;
         var size = easedValue - i;
         if(buttonOverlay != null){
-            graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, size, size, size, size);
+            var x = this.getX() + i / 2;
+            var y = this.getY() + i / 2;
+            graphics.blit(buttonOverlay, x, y, 1, 0, 0, size, size, size, size);
         } else {
-            graphics.drawCenteredString(mc.font, validSlot ? slotIndex + 1 + "" : "⧈", this.getX() - offset + i1 + 3, this.getY() - offset + i1 - 1, validSlot ? SUB_HEADER_COLOUR : HEADER_COLOUR);
+            var text = validSlot ? slotIndex + 1 + "" : "⧈";
+            var x = this.getX() + i1 + 3;
+            var y = this.getY() + i1 - 1;
+            var color = validSlot ? SUB_HEADER_COLOUR : Colours.getHeaderColour();
+            graphics.drawCenteredString(mc.font, text, x, y, color);
+        }
+    }
+
+    private void overlayHoverBorder(GuiGraphics graphics, int easedValue) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(0,0,2);
+        if(showHover && validSlot){
+            var x = this.getX();
+            var y = this.getY();
+            graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, x, y, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
+        }
+        graphics.pose().popPose();
+    }
+
+    private void showLevelUnlock(GuiGraphics graphics, int mouseX, int mouseY, Minecraft mc) {
+        if(!validSlot && !canPress){
+            var prefix = JahdooHelpers.withStyleComponentTrans("info.jahdoo.requires_level", Colours.getHeaderColour());
+            var getUnlockLevel = String.valueOf((slotIndex - 1) * CasterData.UNLOCKED_AT);
+            var level = JahdooHelpers.withStyleComponent(getUnlockLevel, ColourStore.SUB_HEADER_COLOUR);
+            graphics.renderTooltip(mc.font, List.of(prefix.copy().append(level)), Optional.empty(), mouseX, mouseY);
         }
     }
 

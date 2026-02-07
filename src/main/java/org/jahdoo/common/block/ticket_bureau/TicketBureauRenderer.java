@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -43,8 +43,8 @@ public class TicketBureauRenderer implements BlockEntityRenderer<TicketBureauBlo
         var current = CoreData.getFilled(render);
 
         if(!itemStack1.isEmpty()){
-            var displayName = Helpers.withStyleComponent(current + "/" + required, Helpers.colourByPercent(required, current, true));
-            var complete = Helpers.withStyleComponent("Complete", ColourStore.MAGNET_RANGE_GREEN);
+            var displayName = JahdooHelpers.withStyleComponent(current + "/" + required, JahdooHelpers.colourByPercent(required, current, true));
+            var complete = JahdooHelpers.withStyleComponent("Complete", ColourStore.MAGNET_RANGE_GREEN);
             stack.pushPose();
             if(dispatcher.camera.getPosition().distanceTo(entity.getBlockPos().getCenter()) < 4){
                 renderName(dispatcher.camera.rotation(), CoreData.isFull(itemStack1) ? complete : displayName, stack, source, 1.4);
@@ -58,7 +58,7 @@ public class TicketBureauRenderer implements BlockEntityRenderer<TicketBureauBlo
             stack.pushPose();
             stack.translate(0.5f, 0.8F, 0.5f);
 
-            var xx = Math.max(0, scale - ((float) entity.privateTicks / 50));
+            var xx = Math.max(0, scale - ((float) entity.getPrivateTicks() / 50));
             stack.scale(xx, xx, xx);
             stack.mulPose(Axis.YP.rotationDegrees(rotate));
 

@@ -3,13 +3,15 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
@@ -17,6 +19,7 @@ import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
@@ -30,7 +33,7 @@ import static org.jahdoo.common.registers.mod.EntityDataReg.SOUL_SIPHON_NOVA;
 
 public class LifeSiphon extends DefaultEntityBehaviour {
 
-    public static final ResourceLocation abilityId = Helpers.res("life_siphon_property");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("life_siphon_property");
     private int fuse;
     private int privateTicks;
     private int pulseCounter;
@@ -52,7 +55,7 @@ public class LifeSiphon extends DefaultEntityBehaviour {
         if(this.element.getOwner() != null){
             var player = (LivingEntity) this.element.getOwner();
             var damage = (float) this.getTag(DAMAGE);
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                 player, damage, true, MAGIC_DAMAGE_MULTIPLIER, VITALITY_MAGIC_DAMAGE_MULTIPLIER
             );
         }
@@ -108,14 +111,18 @@ public class LifeSiphon extends DefaultEntityBehaviour {
         this.pulseBehaviour();
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     @Override
     public void discardCondition() {
         if(pulseCounter >= pulses){
             if(fuse == 0) fuse = privateTicks;
             if(fuse + 20 == privateTicks){
-                var pos = this.element.blockPosition();
-                Helpers.getSoundWithPosition(level(), pos, getElementType().sound(), 2f, 0.7f);
-                Helpers.getSoundWithPosition(level(), pos, SoundReg.IMPACT.get(), 2f);
+                sharedSound(getElementType().sound(), 2f, 0.7f);
+                sharedSound(SoundReg.IMPACT.get(), 2f, 1f);
+
                 if(level() instanceof ServerLevel serverLevel){
                     for (int i = 0; i  < 10; i++){
                         ParticleHandlers.particleBurst(serverLevel, this.element.position(), 1,
@@ -143,18 +150,8 @@ public class LifeSiphon extends DefaultEntityBehaviour {
     public void setPrimed(){
         if (privateTicks >= 20 || this.hasHitEntity || this.isPrimed) {
             if(!this.isPrimed){
-                Helpers.getSoundWithPosition(
-                    level(),
-                    this.element.blockPosition(),
-                    getElementType().sound(),
-                    1, 1.8F
-                );
-                Helpers.getSoundWithPosition(
-                    level(),
-                    this.element.blockPosition(),
-                    SoundReg.SUSPEND.get(),
-                    2,0.8F
-                );
+                sharedSound(getElementType().sound(), 1f, 1.8F);
+                sharedSound(SoundReg.SUSPEND.get(), 2F ,0.8F);
             }
             this.element.setDeltaMovement(0, 0, 0);
             element.setShowTrailParticles(false);
@@ -214,8 +211,8 @@ public class LifeSiphon extends DefaultEntityBehaviour {
     void orbEnergyParticles(){
         var reducedPointsInRadius = 1;
         var projectile = this.element;
-        var velocityA = Helpers.getRandomParticleVelocity(projectile, 0.1);
-        var velocityB = Helpers.getRandomParticleVelocity(projectile, 0.05);
+        var velocityA = JahdooHelpers.getRandomParticleVelocity(projectile, 0.1);
+        var velocityB = JahdooHelpers.getRandomParticleVelocity(projectile, 0.05);
         var particleOptionsOne = ParticleHandlers.genericParticle(GENERIC_PARTICLE, this.getElementType(), 10,2.5F);
         var particleOptionsTwo = bakedParticle(this.getElementType().id(), 8, 2.5F, false);
 

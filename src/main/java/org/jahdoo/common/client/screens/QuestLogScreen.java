@@ -23,8 +23,8 @@ import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.overlay.InstanceDataOverlay.progressBar;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.colourByPercent;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponentTrans;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.colourByPercent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 
 public class QuestLogScreen extends AbstractPanableScreen {
     public static int frameTicks;
@@ -197,7 +197,7 @@ public class QuestLogScreen extends AbstractPanableScreen {
             var startX = 192;
             var text = withStyleComponentTrans(isComplete ? complete : tracker, isComplete ? 0 : SUB_HEADER_COLOUR);
 
-            progressBar(graphics, startX, 110, 100, 8, currentValue, requiredValue, 3, colourByPercent(requiredValue, currentValue, true), SUB_HEADER_COLOUR);
+            progressBar(graphics, startX, 110, 100, 8, currentValue, requiredValue, 3, colourByPercent(requiredValue, currentValue, true), SUB_HEADER_COLOUR, uiFade());
             graphics.drawString(font, withStyleComponentTrans(task.taskDescription(), SUB_HEADER_COLOUR), startX + 32, 96, -1);
             centeredStringNoShadow(graphics, font, text,  startX + 98, 114, -1, false);
             renderRewards(graphics);

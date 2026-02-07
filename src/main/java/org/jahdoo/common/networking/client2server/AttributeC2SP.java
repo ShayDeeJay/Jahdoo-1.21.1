@@ -8,13 +8,13 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.UUID;
 
 public class AttributeC2SP implements CustomPacketPayload {
 
-    public static final Type<AttributeC2SP> TYPE = new Type<>(Helpers.res("attribute_sync"));
+    public static final Type<AttributeC2SP> TYPE = new Type<>(JahdooHelpers.res("attribute_sync"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AttributeC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(AttributeC2SP::toBytes, AttributeC2SP::new);
@@ -44,7 +44,7 @@ public class AttributeC2SP implements CustomPacketPayload {
         ctx.enqueueWork(
             () -> {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
-                    Helpers.addTransientAttribute(serverPlayer, value, "boon" + attribute.value().getDescriptionId() + UUID.randomUUID(), attribute);
+                    JahdooHelpers.addTransientAttribute(serverPlayer, value, "boon" + attribute.value().getDescriptionId() + UUID.randomUUID(), attribute);
                 }
             }
         );

@@ -9,14 +9,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
+import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
 
 import java.util.List;
 
 import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 
 public class EnchantedBlockEntity extends SyncedBlockEntity {

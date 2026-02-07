@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -85,7 +85,7 @@ public record AbilityHolder(String abilityName, AbilityData data) {
                 key -> {
                     var value = key.getValue();
                     storedAbility.put(
-                        key.getKey(), Helpers.nbtDoubleList(
+                        key.getKey(), JahdooHelpers.nbtDoubleList(
                             value.actualValue(),
                             value.highestValue(),
                             value.lowestValue(),

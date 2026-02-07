@@ -3,7 +3,7 @@ package org.jahdoo.common.items.caster_item;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animation.RawAnimation;
 
@@ -44,7 +44,7 @@ public class ItemAnimations {
         ServerLevel serverLevel,
         Entity entity
     ){
-        var random = Helpers.Random.nextInt(0, castAnims.size());
+        var random = JahdooHelpers.Random.nextInt(0, castAnims.size());
         animate.triggerAnim(entity, getOrAssignId(itemStack, serverLevel), "Activation", castAnims.get(random));
     }
 

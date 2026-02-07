@@ -27,8 +27,9 @@ import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.ability.skills.AbstractSkill;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,8 @@ import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAllAbilityModifiers;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
     List<Component> components = new ArrayList<>();
@@ -111,8 +112,12 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
                     guiGraphics.disableScissor();
+                    //Outline ability slots
                     SharedUI.boxMaker(guiGraphics, width / 2 - 159, 54, 158, 15, uiColour(), uiFade(), uiFade());
+                    //Outline loadout slots
                     SharedUI.boxMaker(guiGraphics, width - 25, 54, 11, 29, uiColour(), uiFade(), uiFade());
+                    //Outline reset button
+                    SharedUI.boxMaker(guiGraphics, width - 25, 111, 11, 11, uiColour(), uiFade(), uiFade());
                 }
             }
         );
@@ -169,9 +174,9 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var headerColour = color(100, 116, 245);
 
         if(AbilityComponentHelper.shiftForDetails(component, false)){
-            component.add(component.size()-1, withStyleComponent(Helpers.stringIdToName(skill.id()), headerColour));
+            component.add(component.size()-1, withStyleComponent(JahdooHelpers.stringIdToName(skill.id()), headerColour));
         } else {
-            component.addAll(toComponent(skill.description(), Helpers.stringIdToName(skill.id()), headerColour, color(161, 171, 255)));
+            component.addAll(toComponent(skill.description(), JahdooHelpers.stringIdToName(skill.id()), headerColour, color(161, 171, 255)));
         }
 
         if(!haveSkill){
@@ -287,9 +292,17 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
             this.addRenderableWidget(
                 menuButtonAbility(
-                    (int) posX - size / 2, 54,
+                    (int) posX - size / 2,
+                    54,
+                    size,
+                    index,
+                    "",
+                    false,
+                    true,
+                    index < data.getAllowedSlots(),
+                    getA,
                     (Button) -> sendToServer(new RemoveAbilityC2SP(typeId)),
-                    getA, size, true, () -> {}, index, false, "", index < data.getAllowedSlots()
+                    () -> {}
                 )
             );
         }
@@ -299,10 +312,22 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var player = getMinecraft().player;
         if(player == null) return;
 
-        var size = 25;
+        var size = 20;
+        var posX = this.width - size - 4;
+        var posY = 112;
         this.addRenderableWidget(
             menuButtonAbility(
-                this.width - 50 - size / 2, 12, (Button) -> onResetSkillPress(player), TRIAL_EXPERIENCE, size, true, this::onResetSkillHover, 0, false, "Reset", true
+                posX,
+                posY,
+                size,
+                0,
+                "",
+                false,
+                true,
+                true,
+                REFRESH,
+                (Button) -> onResetSkillPress(player),
+                this::onResetSkillHover
             )
         );
     }
@@ -314,7 +339,17 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             var i = 40;
             this.addRenderableWidget(
                 menuButtonAbility(
-                    this.width - i, this.height - i, this::centerScreen, CENTER, 20, true, () -> {}, 0, false, "", true
+                    this.width - i,
+                    this.height - i,
+                    20,
+                    0,
+                    "",
+                    false,
+                    true,
+                    true,
+                    CENTER,
+                    this::centerScreen,
+                    () -> {}
                 )
             );
         }
@@ -327,29 +362,31 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
         var player = mc.player;
         if(player == null) return;
-        var data = player.getData(AttachmentReg.CASTER_DATA);
 
+        var data = player.getData(AttachmentReg.CASTER_DATA);
         var size1 = 20;
         var yLayout = 40;
 
-
         for(int i = 1; i < 4; i++){
             int finalI = i;
-            var b1 = data.getLoadoutIndex() == i;
-            var b = CasterData.hasLoadout(player, i);
+            var b1 = data.getLoadoutIndex() == finalI;
+            var b = CasterData.hasLoadout(player, finalI);
+            var posX = this.width - size + 16;
+            var posY = 51 + yLayout;
             this.addRenderableWidget(
                 menuButtonAbility(
-                    this.width - size + 16,
-                    51 + yLayout,
-                    (button) -> setLoadout(finalI, b),
-                    data.getLoadouts().get(finalI) != null ? DATA : null,
+                    posX,
+                    posY,
                     size1,
-                    canAffordXPCost(player),
-                    () -> this.centerScreenHover(b && !b1),
                     3 - finalI,
-                    b1 ,
                     "",
-                    true
+                    b1,
+                    true,
+                    !b1,
+                    b || Helpers.isKeyDown(KEY_LSHIFT),
+                    data.getLoadouts().get(finalI) != null ? DATA : null,
+                    (button) -> setLoadout(finalI, b),
+                    () -> this.centerScreenHover(b && !b1)
                 )
             );
             yLayout -= 18;
@@ -357,22 +394,19 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     }
 
      private void setLoadout(int index, boolean canPress){
-        var mc = minecraft;
-        if(mc == null) return;
+         var mc = minecraft;
+         if(mc == null) return;
 
-        var player = mc.player;
-        if(player == null) return;
+         var player = mc.player;
+         if(player == null) return;
 
-        if(canAffordXPCost(player)){
-            var newLoadout = CasterData.isNewLoadout(player);
-            var shiftDown = isKeyDown(mc.getWindow().getWindow(), KEY_LSHIFT);
-            var leftClick = isKeyDown(mc.getWindow().getWindow(), KEY_LCONTROL);
+         var newLoadout = CasterData.isNewLoadout(player);
+         var shiftDown = Helpers.isKeyDown(KEY_LSHIFT);
+         var leftClick = Helpers.isKeyDown(KEY_LCONTROL);
 
-            var hasLoadout = CasterData.hasLoadout(player, index);
-            if (!shiftDown && hasLoadout) onResetSkillPress(player);
-            sendToServer(new SaveLoadoutC2SP(index, shiftDown, newLoadout, canPress, leftClick));
-        }
-
+         var hasLoadout = CasterData.hasLoadout(player, index);
+         if (!shiftDown && hasLoadout) sendToServer(new RegretAbilitiesC2SP(false));
+         sendToServer(new SaveLoadoutC2SP(index, shiftDown, newLoadout, canPress, leftClick));
      }
 
      private boolean canAffordXPCost(Player player){
@@ -388,15 +422,15 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     }
 
     private void centerScreenHover(boolean canShow){
-       if(canShow) originalScale = -1;
+//       if(canShow) originalScale = -1;
     }
 
     private void onResetSkillPress(Player player){
-        if(canAffordXPCost(player)){
+        if(canAffordXPCost(player) && !CasterData.isNewLoadout(player)){
             var reductionAmount = getResetCost(player);
             var currentXp = player.experienceLevel;
             PacketDistributor.sendToServer(new PlayerExpC2SP(currentXp - reductionAmount));
-            sendToServer(new RegretAbilitiesC2SP());
+            sendToServer(new RegretAbilitiesC2SP(true));
         }
     }
 

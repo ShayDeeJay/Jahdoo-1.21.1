@@ -1,6 +1,6 @@
 package org.jahdoo.trial_nexus.rarity;
 import com.mojang.datafixers.util.Pair;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class RarityAttributes {
     private final Pair<Double, Double> manaPool;

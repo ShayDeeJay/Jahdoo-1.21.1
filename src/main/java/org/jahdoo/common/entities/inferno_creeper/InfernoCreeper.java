@@ -17,7 +17,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
@@ -144,14 +144,14 @@ public class InfernoCreeper extends Creeper {
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 1F);
         var directions = positionScrambler.subtract(this.position()).normalize();
         var lifetime = (int) this.novaMaxSize;
-        var size = Helpers.Random.nextDouble(8, 12);
+        var size = JahdooHelpers.Random.nextDouble(8, 12);
         var bakedParticle = bakedParticle(this.getElementType().id(), lifetime, (float) size, false);
         var col1 = this.getElementType().partColourA();
         var col2 =  color(51, 51, 51);
         var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, (float) (size - 0.2), col1, col2, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
-        var randomSpeed = Helpers.Random.nextDouble(this.novaMaxSize/10, this.novaMaxSize/6);
-        var randomType = getRandomParticle.get(Helpers.Random.nextInt(2));
+        var randomSpeed = JahdooHelpers.Random.nextDouble(this.novaMaxSize/10, this.novaMaxSize/6);
+        var randomType = getRandomParticle.get(JahdooHelpers.Random.nextInt(2));
 
         ParticleHandlers.sendParticles(
             level(), randomType, worldPosition, 0, directions.x, directions.y + 0.05, directions.z, randomSpeed

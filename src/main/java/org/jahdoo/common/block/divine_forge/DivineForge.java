@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -29,18 +30,18 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.block.BlockInteractionHandler;
 
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.common.block.BlockInteractionHandler.removeItemsFromSlotToHand;
-import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class DivineForge extends BaseEntityBlock {
 
@@ -93,8 +94,8 @@ public class DivineForge extends BaseEntityBlock {
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if(!level.isClientSide){
-            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundEvents.ANVIL_PLACE, 0.1F, 0.6F);
-            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.SPELL_SOUND.get(), 0.6F, 1.2F);
+            Helpers.getSoundWithPosition(level, pos, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.1F, 0.6F);
+            Helpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), SoundSource.BLOCKS, 0.6F, 1.2F);
         }
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
@@ -147,7 +148,7 @@ public class DivineForge extends BaseEntityBlock {
         boolean movedByPiston
     ) {
         if (level.getBlockEntity(pos) instanceof DivineForgeEntity runeTable) {
-            var handler = runeTable.inputItemHandler;
+            var handler = runeTable.getInputItemHandler();
             for(int i = 0; i < 4; i++){
                 var inputInventory = new SimpleContainer(1);
                 inputInventory.addItem(handler.getStackInSlot(i));
@@ -174,16 +175,16 @@ public class DivineForge extends BaseEntityBlock {
         var hasItem = divineForge.getItem().getStackInSlot(0).isEmpty();
 
         if(!hasItem && player.isShiftKeyDown()){
-            removeItemsFromSlotToHand(divineForge.inputItemHandler, 0, player, hand);
+            removeItemsFromSlotToHand(divineForge.getInputItemHandler(), 0, player, hand);
             return SUCCESS;
         } else if (stack.has(JAHDOO_GEAR_DATA)) {
 
-            swapItemsWithHand(divineForge.inputItemHandler, 0, player, hand);
+            BlockInteractionHandler.swapItemsWithHand(divineForge.getInputItemHandler(), 0, player, hand);
             divineForge.stand = EntityType.ARMOR_STAND.create(level);
             setOuterRingPulse(level, pos, 0.8, 20, 1.5, 0.2, ColourStore.NEGATIVE_RED, 80);
-            Helpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), 0.4F);
+            Helpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), SoundSource.BLOCKS, 0.4F);
             Helpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get());
-            divineForge.privateTicks = 0;
+            divineForge.setPrivateTicks(0);
 
             return SUCCESS;
         } else {

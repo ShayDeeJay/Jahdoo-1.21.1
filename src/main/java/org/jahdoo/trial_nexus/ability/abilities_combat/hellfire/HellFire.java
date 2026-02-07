@@ -1,35 +1,40 @@
 package org.jahdoo.trial_nexus.ability.abilities_combat.hellfire;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.DamageUtils;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
 import static net.minecraft.core.BlockPos.containing;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.ability.SharedFireProperties.fireTrailVegetationRemover;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.SoundReg.*;
+import static org.jahdoo.common.registers.SoundReg.FIRE_ABILITY;
+import static org.jahdoo.common.registers.SoundReg.SUSPEND;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.ability.SharedFireProperties.fireTrailVegetationRemover;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public class HellFire extends DefaultEntityBehaviour {
 
@@ -117,14 +122,19 @@ public class HellFire extends DefaultEntityBehaviour {
         );
     }
 
+    public void sharedSound(BlockPos pos, SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(cloud.level(), pos, sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
+
     private void novaSoundManager(List<Vec3> positions){
         var posOf = containing(positions.get(positions.size() / 2));
         var level = cloud.level();
         var tick = cloud.tickCount;
 
         if (tick % 3 == 0) {
-            getSoundWithPosition(level, posOf, FIRE_ABILITY.get(), 1F, 1.0F);
-            getSoundWithPosition(level, posOf, SUSPEND.get(), 1F, 1.6F);
+            sharedSound(posOf, FIRE_ABILITY.get(), 1F, 1.0F);
+            sharedSound(posOf,  SUSPEND.get(), 1F, 1.6F);
         }
     }
 

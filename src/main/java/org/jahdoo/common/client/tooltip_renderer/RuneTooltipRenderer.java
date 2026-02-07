@@ -7,8 +7,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
+import org.shaydee.shaydeeapi.Colours;
 
 import java.util.List;
 
@@ -17,7 +18,6 @@ import static net.minecraft.client.gui.Font.DisplayMode.SEE_THROUGH;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class RuneTooltipRenderer implements ClientTooltipComponent {
 
@@ -35,7 +35,7 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
     }
 
     public boolean isArmorBroken(){
-        return Helpers.durabilityDamageCount(this.component.gearPiece()) == 0;
+        return JahdooHelpers.durabilityDamageCount(this.component.gearPiece()) == 0;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
             var getLabel = itemStack.isEmpty() ? Component.literal("Empty Slot") : components;
             var posY = mouseY + 3 + this.spacing * spacer;
 
-            font.drawInBatch(getLabel, mouseX + 15, posY, HEADER_COLOUR, true, matrix, bufferSource, SEE_THROUGH, 0, FULL_BRIGHT);
+            font.drawInBatch(getLabel, mouseX + 15, posY, Colours.getHeaderColour(), true, matrix, bufferSource, SEE_THROUGH, 0, FULL_BRIGHT);
             spacer++;
         }
     }

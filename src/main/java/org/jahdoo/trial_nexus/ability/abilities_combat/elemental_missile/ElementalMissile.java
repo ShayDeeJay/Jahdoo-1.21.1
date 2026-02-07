@@ -4,6 +4,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +22,8 @@ import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.world.entity.ai.targeting.TargetingConditions.DEFAULT;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
@@ -30,7 +33,7 @@ import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 
 public class ElementalMissile extends DefaultEntityBehaviour {
 
-    private static final ResourceLocation abilityId = Helpers.res("elemental_shooter_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("elemental_shooter_property");
     private double numberOfRicochets;
     private double effectStrength;
     private double effectDuration;
@@ -53,7 +56,7 @@ public class ElementalMissile extends DefaultEntityBehaviour {
             var element = ElementReg.fromId((int) elementId);
             element.ifPresent(
                 getElement -> {
-                    this.damage = Helpers.attributeModifierCalculator(
+                    this.damage = JahdooHelpers.attributeModifierCalculator(
                         (LivingEntity) player,
                         (float) damage,
                         true,
@@ -102,7 +105,7 @@ public class ElementalMissile extends DefaultEntityBehaviour {
 
     private void applyEffect(LivingEntity livingEntity, Holder<MobEffect> mobEffect){
         if(!livingEntity.hasEffect(mobEffect)){
-            if (Helpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0) {
+            if (JahdooHelpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0) {
                 livingEntity.addEffect(new JahdooMobEffect(mobEffect, (int) effectDuration, (int) effectStrength));
             }
         }
@@ -131,8 +134,8 @@ public class ElementalMissile extends DefaultEntityBehaviour {
 
     private void altOnHit(ServerLevel serverLevel) {
         if(generic.tickCount < 6) return;
-        Helpers.getSoundWithPositionV(generic.level(), this.generic.position(), getElement().sound(), 0.2F, 1.4F);
-        Helpers.getSoundWithPositionV(generic.level(), this.generic.position(), SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+        JahdooHelpers.getSoundWithPositionV(generic.level(), this.generic.position(), getElement().sound(), 0.2F, 1.4F);
+        JahdooHelpers.getSoundWithPositionV(generic.level(), this.generic.position(), SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
         ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 10, ParticleHandlers.bakedParticle(this.getElement().id(), 6, 1, false), 0.12F);
         var targets = serverLevel.getNearbyEntities(
             LivingEntity.class, DEFAULT, null, this.generic.getBoundingBox().inflate(3,3,3)
@@ -142,12 +145,19 @@ public class ElementalMissile extends DefaultEntityBehaviour {
         this.generic.discard();
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(this.generic.level(), this.generic.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
+
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
+
         altOnHitWithResult(serverLevel);
-        Helpers.getSoundWithPositionV(this.generic.level(), hitEntity.position(), SoundReg.ELEMENTAL_BULLET.get(), 1, 0.8F);
+        sharedSound(SoundReg.ELEMENTAL_BULLET.get(), 1F, 0.8F);
         ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
+
         this.setDamageByOwner(hitEntity);
         this.generic.discard();
     }
@@ -155,11 +165,12 @@ public class ElementalMissile extends DefaultEntityBehaviour {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         if(blockBounce == numberOfRicochets) this.generic.discard();
+        sharedSound(getElement().sound(), 0.4F, 1F);
 
-        Helpers.getSoundWithPosition(this.generic.level(), this.generic.blockPosition(), getElement().sound(), 0.4f);
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
         ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
-        Helpers.getSoundWithPosition(serverLevel, blockHitResult.getBlockPos(), SoundReg.ELEMENTAL_BULLET.get(), 0.8F, 1.2F);
+        sharedSound(SoundReg.ELEMENTAL_BULLET.get(), 0.8F, 1.2F);
+
         this.setReboundBehaviour(blockHitResult);
     }
 

@@ -7,29 +7,31 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.event.event_helpers.EventHelpers;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Colours;
 
 import java.util.List;
 
 import static org.jahdoo.common.event.event_helpers.EventHelpers.getOverEnchantColour;
-import static org.jahdoo.trial_nexus.utils.ColourStore.CHAMPION_GOLD;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.highlightTextComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeString;
-import static org.jahdoo.trial_nexus.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
+import static org.jahdoo.trial_nexus.utils.ColourStore.CHAMPION_GOLD;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.highlightTextComponent;
 
 public interface JahdooItem {
 
+    default String descriptionId(){
+        return null;
+    }
+
     default ItemStack getRecycleItem(){
         return new ItemStack(ItemReg.ESSENCE_FRAGMENT);
-    };
+    }
 
     default int customRecycleChance(ItemStack itemStack){
         return -1;
@@ -44,11 +46,11 @@ public interface JahdooItem {
     }
 
     default void brokenGearMessage(List<Component> toolTips, ItemStack gearItem){
-        toolTips.add(Helpers.withStyleComponentTrans("❌Broken❌", ColourStore.RATING_2_RED));
+        toolTips.add(JahdooHelpers.withStyleComponentTrans("❌Broken❌", ColourStore.RATING_2_RED));
     }
 
     default boolean isItemBroken(ItemStack gearItem){
-        return Helpers.durabilityDamageCount(gearItem) == 0;
+        return JahdooHelpers.durabilityDamageCount(gearItem) == 0;
     }
 
     default void appendRepairSlotsComponent(List<Component> toolTips, ItemStack gearItem) {
@@ -69,24 +71,24 @@ public interface JahdooItem {
 
     default void appendWeaponToolTip(ItemStack stack, Item.TooltipContext context, List<Component> toolTips){
         toolTips.add(Component.literal(" "));
-        toolTips.add(Helpers.withStyleComponent("When Equipped", ColourStore.SUB_HEADER_COLOUR));
+        toolTips.add(JahdooHelpers.withStyleComponent("When Equipped", ColourStore.SUB_HEADER_COLOUR));
         for (var modifier : stack.getAttributeModifiers().modifiers()) {
-            var value = roundNonWholeString(singleFormattedDouble(modifier.modifier().amount()));
+            var value = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.singleFormattedDouble(modifier.modifier().amount()));
             var getColour = ColourStore.ABSORPTION_TEXT_YELLOW;
 
             if(modifier.attribute() == Attributes.ENTITY_INTERACTION_RANGE){
-                toolTips.add(Helpers.withStyleComponent("+"+value+" Attack Range", getColour));
+                toolTips.add(JahdooHelpers.withStyleComponent("+"+value+" Attack Range", getColour));
             }
 
             if(modifier.attribute() == Attributes.ATTACK_DAMAGE){
-                toolTips.add(Helpers.withStyleComponentTrans("+"+value+" Attack Damage", getColour));
+                toolTips.add(JahdooHelpers.withStyleComponentTrans("+"+value+" Attack Damage", getColour));
             }
 
             if(modifier.attribute() == Attributes.ATTACK_SPEED){
                 var value1 = modifier.attribute().value().getDefaultValue();
                 var amount = modifier.modifier().amount();
-                var v = roundNonWholeString(singleFormattedDouble(value1 + amount));
-                toolTips.add(Helpers.withStyleComponent(v+" Attack Speed", getColour));
+                var v = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.singleFormattedDouble(value1 + amount));
+                toolTips.add(JahdooHelpers.withStyleComponent(v+" Attack Speed", getColour));
             }
         }
         runeSpacer(stack, toolTips);
@@ -96,15 +98,15 @@ public interface JahdooItem {
         var itemEnchantments = stack.get(DataComponents.ENCHANTMENTS);
         if(itemEnchantments != null && !itemEnchantments.entrySet().isEmpty()){
             if(addSpacer) tooltipComponents.add(Component.literal(" "));
-            tooltipComponents.add(Helpers.withStyleComponent("Enchantments", ColourStore.SUB_HEADER_COLOUR));
+            tooltipComponents.add(JahdooHelpers.withStyleComponent("Enchantments", ColourStore.SUB_HEADER_COLOUR));
             for (var holderEntry : itemEnchantments.entrySet()) {
                 var value = holderEntry.getKey().value();
                 var string = value.description().getString();
                 var s = JahdooRarity.romanNumeralConverter(holderEntry.getIntValue() - 1);
                 if(!EventHelpers.isOverEnchanted(holderEntry.getKey(), holderEntry.getIntValue())){
-                    tooltipComponents.add(Helpers.withStyleComponent(string + " " + s, ColourStore.NETHERITE_BOX));
+                    tooltipComponents.add(JahdooHelpers.withStyleComponent(string + " " + s, ColourStore.NETHERITE_BOX));
                 } else {
-                    var recoloured = Helpers.withStyleComponent(string + " " + s, getOverEnchantColour(level));
+                    var recoloured = JahdooHelpers.withStyleComponent(string + " " + s, getOverEnchantColour(level));
                     tooltipComponents.add(recoloured);
                 }
             }
@@ -142,7 +144,7 @@ public interface JahdooItem {
 
     default void bonusModifierTooltip(ItemStack stack, List<Component> toolTip, Item.TooltipContext context, boolean addSpace) {
         var text = "Bonus Modifiers";
-        standAloneModifiersWithLabel(stack, toolTip, context, text, HEADER_COLOUR, CHAMPION_GOLD, 1.5, 20, addSpace);
+        standAloneModifiersWithLabel(stack, toolTip, context, text, Colours.getHeaderColour(), CHAMPION_GOLD, 1.5, 20, addSpace);
     }
 
 }

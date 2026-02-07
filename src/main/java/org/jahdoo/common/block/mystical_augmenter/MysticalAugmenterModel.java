@@ -1,10 +1,10 @@
 package org.jahdoo.common.block.mystical_augmenter;
 
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 
 public class MysticalAugmenterModel extends DefaultedBlockGeoModel<MysticalAugmenterEntity> {
     public MysticalAugmenterModel() {
-        super(Helpers.res("mystical_augmenter"));
+        super(JahdooHelpers.res("mystical_augmenter"));
     }
 }

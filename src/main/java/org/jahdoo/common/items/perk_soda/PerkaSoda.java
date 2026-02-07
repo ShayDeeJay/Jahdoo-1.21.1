@@ -20,8 +20,8 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.PlayerBoonReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Colours;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,7 +53,7 @@ public class PerkaSoda extends Item implements JahdooItem {
         if(customModelData != null){
             var getId = stack.get(ComponentReg.ID);
             var getNameById = PlayerBoonReg.getFromId(getId);
-            this.standAloneModifiersWithLabel(stack, tooltipComponents, context, getNameById.getLabel(), ColourStore.HEADER_COLOUR, getNameById.colour(), 2, 20, false);
+            this.standAloneModifiersWithLabel(stack, tooltipComponents, context, getNameById.getLabel(), Colours.getHeaderColour(), getNameById.colour(), 2, 20, false);
         }
     }
 
@@ -74,12 +74,12 @@ public class PerkaSoda extends Item implements JahdooItem {
 
         addPerk(item);
 
-        Helpers.getSoundWithPositionV(serverLevel, player.position(), SoundReg.CAN_OPEN.get(), 1, 1.6F);
+        JahdooHelpers.getSoundWithPositionV(serverLevel, player.position(), SoundReg.CAN_OPEN.get(), 1, 1.6F);
         return ItemUtils.startUsingInstantly(level, player, usedHand);
     }
 
     private static void addTrailNexusAttribute(Player livingEntity, double value, Holder<Attribute> attribute) {
-        Helpers.addTransientAttribute(livingEntity, value, "boon" + attribute.value().getDescriptionId() + UUID.randomUUID(), attribute);
+        JahdooHelpers.addTransientAttribute(livingEntity, value, "boon" + attribute.value().getDescriptionId() + UUID.randomUUID(), attribute);
     }
 
     private static ItemAttributeModifiers.Entry getDrinkBoon(ItemStack stack) {
@@ -99,7 +99,7 @@ public class PerkaSoda extends Item implements JahdooItem {
             var value = manaPool.getValue(rarity);
             item.set(customModelData, new CustomModelData(manaPool.getTextureId()));
 
-            var boon = new AttributeModifier(Helpers.res("boon"), value, AttributeModifier.Operation.ADD_VALUE);
+            var boon = new AttributeModifier(JahdooHelpers.res("boon"), value, AttributeModifier.Operation.ADD_VALUE);
             var x = ItemAttributeModifiers.builder().add(manaPool.attributeHolder(), boon, EquipmentSlotGroup.ARMOR);
             item.set(DataComponents.ATTRIBUTE_MODIFIERS, x.build());
             item.set(ComponentReg.ID, manaPool.id());

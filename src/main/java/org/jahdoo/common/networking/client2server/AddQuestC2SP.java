@@ -7,11 +7,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class AddQuestC2SP implements CustomPacketPayload {
 
-    public static final Type<AddQuestC2SP> TYPE = new Type<>(Helpers.res("sync_run_data_client"));
+    public static final Type<AddQuestC2SP> TYPE = new Type<>(JahdooHelpers.res("sync_run_data_client"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AddQuestC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(AddQuestC2SP::toBytes, AddQuestC2SP::new);

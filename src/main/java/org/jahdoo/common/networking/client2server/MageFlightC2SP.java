@@ -7,13 +7,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 
 public class MageFlightC2SP implements CustomPacketPayload {
 
-    public static final Type<MageFlightC2SP> TYPE = new Type<>(Helpers.res("mage_flight_sync"));
+    public static final Type<MageFlightC2SP> TYPE = new Type<>(JahdooHelpers.res("mage_flight_sync"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, MageFlightC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(MageFlightC2SP::toBytes, MageFlightC2SP::new);

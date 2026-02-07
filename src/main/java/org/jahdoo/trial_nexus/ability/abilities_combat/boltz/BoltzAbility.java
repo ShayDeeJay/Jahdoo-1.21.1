@@ -3,29 +3,30 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.boltz;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.element_projectile.ElementProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.common.registers.mod.EntityDataReg;
-import org.jahdoo.common.registers.EntityReg;
-import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
+import static net.minecraft.sounds.SoundSource.NEUTRAL;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
 public class BoltzAbility extends Ability {
 
     private static final String TOTAL_BOLTS = "Total Boltz";
-    public static final ResourceLocation abilityId = Helpers.res("boltz");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("boltz");
     public static final String DISCHARGE_RADIUS = "Discharge Radius";
 
     @Override
@@ -103,7 +104,7 @@ public class BoltzAbility extends Ability {
             sendParticles(player.level(), particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
         }
 
-        getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ORB_CREATE.get(), 0.5f,1.5f);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ORB_CREATE.get(), NEUTRAL, 0.5f,1.5f);
     }
 
     @Override

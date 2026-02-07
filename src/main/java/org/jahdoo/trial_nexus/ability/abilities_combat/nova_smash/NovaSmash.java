@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -18,30 +19,30 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.common.networking.server2client.NovaSmashS2CP;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.networking.server2client.NovaSmashS2CP;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
-import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
 public class NovaSmash implements IAttachment {
 
@@ -120,10 +121,10 @@ public class NovaSmash implements IAttachment {
     }
 
     private void setAbilityEffects(Player player){
-        getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
-        getSoundWithPosition(player.level(), player.blockPosition(), getElement().sound(), 1, 1f);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), getElement().sound(), SoundSource.PLAYERS, 1, 1f);
         if(player.tickCount % 2 == 0){
-            getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.EXPLOSION.get(), 0.5F, 1f);
+            Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.EXPLOSION.get(), SoundSource.PLAYERS, 0.5F, 1f);
         }
         this.clientDiggingParticles(player, player.level());
 
@@ -186,9 +187,9 @@ public class NovaSmash implements IAttachment {
         if (this.canSmash){
             var getHolder = CasterData.entityHolderWithSelected(player);
             var getValue = (float) CasterData.getSpecificValue(getHolder, AbilityBuilder.DAMAGE);
-            this.getDamage = Helpers.attributeModifierCalculator(player, getValue, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
+            this.getDamage = JahdooHelpers.attributeModifierCalculator(player, getValue, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
-            Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.DASH_EFFECT_INSTANT.get(), 1, 1.4F);
+            JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.DASH_EFFECT_INSTANT.get(), 1, 1.4F);
 
             if(player.onGround()){
                 player.resetFallDistance();

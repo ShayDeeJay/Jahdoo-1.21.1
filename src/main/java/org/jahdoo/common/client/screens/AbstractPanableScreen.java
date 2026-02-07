@@ -7,7 +7,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -19,6 +18,7 @@ import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
+import static org.jahdoo.trial_nexus.utils.Configuration.UI_COLOUR;
 
 public abstract class AbstractPanableScreen extends Screen {
 
@@ -26,6 +26,13 @@ public abstract class AbstractPanableScreen extends Screen {
     protected double panY;
     protected double zoomX;
     protected double smoothToX;
+    public static final List<ScreenType> types = List.of(
+        new ScreenType(AbilityUnlockScreen::new, "Abilities", ABILITY),
+        new ScreenType(StatScreen::new, "Statistics", STAT),
+        new ScreenType(RunScreen::new, "History", HISTORY),
+        new ScreenType(QuestLogScreen::new, "Quests", QUEST_CRATE)
+    );
+
 
     public AbstractPanableScreen() { super(empty()); }
 
@@ -35,7 +42,7 @@ public abstract class AbstractPanableScreen extends Screen {
     }
 
     public static int uiColour(){
-        return ColourStore.SYMPATHISER_ORANGE;
+        return SetingsScreen.uiColours.get(UI_COLOUR.get());
     }
 
     public static int uiColourAlpha(){
@@ -49,39 +56,49 @@ public abstract class AbstractPanableScreen extends Screen {
     public record ScreenType(Supplier<Screen> supplier, String label, ResourceLocation icon){}
 
     private void screenTab() {
-        var buttonWidth = 30;
-        var gap = 20;
-
-        var types = List.of(
-            new ScreenType(AbilityUnlockScreen::new, "Abilities", ABILITY),
-            new ScreenType(StatScreen::new, "Statistics", STAT),
-            new ScreenType(RunScreen::new, "History", DATA),
-            new ScreenType(QuestLogScreen::new, "Quests", QUEST_CRATE),
-            new ScreenType(CraftingHelperScreen::new, "Items", GUI_AUGMENT_SLOT)
-        );
-
+        var buttonWidth = 24;
+        var gap = 32;
         var numButtons = types.size();
         var totalWidth = numButtons * buttonWidth + (numButtons - 1) * gap;
         var startX = (width - totalWidth) / 2;
-//        var slots = player.getData(AttachmentReg.CASTER_DATA.get());
-//        var validSlot = slotIndex < slots.getAllowedSlots();
+        var posY = 10;
         for (int i = 0; i < numButtons; i++) {
-            int x = startX + i * (buttonWidth + gap);
+            var x = startX + i * (buttonWidth + gap);
             var getType = types.get(i);
 
-            this.addRenderableWidget(menuButtonAbility(
-                x, 8,
-                (Button) -> getMinecraft().setScreen(getType.supplier.get()),
-                getType.icon,
-                buttonWidth,
-                false,
-                () -> {},
-                0,
-                getType.supplier.get().getClass().isInstance(getMinecraft().screen),
-                getType.label,
-                true
-            ));
+            this.addRenderableWidget(
+                menuButtonAbility(
+                    x,
+                    posY,
+                    buttonWidth,
+                    0,
+                    getType.label,
+                    getType.supplier.get().getClass().isInstance(getMinecraft().screen),
+                    false,
+                    true,
+                    getType.icon,
+                    (Button) -> getMinecraft().setScreen(getType.supplier.get()),
+                    () -> {}
+                )
+            );
         }
+
+        var settings = new ScreenType(SetingsScreen::new, "Settings", COG);
+        this.addRenderableWidget(
+            menuButtonAbility(
+                this.width - 60,
+                posY,
+                buttonWidth,
+                0,
+                settings.label,
+                settings.supplier.get().getClass().isInstance(getMinecraft().screen),
+                false,
+                true,
+                settings.icon,
+                (Button) -> getMinecraft().setScreen(settings.supplier.get()),
+                () -> {}
+            )
+        );
     }
 
     @Override

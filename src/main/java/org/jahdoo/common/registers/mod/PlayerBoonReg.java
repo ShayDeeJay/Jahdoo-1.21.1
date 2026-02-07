@@ -10,13 +10,13 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
 import org.jahdoo.trial_nexus.boon.player_boons.boons.*;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.function.Supplier;
 
 public class PlayerBoonReg {
 
-    public static final ResourceKey<Registry<AbstractPlayerBoons>> PLAYER_BOON_REGISTRY_KEY = ResourceKey.createRegistryKey(Helpers.res("player_boon"));
+    public static final ResourceKey<Registry<AbstractPlayerBoons>> PLAYER_BOON_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("player_boon"));
     private static final DeferredRegister<AbstractPlayerBoons> PLAYER_BOON = DeferredRegister.create(PLAYER_BOON_REGISTRY_KEY, JahdooMod.MOD_ID);
     public static final Registry<AbstractPlayerBoons> REGISTRY =  new RegistryBuilder<>(PLAYER_BOON_REGISTRY_KEY).create();
 
@@ -33,7 +33,7 @@ public class PlayerBoonReg {
         var element = REGISTRY
             .stream()
             .toList();
-        return Helpers.listRandom(element);
+        return JahdooHelpers.listRandom(element);
     }
 
     public static AbstractPlayerBoons getFromId(String id) {
@@ -41,7 +41,7 @@ public class PlayerBoonReg {
             .stream()
             .filter(a -> a.id().equals(id))
             .toList();
-        return Helpers.listRandom(element);
+        return JahdooHelpers.listRandom(element);
     }
 
     //Negative

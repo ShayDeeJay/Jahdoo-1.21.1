@@ -9,12 +9,12 @@ import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
 public class LightPlacer extends AbstractUtilityProjectile {
 
-    private final ResourceLocation abilityId = Helpers.res("light_placer_property");
+    private final ResourceLocation abilityId = JahdooHelpers.res("light_placer_property");
     BlockPos hitPos;
     boolean hitBlock;
 

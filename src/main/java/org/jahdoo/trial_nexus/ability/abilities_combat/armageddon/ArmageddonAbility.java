@@ -9,7 +9,7 @@ import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.SoundReg;
@@ -20,7 +20,7 @@ import static org.jahdoo.common.registers.mod.ElementReg.inferno;
 
 public class ArmageddonAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("armageddon");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("armageddon");
     public static final String SPAWNING_SPEED = "Spawning Speed";
 
     @Override

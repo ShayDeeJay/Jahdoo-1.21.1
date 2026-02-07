@@ -3,18 +3,17 @@ package org.jahdoo.common.items;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 
-public abstract class BaseItem extends Item implements JahdooItem {
+public abstract class BaseItem extends BaseJahdooItem implements JahdooItem {
 
     public BaseItem(Properties properties) {
         super(properties);
@@ -22,7 +21,7 @@ public abstract class BaseItem extends Item implements JahdooItem {
 
     public void implicitModifiers(ItemStack stack, List<Component> tooltipComponents){
         tooltipComponents.add(Component.literal(" "));
-        tooltipComponents.add(Helpers.withStyleComponent("Implicit Modifiers", ColourStore.SUB_HEADER_COLOUR));
+        tooltipComponents.add(JahdooHelpers.withStyleComponentTrans("info.jahdoo.implicit_modifiers", ColourStore.SUB_HEADER_COLOUR));
     }
 
     @Override

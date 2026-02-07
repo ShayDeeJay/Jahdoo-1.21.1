@@ -11,7 +11,7 @@ import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.Configuration;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 import java.util.Objects;
@@ -51,7 +51,7 @@ public class OverlayEvent {
     private static void hideCrosshairForArcaneShift(RenderGuiLayerEvent.Pre event) {
         var player = Minecraft.getInstance().player;
         if(player == null) return;
-        var stack = Helpers.getUsedItem(player);
+        var stack = JahdooHelpers.getUsedItem(player);
         var getSelectedAbility = player.getData(AttachmentReg.CASTER_DATA.get());
         if(Objects.equals(getSelectedAbility.getSelectedAbility(), abilityId.getPath().intern())){
             var pickDistance = CasterData.getSpecificValue(player, CASTING_DISTANCE);

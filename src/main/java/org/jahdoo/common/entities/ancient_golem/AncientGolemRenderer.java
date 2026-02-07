@@ -9,17 +9,19 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
-import static net.minecraft.client.animation.AnimationChannel.*;
-import static net.minecraft.client.animation.AnimationChannel.Interpolations.*;
-import static net.minecraft.client.animation.KeyframeAnimations.*;
-import static net.minecraft.client.renderer.entity.EntityRendererProvider.*;
+import static net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM;
+import static net.minecraft.client.animation.AnimationChannel.Interpolations.LINEAR;
+import static net.minecraft.client.animation.AnimationChannel.Targets;
+import static net.minecraft.client.animation.KeyframeAnimations.degreeVec;
+import static net.minecraft.client.animation.KeyframeAnimations.posVec;
+import static net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 
 public class AncientGolemRenderer extends MobRenderer<AncientGolem, AncientGolemModel<AncientGolem>> {
 
     private static final ResourceLocation GOLEM_LOCATION =
-        Helpers.res("textures/entity/ancient_golem/ancient_golem.png");
+        JahdooHelpers.res("textures/entity/ancient_golem/ancient_golem.png");
 
     public static final AnimationDefinition MODEL_NEW_ANIMATION = AnimationDefinition.Builder
         .withLength(1.0F) // Animation length
@@ -219,72 +221,91 @@ public class AncientGolemRenderer extends MobRenderer<AncientGolem, AncientGolem
 
         .build();
 
-    public static final AnimationDefinition NORMAL_ATTACK_ANIM = AnimationDefinition.Builder
-        .withLength(1.0F) // Animation length
+    public static final AnimationDefinition NORMAL_ATTACK = AnimationDefinition.Builder.withLength(0.75F)
 
-        // Body Animation
+        // LEFT LEG ROTATION
+        .addAnimation("left_leg", new AnimationChannel(
+            Targets.ROTATION,
+            new Keyframe(0.0F,    degreeVec(0.0F, 0.0F, 0.0F), LINEAR),
+            new Keyframe(0.4583F, degreeVec(0.0F, 0.0F, 0.0F), LINEAR)
+        ))
+
+        // BODY ROTATION
         .addAnimation("body", new AnimationChannel(
             Targets.ROTATION,
-            new Keyframe(0.0F, degreeVec(0.0F, 0.0F, 0.0F), CATMULLROM),
-            new Keyframe(0.0833F, degreeVec(-22.5F, 0.0F, 0.0F), CATMULLROM),
-            new Keyframe(0.2083F, degreeVec(22.5F, 0.0F, 0.0F), CATMULLROM),
-            new Keyframe(1.0F, degreeVec(0.0F, 0.0F, 0.0F), CATMULLROM)
+            new Keyframe(0.0F,    degreeVec( 0.0F, 0.0F, 0.0F), LINEAR),
+            new Keyframe(0.125F,  degreeVec(-10.0F, 0.0F, 0.0F), LINEAR),
+            new Keyframe(0.2083F, degreeVec(-10.0F, 0.0F, 0.0F), LINEAR),
+            new Keyframe(0.2917F, degreeVec(-10.0F, 0.0F, 0.0F), LINEAR),
+            new Keyframe(0.375F,  degreeVec( 7.5F, 0.0F, 0.0F), LINEAR),
+            new Keyframe(0.7083F, degreeVec( 0.0F, 0.0F, 0.0F), CATMULLROM)
         ))
 
-        // Head Animation
-        .addAnimation("head", new AnimationChannel(
-            Targets.ROTATION,
-            new Keyframe(0.0F, degreeVec(0.0F, 0.0F, 0.0F), LINEAR),
-            new Keyframe(0.2083F, degreeVec(7.5F, 0.0F, 0.0F), LINEAR),
-            new Keyframe(1.0F, degreeVec(0.0F, 0.0F, 0.0F), CATMULLROM)
+        // BODY POSITION
+        .addAnimation("body", new AnimationChannel(
+            Targets.POSITION,
+            new Keyframe(0.0F,    posVec(0.0F, 0.0F,  0.0F), LINEAR),
+            new Keyframe(0.125F,  posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.2083F, posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.2917F, posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.375F,  posVec(0.0F, 0.0F, -2.0F), LINEAR),
+            new Keyframe(0.7083F, posVec(0.0F, 0.0F,  0.0F), CATMULLROM)
         ))
 
+        // HEAD POSITION
         .addAnimation("head", new AnimationChannel(
             Targets.POSITION,
-            new Keyframe(0.0F, posVec(0.0F, 0.0F, 0.0F), LINEAR),
-            new Keyframe(0.0833F, posVec(0.0F, 0.0F, 6.0F), CATMULLROM),
-            new Keyframe(0.2083F, posVec(0.0F, -1.0F, -4.0F), CATMULLROM),
-            new Keyframe(1.0F, posVec(0.0F, 0.0F, 0.0F), CATMULLROM)
+            new Keyframe(0.0F,    posVec(0.0F, 0.0F,  0.0F), LINEAR),
+            new Keyframe(0.125F,  posVec(0.0F, 0.0F,  4.0F), LINEAR),
+            new Keyframe(0.2083F, posVec(0.0F, 0.0F,  4.0F), LINEAR),
+            new Keyframe(0.2917F, posVec(0.0F, 0.0F,  4.0F), LINEAR),
+            new Keyframe(0.4167F, posVec(0.0F, 0.0F, -4.0F), LINEAR),
+            new Keyframe(0.7083F, posVec(0.0F, 0.0F,  0.0F), CATMULLROM)
         ))
 
-        // Right Arm Animation
+        // RIGHT ARM ROTATION
         .addAnimation("right_arm", new AnimationChannel(
             Targets.ROTATION,
-            new Keyframe(0.0F, degreeVec(0.0F, 0.0F, 0.0F), CATMULLROM),
-            new Keyframe(0.125F, degreeVec(-51.81835F, 18.03497F, 13.6835F), CATMULLROM),
-            new Keyframe(0.2083F, degreeVec(-70.538F, 39.5215F, 21.3896F), CATMULLROM),
-            new Keyframe(0.2917F, degreeVec(-73.4753F, -25.37252F, 1.46928F), LINEAR),
-            new Keyframe(1.0F, degreeVec(0.0F, 0.0F, 0.0F), CATMULLROM)
+            new Keyframe(0.0F,    degreeVec(  0.0F,   0.0F, 0.0F), LINEAR),
+            new Keyframe(0.2917F, degreeVec(-90.0F,  45.0F, 0.0F), LINEAR),
+            new Keyframe(0.4167F, degreeVec(-90.0F, -17.5F, 0.0F), CATMULLROM),
+            new Keyframe(0.7083F, degreeVec(  0.0F,   0.0F, 0.0F), CATMULLROM)
         ))
 
+        // RIGHT ARM POSITION
         .addAnimation("right_arm", new AnimationChannel(
             Targets.POSITION,
-            new Keyframe(0.0F, posVec(0.0F, 0.0F, 0.0F), CATMULLROM),
-            new Keyframe(0.0833F, posVec(0.0F, -1.0F, 4.0F), CATMULLROM),
-            new Keyframe(0.2083F, posVec(0.0F, -1.0F, -6.0F), CATMULLROM),
-            new Keyframe(1.0F, posVec(0.0F, 0.0F, 0.0F), CATMULLROM)
+            new Keyframe(0.0F,    posVec(0.0F, 0.0F,  0.0F), LINEAR),
+            new Keyframe(0.125F,  posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.2083F, posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.2917F, posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.375F,  posVec(0.0F, 0.0F, -2.0F), LINEAR),
+            new Keyframe(0.4167F, posVec(0.0F, 0.0F, -9.0F), LINEAR),
+            new Keyframe(0.7083F, posVec(0.0F, 0.0F,  0.0F), CATMULLROM)
         ))
 
-        // Left Arm Animation
+        // LEFT ARM ROTATION
         .addAnimation("left_arm", new AnimationChannel(
             Targets.ROTATION,
-            new Keyframe(0.0F, degreeVec(0.0F, 0.0F, 0.0F), LINEAR),
-            new Keyframe(0.125F, degreeVec(-51.81835F, -18.03497F, -13.6835F), CATMULLROM),
-            new Keyframe(0.2083F, degreeVec(-70.538F, -39.5215F, -21.3896F), CATMULLROM),
-            new Keyframe(0.2917F, degreeVec(-73.4753F, 25.37252F, -1.46928F), LINEAR),
-            new Keyframe(1.0F, degreeVec(0.0F, 0.0F, 0.0F), CATMULLROM)
+            new Keyframe(0.0F,    degreeVec(  0.0F,   0.0F, 0.0F), LINEAR),
+            new Keyframe(0.2917F, degreeVec(-90.0F, -45.0F, 0.0F), LINEAR),
+            new Keyframe(0.4167F, degreeVec(-90.0F,  15.0F, 0.0F), CATMULLROM),
+            new Keyframe(0.7083F, degreeVec(  0.0F,   0.0F, 0.0F), CATMULLROM)
         ))
 
+        // LEFT ARM POSITION
         .addAnimation("left_arm", new AnimationChannel(
             Targets.POSITION,
-            new Keyframe(0.0F, posVec(0.0F, 0.0F, 0.0F), LINEAR),
-            new Keyframe(0.0833F, posVec(0.0F, -1.0F, 4.0F), CATMULLROM),
-            new Keyframe(0.2083F, posVec(0.0F, -1.0F, -6.0F), CATMULLROM),
-            new Keyframe(1.0F, posVec(0.0F, 0.0F, 0.0F), CATMULLROM)
+            new Keyframe(0.0F,    posVec(0.0F, 0.0F,  0.0F), LINEAR),
+            new Keyframe(0.125F,  posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.2083F, posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.2917F, posVec(0.0F, 0.0F,  2.0F), LINEAR),
+            new Keyframe(0.375F,  posVec(0.0F, 0.0F, -2.0F), LINEAR),
+            new Keyframe(0.4167F, posVec(0.0F, 0.0F, -9.0F), LINEAR),
+            new Keyframe(0.7083F, posVec(0.0F, 0.0F,  0.0F), CATMULLROM)
         ))
+
         .build();
-
-
     @Override
     public void render(
         AncientGolem entity,

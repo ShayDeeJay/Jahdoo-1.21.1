@@ -11,7 +11,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguratio
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class ModConfiguredFeatures {
     }
 
     public static ResourceKey<ConfiguredFeature<?, ?>> registerKey(String name) {
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE, Helpers.res(name));
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, JahdooHelpers.res(name));
     }
     private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(
         BootstrapContext<ConfiguredFeature<?, ?>> context,

@@ -13,7 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jahdoo.trial_nexus.mobs.MobItemHandler;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class StarterPack extends Item {
                  data.value() == 1 ? Pair.of("Diamond ", DIAMOND_BOX) :
                                      Pair.of("Netherite ", NETHERITE_BOX) ;
 
-        return Helpers.withStyleComponent(getType.getFirst() + "Starter Pack", getType.getSecond());
+        return JahdooHelpers.withStyleComponent(getType.getFirst() + "Starter Pack", getType.getSecond());
     }
 
     @Override

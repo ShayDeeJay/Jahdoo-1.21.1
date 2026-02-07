@@ -10,7 +10,7 @@ import org.jahdoo.trial_nexus.ability.AbstractAbility;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
@@ -19,7 +19,7 @@ import org.jahdoo.common.registers.SoundReg;
 
 import static net.minecraft.world.entity.EntitySelector.LIVING_ENTITY_STILL_ALIVE;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
@@ -65,7 +65,7 @@ public class ArcaneShift extends AbstractAbility {
                 player.teleportTo(inFront.x, inFront.y + 0.5, inFront.z);
             }
 
-            Helpers.getSoundWithPositionV(level, result.getLocation(), SoundReg.TELEPORT.get(), 2f, 1f);
+            JahdooHelpers.getSoundWithPositionV(level, result.getLocation(), SoundReg.TELEPORT.get(), 2f, 1f);
             player.resetFallDistance();
         }
 

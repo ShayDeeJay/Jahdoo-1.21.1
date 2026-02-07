@@ -5,15 +5,16 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -25,7 +26,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import static org.jahdoo.common.entities.EntityAnimations.OPEN_LOOT;
 import static org.jahdoo.common.entities.EntityAnimations.SPAWN_CHEST;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getColourDarker;
 
 public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity {
 
@@ -74,7 +76,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
-        tag.putInt("loot_chest.private", privateTicks);
+        tag.putInt("loot_chest.private", getPrivateTicks());
         tag.putBoolean("isOpen", isOpen);
         tag.putInt("getRarity", getRarity);
         tag.putBoolean("showHover", showHover);
@@ -83,21 +85,21 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
-        privateTicks = tag.getInt("loot_chest.private");
+        setPrivateTicks(tag.getInt("loot_chest.private"));
         isOpen = tag.getBoolean("isOpen");
         getRarity = tag.getInt("getRarity");
         showHover = tag.getBoolean("showHover");
     }
 
     public void tick(Level level, BlockPos pos, BlockState blockState) {
-        privateTicks++;
+        incrementPrivateTicks();
         var id = getRarity;
 
         if(canRender()){
             if(Random.nextInt(5) == 0){
-                Helpers.getSoundWithPosition(level, pos, SoundReg.LOOTBOX_IDLE.get(), 0.4F, 1F);
+                Helpers.getSoundWithPosition(level, pos, SoundReg.LOOTBOX_IDLE.get(), SoundSource.BLOCKS, 0.4F, 1F);
             }
-            if(this.privateTicks % (6 - getRarity) == 0){
+            if(this.getPrivateTicks() % (6 - getRarity) == 0){
                 for (var vec3 : PositionFinders.innerRadiusRandom(pos.getCenter().subtract(0, 0.35, 0), 0.55, Math.max(3, 5 * id))) {
                     var colour1 = KeyItem.getJahdooRarity(new CustomModelData(id));
                     var darker = getColourDarker(colour1.getColour(), 0.5f);
@@ -111,28 +113,20 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
             }
         }
 
-        if(privateTicks == 1){
-            getSoundWithPosition(level, pos, SoundReg.TELEPORT.get(), 1f, 2f);
+        if(getPrivateTicks() == 1){
+            Helpers.getSoundWithPosition(level, pos, SoundReg.TELEPORT.get(), SoundSource.BLOCKS, 1f, 2f);
         }
 
-        if(privateTicks == 7){
+        if(getPrivateTicks() == 7){
             var volume = 2;
             var pitch = 0.4f;
             var pitch2 = 0.2f;
-            getSoundWithPosition(level, pos, SoundEvents.VAULT_PLACE, volume, pitch);
-            getSoundWithPosition(level, pos, SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
+            Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_PLACE, SoundSource.BLOCKS, volume, pitch);
+            Helpers.getSoundWithPosition(level, pos, SoundEvents.IRON_GOLEM_STEP, SoundSource.BLOCKS, volume, pitch2);
         }
 
-
         if(level instanceof ServerLevel serverLevel){
-//            if(privateTicks > 10){
-//                var scale = 5;
-//                var area = new AABB(pos).inflate(scale, 1, scale);
-//                var getNearby = serverLevel.getNearbyEntities(LivingEntity.class, DEFAULT, null, area);
-//                if(!getNearby.isEmpty()) this.setOpen(true);
-//            }
             serverLevel.sendBlockUpdated(pos, blockState, blockState, 2);
-//            updateBlock();
         }
     }
 

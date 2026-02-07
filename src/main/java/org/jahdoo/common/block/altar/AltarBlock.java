@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.effect.MobEffects;
@@ -22,11 +23,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
-import static net.minecraft.world.ItemInteractionResult.*;
-import static org.jahdoo.common.block.altar.AltarBlockEntity.startAltar;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.common.registers.BlockEntityReg.CHALLENGE_ALTAR_BE;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
@@ -73,26 +73,23 @@ public class AltarBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof AltarBlockEntity altarE)) return FAIL;
         if (!(level instanceof ServerLevel serverLevel)) return FAIL;
 
-        var consume = highlightMobs(altarE, serverLevel);
-        if (consume != null) return consume;
-
-        return startAltar(pos, altarE, serverLevel);
+        return highlightMobs(altarE, serverLevel);
     }
 
-    private static @Nullable ItemInteractionResult highlightMobs(AltarBlockEntity altarE, ServerLevel serverLevel) {
+    private static ItemInteractionResult highlightMobs(AltarBlockEntity altarE, ServerLevel serverLevel) {
         if(altarE.started) {
             for (var entity : serverLevel.getEntities().getAll()) {
                 if(!(entity instanceof Player) && entity instanceof LivingEntity livingEntity){
                     var glowing = MobEffects.GLOWING;
                     if(!livingEntity.hasEffect(glowing)){
                         livingEntity.addEffect(new JahdooMobEffect(glowing, 200, 1));
-                        Helpers.getSoundWithPositionV(serverLevel, livingEntity.position(), SoundEvents.BELL_BLOCK, 2, 0.8F);
+                        Helpers.getSoundWithPosition(serverLevel, livingEntity.position(), SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2F, 0.8F);
                     }
                 }
             }
-            return CONSUME;
+            return SUCCESS;
         }
-        return null;
+        return FAIL;
     }
 
 }

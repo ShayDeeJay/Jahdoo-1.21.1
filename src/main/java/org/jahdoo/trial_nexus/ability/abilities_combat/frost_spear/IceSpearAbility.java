@@ -8,7 +8,7 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.ice_spear.IceSpear;
 
@@ -19,7 +19,7 @@ import static org.jahdoo.common.registers.mod.ElementReg.frost;
 
 public class IceSpearAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("ice_spear");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("ice_spear");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -68,7 +68,7 @@ public class IceSpearAbility extends Ability {
         var level = player.level();
 
         if (!level.isClientSide) {
-            Helpers.getSoundWithPositionV(level, player.position(), SoundEvents.TRIDENT_THROW.value(), 1, 1.4F);
+            JahdooHelpers.getSoundWithPositionV(level, player.position(), SoundEvents.TRIDENT_THROW.value(), 1, 1.4F);
             Ability.fireMultiShotProjectile((int) projectileCount, (float) velocity, player, 0.25, () -> new IceSpear(player), 0);
         }
     }

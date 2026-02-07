@@ -8,11 +8,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import org.jahdoo.common.block.AbstractBEInventory;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
+import static org.jahdoo.common.registers.BlockEntityReg.SHOPPING_TABLE_BE;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
-import static org.jahdoo.common.registers.BlockEntityReg.SHOPPING_TABLE_BE;
 
 public class ShoppingTableEntity extends AbstractBEInventory {
 
@@ -49,7 +49,7 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     }
 
     public ItemStackHandler getItem(){
-        return this.inputItemHandler;
+        return this.getInputItemHandler();
     }
 
     public boolean canPurchase(){

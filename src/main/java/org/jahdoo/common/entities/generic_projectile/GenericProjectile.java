@@ -3,6 +3,8 @@ package org.jahdoo.common.entities.generic_projectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -27,12 +29,13 @@ import org.jahdoo.trial_nexus.ability.ProjectileProperties;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
 public class GenericProjectile extends ProjectileProperties implements IEntityProperties {
@@ -175,6 +178,10 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         return true;
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     @Override
     protected void onHitBlock(@NotNull BlockHitResult blockHitResult) {
         var pos = blockHitResult.getBlockPos();
@@ -184,10 +191,10 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         } else {
             if(level() instanceof ServerLevel){
                 if (this.level().getBlockEntity(pos) instanceof PowerUpStationEntity entity) {
-                    var item = entity.inputItemHandler.getStackInSlot(0);
+                    var item = entity.getInputItemHandler().getStackInSlot(0);
                     if(item.isEmpty() || !CoreData.isFull(item)){
                         var powerUpValue = this.getPersistentData().getInt(POWER_UP_KEY);
-                        entity.inputItemHandler.setStackInSlot(0, CoreData.incrementCore(item, powerUpValue));
+                        entity.getInputItemHandler().setStackInSlot(0, CoreData.incrementCore(item, powerUpValue));
                         var filled = CoreData.getFilled(item);
                         var needed = CoreData.getRequired(item);
 
@@ -197,8 +204,9 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
 
                         entity.updateBlock();
                         getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.6, 20, this::particleSetter);
-                        Helpers.getSoundWithPositionV(this.level(), pos.getCenter(), SoundReg.VITALITY_ABILITY.get(), 1, 1.8F);
-                        Helpers.getSoundWithPositionV(this.level(), pos.getCenter(), SoundReg.LOOTBOX_OPEN.get(), 1, volume);
+
+                        sharedSound(SoundReg.VITALITY_ABILITY.get(), 1F, 1.8F);
+                        sharedSound(SoundReg.LOOTBOX_OPEN.get(), 1F, volume);
                     }
                     this.discard();
                 }
@@ -262,7 +270,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         }
 
         AbstractEntityProperty abstractProjectileProperty = EntityDataReg.REGISTRY.get(
-            Helpers.res(tag.getString("projectileIndex"))
+            JahdooHelpers.res(tag.getString("projectileIndex"))
         );
 
         if(abstractProjectileProperty != null) {

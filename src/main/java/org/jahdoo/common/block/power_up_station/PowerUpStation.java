@@ -2,6 +2,7 @@ package org.jahdoo.common.block.power_up_station;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -29,8 +30,8 @@ import org.jahdoo.common.items.CoreItem;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
@@ -147,14 +148,14 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
         var entity = level.getBlockEntity(pos);
 
         if (entity instanceof PowerUpStationEntity powerUpStation) {
-            var handler = powerUpStation.inputItemHandler;
+            var handler = powerUpStation.getInputItemHandler();
 
             if(stack.has(CORE_DATA) && !CoreData.isFull(stack)){
                 swapItemsWithHand(handler, 0, player, hand);
                 if(!stack.isEmpty()){
-                    Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.LEVEL_UP.get(), 1, 0.5F);
+                    Helpers.getSoundWithPosition(level, pos, SoundReg.LEVEL_UP.get(), SoundSource.BLOCKS, 1, 0.5F);
                 } else {
-                    Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.IMPACT.get(), 1, 0.85F);
+                    Helpers.getSoundWithPosition(level, pos, SoundReg.IMPACT.get(), SoundSource.BLOCKS, 1, 0.85F);
                 }
                 return SUCCESS;
             }
@@ -179,7 +180,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
                 handler.setStackInSlot(0, ItemStack.EMPTY);
             }
 
-            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.REJECT.get(), 1, 1);
+            Helpers.getSoundWithPosition(level, pos, SoundReg.REJECT.get(), SoundSource.BLOCKS, 1, 1);
         }
 
         return SUCCESS;
@@ -187,8 +188,8 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
 
     private static @Nullable ItemInteractionResult sharedPlace(Level level, BlockPos pos, PowerUpStationEntity powerUpStation, ItemStack item) {
         if (item.getItem() instanceof CoreItem && item.has(CORE_DATA)) {
-            powerUpStation.inputItemHandler.insertItem(0, item.copyWithCount(1), false);
-            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.LEVEL_UP.get(), 1, 0.5F);
+            powerUpStation.getInputItemHandler().insertItem(0, item.copyWithCount(1), false);
+            Helpers.getSoundWithPosition(level, pos, SoundReg.LEVEL_UP.get(), SoundSource.BLOCKS, 1, 0.5F);
             item.shrink(1);
             return SUCCESS;
         }

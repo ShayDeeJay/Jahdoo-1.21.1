@@ -7,7 +7,7 @@ import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -16,7 +16,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 
 public class LightPlacerAbility extends AbstractBlockAbility {
 
-    public static final ResourceLocation abilityId = Helpers.res("light_placer");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("light_placer");
 
     @Override
     public JahdooRarity rarity() {

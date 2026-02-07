@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
@@ -46,17 +46,17 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private ModelFile modelFile(String location) {
-        return new ModelFile.ExistingModelFile(Helpers.res(location), this.existingFileHelper);
+        return new ModelFile.ExistingModelFile(JahdooHelpers.res(location), this.existingFileHelper);
     }
 
     private void createModel(String augment, String model) {
         withExistingParent(augment, ResourceLocation.withDefaultNamespace("item/generated"))
-            .texture("layer0", Helpers.res(model));
+            .texture("layer0", JahdooHelpers.res(model));
     }
 
     private ItemModelBuilder getWithParent(DeferredHolder<Item, Item> item, String path) {
         return withExistingParent(item.getId().getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
-            .texture("layer0", Helpers.res(path));
+            .texture("layer0", JahdooHelpers.res(path));
     }
 
     private void registerRuneModels() {
@@ -177,7 +177,7 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.SKILL_POINT, ItemReg.COIN_SACK, ItemReg.STONE_OF_REGRET,
             ItemReg.ROSE_QUARTZ, ItemReg.ENCHANTED_DIAMOND, ItemReg.LISITE_SHARD,
             ItemReg.DICE, ItemReg.NETHERITE_NUGGET, ItemReg.DIAMOND_NUGGET, ItemReg.GEAR_SCRAP,
-            ItemReg.ASTRINIUM_INGOT, ItemReg.KEY_FRAGMENT, ItemReg.BAZAAR_KEY, ItemReg.CRYPT_KEY,
+            ItemReg.ASTRINIUM_INGOT, ItemReg.KEY_FRAGMENT, ItemReg.BAZAAR_KEY, ItemReg.CRYPT_KEY,ItemReg.CHALLENGER_KEY,
             ItemReg.SANCTUARY_KEY, ItemReg.EXIT_KEY, ItemReg.CHARGED_AUGMENT_CORE, ItemReg.CHARGED_ADVANCED_AUGMENT_CORE,
             ItemReg.CHARGED_AUGMENT_HYPER_CORE
         );

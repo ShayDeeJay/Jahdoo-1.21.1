@@ -16,7 +16,7 @@ import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.attachments.ChaosCubeData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -109,7 +109,7 @@ public class MysticalAugmenterEntity extends AbstractTankUser implements GeoBloc
             poss -> {
                 var directions = this.getBlockPos().getCenter().subtract(poss).normalize();
                 var particle = ParticleHandlers.genericParticle(ParticleStore.MAGIC_PARTICLE, ElementReg.utility(), (int) (radius * 15), 0.8f);
-                sendParticles(level, particle, poss, 0, directions.x, directions.y, directions.z, Helpers.Random.nextFloat(0.05F, 0.14F));
+                sendParticles(level, particle, poss, 0, directions.x, directions.y, directions.z, JahdooHelpers.Random.nextFloat(0.05F, 0.14F));
             }
         );
     }

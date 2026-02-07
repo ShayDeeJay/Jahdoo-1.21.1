@@ -11,6 +11,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
+import org.shaydee.shaydeeapi.Colours;
 
 import java.util.HashMap;
 
@@ -21,7 +22,6 @@ import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
 import static org.jahdoo.common.client.screens.RunScreen.getComponents;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class FlexiButton extends ImageButton {
 
@@ -74,7 +74,7 @@ public class FlexiButton extends ImageButton {
         var spacer = 0;
         var newInst = new InstanceData("", new HashMap<>());
         var getAllComponents = getComponents(newInst, pastRun, trialData).subList(0,3);
-        var isSelected = !this.isSelected ? fade : color(160, HEADER_COLOUR);
+        var isSelected = !this.isSelected ? fade : color(160, Colours.getHeaderColour());
         var borderColour =  0;
         var width = (int) this.width / 2;
         var height = (int) this.height / 2;

@@ -6,20 +6,19 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
 import org.jahdoo.common.block.divine_forge.RuneTableMenu;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.CoinSack;
+import org.jahdoo.trial_nexus.attachments.PlayerWallet;
+import org.shaydee.shaydeeapi.Colours;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.block.divine_forge.helpers.RuneTableScreen.groupFade;
 import static org.jahdoo.common.client.Icons.GUI_GENERAL_SLOT;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
@@ -27,6 +26,7 @@ import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
 import static org.jahdoo.common.client.slots.RuneSlot.removeCurrencyCost;
 import static org.jahdoo.common.client.slots.RuneSlot.removeRuneCost;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.getGearData;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class RuneManager {
 
@@ -51,7 +51,7 @@ public class RuneManager {
         var shiftX = -5;
         var spacer = new AtomicInteger();
         var entity = runeTableMenu.tableEntity();
-        var item = entity.inputItemHandler.getStackInSlot(0);
+        var item = entity.getInputItemHandler().getStackInSlot(0);
         var font = minecraft.font;
 
 //        remainingPotential(guiGraphics, shiftX, spacer, shiftY, mouseX, mouseY, width, height, showInventory, slot, minecraft, runeTableMenu, coinCost, borderColour);
@@ -85,7 +85,7 @@ public class RuneManager {
         boxMaker(guiGraphics, startX11, startY11, Math.max(10, 74), heightOffset, borderColour, groupFade());
 
         if(getRunes.runeSlots().isEmpty() && showInventory){
-            guiGraphics.drawCenteredString(font, "No Slots Available", startX11 + 74, startY11 + 46, SUB_HEADER_COLOUR);
+            guiGraphics.drawCenteredString(font, "No Slots Available", startX11 + 74, startY11 + 46, Colours.getSubHeaderColour());
         }
 
     }
@@ -115,13 +115,13 @@ public class RuneManager {
             var list = new ArrayList<Component>();
 
             list.add(withStyleComponent(prefix, borderColour));
-            var coreAvailableColour = entity.checkAndChargeCores(coreItemType, false) ? SUB_HEADER_COLOUR : NEGATIVE_RED;
+            var coreAvailableColour = entity.checkAndChargeCores(coreItemType, false) ? Colours.getSubHeaderColour() : Colours.getNegativeRed();
 
             list.add(withStyleComponent(text + ": ", coreAvailableColour).copy().append(quantityCost));
             CoinSack.coinToolTip(list, coinCost);
 
             if(!isShiftDown(minecraft)){
-                list.add(withStyleComponent("Hold", HEADER_COLOUR).copy().append(withStyleComponent(" [Shift] ", OFF_WHITE)));
+                list.add(withStyleComponent("Hold", Colours.getHeaderColour()).copy().append(withStyleComponent(" [Shift] ", Colours.getOffWhite())));
             }
 
             var toolTipSpacer = isShiftDown(minecraft) ? ((list.size() * 10) + 10) : 0;

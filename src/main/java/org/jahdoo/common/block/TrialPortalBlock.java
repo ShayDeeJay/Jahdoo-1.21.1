@@ -23,7 +23,7 @@ import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
@@ -110,7 +110,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
             }
 
             var particleColour = state.getValue(DIMENSION_KEY) == 0 ? PERK_GREEN : COSMIC_PURPLE;
-            var colourDarker = Helpers.getColourDarker(particleColour, 0.5F);
+            var colourDarker = JahdooHelpers.getColourDarker(particleColour, 0.5F);
             var particleData = ParticleHandlers.genericParticle(MAGIC_PARTICLE, particleColour, colourDarker, 10, 1, false, 0);
             level.addParticle(particleData, d0, d1, d2, 0, d4, 0);
         }

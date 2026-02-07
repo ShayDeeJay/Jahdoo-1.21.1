@@ -3,39 +3,32 @@ package org.jahdoo.common.items;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.level_manager.StructureManager;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
+import static org.jahdoo.trial_nexus.level_manager.StructureManager.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 
-public class KeyItem extends Item implements JahdooItem {
-
-    public static final int EXIT_KEY = 5;
-    public static final int BAZAAR_KEY = 6;
-    public static final int CRYPT_KEY = 7;
-    public static final int SANCTUARY_KEY = 8;
-    public static final int KEY_PIECE = 9;
-
+public class KeyItem extends BaseJahdooItem {
 
     public enum KeyTypes {
-        EXIT_KEY("exit_key", ABSORPTION_YELLOW, StructureManager.EXIT_ROOM_COMPONENT),
-        BAZAAR_KEY("bazaar_key", AETHER_BLUE, StructureManager.BAZAAR_COMPONENT),
-        CRYPT_KEY("crypt_key", UNIQUE_B, StructureManager.LOOT_CRYPT_COMPONENT),
+        EXIT_KEY("exit_key", ABSORPTION_YELLOW, EXIT_ROOM_COMPONENT),
+        BAZAAR_KEY("bazaar_key", AETHER_BLUE, BAZAAR_COMPONENT),
+        CRYPT_KEY("crypt_key", UNIQUE_B, LOOT_CRYPT_COMPONENT),
         KEY_PIECE("key_piece", SUB_HEADER_COLOUR, Component.empty()),
-        SANCTUARY_KEY("sanctuary_key", ElementReg.mystic().textColourA(), StructureManager.SANCTUARY_COMPONENT);
+        SANCTUARY_KEY("sanctuary_key", ElementReg.mystic().textColourA(), SANCTUARY_COMPONENT),
+        CHALLENGER_KEY("challenger_key", PERK_GREEN, CHALLENGER_DOME_COMPONENT);
 
         private final String id;
         private final int color;
@@ -99,15 +92,10 @@ public class KeyItem extends Item implements JahdooItem {
     }
 
     @Override
-    public Component getDescription() {
-        return Helpers.withStyleComponent("Once keys enter the nexus, they will be bound to that instance.", SUB_HEADER_COLOUR);
-    }
-
-    @Override
     public Component getName(ItemStack stack) {
         var type = KeyTypes.getById(stack.getDescriptionId());
         var colour = type.color;
-        return withStyleComponent(Helpers.stringIdToName(type.id), colour);
+        return withStyleComponentTrans(super.getName(stack).getString(), colour);
     }
 
     @Override

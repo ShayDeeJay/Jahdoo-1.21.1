@@ -47,7 +47,7 @@ import org.jahdoo.common.entities.void_spider.VoidSpiderRenderer;
 import org.jahdoo.common.particle.MovingParticle;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.client.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.getColour;
@@ -74,9 +74,9 @@ public class ClientBusEvents {
 
     @SubscribeEvent
     public static void onRegisterOverlays(RegisterGuiLayersEvent event) {
-        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, Helpers.res("mana_bar"), new CustomHudOverlay());
-        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, Helpers.res("level_data"), new InstanceDataOverlay());
-        event.registerAboveAll(Helpers.res("wallet"), new WalletOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("mana_bar"), new CustomHudOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("level_data"), new InstanceDataOverlay());
+        event.registerAboveAll(JahdooHelpers.res("wallet"), new WalletOverlay());
     }
 
     @SubscribeEvent

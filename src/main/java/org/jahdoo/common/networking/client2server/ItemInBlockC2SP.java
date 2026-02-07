@@ -8,11 +8,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 public class ItemInBlockC2SP implements CustomPacketPayload {
-    public static final Type<ItemInBlockC2SP> TYPE = new Type<>(Helpers.res("wand_data_sync"));
+    public static final Type<ItemInBlockC2SP> TYPE = new Type<>(JahdooHelpers.res("wand_data_sync"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemInBlockC2SP> STREAM_CODEC =
             CustomPacketPayload.codec(ItemInBlockC2SP::toBytes, ItemInBlockC2SP::new);
 
@@ -44,7 +44,7 @@ public class ItemInBlockC2SP implements CustomPacketPayload {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
                     if(bEntity instanceof AbstractBEInventory abstractBEntity){
-                        abstractBEntity.inputItemHandler.setStackInSlot(index, itemStack);
+                        abstractBEntity.getInputItemHandler().setStackInSlot(index, itemStack);
                     }
                 }
             }

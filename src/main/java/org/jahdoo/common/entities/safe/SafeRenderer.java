@@ -12,8 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.network.chat.Component;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -56,7 +55,7 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
             poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
             poseStack.mulPose(Axis.XP.rotation(-1.5f));
             poseStack.scale(z, z, z);
-            drawHealthBar(poseStack.last(), bufferSource, animatable.getDamageRequired() - animatable.getDamageCounter(), animatable.getDamageRequired(), Icons.LOOT_POT_ICON);
+            drawHealthBar(poseStack.last(), bufferSource, animatable.getDamageRequired() - animatable.getDamageCounter(), animatable.getDamageRequired(), Icons.HEALTH_HOLDER);
             poseStack.popPose();
 
             roomData(animatable, poseStack, bufferSource, entityRenderDispatcher, partialTick);
@@ -65,7 +64,7 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
 
     public static void roomData(Safe entity, PoseStack pPoseStack, MultiBufferSource bufferSource, EntityRenderDispatcher dispatcher, float partialTicks) {
         var offWhite = ColourStore.NEGATIVE_RED;
-        var displayName = Helpers.withStyleComponent(Maths.ticksToTime(String.valueOf(entity.getTimer())), offWhite);
+        var displayName = JahdooHelpers.withStyleComponent(org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(entity.getTimer())), offWhite);
         pPoseStack.pushPose();
         pPoseStack.translate(0, entity.getBbHeight() - 2, 0);
 
@@ -82,10 +81,10 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
         var matrix4f = pPoseStack.last().pose();
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
-        var text = Helpers.withStyleComponent("HURRY!", offWhite);
+        var text = JahdooHelpers.withStyleComponent("HURRY!", offWhite);
         var f2 = (float)(-font.width(text) / 2);
 
-        font.drawInBatch(text, f2, -10, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+//        font.drawInBatch(text, f2, -10, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         font.drawInBatch(displayName, f1, 0, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
 

@@ -9,13 +9,13 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 
 public class PlayerTrialDataS2CP implements CustomPacketPayload {
 
-    public static final Type<PlayerTrialDataS2CP> TYPE = new Type<>(Helpers.res("sync_player_trial_data"));
+    public static final Type<PlayerTrialDataS2CP> TYPE = new Type<>(JahdooHelpers.res("sync_player_trial_data"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PlayerTrialDataS2CP> STREAM_CODEC =
         CustomPacketPayload.codec(PlayerTrialDataS2CP::toBytes, PlayerTrialDataS2CP::new);

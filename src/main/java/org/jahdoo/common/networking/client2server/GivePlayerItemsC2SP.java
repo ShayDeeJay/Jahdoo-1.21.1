@@ -7,10 +7,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 public class GivePlayerItemsC2SP implements CustomPacketPayload {
-    public static final Type<GivePlayerItemsC2SP> TYPE = new Type<>(Helpers.res("give_player_items"));
+    public static final Type<GivePlayerItemsC2SP> TYPE = new Type<>(JahdooHelpers.res("give_player_items"));
     public static final StreamCodec<RegistryFriendlyByteBuf, GivePlayerItemsC2SP> STREAM_CODEC = CustomPacketPayload.codec(GivePlayerItemsC2SP::toBytes, GivePlayerItemsC2SP::new);
 
     private final ItemStack reward;

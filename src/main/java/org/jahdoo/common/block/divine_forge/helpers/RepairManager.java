@@ -15,17 +15,17 @@ import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.client.SharedUI.getCore;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.repairDurability;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.repairDurability;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class RepairManager {
 
     public static void onRepair(Minecraft minecraft, RuneTableMenu menu){
         var entity = menu.tableEntity();
-        var item = entity.inputItemHandler.getStackInSlot(0);
+        var item = entity.getInputItemHandler().getStackInSlot(0);
         minecraft.player.playSound(SoundReg.UNLOCK_NOTIFICATION.get(), 1F, 0.6F);
         minecraft.player.playSound(SoundReg.REJECT.get(), 1, 1.8F);
-        var handler = entity.inputItemHandler.getStackInSlot(getRepairCoreCost(item)+1);
+        var handler = entity.getInputItemHandler().getStackInSlot(getRepairCoreCost(item)+1);
 
         sendToServer(new ItemInBlockC2SP(handler.copyWithCount(handler.getCount()-1), entity.getBlockPos(), getRepairCoreCost(item)+1));
         repairDurability(item);

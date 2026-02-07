@@ -17,7 +17,7 @@ import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.ProjectileProperties;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -241,7 +241,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         this.abilityHolder = AbilityHolder.readTag(pCompound, this.abilityId);
         if(this.getProjectile == null && !selectedAbility.isEmpty()){
             this.getProjectile = EntityDataReg.REGISTRY
-                .get(Helpers.res(selectedAbility))
+                .get(JahdooHelpers.res(selectedAbility))
                 .getEntityProperty();
             this.getProjectile.readCompoundTag(pCompound);
             this.getProjectile.getElementProjectile(this);

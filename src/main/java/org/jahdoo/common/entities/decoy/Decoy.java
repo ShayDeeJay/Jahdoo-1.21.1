@@ -4,22 +4,25 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.ability.abilities_combat.EscapeDecoyAbility;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.jahdoo.common.entities.EntityHelpers;
+import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EntityReg;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.trial_nexus.ability.abilities_combat.EscapeDecoyAbility;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
+
+import java.util.UUID;
 
 import static net.minecraft.network.syncher.EntityDataSerializers.FLOAT;
 import static net.minecraft.network.syncher.EntityDataSerializers.INT;
@@ -28,20 +31,21 @@ import static net.minecraft.network.syncher.SynchedEntityData.defineId;
 import static net.minecraft.util.RandomSource.create;
 import static org.jahdoo.common.registers.mod.ElementReg.vitality;
 
-public class Decoy extends Mob {
+public class Decoy extends Mob implements ITamableEntity {
 
     private static final EntityDataAccessor<Float> SCALE = defineId(Decoy.class, FLOAT);
     private static final EntityDataAccessor<Integer> MAX_LIFETIME = defineId(Decoy.class, INT);
-    private Player player;
+    private LivingEntity owner;
+    private UUID ownerUUID;
     private int range;
 
     public Decoy(EntityType<? extends Mob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public Decoy(Level pLevel, Player player, int range) {
+    public Decoy(Level pLevel, LivingEntity owner, int range) {
         super(EntityReg.DECOY.get(), pLevel);
-        this.player = player;
+        this.owner = owner;
         this.range = range;
     }
 
@@ -98,20 +102,14 @@ public class Decoy extends Mob {
         return SoundEvents.AMETHYST_BLOCK_BREAK;
     }
 
-
-    private void onAttract(Mob mob) {
-        mob.setTarget(this);
-    }
-
-    @Override
-    protected void onEffectAdded(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        super.onEffectAdded(effectInstance, entity);
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundEvents.ELDER_GUARDIAN_HURT, 1, 1.8f);
-        Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 1, 1.8f);
+        sharedSound(SoundEvents.ELDER_GUARDIAN_HURT, 1F, 1.8F);
+        sharedSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 1F, 1.8F);
         return false;
     }
 
@@ -126,24 +124,30 @@ public class Decoy extends Mob {
     public void tick() {
         super.tick();
         if(this.tickCount > 4) this.setScale(1);
+
         this.pullParticlesToCenter();
-        this.attractPlayersOps();
+
+        if(this.owner == null) {
+            this.owner = this.reassignOwner(level(), owner, ownerUUID);
+        }
+
+        attractPlayersOps(this, range, owner);
         onDiscard();
     }
 
     private void onDiscard() {
-        if(this.tickCount >= this.getMaxLifetime() && player != null) {
-            Helpers.getSoundWithPositionV(player.level(), player.position(), getElement().sound(), 1, 1.4f);
+        if(this.tickCount >= this.getMaxLifetime()) {
+            sharedSound(getElement().sound(), 1F, 1.4F);
             EscapeDecoyAbility.onExistenceChange(this, getElement());
             this.discard();
         }
     }
 
-    public void attractPlayersOps(){
-        this.level().getNearbyEntities(
-            Mob.class, TargetingConditions.DEFAULT, this,
-            this.getBoundingBox().inflate(range)
-        ).forEach(this::onAttract);
+    public static void attractPlayersOps(LivingEntity entity, int range, LivingEntity owner){
+        entity.level().getNearbyEntities(
+            Mob.class, TargetingConditions.DEFAULT, entity,
+            entity.getBoundingBox().inflate(range)
+        ).forEach(mob -> EntityHelpers.canTarget(mob, owner));
     }
 
     @Override
@@ -151,6 +155,11 @@ public class Decoy extends Mob {
         super.readAdditionalSaveData(tag);
         this.tickCount = tag.getInt("tickCounter");
         this.setMaxLifetime(tag.getInt("maxLife"));
+        this.range = tag.getInt("range");
+
+        var uuid1 = loadTag(tag);
+        if(uuid1 != null) this.ownerUUID = uuid1;
+
         this.setScale(1);
     }
 
@@ -159,19 +168,17 @@ public class Decoy extends Mob {
         super.addAdditionalSaveData(tag);
         tag.putInt("tickCounter", this.tickCount);
         tag.putInt("maxLife", this.getMaxLifetime());
+        tag.putInt("range", this.range);
+
+        saveTag(owner, tag);
     }
 
     public void pullParticlesToCenter(){
-        extracted(getElement());
-    }
-
-    public void extracted(AbstractElement element) {
         PositionFinders.innerRadiusRandom(
             this.position()
                 .add(0,this.getBbHeight()/2,0)
                 .offsetRandom(create(), 1.5f), range, (double) range /2,
             positions -> {
-
                 var directions = this.position()
                     .subtract(positions)
                     .normalize()
@@ -179,15 +186,25 @@ public class Decoy extends Mob {
 
                 ParticleHandlers.sendParticles(
                     this.level(),
-                    ParticleHandlers.getAllParticleTypes(element, 6, 2),
+                    ParticleHandlers.getAllParticleTypes(getElement(), 6, 2),
                     positions,
                     0,
                     directions.x,
-                    Helpers.Random.nextDouble(-0.3, 0.3),
+                    JahdooHelpers.Random.nextDouble(-0.3, 0.3),
                     directions.z,
                     0.5
                 );
             }
         );
+    }
+
+    @Override
+    public LivingEntity getOwner() {
+        return owner;
+    }
+
+    @Override
+    public void setOwner(LivingEntity livingEntity) {
+        this.owner = livingEntity;
     }
 }

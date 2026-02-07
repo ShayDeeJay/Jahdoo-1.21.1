@@ -14,10 +14,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.ADDITIONAL_RUNE_SLOTS;
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLOTS;
@@ -33,16 +33,16 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
 
     public void tick(Level pLevel, BlockPos pos, BlockState pState) {
 
-        if(itemSlot().isEmpty()) privateTicks = 0; else {
+        if(itemSlot().isEmpty()) setPrivateTicks(0); else {
             if(getLevel() instanceof ServerLevel){
-                privateTicks++;
+                incrementPrivateTicks();
                 updateBlock();
             }
         }
     }
 
     public boolean checkAndChargeCores(Item item, boolean charge){
-        var handler = this.inputItemHandler;
+        var handler = this.getInputItemHandler();
         for (int i = 0; i < handler.getSlots(); i++){
             var runeTableItem = handler.getStackInSlot(i);
 
@@ -64,15 +64,15 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
     }
 
     public ItemStackHandler getItem(){
-        return this.inputItemHandler;
+        return this.getInputItemHandler();
     }
 
     public ItemStack itemSlot(){
-        return this.inputItemHandler.getStackInSlot(0);
+        return this.getInputItemHandler().getStackInSlot(0);
     }
 
     public ItemStack getModificationSlot(){
-        return inputItemHandler.getStackInSlot(MODIFICATION_SLOT);
+        return getInputItemHandler().getStackInSlot(MODIFICATION_SLOT);
     };
 
     @Override
@@ -102,7 +102,7 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new RuneTableMenu(i, inventory,this, this.data);
+        return new RuneTableMenu(i, inventory,this, this.getData());
     }
 
     public void setItem(ItemStack item){

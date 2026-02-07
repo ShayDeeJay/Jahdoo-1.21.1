@@ -11,8 +11,8 @@ import org.jahdoo.trial_nexus.element.AbstractElement;
 
 import java.util.Objects;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromId;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;

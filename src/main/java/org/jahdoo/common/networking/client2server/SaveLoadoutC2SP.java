@@ -9,12 +9,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class SaveLoadoutC2SP implements CustomPacketPayload {
 
 
-    public static final Type<SaveLoadoutC2SP> TYPE = new Type<>(Helpers.res("save_loadout"));
+    public static final Type<SaveLoadoutC2SP> TYPE = new Type<>(JahdooHelpers.res("save_loadout"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SaveLoadoutC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(SaveLoadoutC2SP::toBytes, SaveLoadoutC2SP::new);

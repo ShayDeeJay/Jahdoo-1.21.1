@@ -11,8 +11,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 public class WandManagerEntity extends AbstractBEInventory implements MenuProvider {
 
@@ -30,7 +30,7 @@ public class WandManagerEntity extends AbstractBEInventory implements MenuProvid
     }
 
     public ItemStack getWandSlot(){
-        return this.inputItemHandler.getStackInSlot(0);
+        return this.getInputItemHandler().getStackInSlot(0);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class WandManagerEntity extends AbstractBEInventory implements MenuProvid
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-        return new WandManagerMenu(id, inventory, this, this.data);
+        return new WandManagerMenu(id, inventory, this, this.getData());
     }
 
     @Override

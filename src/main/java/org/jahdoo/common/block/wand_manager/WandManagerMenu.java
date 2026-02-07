@@ -7,7 +7,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.CoreItemSlot;
 import org.jahdoo.common.client.slots.RuneSlot;
@@ -15,6 +14,7 @@ import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.MenuReg;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +41,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
     }
 
     private void insertWandSlot() {
-        this.addSlot(new CoreItemSlot(getWandManagerEntity().inputItemHandler, 0, -1000, -1000, ItemReg.AUGMENT_CORE.get()));
+        this.addSlot(new CoreItemSlot(getWandManagerEntity().getInputItemHandler(), 0, -1000, -1000, ItemReg.AUGMENT_CORE.get()));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
     private void insertAugmentSlots() {
         var spacer = new AtomicInteger();
-        var handler = getWandManagerEntity().inputItemHandler;
+        var handler = getWandManagerEntity().getInputItemHandler();
 
         for (int i = 1; i < 4; i ++){
             this.addSlot(new CoreItemSlot(handler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
@@ -91,7 +91,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
             var getData = JahdooGearData.getGearData(getAllSlots);
-            var iHandler = getWandManagerEntity().inputItemHandler;
+            var iHandler = getWandManagerEntity().getInputItemHandler();
             var indexOne = new AtomicInteger(4);
 
             for (ItemStack itemStack : getData.runeSlots()) {

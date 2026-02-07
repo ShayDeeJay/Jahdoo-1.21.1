@@ -7,12 +7,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.registers.AttachmentReg;
 
 public class CastingDataSyncS2CP implements CustomPacketPayload {
 
-    public static final Type<CastingDataSyncS2CP> TYPE = new Type<>(Helpers.res("selected_ability_s2c"));
+    public static final Type<CastingDataSyncS2CP> TYPE = new Type<>(JahdooHelpers.res("selected_ability_s2c"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CastingDataSyncS2CP> STREAM_CODEC =
         CustomPacketPayload.codec(CastingDataSyncS2CP::toBytes, CastingDataSyncS2CP::new);

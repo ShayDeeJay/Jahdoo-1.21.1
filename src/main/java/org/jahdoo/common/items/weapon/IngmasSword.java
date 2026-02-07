@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class IngmasSword extends BaseWeapon {
 

@@ -6,12 +6,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 public class ManaSyncS2CP implements CustomPacketPayload {
-    public static final Type<ManaSyncS2CP> TYPE = new Type<>(Helpers.res("sync_client_mana"));
+    public static final Type<ManaSyncS2CP> TYPE = new Type<>(JahdooHelpers.res("sync_client_mana"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ManaSyncS2CP> STREAM_CODEC = CustomPacketPayload.codec(ManaSyncS2CP::toBytes, ManaSyncS2CP::new);
 
     private final double mana;

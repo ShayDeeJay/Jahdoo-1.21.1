@@ -80,20 +80,21 @@ public class ToggleComponent  {
         return new GuiButton(posX, posY, button, size, action, isSelected, location, "", scale, showHover);
     }
 
+
     public static AbilitySlotButton menuButtonAbility(
         int posX,
         int posY,
-        Button.OnPress action,
-        ResourceLocation location,
         int size,
-        boolean showHover,
-        Runnable hoverAction,
         int slot,
-        boolean selected,
         String label,
-        boolean validSlot
+        boolean selected,
+        boolean showHover,
+        boolean validSlot,
+        ResourceLocation location,
+        Button.OnPress action,
+        Runnable hoverAction
     ) {
-        return new AbilitySlotButton(posX, posY, new WidgetSprites(ABILITY_BACKGROUND, ABILITY_BACKGROUND), size, action, selected, location, label, 0, showHover, slot, validSlot) {
+        return new AbilitySlotButton(posX, posY, size, slot, label, selected, showHover, validSlot, validSlot, location, action) {
 
             public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
                 super.renderWidget(graphics, mouseX, mouseY, pPartialTick);
@@ -103,6 +104,29 @@ public class ToggleComponent  {
         };
     }
 
+    public static AbilitySlotButton menuButtonAbility(
+        int posX,
+        int posY,
+        int size,
+        int slot,
+        String label,
+        boolean selected,
+        boolean showHover,
+        boolean validSlot,
+        boolean canPress,
+        ResourceLocation location,
+        Button.OnPress action,
+        Runnable hoverAction
+    ) {
+        return new AbilitySlotButton(posX, posY, size, slot, label, selected, showHover, validSlot, canPress, location, action) {
+
+            public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
+                super.renderWidget(graphics, mouseX, mouseY, pPartialTick);
+                if(this.isMouseOver(mouseX, mouseY)) hoverAction.run();
+            }
+
+        };
+    }
 
     public static GuiButton menuButtonSound(
         int posX,

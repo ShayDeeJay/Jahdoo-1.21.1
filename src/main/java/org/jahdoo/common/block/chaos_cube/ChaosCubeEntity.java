@@ -7,7 +7,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,6 +15,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.AbilityHolder;
@@ -25,11 +25,11 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.ChaosCubeData;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,16 +46,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static net.minecraft.core.Direction.*;
-import static net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import static net.minecraft.core.Direction.byName;
 import static org.jahdoo.common.block.BlockInteractionHandler.getItemHandlerAt;
 import static org.jahdoo.common.entities.EntityAnimations.*;
-import static org.jahdoo.common.entities.EntityAnimations.MYS_DOWN;
-import static org.jahdoo.common.entities.EntityAnimations.MYS_EAST;
-import static org.jahdoo.common.entities.EntityAnimations.MYS_NORTH;
-import static org.jahdoo.common.entities.EntityAnimations.MYS_SOUTH;
-import static org.jahdoo.common.entities.EntityAnimations.MYS_UP;
-import static org.jahdoo.common.entities.EntityAnimations.MYS_WEST;
 
 
 public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
@@ -120,12 +113,12 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     }
 
     private void useSound(float volume, float pitch, Level level) {
-        Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BREEZE_CHARGE, volume, pitch);
+        Ability.utilitySpellCastSound(level, getBlockPos().getCenter());
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new ChaosCubeMenu(i, inventory, this, this.data);
+        return new ChaosCubeMenu(i, inventory, this, this.getData());
     }
 
     private void particleAnimation(Level level, boolean hasTank) {
@@ -280,6 +273,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
 
     public void useAugment(Level level, boolean ignorePower) {
         if(!hasTankAndFuel()) return;
+
         var actionDirection = this.getDirectionPos(getData.action());
         var isPowered = getData.active();
         if(!ignorePower) if (!isPowered) return;
@@ -300,37 +294,41 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         this.setChanged();
     }
 
-    public void externalOutputInventory(Level level, ItemEntity itemEntity){
+    public boolean externalOutputInventory(Level level, ItemEntity itemEntity){
         var pos = getDirectionPos(this.getData.output());
 
         var blockEntity = level.getBlockEntity(pos);
-        var entityStack = itemEntity.getItem();
+        if (blockEntity == null) return false;
 
-        if (blockEntity == null) return;
+        var itemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, byName(this.getData.output()));
+        if (itemHandler == null) return false;
 
-        var itemHandler = level.getCapability(ItemHandler.BLOCK, pos, byName(this.getData.output()));
+        var sourceStack = itemEntity.getItem();
+        var remaining = sourceStack.copy();
+        var originalCount = remaining.getCount();
 
-        if (itemHandler != null) {
-            var remaining = entityStack.copy();
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            var slotStack = itemHandler.getStackInSlot(i);
 
-            for (int i = 0; i < itemHandler.getSlots(); i++) {
-                var slotStack = itemHandler.getStackInSlot(i);
-
-                if (!slotStack.isEmpty() && ItemStack.isSameItem(slotStack, remaining)) {
-                    remaining = itemHandler.insertItem(i, remaining, false);
-                    if (remaining.isEmpty()) return;
-                }
-            }
-
-            for (int i = 0; i < itemHandler.getSlots(); i++) {
-                var slotStack = itemHandler.getStackInSlot(i);
-
-                if (slotStack.isEmpty()) {
-                    remaining = itemHandler.insertItem(i, remaining, false);
-                    if (remaining.isEmpty()) return;
-                }
+            if (!slotStack.isEmpty() && ItemStack.isSameItemSameComponents(slotStack, remaining)) {
+                remaining = itemHandler.insertItem(i, remaining, false);
+                if (remaining.isEmpty()) break;
             }
         }
+
+        for (int i = 0; i < itemHandler.getSlots() && !remaining.isEmpty(); i++) {
+            if (itemHandler.getStackInSlot(i).isEmpty()) {
+                remaining = itemHandler.insertItem(i, remaining, false);
+            }
+        }
+
+        int inserted = originalCount - remaining.getCount();
+        if (inserted > 0) {
+            sourceStack.shrink(inserted);
+            if (sourceStack.isEmpty()) itemEntity.discard();
+            return true;
+        }
+        return false;
     }
 
 }

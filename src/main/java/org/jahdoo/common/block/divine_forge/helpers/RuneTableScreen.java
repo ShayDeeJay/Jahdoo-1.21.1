@@ -16,6 +16,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.Colours;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,6 @@ import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.screens.AbilityModificationScreen.WIDGET;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.canRepair;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
@@ -102,7 +102,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
                 new Overlay() {
                     @Override
                     public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
-                        var color = color(200, canRepairItem ? HEADER_COLOUR : borderColour);
+                        var color = color(200, canRepairItem ? Colours.getHeaderColour() : borderColour);
                         SharedUI.boxMaker(guiGraphics, posX1 + 6, posY1 + 6, 16, 16, color, 0, 0);
                     }
                 }
@@ -136,7 +136,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
                 new Overlay() {
                     @Override
                     public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
-                        var color = color(200, canRepairItem ? HEADER_COLOUR : borderColour);
+                        var color = color(200, canRepairItem ? Colours.getHeaderColour() : borderColour);
                         SharedUI.boxMaker(guiGraphics, posX1 + 6, posY1 + 6, 16, 16, color, 0, 0);
                         guiGraphics.blit(GUI_ITEM_SLOT, posX1 + 6, posY1 - 22, 0,0,32,32,32,32);
                     }
@@ -203,7 +203,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     public ItemStack getItem(){
-        return entity().inputItemHandler.getStackInSlot(0);
+        return entity().getInputItemHandler().getStackInSlot(0);
     }
 
     public static int groupFade() {

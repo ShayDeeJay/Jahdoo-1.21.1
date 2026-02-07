@@ -16,9 +16,9 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Colours;
 
 import static org.jahdoo.common.items.caster_item.ItemAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
@@ -28,8 +28,7 @@ import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 import static org.jahdoo.trial_nexus.ability.Ability.DISTANCE_CAST;
 import static org.jahdoo.trial_nexus.ability.Ability.HOLD_CAST;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
-import static org.jahdoo.trial_nexus.utils.Maths.getFormattedFloat;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 
 public class CastHelper {
@@ -66,8 +65,8 @@ public class CastHelper {
         var volume1 = 0.8f;
         var pitch1 = 1.6f;
         if(player instanceof ServerPlayer serverPlayer){
-            Helpers.sendClientSound(serverPlayer, crafterFail, volume, pitch, false);
-            Helpers.sendClientSound(serverPlayer, vexHurt, volume1, pitch1, false);
+            JahdooHelpers.sendClientSound(serverPlayer, crafterFail, volume, pitch, false);
+            JahdooHelpers.sendClientSound(serverPlayer, vexHurt, volume1, pitch1, false);
         } else {
             player.playSound(crafterFail, volume, pitch);
             player.playSound(vexHurt, volume1, pitch1);
@@ -83,7 +82,7 @@ public class CastHelper {
         var cooldownCost = CasterData.getSpecificValue(player, COOLDOWN);
         var cooldownSystem = player.getData(CASTER_DATA);
         var ability = AbilityReg.getFirstSpellByTypeId(abilityId);
-        var reCalculatedCooldown = Helpers.attributeModifierCalculator(player, (float) cooldownCost, false,  ability.orElseThrow().getElemenType().cooldownReduction(), COOLDOWN_REDUCTION);
+        var reCalculatedCooldown = JahdooHelpers.attributeModifierCalculator(player, (float) cooldownCost, false,  ability.orElseThrow().getElemenType().cooldownReduction(), COOLDOWN_REDUCTION);
         cooldownSystem.addCooldown(abilityId, (int) reCalculatedCooldown);
     }
 
@@ -95,7 +94,7 @@ public class CastHelper {
         var getManaCost = CasterData.getSpecificValue(player, MANA_COST);
         var manaSystem = player.getData(CASTER_DATA);
         var ability = AbilityReg.getFirstSpellByTypeId(abilityId);
-        var reCalculatedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, ability.orElseThrow().getElemenType().manaReduction(), MANA_COST_REDUCTION);
+        var reCalculatedMana = JahdooHelpers.attributeModifierCalculator(player, (float) getManaCost, false, ability.orElseThrow().getElemenType().manaReduction(), MANA_COST_REDUCTION);
         manaSystem.subtractMana(reCalculatedMana, player);
     }
 
@@ -117,7 +116,7 @@ public class CastHelper {
     }
 
     public static void executeAndCharge(Player player) {
-        var wandItem = Helpers.getUsedItem(player);
+        var wandItem = JahdooHelpers.getUsedItem(player);
         var typeId = CasterData.selectedAbility(player);
         var ability = AbilityReg.getFirstSpellByTypeId(typeId);
         if(ability.isPresent()){
@@ -134,10 +133,10 @@ public class CastHelper {
                         onCast(player, getAbility);
                         OnCastPerks.onCastPerkApply(player);
                         if(player.level() instanceof ServerLevel serverLevel){
-                            Helpers.hurtAndKeepItem(wandItem, 5, serverLevel, player);
+                            JahdooHelpers.hurtAndKeepItem(wandItem, 5, serverLevel, player);
                             if (CasterItemHelper.canOffHand(player, false)) {
                                 var gauntlet = CasterItemHelper.getGauntlet(player);
-                                Helpers.hurtAndKeepItem(gauntlet, 5, serverLevel, player);
+                                JahdooHelpers.hurtAndKeepItem(gauntlet, 5, serverLevel, player);
                             }
                         }
                     } else failedCastNotification(player);
@@ -147,13 +146,13 @@ public class CastHelper {
     }
 
     public static void brokenWandNotification(Player player, @Nullable AbstractElement element){
-        var colour = element == null ? ColourStore.OFF_WHITE : element.textColourA();
+        var colour = element == null ? org.shaydee.shaydeeapi.Colours.getOffWhite() : element.textColourA();
         failedCastNotification(player);
         player.displayClientMessage(withStyleComponent("Wand too damaged to cast", colour), true);
     }
 
     public static InteractionResultHolder<ItemStack> use(Player player) {
-        var itemStack = Helpers.getUsedItem(player);
+        var itemStack = JahdooHelpers.getUsedItem(player);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
 
 //        var typeId = CasterData.selectedAbility(player);
@@ -175,14 +174,14 @@ public class CastHelper {
         var isDistanceCast = AbilityReg.getFirstSpellByTypeId(CasterData.selectedAbility(player));
         if(isDistanceCast.isPresent() && isDistanceCast.get().getCastType() == DISTANCE_CAST){
             var getCurrentAbility = CasterData.selectedAbility(player);
-            var getAbility = Helpers.getModifierValue(player, getCurrentAbility);
+            var getAbility = JahdooHelpers.getModifierValue(player, getCurrentAbility);
             var allowedDistance = getAbility.get(CASTING_DISTANCE).setValue();
             var lookAtLocation = player.pick(allowedDistance, 0, false);
             var isValidCastLocation = lookAtLocation.getType() == HitResult.Type.MISS;
             var getWandElement = fromWand(itemStack.getItem()).orElse(null);
             var distance = String.valueOf(Math.round(allowedDistance));
-            var colour = getWandElement == null ? ColourStore.WALLET_BROWN : getWandElement.partColourB();
-            var distanceCompo = Helpers.withStyleComponent(distance, colour);
+            var colour = getWandElement == null ? Colours.getWalletBrown() : getWandElement.partColourB();
+            var distanceCompo = JahdooHelpers.withStyleComponent(distance, colour);
             var notAllowedDistanceMessage = Component.translatable("casting.jahdoo.distance", distanceCompo);
 
             if (isValidCastLocation) {
@@ -200,24 +199,24 @@ public class CastHelper {
         var ability = AbilityReg.getFirstSpellByTypeId(typeId).orElseThrow();
         var getManaCost = CasterData.getSpecificValue(player, MANA_COST);
         var element = ability.getElemenType();
-        var adjustedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, element.manaReduction());
+        var adjustedMana = JahdooHelpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, element.manaReduction());
         var manaAvailable = casterData.getManaPool();
         var sufficientMana = casterData.getManaPool() >= adjustedMana;
         var abilityOnCooldown = casterData.isAbilityOnCooldown(typeId);
 
         if(!player.isCreative()){
             if (abilityOnCooldown) {
-                var nameComp = Helpers.withStyleComponent(ability.getAbilityName(), element.partColourB());
+                var nameComp = JahdooHelpers.withStyleComponent(ability.getAbilityName(), element.partColourB());
                 var messageComp = Component.translatable("casting.jahdoo.on_cooldown", nameComp);
                 player.displayClientMessage(messageComp, true);
                 return false;
             }
 
             if (!sufficientMana) {
-                var formattedCost = getFormattedFloat(adjustedMana);
-                var formattedAvailable = getFormattedFloat((float) manaAvailable);
-                var costComp = Helpers.withStyleComponent(String.valueOf(formattedCost), element.partColourA());
-                var availComp = Helpers.withStyleComponent(String.valueOf(formattedAvailable), element.partColourB());
+                var formattedCost = org.shaydee.shaydeeapi.Maths.getFormattedFloat(adjustedMana);
+                var formattedAvailable = org.shaydee.shaydeeapi.Maths.getFormattedFloat((float) manaAvailable);
+                var costComp = JahdooHelpers.withStyleComponent(String.valueOf(formattedCost), element.partColourA());
+                var availComp = JahdooHelpers.withStyleComponent(String.valueOf(formattedAvailable), element.partColourB());
                 var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);
                 player.displayClientMessage(notEnoughManaMessage, true);
                 return false;

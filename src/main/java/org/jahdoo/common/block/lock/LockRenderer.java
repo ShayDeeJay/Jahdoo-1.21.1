@@ -27,8 +27,8 @@ import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
-import static org.jahdoo.trial_nexus.utils.Helpers.stringIdToName;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.stringIdToName;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
 

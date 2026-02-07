@@ -8,8 +8,6 @@ import org.jahdoo.common.registers.ComponentReg;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 
-import static org.jahdoo.trial_nexus.utils.Maths.doubleFormattedDouble;
-
 public class AbilityBuilder {
 
     //Mandatory mods
@@ -255,10 +253,10 @@ public class AbilityBuilder {
 
     public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step, double baseCost) {
         var getValue = isHigherBetter ? low : high;
-        var chosenR = doubleFormattedDouble(getValue);
-        var highR = doubleFormattedDouble(high);
-        var lowR = doubleFormattedDouble(low);
-        var stepR = doubleFormattedDouble(step);
+        var chosenR = org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(getValue);
+        var highR = org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(high);
+        var lowR = org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(low);
+        var stepR = org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(step);
         var abilityModifiers = new AbilityData.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, baseCost, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;

@@ -23,10 +23,10 @@ import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.quests.AbstractQuest;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +41,7 @@ import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllNegative;
 import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllPositive;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeString;
-import static org.jahdoo.trial_nexus.utils.Maths.ticksToTime;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class InstanceDataOverlay implements LayeredDraw.Layer {
 
@@ -101,8 +99,16 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var x = 8;
         var size = 18;
         var spacer = 20;
+        var remainingTime = instanceData.getMaxTime() - instanceData.getTicks();
+        var startY = 20;
+        var barColour = Helpers.colourByPercent(instanceData.getMaxTime(), remainingTime, true);
+        var borderColour = org.shaydee.shaydeeapi.Colours.getNetheriteBox();
         var time = HudEntry.getTime(instanceData);
-        alwaysOnEntry(graphics, time.icon(), x, 6, size, -1, font, time.value());
+
+        if(instanceData.getMaxTime() > 0){
+            progressBar(graphics, 8, startY, 38, 4, remainingTime, instanceData.getMaxTime(), 2, barColour, borderColour, uiFade());
+            alwaysOnEntry(graphics, time.icon(), x - 2, startY - 18, size, -1, font, time.value());
+        }
 
         var listOfEntries = List.of(
             HudEntry.roomsCleared(instanceData),
@@ -133,7 +139,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         public static HudEntry getTime(InstanceData instanceData){
             var remainingTime = instanceData.getMaxTime() - instanceData.getTicks();
             var colour = remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED;
-            var time = appendStat("", ticksToTime(valueOf(remainingTime)), colour);
+            var time = appendStat("", org.shaydee.shaydeeapi.Maths.ticksToTime(valueOf(remainingTime)), colour);
             return new HudEntry(Icons.CLOCK, time);
         }
 
@@ -144,7 +150,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         }
 
         public static Component getComp(Object info){
-            return Helpers.withStyleComponent(String.valueOf(info), -1);
+            return JahdooHelpers.withStyleComponent(String.valueOf(info), -1);
         }
 
         public static HudEntry chestCommon(RunData runData){
@@ -212,7 +218,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
             var offset = 3;
             var colourBorder = quest.questColour();
 
-            progressBar(graphics, offsetX, startY, baseWidth, height, current, needed, offset, colourBorder, uiColour());
+            progressBar(graphics, offsetX, startY, baseWidth, height, current, needed, offset, colourBorder, uiColour(), uiFade());
             graphics.drawCenteredString(font, appendStat("Quest: ", quest.getDisplayName(), quest.questColour()), offsetX + baseWidth, startY - 12, -1);
             graphics.drawCenteredString(font, withStyleComponent(display, colour), offsetX + baseWidth, startY + (height * 2) + 3, -1);
         }
@@ -224,7 +230,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         if (!InputConstants.isKeyDown(window, InputConstants.KEY_TAB)) {
             timer = 0;
             return;
-        };
+        }
 
         var trialData = PlayerTrialData.getData(player);
         var positives = getBoons(true, instanceData, trialData);
@@ -238,10 +244,9 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         final var rowHeight = 14;
         final var negativeOffsetX = -150;
 
-        var difficultyId = Helpers.stringIdToName(instanceData.getDifficulty());
+        var difficultyId = JahdooHelpers.stringIdToName(instanceData.getDifficulty());
         var difficultyName = difficultyId.isEmpty() ? "Unselected" : difficultyId;
         var difficultyColor = difficultyId.isEmpty() ? ColourStore.OFF_WHITE : getFromName(difficultyName).getColor();
-
         var header = new RunScreen.StatEntry(componentTemplate("Difficulty", difficultyName, difficultyColor), null);
 
         graphics.pose().pushPose();
@@ -291,15 +296,15 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
             String displayValue;
 
             if (positive) {
-                displayValue = boon.id().equals(InstanceData.KEY_MAX_TIME) ? Maths.ticksToTime(String.valueOf(rawValue)) : Maths.roundNonWholeString(rawValue);
+                displayValue = boon.id().equals(InstanceData.KEY_MAX_TIME) ? org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(rawValue)) : org.shaydee.shaydeeapi.Maths.roundNonWholeString(rawValue);
             } else {
-                var v = roundNonWholeString(Maths.singleFormattedDouble(rawValue));
+                var v = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.singleFormattedDouble(rawValue));
                 displayValue = v + (boon.isPercentageOf() ? "%" : "");
             }
 
             var color = positive ? boon.getHeaderColour() : MAGNET_STRENGTH_RED;
             var component = componentTemplate(
-                Helpers.stringIdToName(boon.id()), displayValue, color
+                JahdooHelpers.stringIdToName(boon.id()), displayValue, color
             );
             components.add(new RunScreen.StatEntry(component, boon.getIcon()));
         }
@@ -308,12 +313,12 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
     }
 
 
-    public static void progressBar(GuiGraphics graphics, int offsetX, int startY, int baseWidth, int height, int current, int needed, int offset, int barColour, int containerBorder) {
-        SharedUI.boxMaker(graphics, offsetX, startY, baseWidth, height, containerBorder, uiFade(), uiFade());
+    public static void progressBar(GuiGraphics graphics, int offsetX, int startY, int baseWidth, int height, int current, int needed, int offset, int barColour, int containerBorder, int backgroundColour) {
+        SharedUI.boxMaker(graphics, offsetX, startY, baseWidth, height, containerBorder, backgroundColour, backgroundColour);
         if (current > 0) {
             var progressRatio = (float) Math.min(current, needed) / (float) needed;
-            var barWidth = (baseWidth - offset) * progressRatio;
-            SharedUI.boxMaker(graphics, offsetX + offset, startY + offset, Math.max((int) barWidth, 1), height - offset, barColour, barColour, barColour);
+            var barWidth = Math.round((baseWidth - offset) * progressRatio);
+            SharedUI.boxMaker(graphics, offsetX + offset, startY + offset, Math.max(barWidth, 1), height - offset, barColour, barColour, barColour);
         }
     }
 

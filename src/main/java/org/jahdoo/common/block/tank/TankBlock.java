@@ -29,8 +29,8 @@ import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 import static net.minecraft.sounds.SoundEvents.SAND_PLACE;
@@ -130,7 +130,7 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof TankBlockEntity tankBlock){
                 tankBlock.setData(AttachmentReg.BOOL, true);
-                tankBlock.inputItemHandler.setStackInSlot(0, new ItemStack(NEXITE_POWDER.get()).copyWithCount(64));
+                tankBlock.getInputItemHandler().setStackInSlot(0, new ItemStack(NEXITE_POWDER.get()).copyWithCount(64));
             }
         }
     }
@@ -167,7 +167,7 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
 
         if (entity instanceof TankBlockEntity tank) {
-            var handler = tank.inputItemHandler;
+            var handler = tank.getInputItemHandler();
             var itemStack = new ItemStack(AUGMENT_CORE);
             CoreData.setFilled(itemStack);
 

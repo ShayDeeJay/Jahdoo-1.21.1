@@ -8,7 +8,7 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.BaseMagicWeapon;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -51,7 +51,7 @@ public class ElementalStaff extends BaseMagicWeapon implements GeoItem, JahdooIt
         float attackSpeed = -2.6F;
         var modifier = new AttributeModifier(BASE_ATTACK_DAMAGE_ID, attackDamage + Tiers.NETHERITE.getAttackDamageBonus(), AttributeModifier.Operation.ADD_VALUE);
         var modifier1 = new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE);
-        var modifier2 = new AttributeModifier(Helpers.res("reach"), 1, AttributeModifier.Operation.ADD_VALUE);
+        var modifier2 = new AttributeModifier(JahdooHelpers.res("reach"), 1, AttributeModifier.Operation.ADD_VALUE);
         var mainHand = EquipmentSlotGroup.MAINHAND;
         var attributes = ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE, modifier, mainHand)

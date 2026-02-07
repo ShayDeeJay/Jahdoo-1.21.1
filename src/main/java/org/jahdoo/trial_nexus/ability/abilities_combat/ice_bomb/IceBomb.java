@@ -3,6 +3,8 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.ice_bomb;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.Level;
@@ -12,7 +14,7 @@ import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
@@ -21,6 +23,7 @@ import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +31,14 @@ import java.util.UUID;
 
 import static net.minecraft.util.RandomSource.create;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.getRandomParticleVelocity;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getRandomParticleVelocity;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.registers.AttributeReg.FROST_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 
 public class IceBomb extends DefaultEntityBehaviour {
 
-    private final ResourceLocation abilityId = Helpers.res("ice_bomb_property");
+    private final ResourceLocation abilityId = JahdooHelpers.res("ice_bomb_property");
     private final List<UUID> getHitEntities = new ArrayList<>();
     private static final int INT = 60;
     private boolean hasHitBlock;
@@ -54,7 +57,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         if(this.element.getOwner() != null){
             var player = this.element.getOwner();
             var damage = this.getTag(DAMAGE);
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
                 true,
@@ -144,10 +147,16 @@ public class IceBomb extends DefaultEntityBehaviour {
         ).forEach(this::entityFreezeEffectAndDamage);
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     private void onDetonate() {
         element.setShowTrailParticles(false);
-        Helpers.getSoundWithPosition(level(), this.element.blockPosition(), SoundReg.IMPACT.get(), 1, 1 + ((float) this.currentRicochets /10));
-        Helpers.getSoundWithPosition(level(), this.element.blockPosition(), SoundReg.FROST_ABILITY.get(), 1, 1 + ((float) this.currentRicochets /10));
+        var ricochets = (float) (1 + this.currentRicochets / 10);
+        sharedSound(SoundReg.IMPACT.get(), 1F, ricochets);
+        sharedSound(SoundReg.FROST_ABILITY.get(), 1F,ricochets);
+
         PositionFinders.getOuterRingOfRadiusRandom(this.element.position(), 0.5, 60 * currentRicochets,
             worldPosition -> this.setParticleNova(worldPosition, 0.7)
         );
@@ -206,7 +215,7 @@ public class IceBomb extends DefaultEntityBehaviour {
 
     void iceBombIdleParticles(){
         if(hasHitBlock) return;
-        var bakedParticle = bakedParticle(this.getElementType().id(), 2, Helpers.Random.nextFloat(1.5f, 2f), false);
+        var bakedParticle = bakedParticle(this.getElementType().id(), 2, JahdooHelpers.Random.nextFloat(1.5f, 2f), false);
         var genericParticle = ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, this.getElementType(), 3, 1);
 
         PositionFinders.getRandomSphericalPositions(
@@ -227,28 +236,10 @@ public class IceBomb extends DefaultEntityBehaviour {
         var i = rico / 2;
         var getParticle = ParticleHandlers.getAllParticleTypes(getElementType(), 10 + (rico), 3 + i);
         var i1 = (float) rico / 8;
-        var randSpeed = Helpers.Random.nextDouble(0.1 + i1, 0.2 + i1);
+        var randSpeed = JahdooHelpers.Random.nextDouble(0.1 + i1, 0.2 + i1);
         var positions = worldPosition.offsetRandom(create(), 0.2f);
 
         ParticleHandlers.sendParticles(level(), getParticle , positions, 0, directions.x, directions.y, directions.z, randSpeed);
     }
 
-    private void playPeriodicIdleSound(){
-        if(this.element.tickCount == 1){
-            Helpers.getSoundWithPosition(
-                level(),
-                this.element.blockPosition(),
-                SoundReg.TIMER.get(),
-                0.8f, 0.1f
-            );
-        }
-        if (this.element.tickCount % (21) == 0) {
-            Helpers.getSoundWithPosition(
-                level(),
-                this.element.blockPosition(),
-                SoundReg.TIMER.get(),
-                0.8f, 0.1f
-            );
-        }
-    }
 }

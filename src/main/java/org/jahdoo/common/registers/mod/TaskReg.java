@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.tasks.*;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 public class TaskReg {
 
-    public static final ResourceKey<Registry<AbstractTask>> TASK_REGISTRY_KEY = ResourceKey.createRegistryKey(Helpers.res("task"));
+    public static final ResourceKey<Registry<AbstractTask>> TASK_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("task"));
     private static final DeferredRegister<AbstractTask> TASK = DeferredRegister.create(TASK_REGISTRY_KEY, JahdooMod.MOD_ID);
     public static final Registry<AbstractTask> REGISTRY =  new RegistryBuilder<>(TASK_REGISTRY_KEY).create();
 

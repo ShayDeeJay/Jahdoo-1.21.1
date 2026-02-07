@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -35,13 +35,13 @@ public class AugmentCrystal extends BaseItem implements ICurioItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return Helpers.withStyleComponent(super.getName(stack).getString(), ColourStore.GOLD_COIN);
+        return JahdooHelpers.withStyleComponent(super.getName(stack).getString(), ColourStore.GOLD_COIN);
     }
 
     @Override
     public void implicitModifiers(ItemStack stack, List<Component> tooltipComponents) {
         super.implicitModifiers(stack, tooltipComponents);
-        tooltipComponents.add(Helpers.withStyleComponent("Offhand Wands", ColourStore.SYMPATHISER_ORANGE));
+        tooltipComponents.add(JahdooHelpers.withStyleComponent("Offhand Wands", ColourStore.SYMPATHISER_ORANGE));
     }
 
     @Override

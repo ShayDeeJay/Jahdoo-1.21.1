@@ -7,14 +7,14 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.AbilityHolderS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 
 public class AbilityHolderC2SP implements CustomPacketPayload {
 
-    public static final Type<AbilityHolderC2SP> TYPE = new Type<>(Helpers.res("ability_holder"));
+    public static final Type<AbilityHolderC2SP> TYPE = new Type<>(JahdooHelpers.res("ability_holder"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AbilityHolderC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(AbilityHolderC2SP::toBytes, AbilityHolderC2SP::new);

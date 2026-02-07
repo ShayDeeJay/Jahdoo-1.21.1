@@ -5,7 +5,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,8 +19,8 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -33,7 +35,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.ItemReg.ESSENCE_FRAGMENT;
 import static org.jahdoo.trial_nexus.utils.ColourStore.ABSORPTION_YELLOW;
-import static org.jahdoo.trial_nexus.utils.Maths.percentageChance;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.processingParticle;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 
@@ -53,16 +55,16 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     }
 
     public ItemStack getInputAndOutputRenderer() {
-        var outHandler = this.outputItemHandler.getStackInSlot(0);
+        var outHandler = this.getOutputItemHandler().getStackInSlot(0);
         if(outHandler.isEmpty()) {
-            return this.inputItemHandler.getStackInSlot(0);
+            return this.getInputItemHandler().getStackInSlot(0);
         }
         return outHandler;
     }
 
     private void shiftProcessedItemsToOutput(){
-        var outputHandler = this.outputItemHandler;
-        var inputHandler = this.inputItemHandler;
+        var outputHandler = this.getOutputItemHandler();
+        var inputHandler = this.getInputItemHandler();
         var essenceFragment = ESSENCE_FRAGMENT.get();
 
         if (outputHandler.getStackInSlot(0).isEmpty() && inputHandler.getStackInSlot(0).is(essenceFragment)) {
@@ -91,7 +93,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     }
 
     private void completedRecycling(Level level){
-        var handler = this.inputItemHandler;
+        var handler = this.getInputItemHandler();
         var oItem = handler.getStackInSlot(0);
 
         if(!(oItem.getItem() instanceof JahdooItem jItem)) return;
@@ -101,8 +103,8 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         this.chargeTankFuel(RECYCLING_COST);
         handler.setStackInSlot(0, EMPTY);
 
-        this.outputItemHandler.setStackInSlot(0, recycleItem.getFirst());
-        this.outputItemHandler.setStackInSlot(1, recycleItem.get(1));
+        this.getOutputItemHandler().setStackInSlot(0, recycleItem.getFirst());
+        this.getOutputItemHandler().setStackInSlot(1, recycleItem.get(1));
         level.sendBlockUpdated(tank, level.getBlockState(tank), this.getBlockState(), 3);
         this.progress = 0;
     }
@@ -122,9 +124,9 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         // If no rarity OR custom chance is provided
         if (rarity == null || custom != -1) {
             int safe = clampChance(custom);
-            var recycleItem = List.of(percentageChance(safe) ? jahdooItem.getRecycleItem() : EMPTY, scrap.copyWithCount(2));
+            var recycleItem = List.of(org.shaydee.shaydeeapi.Maths.percentageChance(safe) ? jahdooItem.getRecycleItem() : EMPTY, scrap.copyWithCount(2));
             var empty = List.of(EMPTY, scrap.copyWithCount(2));
-            return percentageChance(safe) ? recycleItem : empty;
+            return org.shaydee.shaydeeapi.Maths.percentageChance(safe) ? recycleItem : empty;
         }
 
         var durabilityInfo = CustomHudOverlay.getDurabilityWithColor(originalItem);
@@ -155,7 +157,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         System.out.println("Safe Chance");
         System.out.println(safeChance);
 
-        boolean success = percentageChance(safeChance);
+        boolean success = org.shaydee.shaydeeapi.Maths.percentageChance(safeChance);
 
         var getNew = scrap.copyWithCount(i);
         return List.of(success ? jahdooItem.getRecycleItem() : EMPTY, getNew);
@@ -174,16 +176,21 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         );
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(level, getBlockPos(), sEvent, SoundSource.BLOCKS, volume, pitch);
+    }
+
     private void recyclingProcess(){
-        var isInputAugment = this.inputItemHandler.getStackInSlot(0);
-        var isOutputEmpty = this.outputItemHandler.getStackInSlot(0).isEmpty();
+        var isInputAugment = this.getInputItemHandler().getStackInSlot(0);
+        var isOutputEmpty = this.getOutputItemHandler().getStackInSlot(0).isEmpty();
         if (isOutputEmpty && isInputAugment.getItem() instanceof JahdooItem){
             this.progress++;
 
-            if (this.getTankEntity().inputItemHandler.getStackInSlot(0).getCount() >= 6) {
+            if (this.getTankEntity().getInputItemHandler().getStackInSlot(0).getCount() >= 6) {
                 if((19+progress) % 40 == 0){
-                    Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BASALT_BREAK, 1, 1f);
-                    Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundReg.IMPACT.get(), 1, 1f);
+                    sharedSound(SoundEvents.BASALT_BREAK, 1F, 1f);
+                    sharedSound(SoundReg.IMPACT.get(), 1F, 1f);
+
                     if(!(this.level instanceof ServerLevel serverLevel)) return;
                     this.tableProcessingParticle(this.level, serverLevel, this.getBlockPos());
                 }

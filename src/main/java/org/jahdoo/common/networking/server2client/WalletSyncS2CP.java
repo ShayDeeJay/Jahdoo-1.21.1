@@ -6,12 +6,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
 
 public class WalletSyncS2CP implements CustomPacketPayload {
-    public static final Type<WalletSyncS2CP> TYPE = new Type<>(Helpers.res("sync_client_wallet"));
+    public static final Type<WalletSyncS2CP> TYPE = new Type<>(JahdooHelpers.res("sync_client_wallet"));
     public static final StreamCodec<RegistryFriendlyByteBuf, WalletSyncS2CP> STREAM_CODEC = CustomPacketPayload.codec(WalletSyncS2CP::toBytes, WalletSyncS2CP::new);
 
     private final int wallet;

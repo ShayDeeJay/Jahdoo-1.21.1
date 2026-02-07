@@ -9,11 +9,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class UnlockedSkillsC2SP implements CustomPacketPayload {
 
-    public static final Type<UnlockedSkillsC2SP> TYPE = new Type<>(Helpers.res("unlocked_skills"));
+    public static final Type<UnlockedSkillsC2SP> TYPE = new Type<>(JahdooHelpers.res("unlocked_skills"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, UnlockedSkillsC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(UnlockedSkillsC2SP::toBytes, UnlockedSkillsC2SP::new);

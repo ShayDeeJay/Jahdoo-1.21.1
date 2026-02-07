@@ -7,17 +7,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -30,14 +31,14 @@ import java.util.ArrayList;
 import static net.minecraft.network.syncher.EntityDataSerializers.*;
 import static net.minecraft.network.syncher.SynchedEntityData.defineId;
 import static net.minecraft.world.entity.ai.attributes.Attributes.SCALE;
+import static org.jahdoo.common.entities.EntityAnimations.*;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.NOVICE;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
 import static org.jahdoo.trial_nexus.loot.RewardLootTables.attachItemData;
 import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
-import static org.jahdoo.trial_nexus.mobs.MobManager.addBaseAttribute;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.common.entities.EntityAnimations.*;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.addBaseAttribute;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 public class Safe extends LivingEntity implements GeoEntity {
@@ -150,10 +151,16 @@ public class Safe extends LivingEntity implements GeoEntity {
         return Component.empty();
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     @Override
     public void kill() {
-        Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.REJECT.get(), 1, 1);
-        Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.ORB_CREATE.get(), 1, 2);
+
+        sharedSound(SoundReg.REJECT.get(), 1F, 1F);
+        sharedSound(SoundReg.ORB_CREATE.get(), 1F, 2F);
+
         this.remove(RemovalReason.KILLED);
     }
 
@@ -250,16 +257,18 @@ public class Safe extends LivingEntity implements GeoEntity {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (getCurrentState() < 2 && source.getEntity() instanceof Player player) {
-            Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.BLOCK.get(), 1, Random.nextFloat(0.8F, Math.max(0.85F, getDamageCounter() / 10)));
-            Helpers.getSoundWithPositionV(level(), this.position(), SoundEvents.CHAIN_BREAK, 1, Random.nextFloat(1F, 1.2F));
+
+            sharedSound(SoundReg.BLOCK.get(), 1F, Random.nextFloat(0.8F, Math.max(0.85F, getDamageCounter() / 10)));
+            sharedSound(SoundEvents.CHAIN_BREAK, 1F, Random.nextFloat(1F, 1.2F));
+
             setCurrentState(1);
             setTimeSinceDamaged(requiredTimeBetweenDamage);
             setDamageCounter(getDamageCounter() + amount);
 
             if (getDamageCounter() >= getDamageRequired()) {
                 setDamageCounter(0);
-                Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.IMPACT.get(), 1, 0.6F);
-                Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.CRATE_OPEN.get(), 2, 2F);
+                sharedSound(SoundReg.IMPACT.get(), 1F, 0.6F);
+                sharedSound(SoundReg.CRATE_OPEN.get(), 2F, 2F);
                 setCurrentState(2);
                 if (getCurrentState() == 2) {
                     if (level() instanceof ServerLevel serverLevel) {

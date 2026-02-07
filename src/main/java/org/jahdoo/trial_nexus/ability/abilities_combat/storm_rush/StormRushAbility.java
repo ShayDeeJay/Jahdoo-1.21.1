@@ -7,13 +7,13 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 public class StormRushAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("storm_rush");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("storm_rush");
     public static final String LAUNCH_DISTANCE = "Launch Distance";
 
     @Override

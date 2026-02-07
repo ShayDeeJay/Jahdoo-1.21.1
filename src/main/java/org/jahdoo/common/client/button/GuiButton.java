@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public class GuiButton extends ImageButton {
             graphics.pose().translate(0,0,2);
             var tooltipLines = new ArrayList<Component>();
             if(!label.isEmpty()){
-                tooltipLines.add(Helpers.withStyleComponent(label, ColourStore.SUB_HEADER_COLOUR));
+                tooltipLines.add(JahdooHelpers.withStyleComponent(label, ColourStore.SUB_HEADER_COLOUR));
             }
             graphics.renderTooltip(font, tooltipLines, Optional.empty(), mouseX, mouseY);
 

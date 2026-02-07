@@ -11,11 +11,11 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import top.theillusivec4.curios.api.CuriosApi;
 
 public class MagnetActiveC2SP implements CustomPacketPayload {
-    public static final Type<MagnetActiveC2SP> TYPE = new Type<>(Helpers.res("active_magnet"));
+    public static final Type<MagnetActiveC2SP> TYPE = new Type<>(JahdooHelpers.res("active_magnet"));
     public static final StreamCodec<RegistryFriendlyByteBuf, MagnetActiveC2SP> STREAM_CODEC =
             CustomPacketPayload.codec(MagnetActiveC2SP::toBytes, MagnetActiveC2SP::new);
 
@@ -37,11 +37,11 @@ public class MagnetActiveC2SP implements CustomPacketPayload {
                         var magnetData = magnet.get(ComponentReg.MAGNET_DATA);
                         if(magnetData != null){
                             MagnetData.updateActive(magnet, !magnetData.active());
-                            var active = Helpers.withStyleComponent("Active", ColourStore.MAGNET_RANGE_GREEN);
-                            var deactivate = Helpers.withStyleComponent("Deactivated", ColourStore.MAGNET_STRENGTH_RED);
+                            var active = JahdooHelpers.withStyleComponent("Active", ColourStore.MAGNET_RANGE_GREEN);
+                            var deactivate = JahdooHelpers.withStyleComponent("Deactivated", ColourStore.MAGNET_STRENGTH_RED);
                             player.displayClientMessage(!magnetData.active() ? active : deactivate, true);
                             if(player instanceof ServerPlayer serverPlayer){
-                                Helpers.sendClientSound(serverPlayer, SoundReg.SELECT.get(), 1, 1);
+                                JahdooHelpers.sendClientSound(serverPlayer, SoundReg.SELECT.get(), 1, 1);
                             }
                         }
                     }

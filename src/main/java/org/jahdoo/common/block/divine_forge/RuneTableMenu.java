@@ -6,7 +6,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.CoreItemSlot;
 import org.jahdoo.common.client.slots.ModifierSlot;
@@ -16,8 +15,9 @@ import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.MenuReg;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
-import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.*;
+import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.MODIFICATION_SLOT;
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLOTS;
 import static org.jahdoo.common.client.SharedUI.getCore;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
@@ -73,13 +73,13 @@ public class RuneTableMenu extends AbstractInternalContainer  {
     }
 
     private void insertModificationSlot() {
-        this.addSlot(new ModifierSlot(tableEntity().inputItemHandler, MODIFICATION_SLOT, posX + 77, posY - 78, this));
+        this.addSlot(new ModifierSlot(tableEntity().getInputItemHandler(), MODIFICATION_SLOT, posX + 77, posY - 78, this));
     }
 
     private void insertAugmentSlots() {
         var spacer = 0;
         for (int i = 1; i < 4; i ++){
-            this.addSlot(new CoreItemSlot(tableEntity().inputItemHandler, i, posX - 75, posY + spacer - 96, getCore().get(i-1)));
+            this.addSlot(new CoreItemSlot(tableEntity().getInputItemHandler(), i, posX - 75, posY + spacer - 96, getCore().get(i-1)));
             spacer += 28;
         }
     }
@@ -87,7 +87,7 @@ public class RuneTableMenu extends AbstractInternalContainer  {
     private void insertRuneSlots() {
         var getAllSlots = this.tableEntity().getItem().getStackInSlot(0);
         var getData = JahdooGearData.getGearData(getAllSlots);
-        var iHandler = tableEntity().inputItemHandler;
+        var iHandler = tableEntity().getInputItemHandler();
         var indexOne = 4;
         for (ItemStack itemStack : getData.runeSlots()) {
             iHandler.setStackInSlot(indexOne, itemStack);

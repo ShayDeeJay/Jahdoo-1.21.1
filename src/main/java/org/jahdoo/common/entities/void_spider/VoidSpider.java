@@ -5,7 +5,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -15,17 +16,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.entities.ITamableEntity;
-import org.jahdoo.common.registers.*;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
-import static org.jahdoo.trial_nexus.mobs.MobManager.spawnAroundEntity;
-import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.registers.mod.ElementReg.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
+import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.common.registers.mod.ElementReg.mystic;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.getRandomSphericalBlockPositions;
 
 public class VoidSpider extends Spider implements ITamableEntity {
     protected boolean triggerDeathSpawn;
@@ -128,6 +132,21 @@ public class VoidSpider extends Spider implements ITamableEntity {
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new SpiderTargetGoal<>(this, Player.class));
+    }
+
+    public static void spawnAroundEntity(
+        Level level,
+        BlockPos spawnPos,
+        int radius,
+        int points,
+        Consumer<BlockPos> spawn
+    ) {
+        for (var blockPos : getRandomSphericalBlockPositions(spawnPos, radius, points)) {
+            var above = level.getBlockState(blockPos.above(2));
+            var main = level.getBlockState(blockPos.above());
+            var below = level.getBlockState(blockPos);
+            if (above.isAir() && main.isAir() && !(below.isAir() || !below.getFluidState().isEmpty())) spawn.accept(blockPos);
+        }
     }
 
     private void spawnBabies() {

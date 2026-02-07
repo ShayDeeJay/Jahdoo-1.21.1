@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -59,11 +60,16 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
+import org.jahdoo.common.client.screens.AbilityUnlockScreen;
+import org.jahdoo.common.client.screens.RunScreen;
+import org.jahdoo.common.client.screens.StatScreen;
+import org.jahdoo.common.client.screens.codex.ItemCodexScreen;
+import org.jahdoo.common.client.tooltip_renderer.RuneTooltipRenderer;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.LootCrateData;
 import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.entities.ITamableEntity;
-import org.jahdoo.common.entities.SharedEntityBehaviours;
+import org.jahdoo.common.entities.EntityHelpers;
 import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
@@ -71,7 +77,6 @@ import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.UseAbilityC2SP;
@@ -92,38 +97,39 @@ import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
+import org.shaydee.shaydeeapi.Helpers;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.*;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
-import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static net.minecraft.client.Minecraft.getInstance;
-import static net.minecraft.sounds.SoundSource.PLAYERS;
+import static net.minecraft.sounds.SoundSource.*;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.block.altar.AltarBlockEntity.roomBounding;
+import static org.jahdoo.common.client.KeyBinding.*;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.getAllSlots;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
+import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
 import static org.jahdoo.trial_nexus.attachments.RunData.*;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.itemBehaviour;
 import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 import static org.jahdoo.trial_nexus.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 
 public class EventHelpers {
+    public static int toolTipTimer = 0;
 
     public static void saveDestinyBondItems(LivingEntity entity) {
         if(entity instanceof Player player) {
@@ -227,7 +233,8 @@ public class EventHelpers {
 
     public static void onDeathGreaterFrostEffect(LivingEntity entity) {
         if(entity.hasEffect(EffectReg.GREATER_FROST_EFFECT)){
-            getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
+            Helpers.getSoundWithPosition(entity.level(), entity.position(), SoundReg.BLOCK.get(), HOSTILE);
+
             getAllParticleTypes(ElementReg.frost(), 20, 1);
             sendParticles(
                   entity.level(),
@@ -296,7 +303,7 @@ public class EventHelpers {
     public static void removeShieldUse(PlayerInteractEvent.RightClickItem rightClickItem) {
         if(rightClickItem.getItemStack().getItem() instanceof ShieldItem && rightClickItem.getLevel() instanceof CustomLevel){
             rightClickItem.setCanceled(true);
-            rightClickItem.getEntity().displayClientMessage(Helpers.withStyleComponent("This item doesn't work here", ColourStore.OFF_WHITE), true);
+            rightClickItem.getEntity().displayClientMessage(JahdooHelpers.withStyleComponent("This item doesn't work here", org.shaydee.shaydeeapi.Colours.getOffWhite()), true);
         }
     }
 
@@ -310,7 +317,7 @@ public class EventHelpers {
             var shieldDurability = durabilityDamageCount(getTome);
             var blockPercentage = getTome.get(ComponentReg.SHIELD_BLOCK_CHANCE);
             if(blockPercentage == null) return;
-            var blockChance = Maths.percentageChance(blockPercentage);
+            var blockChance = org.shaydee.shaydeeapi.Maths.percentageChance(blockPercentage);
 
             if (blockChance && shieldDurability > 0) {
                 event.setBlocked(true);
@@ -319,7 +326,7 @@ public class EventHelpers {
                 if(event.getEntity().level() instanceof ServerLevel serverLevel){
                     hurtAndKeepItem(getTome, damage, serverLevel, entity);
                 }
-                getSoundWithPositionV(entity.level(), entity.position(), SoundReg.BLOCK.get(), 1, 1);
+                Helpers.getSoundWithPosition(entity.level(), entity.position(), SoundReg.BLOCK.get(), PLAYERS);
             }
         }
     }
@@ -336,7 +343,7 @@ public class EventHelpers {
                     event.setCanceled(true);
                     var holder = CasterData.entityHolderWithSelected(player);
                     if (holder != AbilityHolder.DEFAULT) {
-                        creatorEntity.inputItemHandler.getStackInSlot(0).set(ComponentReg.ABILITY_HOLDER, holder);
+                        creatorEntity.getInputItemHandler().getStackInSlot(0).set(ComponentReg.ABILITY_HOLDER, holder);
                     } else {
                         var message = "You don't have this ability";
                         var messageComponent = withStyleComponent(message, element.textColourA());
@@ -363,7 +370,7 @@ public class EventHelpers {
                                 var part = ParticleHandlers.getAllParticleTypes(element, 6, 2);
                                 ParticleHandlers.particleBurst(level, pos.getCenter().add(0,0.5,0), 1, part);
                             }
-                            getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
+                            Helpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), BLOCKS, 1F, 0.5F);
                             return true;
                         } else {
                             var message = "You don't have this ability";
@@ -419,7 +426,7 @@ public class EventHelpers {
 
         var shulkerBox = new ItemStack(Items.LIGHT_GRAY_SHULKER_BOX);
 
-        shulkerBox.set(DataComponents.CUSTOM_NAME, withStyleComponent("Starter Box", ColourStore.HEADER_COLOUR));
+        shulkerBox.set(DataComponents.CUSTOM_NAME, withStyleComponent("Starter Box", org.shaydee.shaydeeapi.Colours.getHeaderColour()));
         shulkerBox.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(freeItems));
         ItemHandlerHelper.giveItemToPlayer(player, shulkerBox);
     }
@@ -450,7 +457,7 @@ public class EventHelpers {
                 var chestRarity = difficulty.getId();
                 var type = difficulty.getSerializedName();
                 var rewards = getCompletionLoot(customLevel, position, type, chestRarity);
-                itemBehaviour(position, customLevel, Helpers.getRgb(), true, 10, chestRarity, Helpers.listRandom(rewards));
+                itemBehaviour(position, customLevel, JahdooHelpers.getRgb(), true, 10, chestRarity, JahdooHelpers.listRandom(rewards));
             }
         }
     }
@@ -459,7 +466,7 @@ public class EventHelpers {
         var attribute = entity.getAttribute(AttributeReg.RESILIENCE);
         if(attribute != null){
             var resilience = attribute.getValue();
-            var damageReduction = Maths.getPercentage(resilience, event.getNewDamage());
+            var damageReduction = org.shaydee.shaydeeapi.Maths.getPercentage(resilience, event.getNewDamage());
             var damageWithResilience = event.getNewDamage() - damageReduction;
             event.setNewDamage((float) damageWithResilience);
         }
@@ -470,7 +477,7 @@ public class EventHelpers {
             var origin = event.getOriginalDamage();
             var modifiedDamage = origin * 2;
             if(!entity.isAlive()){
-                getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
+                Helpers.getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, HOSTILE, 1F, 1F);
                 getAllParticleTypes(ElementReg.frost(), 20, 1);
                 sendParticles(
                     entity.level(),
@@ -515,7 +522,7 @@ public class EventHelpers {
             }
         }
 
-        if(Helpers.durabilityDamageCount(item) > 0){
+        if(JahdooHelpers.durabilityDamageCount(item) > 0){
             for (var modifier : item.getAttributeModifiers().modifiers()) {
                 event.addModifier(modifier.attribute(), modifier.modifier());
             }
@@ -524,7 +531,7 @@ public class EventHelpers {
 
     public static boolean removeArmorAttributes(ItemAttributeModifiers.Entry entry, ItemAttributeModifierEvent event){
         var item = event.getItemStack();
-        var durability = Helpers.durabilityDamageCount(item);
+        var durability = JahdooHelpers.durabilityDamageCount(item);
         if(item.has(DataComponents.DAMAGE) && item.getItem() instanceof JahdooItem){
             return durability == 0;
         }
@@ -541,7 +548,7 @@ public class EventHelpers {
 
         if(item.is(ModTags.Items.WAND_TAGS) && hand == 2) return;
 
-        var durability = Helpers.durabilityDamageCount(item);
+        var durability = JahdooHelpers.durabilityDamageCount(item);
         if(item.has(DataComponents.DAMAGE) && item.getItem() instanceof JahdooItem && durability > 0){
             for (ItemStack itemStack : slotAttributes.runeSlots()) {
                 var mods = itemStack.getAttributeModifiers().modifiers();
@@ -678,15 +685,15 @@ public class EventHelpers {
                 for (var livingEntity : getNearby) {
 
                     if(livingEntity instanceof ITamableEntity t && t.getOwner() != null){
-                        if(Helpers.canPathfindToTarget(entity, livingEntity)){
+                        if(JahdooHelpers.canPathfindToTarget(entity, livingEntity)){
                             entity.setTarget(livingEntity);
                         }
                     } else if (livingEntity instanceof Player) {
-                        if(Helpers.canPathfindToTarget(entity, livingEntity)){
+                        if(JahdooHelpers.canPathfindToTarget(entity, livingEntity)){
                             entity.setTarget(livingEntity);
                         }
                     } else if (entity instanceof ITamableEntity t && t.getOwner() != null) {
-                        if(SharedEntityBehaviours.canTarget(livingEntity, t.getOwner())){
+                        if(EntityHelpers.canTarget(livingEntity, t.getOwner())){
                             entity.setTarget(livingEntity);
                         }
                     }
@@ -716,8 +723,8 @@ public class EventHelpers {
 
                     if(warning1Minute){
                         player.connection.send(new ClientboundSetTitlesAnimationPacket(5, 30, 5));
-                        player.connection.send(new ClientboundSetTitleTextPacket(Helpers.withStyleComponent("WARNING", ColourStore.NEGATIVE_RED)));
-                        player.connection.send(new ClientboundSetSubtitleTextPacket(Helpers.withStyleComponent("60 seconds Remaining", ColourStore.OFF_WHITE)));
+                        player.connection.send(new ClientboundSetTitleTextPacket(JahdooHelpers.withStyleComponent("WARNING", org.shaydee.shaydeeapi.Colours.getNegativeRed())));
+                        player.connection.send(new ClientboundSetSubtitleTextPacket(JahdooHelpers.withStyleComponent("60 seconds Remaining", org.shaydee.shaydeeapi.Colours.getOffWhite())));
                         getSoundWithPositionV(player.level(), player.position(), SoundReg.END_TRIAL.get(), 0.5F, 1.8F);
                         getSoundWithPositionV(player.level(), player.position(), SoundReg.REJECT.get(), 0.5F, 1.8F);
                     }
@@ -763,8 +770,8 @@ public class EventHelpers {
 
         var casterData = player.getData(CASTER_DATA.get());
         var getAbility = casterData.abilitySlots.get(keyNum - 1);
-        var b = withStyleComponent(String.valueOf(keyNum), ColourStore.PERK_GREEN);
-        var a = withStyleComponentTrans("abilitySelector.jahdoo.non_assigned", ColourStore.SUB_HEADER_COLOUR, b);
+        var b = withStyleComponent(String.valueOf(keyNum), org.shaydee.shaydeeapi.Colours.getPerkGreen());
+        var a = withStyleComponentTrans("abilitySelector.jahdoo.non_assigned", org.shaydee.shaydeeapi.Colours.getSubHeaderColour(), b);
 
         if (!getAbility.isEmpty()) {
             casterData.setSelectedAbility(getAbility);
@@ -796,7 +803,7 @@ public class EventHelpers {
             } else {
                 player.displayClientMessage(Component.literal("No data to copy!"), true);
             }
-        };
+        }
 
         if(keyDownV && keyDownCtrl) {
             if(player.hasData(MODULAR_CHAOS_CUBE)){
@@ -806,7 +813,7 @@ public class EventHelpers {
             } else {
                 player.displayClientMessage(Component.literal("Nothing to paste!"), true);
             }
-        };
+        }
     }
 
     public static void questTracker(Level level, Player player) {
@@ -825,10 +832,10 @@ public class EventHelpers {
         var i = quest.questQuantity(serverPlayer);
 
         if (stat >= i && !runData.isCompletedQuest()) {
-            Helpers.sendClientSound(serverPlayer, SoundReg.QUEST_COMPLETE.get(), 1, 1);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.QUEST_COMPLETE.get(), 1, 1);
 
             for(int j = 0; j < 100; j++){
-                var color = Helpers.getRgb();
+                var color = JahdooHelpers.getRgb();
                 var particle = ParticleHandlers.getNonBakedParticles(color, color, 27, Random.nextInt(1, 3));
                 var x = player.getRandomX(0.5);
                 var y = player.getRandomY();
@@ -851,11 +858,136 @@ public class EventHelpers {
             TriggerEvents.triggerQuestCompleteEvent(serverPlayer, customLevel);
             newBlock.set(ComponentReg.LOOT_CRATE_DATA, value);
             Helpers.throwOrAddItem(serverPlayer, newBlock);
-            var exitKey = new ItemStack(ItemReg.LOOT_KEY);
-            exitKey.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(KeyItem.EXIT_KEY));
+
+            var exitKey = new ItemStack(ItemReg.EXIT_KEY);
             Helpers.throwOrAddItem(serverPlayer, exitKey);
             addExperienceToTotal(quest.questXp(serverPlayer), serverPlayer);
             runData.setCompletedQuest(true);
+        }
+    }
+
+    public static void mapCustomKeys(Minecraft instance, Player player){
+        checkKey(WAND_SLOT_1A, () -> selectAbilitySlot(1));
+        checkKey(WAND_SLOT_2A, () -> selectAbilitySlot(2));
+        checkKey(WAND_SLOT_3A, () -> selectAbilitySlot(3));
+        checkKey(WAND_SLOT_4A, () -> selectAbilitySlot(4));
+        checkKey(WAND_SLOT_5A, () -> selectAbilitySlot(5));
+        checkKey(WAND_SLOT_6A, () -> selectAbilitySlot(6));
+        checkKey(WAND_SLOT_7A, () -> selectAbilitySlot(7));
+        checkKey(WAND_SLOT_8A, () -> selectAbilitySlot(8));
+        checkKey(WAND_SLOT_9A, () -> selectAbilitySlot(9));
+        checkKey(WAND_SLOT_10A, () -> selectAbilitySlot(10));
+
+        checkKey(STAT_SCREEN, () -> instance.setScreen(new StatScreen()));
+        checkKey(ABILITY_SCREEN, () -> instance.setScreen(new AbilityUnlockScreen()));
+        checkKey(ABILITY_MODIFICATION_SCREEN, () -> instance.setScreen(getAugmentModificationScreenWand(player, null)));
+        checkKey(RUN_SCREEN, () -> instance.setScreen(new RunScreen()));
+    }
+
+    private static final Map<KeyMapping, Boolean> keyWasDown = new HashMap<>();
+
+    private static void checkKey(KeyMapping key, Runnable action) {
+        var isDown = key.isDown();
+        var wasDown = keyWasDown.getOrDefault(key, false);
+
+        if (isDown && !wasDown) action.run();
+        keyWasDown.put(key, isDown);
+    }
+
+    public static void renderRuneSockets(
+        ItemStack itemStack,
+        List<Either<FormattedText, TooltipComponent>> current
+    ){
+        var allSlots = getAllSlots(itemStack);
+        if(allSlots.isEmpty()) return;
+        var runeSockets = new RuneTooltipRenderer.RuneComponent(itemStack, allSlots);
+        current.add(current.size(), Either.right(runeSockets));
+    }
+
+    public static void renderOverEnchantedToolTip(
+        ItemStack itemStack,
+        Minecraft instance,
+        List<Either<FormattedText, TooltipComponent>> current
+    ){
+        var level = instance.level;
+
+        if(level != null){
+            var iterator = current.listIterator();
+            while (iterator.hasNext()) {
+                var tooltipElement = iterator.next();
+                var left = tooltipElement.left();
+                if (left.isEmpty()) continue;
+
+                var formattedText = left.get();
+                var rawString = formattedText.getString();
+                var components = itemStack.getComponents();
+                var storedEnchants = components.get(DataComponents.STORED_ENCHANTMENTS);
+                var appliedEnchants = components.get(DataComponents.ENCHANTMENTS);
+
+                if(storedEnchants != null){
+                    isFoundOverEnchanted(storedEnchants, formattedText, iterator, rawString, level);
+                } else if (appliedEnchants != null) {
+                    isFoundOverEnchanted(appliedEnchants, formattedText, iterator, rawString, level);
+                }
+            }
+        }
+    }
+
+    public static void specialisedJahdooItemTooltip(
+        Item item,
+        List<Either<FormattedText, TooltipComponent>> current
+    ){
+        if(item instanceof JahdooItem){
+            var iterator = current.iterator();
+            while (iterator.hasNext()) {
+                var tooltipElement = iterator.next();
+                var left = tooltipElement.left();
+                if (left.isPresent()) {
+                    var formattedText = left.get();
+                    var string = formattedText.toString();
+                    var neoforge = string.contains("neoforge");
+                    var whenOn = string.contains("item.modifiers");
+                    var enchantment = string.contains("enchantment");
+                    var mcComponent = string.contains("literal{ }[style={color=dark_green}");
+                    var modNamePre = string.contains("creative_tab.jahdoo_tab");
+                    var curio = string.contains("curios.modifiers");
+                    var empty = formattedText.getString().isEmpty();
+                    if (empty || neoforge || whenOn || enchantment || mcComponent || modNamePre || curio) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
+    }
+
+    public static void renderMoreInfoTooltip(
+        ItemStack item,
+        Minecraft instance,
+        List<Either<FormattedText, TooltipComponent>> current
+    ){
+        if(item.getItem() instanceof JahdooItem jahdooItem) {
+            var s = jahdooItem.descriptionId();
+            if(s != null && !Component.translatable(s).getString().equals(s)){
+
+                var hotkey = JahdooHelpers.withStyleComponentTrans("augmentHelper.jahdoo.shift", org.shaydee.shaydeeapi.Colours.getPerkGreen());
+                var holdToInfo = JahdooHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", org.shaydee.shaydeeapi.Colours.getHeaderColour(), hotkey);
+                var loading = "█".repeat(Math.min(toolTipTimer / 20, 5));
+
+                var literal = JahdooHelpers.withStyleComponent(loading,  JahdooHelpers.colourByPercent(100, toolTipTimer, true));
+                var eitherListIterator = current.listIterator(current.size());
+
+                eitherListIterator.add(Either.left(holdToInfo));
+                if(!loading.isEmpty()) eitherListIterator.add(Either.left(literal));
+                if(Helpers.isKeyDown(KEY_LCONTROL)) toolTipTimer++; else toolTipTimer = 0;
+
+                if(toolTipTimer > 120){
+                    instance.setScreen(new ItemCodexScreen(item, instance.screen));
+                    toolTipTimer = 0;
+                }
+            }
+        } else {
+            toolTipTimer = 0;
         }
     }
 
@@ -867,7 +999,7 @@ public class EventHelpers {
                 var name = enchantmentHolder.description().getString();
                 if (formattedText.toString().contains(name.toLowerCase())) {
                     iterator.remove();
-                    var recoloured = Helpers.withStyleComponent(rawString, getOverEnchantColour(level));
+                    var recoloured = JahdooHelpers.withStyleComponent(rawString, getOverEnchantColour(level));
                     iterator.add(Either.left(recoloured));
                 }
             }
@@ -875,7 +1007,7 @@ public class EventHelpers {
     }
 
     public static int getOverEnchantColour(Level level){
-        return Helpers.getColorTransition(ColourStore.NETHERITE_BOX, ColourStore.UNIQUE_B, (int) level.getGameTime(), 50);
+        return JahdooHelpers.getColorTransition(org.shaydee.shaydeeapi.Colours.getNetheriteBox(), org.shaydee.shaydeeapi.Colours.getUniqueB(), (int) level.getGameTime(), 50);
     }
 
     public static boolean isOverEnchanted(Holder<Enchantment> entry, int currentValue){
@@ -884,4 +1016,5 @@ public class EventHelpers {
 
         return currentValue > maxLevel;
     }
+
 }

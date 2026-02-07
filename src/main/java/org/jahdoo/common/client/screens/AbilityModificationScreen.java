@@ -13,11 +13,6 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.components.AbilityData;
@@ -25,23 +20,32 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.AbilityPointC2SP;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.Maths;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static java.lang.String.valueOf;
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextSingle;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
 import static org.jahdoo.common.registers.mod.ElementReg.*;
+import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextSingle;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class AbilityModificationScreen extends Screen {
 
@@ -179,7 +183,7 @@ public class AbilityModificationScreen extends Screen {
         var rebuild = Component.empty();
         if (component.getString().contains("|")) {
             for (Component component1 : component.toFlatList().subList(0, 2)) rebuild.append(component1);
-            rebuild.append(Helpers.withStyleComponent(component.toFlatList().getLast().getString(), -1129857));
+            rebuild.append(JahdooHelpers.withStyleComponent(component.toFlatList().getLast().getString(), -1129857));
             this.addRenderableOnly(textRenderable(width - 139, selectedY1, rebuild, this.getMinecraft()));
         } else {
             this.addRenderableOnly(textRenderable(width - 139, selectedY1, component, this.getMinecraft()));
@@ -218,10 +222,10 @@ public class AbilityModificationScreen extends Screen {
 
     private void onHover(Component component, int ySpacer, boolean active, double getHighest, int adjusted) {
         if(!active){
-            var original = getModifierContextSingle(extractName(component.getString()), valueOf(doubleFormattedDouble(getHighest)), 1);
-            var prefixTier = withStyleComponent("Next Tier: ", HEADER_COLOUR);
+            var original = getModifierContextSingle(extractName(component.getString()), valueOf(Maths.doubleFormattedDouble(getHighest)), 1);
+            var prefixTier = withStyleComponent("Next Tier: ", Colours.getHeaderColour());
             var upgradeTier = prefixTier.copy().append(withStyleComponent("↑ " + original.getString(), ABSORPTION_YELLOW));
-            var prefixCost = withStyleComponent("Skill Points: ", HEADER_COLOUR);
+            var prefixCost = withStyleComponent("Skill Points: ", Colours.getHeaderColour());
             var upgradeCost = prefixCost.copy().append(withStyleComponent(adjusted + "", PERK_GREEN));
 
             compValues.add(upgradeTier);
@@ -248,11 +252,11 @@ public class AbilityModificationScreen extends Screen {
         var properties = new LinkedHashMap<>(data.getHolder(abilityName).data().abilityProperties());
         var mod = properties.get(name);
         var higherBetter = mod.isHigherBetter();
-        var actualValue = doubleFormattedDouble(mod.actualValue());
-        var step = doubleFormattedDouble(mod.step());
-        var highestValue = doubleFormattedDouble(mod.highestValue());
-        var lowestValue = doubleFormattedDouble(mod.lowestValue());
-        var baseCost = doubleFormattedDouble(mod.baseCost());
+        var actualValue = Maths.doubleFormattedDouble(mod.actualValue());
+        var step = Maths.doubleFormattedDouble(mod.step());
+        var highestValue = Maths.doubleFormattedDouble(mod.highestValue());
+        var lowestValue = Maths.doubleFormattedDouble(mod.lowestValue());
+        var baseCost = Maths.doubleFormattedDouble(mod.baseCost());
         var correctAdjustment = higherBetter ? actualValue + step : actualValue - step;
         var valueWithinRange = higherBetter && actualValue < highestValue ? correctAdjustment : !higherBetter && actualValue > lowestValue ? correctAdjustment : actualValue;
         var abilityModifier = new AbilityData.AbilityModifiers(valueWithinRange, highestValue, lowestValue, step, valueWithinRange, baseCost, higherBetter);
@@ -281,7 +285,7 @@ public class AbilityModificationScreen extends Screen {
         this.holder = updateAugmentConfig(name, abilityKey, player, cost);
 
         if(correctAdjustment && level != null){
-            Helpers.getLocalSound(level, pos, APPLY_EFFECT_TRIAL_OMEN, 1, 2);
+            JahdooHelpers.getLocalSound(level, pos, APPLY_EFFECT_TRIAL_OMEN, 1, 2);
         }
 
         this.rebuildWidgets();

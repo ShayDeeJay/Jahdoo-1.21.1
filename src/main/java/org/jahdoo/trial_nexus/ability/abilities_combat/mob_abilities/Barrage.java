@@ -7,13 +7,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.abilities_combat.permafrost.PermafrostAbility;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getInnerRingOfRadius;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
@@ -21,7 +21,7 @@ import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public class Barrage extends DefaultEntityBehaviour {
 
-    public final static ResourceLocation abilityId = Helpers.res("barrage_property");
+    public final static ResourceLocation abilityId = JahdooHelpers.res("barrage_property");
     private boolean interacted;
     private int trackCounter;
     private double effectDuration;

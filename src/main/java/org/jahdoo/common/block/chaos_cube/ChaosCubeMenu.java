@@ -4,10 +4,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.Block;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.AbstractInternalContainer;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.MenuReg;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 public class ChaosCubeMenu extends AbstractInternalContainer {
 

@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 import static net.minecraft.world.entity.projectile.ProjectileUtil.getWeaponHoldingHand;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class CustomSkeleton extends Skeleton implements ITamableEntity {
 

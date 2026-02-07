@@ -9,11 +9,11 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class BlockBreaker extends AbstractUtilityProjectile {
 
-    private static final ResourceLocation abilityId = Helpers.res("block_breaker_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("block_breaker_property");
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {

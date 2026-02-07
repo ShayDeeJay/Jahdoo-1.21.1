@@ -15,28 +15,33 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.common.client.StaffArmPose.STAFF_ARM_POSE;
-import static org.jahdoo.common.registers.ItemReg.*;
+import static org.jahdoo.common.registers.ItemReg.ITEMS;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class StaffArmPose {
 
     @SubscribeEvent
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerItem(new IClientItemExtensions() {
-            @Nullable
-            @Override
-            public HumanoidModel.ArmPose getArmPose(
-                @NotNull LivingEntity entityLiving,
-                @NotNull InteractionHand hand,
-                @NotNull ItemStack itemStack
-            ) {
-                return STAFF_ARM_POSE.getValue();
-            }
-        }, ITEMS.getEntries()
-            .stream()
-            .filter(item -> CastHelper.validCasterType(item.get()))
-            .map(holder -> (Item) holder.get())
-            .toArray(Item[]::new));
+        event.registerItem(
+            new IClientItemExtensions() {
+
+                @Nullable
+                @Override
+                public HumanoidModel.ArmPose getArmPose(
+                    @NotNull LivingEntity entityLiving,
+                    @NotNull InteractionHand hand,
+                    @NotNull ItemStack itemStack
+                ) {
+                    return STAFF_ARM_POSE.getValue();
+                }
+
+            },
+            ITEMS.getEntries()
+                .stream()
+                .filter(item -> CastHelper.validCasterType(item.get()))
+                .map(holder -> (Item) holder.get())
+                .toArray(Item[]::new)
+        );
     }
 
 }

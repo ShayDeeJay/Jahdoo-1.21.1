@@ -9,7 +9,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,7 +27,7 @@ public abstract class ItemRenderMixin {
         at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V")
     )
     public void overlayStuff(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, BakedModel p_model, CallbackInfo ci){
-        Helpers.itemOverlay(itemStack, displayContext,poseStack,
+        JahdooHelpers.itemOverlay(itemStack, displayContext,poseStack,
             (itemStack1) -> this.renderStatic(itemStack1, displayContext, combinedLight, combinedOverlay, poseStack, bufferSource, Minecraft.getInstance().level, 0)
         );
     }

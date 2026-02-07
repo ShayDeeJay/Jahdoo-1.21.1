@@ -28,7 +28,7 @@ import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -65,7 +65,7 @@ public class DivinityPaxel extends DiggerItem implements JahdooItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return Helpers.withStyleComponent(super.getName(stack).getString(), ColourStore.EXPERIENCE_GREEN);
+        return JahdooHelpers.withStyleComponent(super.getName(stack).getString(), ColourStore.EXPERIENCE_GREEN);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class DivinityPaxel extends DiggerItem implements JahdooItem {
                             .toList();
 
                         if(!x.isEmpty()){
-                            var block = Helpers.listRandom(x);
+                            var block = JahdooHelpers.listRandom(x);
                             serverLevel.setBlockAndUpdate(blockPos, block.defaultBlockState());
                             serverLevel.updateNeighborsAt(blockPos, block);
                         }

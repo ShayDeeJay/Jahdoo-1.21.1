@@ -14,7 +14,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.EffectReg.VITALITY_EFFECT;
 import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_VITALITY;

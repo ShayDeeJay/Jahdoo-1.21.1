@@ -6,11 +6,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 
 public class MoveClientEntityS2CP implements CustomPacketPayload {
-    public static final Type<MoveClientEntityS2CP> TYPE = new Type<>(Helpers.res("move_client_entity"));
+    public static final Type<MoveClientEntityS2CP> TYPE = new Type<>(JahdooHelpers.res("move_client_entity"));
     public static final StreamCodec<RegistryFriendlyByteBuf, MoveClientEntityS2CP> STREAM_CODEC = CustomPacketPayload.codec(MoveClientEntityS2CP::toBytes, MoveClientEntityS2CP::new);
 
     private final double x;

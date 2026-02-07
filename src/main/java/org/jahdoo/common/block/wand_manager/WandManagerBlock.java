@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -33,11 +34,11 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class WandManagerBlock extends BaseEntityBlock {
 
@@ -164,10 +165,10 @@ public class WandManagerBlock extends BaseEntityBlock {
         double radius
     ) {
         if (CastHelper.validCasterType(hand.getItem()) || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
-            if(!hand.isEmpty()) getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
-            swapItemsWithHand(wandManagerTable.inputItemHandler, 0, pPlayer, pHand);
+            if(!hand.isEmpty()) Helpers.getSoundWithPosition(pLevel, pPos, soundEvent, SoundSource.BLOCKS, 1, 1.2f);
+            swapItemsWithHand(wandManagerTable.getInputItemHandler(), 0, pPlayer, pHand);
 
-            var stackInSlot = wandManagerTable.inputItemHandler.getStackInSlot(0);
+            var stackInSlot = wandManagerTable.getInputItemHandler().getStackInSlot(0);
             var type = fromWand(stackInSlot.getItem());
 
             wandManagerTable.privateTicks = 0;
@@ -210,11 +211,11 @@ public class WandManagerBlock extends BaseEntityBlock {
             if (blockEntity instanceof WandManagerEntity wandManagerTable) {
                 var inputInventory = new SimpleContainer(wandManagerTable.setInputSlots());
                 var outputInventory = new SimpleContainer(wandManagerTable.setOutputSlots());
-                var outHandler = wandManagerTable.outputItemHandler;
+                var outHandler = wandManagerTable.getOutputItemHandler();
 
                 for (int i = 0; i < 4; i++) {
                     if (i < inputInventory.getContainerSize()) {
-                        inputInventory.setItem(i, wandManagerTable.inputItemHandler.getStackInSlot(i));
+                        inputInventory.setItem(i, wandManagerTable.getInputItemHandler().getStackInSlot(i));
                     }
                 }
 

@@ -13,8 +13,8 @@ import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 import static net.minecraft.client.renderer.blockentity.BeaconRenderer.renderBeaconBeam;
 import static org.jahdoo.trial_nexus.utils.ColourStore.PERK_GREEN;
-import static org.jahdoo.trial_nexus.utils.Helpers.getColourLight;
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getColourLight;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public class AltarRenderer extends GeoBlockRenderer<AltarBlockEntity>{
 

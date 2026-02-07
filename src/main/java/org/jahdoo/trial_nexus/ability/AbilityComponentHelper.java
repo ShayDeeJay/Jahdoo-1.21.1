@@ -16,9 +16,9 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.Colours;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,8 +30,7 @@ import static org.jahdoo.common.registers.mod.ElementReg.UTILITY;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.ability.AbilityRating.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class AbilityComponentHelper {
 
@@ -80,8 +79,8 @@ public class AbilityComponentHelper {
     public static boolean shiftForDetails(List<Component> toolTips, boolean spacer){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
             if(spacer) toolTips.add(Component.literal(" "));
-            var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey", OFF_WHITE);
-            var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", HEADER_COLOUR, hotkey);
+            var hotkey = JahdooHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey", OFF_WHITE);
+            var holdToDiscover = JahdooHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", Colours.getHeaderColour(), hotkey);
             toolTips.add(holdToDiscover);
             return true;
         }
@@ -93,19 +92,19 @@ public class AbilityComponentHelper {
 
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
             if(showSpacer) comps.add(Component.literal(" "));
-            var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey", OFF_WHITE);
-            var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",HEADER_COLOUR, hotkey);
+            var hotkey = JahdooHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey", OFF_WHITE);
+            var holdToDiscover = JahdooHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", Colours.getHeaderColour(), hotkey);
             comps.add(holdToDiscover);
 
             if(showSpacer){
                 if(!canUpgrade){
                     var component = withStyleComponent("[Click] ", OFF_WHITE);
-                    var sibling = withStyleComponent("To Upgrade", HEADER_COLOUR);
+                    var sibling = withStyleComponent("To Upgrade", Colours.getHeaderColour());
                     comps.add(component.copy().append(sibling));
                 }
 
                 var component = withStyleComponent("[Shift + Click] ", OFF_WHITE);
-                var sibling = withStyleComponent("To Add", HEADER_COLOUR);
+                var sibling = withStyleComponent("To Add", Colours.getHeaderColour());
                 comps.add(component.copy().append(sibling));
             }
 
@@ -185,7 +184,7 @@ public class AbilityComponentHelper {
         if(abilityModifier == null) return Component.empty();
 
         // CHECK THIS IF ISSUE
-        var format = Maths.roundNonWholeString(Maths.doubleFormattedDouble(abilityModifier.setValue()));
+        var format = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(abilityModifier.setValue()));
 
         if (itemStack1 != null) {
             int comparisonResult;
@@ -227,11 +226,11 @@ public class AbilityComponentHelper {
         var toggle = List.of("Toggle");
 
         if (time.stream().anyMatch(keys::contains)) {
-            displayValue = isRange ? rangeString(ticksToTime(min, true), ticksToTime(max, true)) : ticksToTime(current, true);
+            displayValue = isRange ? rangeString(org.shaydee.shaydeeapi.Maths.ticksToTime(min, true), org.shaydee.shaydeeapi.Maths.ticksToTime(max, true)) : org.shaydee.shaydeeapi.Maths.ticksToTime(current, true);
         }  else if (leech.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(min + "%", max + "%") : current + "%";
         } else if (probability.stream().anyMatch(keys::contains)) {
-            displayValue = isRange ? rangeString(toPercent(Double.parseDouble(min)), toPercent(Double.parseDouble(max))) + "%" : toPercent(Double.parseDouble(current)) + "%";
+            displayValue = isRange ? rangeString(org.shaydee.shaydeeapi.Maths.toPercent(Double.parseDouble(min)), org.shaydee.shaydeeapi.Maths.toPercent(Double.parseDouble(max))) + "%" : org.shaydee.shaydeeapi.Maths.toPercent(Double.parseDouble(current)) + "%";
         } else if (distance.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(min, max) + " Blocks" : current + " Blocks";
         } else if (multiplier.stream().anyMatch(keys::contains)) {
@@ -250,7 +249,7 @@ public class AbilityComponentHelper {
         var colour = isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat;
 
         return Component
-          .literal(roundNonWholeString(displayValue))
+          .literal(org.shaydee.shaydeeapi.Maths.roundNonWholeString(displayValue))
           .withStyle(style -> style.withColor(colour));
     }
 
@@ -322,7 +321,7 @@ public class AbilityComponentHelper {
 
         if (!filteredSuffix.isEmpty()) {
             toolTips.add(Component.literal(" "));
-            toolTips.add(Helpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
+            toolTips.add(JahdooHelpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
             filteredSuffix.forEach(keys -> toolTipBase(toolTips, ability, holder, null, keys, 0, hide));
         }
     }

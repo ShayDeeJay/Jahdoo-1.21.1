@@ -1,5 +1,6 @@
 package org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation;
 
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -7,26 +8,26 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.attachments.AbstractHoldUseAttachment;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.attachments.AbstractHoldUseAttachment;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility.CAST_DELAY;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility.MAX_ABSORPTION;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.addTransientAttribute;
 import static org.jahdoo.common.items.caster_item.CastHelper.validManaAndCooldown;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.VITAL_REJUVENATION;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility.CAST_DELAY;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility.MAX_ABSORPTION;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.addTransientAttribute;
 
 public class VitalRejuvenation extends AbstractHoldUseAttachment {
 
@@ -40,13 +41,13 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     }
 
     private void unSuccessfulCast(Player player) {
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), 0.8f, 1.2f);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), SoundSource.PLAYERS, 0.8f, 1.2f);
         PositionFinders.getOuterRingOfRadius(player.position(), 0.3, 30, vec3 -> setCastingAnimation(vec3, player));
     }
 
     public static void successfulCastAnimation(LivingEntity player) {
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), 1f,1.2f);
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.IMPACT.get(), 1f,0.8f);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), SoundSource.PLAYERS, 1f,1.2f);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.IMPACT.get(), SoundSource.PLAYERS, 1f,0.8f);
         setRejuvenationSuccessEffect(player);
     }
 

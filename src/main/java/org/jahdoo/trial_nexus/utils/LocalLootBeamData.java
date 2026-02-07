@@ -28,7 +28,7 @@ public class LocalLootBeamData {
         var beamRadius = 0.2F;
         var shadowRadius = 0f;
         var renderDistance = 250.0;
-        return new LootBeamComponent(colour, colour, beamHeight, 0.8F,  0.2F,  false, beamRadius, 0.4F, shadowRadius, true, renderDistance,  false, 20, 0.1, shadowRadius, false);
+        return new LootBeamComponent(colour, colour, beamHeight, 0.8F,  1F,  false, beamRadius, 0.4F, shadowRadius, false, renderDistance,  false, 20, 0.1, shadowRadius, false);
     }
 
     public static LootBeamComponent rarityLootBeam(JahdooRarity rarity){
@@ -36,7 +36,7 @@ public class LocalLootBeamData {
         var beamRadius = 0.35F + ((float) rarity.getId() / 10);
         var shadowRadius = 0.4f + ((float) rarity.getId() / 10);
         var renderDistance = 48.0 + (rarity.getId() * 20);
-        return new LootBeamComponent(rarity.getColour(), rarity.getColour(),beamHeight, 0.8F,  0.2F,  true, beamRadius, 0.4F, shadowRadius, true, renderDistance, false, 20, 0.1, shadowRadius, false);
+        return new LootBeamComponent(rarity.getColour(), rarity.getColour(),beamHeight, 0.8F,  1F,  true, beamRadius, 0.4F, shadowRadius, true, renderDistance, false, 20, 0.1, shadowRadius, false);
     }
 
     public static LootBeamComponent lootBeamWithColour(int colour){
@@ -44,7 +44,7 @@ public class LocalLootBeamData {
         var beamRadius = 0.45F;
         var shadowRadius = 0.3f;
         var renderDistance = 64.0;
-        return new LootBeamComponent(colour, colour, beamHeight, 0.8F,  0.2F,  true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  false, 20, 0.1, shadowRadius, false);
+        return new LootBeamComponent(colour, colour, beamHeight, 0.8F,  1F,  true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  false, 20, 0.1, shadowRadius, false);
     }
 
     public static LootBeamComponent uniqueLootBeam(JahdooRarity rarity){
@@ -52,7 +52,7 @@ public class LocalLootBeamData {
         var beamRadius = 0.35F + ((float) rarity.getId() / 10);
         var shadowRadius = 0.4f + ((float) rarity.getId() / 10);
         var renderDistance = 250;
-        return new LootBeamComponent(UNIQUE_B, UNIQUE_A, beamHeight, 0.8F,  0.2F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
+        return new LootBeamComponent(UNIQUE_B, UNIQUE_A, beamHeight, 0.8F,  1F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
     }
 
     public static void attachCoinSackLootBeam(ItemStack stack){
@@ -60,7 +60,7 @@ public class LocalLootBeamData {
         var beamRadius = 0.35F;
         var shadowRadius = 0.4f;
         var renderDistance = 48;
-        var lootBeamComponent = new LootBeamComponent(GOLD_COIN, SILVER_COIN, beamHeight, 0.8F, 0.2F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance, true, 5, 0.25, 1.5, true);
+        var lootBeamComponent = new LootBeamComponent(GOLD_COIN, SILVER_COIN, beamHeight, 0.8F, 1F, true, beamRadius, 0.4F, shadowRadius, false, renderDistance, true, 5, 0.25, 1.5, true);
         stack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), lootBeamComponent);
     }
 

@@ -6,10 +6,9 @@ import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 
 import static net.minecraft.world.effect.MobEffects.DAMAGE_BOOST;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_ATTACK_DAMAGE;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.trial_nexus.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class MobDamage extends AbstractLevelBoon {
 
@@ -42,7 +41,7 @@ public class MobDamage extends AbstractLevelBoon {
     @Override
     public double value(JahdooRarity rarity) {
         var getRarity = rarity.getAttributes();
-        return doubleFormattedDouble(getRarity.getRandomMaxHealth());
+        return org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(getRarity.getRandomMaxHealth());
     }
 
     @Override

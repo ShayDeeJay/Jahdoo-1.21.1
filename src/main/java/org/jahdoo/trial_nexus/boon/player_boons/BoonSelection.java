@@ -12,8 +12,7 @@ import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +23,8 @@ import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.getRarity;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class BoonSelection {
 
@@ -50,7 +48,7 @@ public class BoonSelection {
         var list = List.of(
             withStyleComponent(name, OFF_WHITE),
             Component.empty(),
-            durationComp.copy().append(withStyleComponent(ticksToTime(String.valueOf(duration)), colour)),
+            durationComp.copy().append(withStyleComponent(org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(duration)), colour)),
             amplifierComp.copy().append(withStyleComponent(String.valueOf(value), colour))
         );
 
@@ -72,7 +70,7 @@ public class BoonSelection {
             boonCollection.add(effectBoon(MobEffects.ABSORPTION, level));
         }
 
-        return Helpers.listRandom(boonCollection);
+        return JahdooHelpers.listRandom(boonCollection);
     }
 
     public static Boon getNegativeBoon(){
@@ -82,6 +80,7 @@ public class BoonSelection {
         sharedBoons(boonCollection, true);
         if(Random.nextInt(10) == 0){
             boonCollection.add(effectBoon(MobEffects.MOVEMENT_SLOWDOWN, level));
+
             boonCollection.add(effectBoon(MobEffects.POISON, level));
             boonCollection.add(effectBoon(MobEffects.WITHER, level));
             boonCollection.add(effectBoon(MobEffects.HUNGER, level));
@@ -89,7 +88,7 @@ public class BoonSelection {
 
         for (int i = 0; i < 4; i++) boonCollection.add(Boon.EMPTY);
 
-        return Helpers.listRandom(boonCollection);
+        return JahdooHelpers.listRandom(boonCollection);
     }
 
     private static void sharedBoons(ArrayList<Boon> boonCollection, boolean isNegative) {
@@ -113,10 +112,10 @@ public class BoonSelection {
         var id = attribute.value().getDescriptionId();
         var split = translatable(id).getString();
         var string = stream(split.split(" ")).toList();
-        var getValue = roundNonWholeString(doubleFormattedDouble(value));
+        var getValue = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(value));
         var formattedString = (value < 0 ? "" : "+") + getValue + (isPercentage ? "% " : " ");
         var runeFromAttribute = RuneReg.getRuneFromAttribute(attribute);
-        var colourBy = runeFromAttribute == null ? ColourStore.COOLDOWN_GREEN : runeFromAttribute.runeColour();
+        var colourBy = runeFromAttribute == null ? org.shaydee.shaydeeapi.Colours.getCooldownGreen() : runeFromAttribute.runeColour();
         var componentList = new ArrayList<Component>();
 
         componentList.add(withStyleComponent(formattedString, value < 0 ? NEGATIVE_RED : UNIQUE_A));

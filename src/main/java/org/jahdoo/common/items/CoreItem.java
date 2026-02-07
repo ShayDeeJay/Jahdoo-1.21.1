@@ -8,17 +8,24 @@ import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.Helpers.getColorTransition;
+import static org.jahdoo.common.registers.ComponentReg.CORE_DATA;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getColorTransition;
 
 public class CoreItem extends Item implements JahdooItem{
 
-    public CoreItem(Properties properties) {
-        super(properties);
+    public CoreItem(int value) {
+        super(addCompData(value));
+    }
+
+    public static Item.Properties addCompData(int value){
+        var property = new Item.Properties();
+        if(value > 0) property.component(CORE_DATA, new CoreData(value, 0));
+        return property;
     }
 
     @Override
@@ -32,7 +39,7 @@ public class CoreItem extends Item implements JahdooItem{
         var colour = getColorTransition(color, color1, (int) tick, 50);
         var string = super.getName(stack).getString();
         var filledColour = isFilled ? colour : color(182, 156, 180);
-        return Helpers.withStyleComponent(string, filledColour);
+        return JahdooHelpers.withStyleComponent(string, filledColour);
     }
 
     @Override
@@ -40,8 +47,13 @@ public class CoreItem extends Item implements JahdooItem{
         if(!CoreData.isFull(stack) && stack.has(ComponentReg.CORE_DATA)){
             var current = CoreData.getFilled(stack);
             var max = CoreData.getRequired(stack);
-            tooltipComponents.add(Helpers.withStyleComponent(current + "/" + max, ColourStore.PERK_GREEN));
+            tooltipComponents.add(JahdooHelpers.withStyleComponent(current + "/" + max, ColourStore.PERK_GREEN));
         }
+    }
+
+    @Override
+    public String descriptionId() {
+        return "description.item.jahdoo.cores";
     }
 
 }

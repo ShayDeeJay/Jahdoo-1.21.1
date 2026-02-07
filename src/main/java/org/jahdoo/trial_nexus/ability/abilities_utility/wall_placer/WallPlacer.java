@@ -4,6 +4,7 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -11,20 +12,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.getStoredBlock;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.OFFSET;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SIZE;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.deprecated.block_placer.BlockPlacer.removeItemsFromInv;
-import static org.jahdoo.common.items.caster_item.CasterItemHelper.getStoredBlock;
 
 public class WallPlacer extends AbstractUtilityProjectile {
 
-    ResourceLocation abilityId = Helpers.res("wall_placer_property");
+    ResourceLocation abilityId = JahdooHelpers.res("wall_placer_property");
     private Level level;
     private double breakerSize;
     private int size;
@@ -76,7 +78,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
         var replaceBlock = Blocks.AIR;
 
         if(player != null){
-            var mainHandItem = Helpers.getUsedItem(player);
+            var mainHandItem = JahdooHelpers.getUsedItem(player);
             targetBlock = new ItemStack(getStoredBlock(level, mainHandItem));
             replaceBlock = getStoredBlock(level, mainHandItem);
         } else {
@@ -105,7 +107,9 @@ public class WallPlacer extends AbstractUtilityProjectile {
                 }
             }
         }
-        Helpers.getSoundWithPosition(level, pos, replaceBlock.getSoundType(replaceBlock.defaultBlockState(), level, pos, null).getPlaceSound(), 1, 1);
+
+        var placeSound = replaceBlock.getSoundType(replaceBlock.defaultBlockState(), level, pos, null).getPlaceSound();
+        Helpers.getSoundWithPosition(level, pos, placeSound, SoundSource.NEUTRAL, 1, 1);
         generic.discard();
     }
 

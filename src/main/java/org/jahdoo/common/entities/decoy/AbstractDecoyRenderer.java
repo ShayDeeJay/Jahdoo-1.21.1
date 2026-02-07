@@ -3,13 +3,13 @@ package org.jahdoo.common.entities.decoy;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.minecraft.client.renderer.entity.EntityRendererProvider.*;
 
 public class AbstractDecoyRenderer <T extends Decoy, M extends DecoyModel<T>> extends HumanoidMobRenderer<T, M> {
 
-    public static final ResourceLocation DECOY = Helpers.res("textures/entity/eternal_wizard/decoy.png");
+    public static final ResourceLocation DECOY = JahdooHelpers.res("textures/entity/eternal_wizard/decoy.png");
 
     protected AbstractDecoyRenderer(Context context, M model, M innerModel, M outerModel) {
         super(context, model, 0.5F);

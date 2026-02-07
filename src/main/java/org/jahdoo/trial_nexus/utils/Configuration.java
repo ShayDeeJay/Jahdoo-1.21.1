@@ -24,10 +24,12 @@ public class Configuration {
     public static ModConfigSpec.BooleanValue LOCK_ON_TARGET;
     public static ModConfigSpec.DoubleValue HOTBAR_SCALED;
     public static ModConfigSpec.BooleanValue AUTO_HIDE_HOTBAR;
-    
+    public static ModConfigSpec.IntValue UI_COLOUR;
+
     static {
         var CLIENT_BUILDER = new ModConfigSpec.Builder();
 
+        UI_COLOUR = CLIENT_BUILDER.comment("Custom UI colour").defineInRange("colour", 0, 0, 5);
         CUSTOM_UI = CLIENT_BUILDER.comment("Use custom mod UI or Minecraft's UI").define("customUI", false);
         CUSTOM_UI_HEIGHT = CLIENT_BUILDER.comment("Adjust custom UI height").defineInRange("height", -10.0, -1000, 1000);
         CUSTOM_UI_SCALE = CLIENT_BUILDER.comment("Adjust custom UI scale").defineInRange("scale", 1.0, 0, 5);

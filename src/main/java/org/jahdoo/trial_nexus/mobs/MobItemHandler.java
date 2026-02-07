@@ -39,7 +39,7 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance;
 import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public class MobItemHandler {
 

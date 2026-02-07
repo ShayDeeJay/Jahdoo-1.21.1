@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -24,7 +25,9 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.Maths;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -43,8 +46,8 @@ import static org.jahdoo.common.entities.EntityAnimations.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
-import static org.jahdoo.trial_nexus.mobs.MobManager.addBaseAttribute;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.addBaseAttribute;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
@@ -138,8 +141,8 @@ public class ExplosiveBarrel extends LivingEntity implements GeoEntity {
 
     @Override
     public void kill() {
-        Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.REJECT.get(), 1, 1);
-        Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.ORB_CREATE.get(), 1, 2);
+        Helpers.getSoundWithPosition(level(), this.position(), SoundReg.REJECT.get(), SoundSource.NEUTRAL);
+        Helpers.getSoundWithPosition(level(), this.position(), SoundReg.ORB_CREATE.get(), SoundSource.NEUTRAL, 1F, 2F);
         this.remove(RemovalReason.KILLED);
     }
 
@@ -215,29 +218,27 @@ public class ExplosiveBarrel extends LivingEntity implements GeoEntity {
         return barrelElement;
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.HOSTILE, volume, pitch);
+    }
+
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (getCurrentState() < 2) {
-            Helpers.getSoundWithPositionV(level(), this.position(), SoundEvents.AXE_STRIP, 1, Random.nextFloat(0.8F, Math.max(0.85F, getDamageCounter() / 10)));
-            Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.BLOCK.get(), 0.15F, Random.nextFloat(1.2F, 1.6F));
+            sharedSound(SoundEvents.AXE_STRIP, 1F, Random.nextFloat(0.8F, Math.max(0.85F, getDamageCounter() / 10)));
+            sharedSound(SoundReg.BLOCK.get(), 0.15F, Random.nextFloat(1.2F, 1.6F));
             setCurrentState(1);
             setDamageCounter(getDamageCounter() + amount);
 
             if (getDamageCounter() >= getDamageRequired()) {
                 setDamageCounter(0);
-                Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.IMPACT.get(), 1F, 0.6F);
-                Helpers.getSoundWithPositionV(level(), this.position(), SoundEvents.GENERIC_EXPLODE.value(), 2F, 0.6F);
+                sharedSound(SoundReg.IMPACT.get(), 1F, 0.6F);
+                sharedSound(SoundEvents.GENERIC_EXPLODE.value(), 2F, 0.6F);
+
                 setCurrentState(2);
                 if (getCurrentState() == 2) {
                     if (level() instanceof ServerLevel) {
-                        particleBurst(
-                            level(), this.position().add(0,0.2,0), 8,
-                            genericParticle(SOFT_PARTICLE, this.getElementType(), 5, 1.4f),
-                            0, 1.5, 0, 0.1f
-                        );
-                        getOuterRingOfRadiusRandom(this.position(), 1.5, 50, this::setParticleNova);
-
-                        this.novaDamageBehaviour();
+                        novaExplosion(this, getElementType(), 10, 100, 0, 3, 30, this.position());
                         this.discard();
                     };
                 }
@@ -246,33 +247,46 @@ public class ExplosiveBarrel extends LivingEntity implements GeoEntity {
         return false;
     }
 
-    private void setParticleNova(Vec3 worldPosition){
-        var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 0.5F);
-        var directions = positionScrambler.subtract(this.position()).normalize();
-        var lifetime = 4;
+    public static void novaExplosion(LivingEntity livingEntity,  AbstractElement element, double damage, double effectDuration, double effectStrength, double radius, double effectChance, Vec3 pos) {
+        particleBurst(
+            livingEntity.level(), pos.add(0,0.2,0), 8,
+            genericParticle(SOFT_PARTICLE, element, 5, 1.4f),
+            0, 1.5, 0, 0.1f
+        );
+        getOuterRingOfRadiusRandom(pos, radius /2, 50, (a) -> setParticleNova(livingEntity, element, a));
+        novaDamageBehaviour(livingEntity, element, damage, effectDuration, effectStrength, radius, effectChance);
+    }
+
+    public static void setParticleNova(LivingEntity livingEntity, AbstractElement element, Vec3 pos){
+        var positionScrambler = pos.offsetRandom(RandomSource.create(), 0.5F);
+        var directions = positionScrambler.subtract(livingEntity.position()).normalize();
+        var lifetime = 6;
         var size = 5;
-        var bakedParticle = bakedParticle(this.getElementType().id(), lifetime, size, false);
-        var col1 = this.getElementType().partColourA();
-        var col2 = this.getElementType().partColourFade();
+        var bakedParticle = bakedParticle(element.id(), lifetime, size, false);
+        var col1 = element.partColourA();
+        var col2 = element.partColourFade();
         var genericParticle = genericParticle(GENERIC_PARTICLE, lifetime, size, col1, col2, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
 
         ParticleHandlers.sendParticles(
-            this.level(), getRandomParticle.get(Helpers.Random.nextInt(2)), worldPosition.add(0, 0.6, 0), 0, directions.x, directions.y, directions.z, 0.5
+            livingEntity.level(), getRandomParticle.get(JahdooHelpers.Random.nextInt(2)), pos.add(0, 0.6, 0), 0, directions.x, directions.y, directions.z, 0.5
         );
     }
 
-    private void novaDamageBehaviour(){
-        this.level().getNearbyEntities(
+    private static void novaDamageBehaviour(LivingEntity livingEntity, AbstractElement element, double damage, double effectDuration, double effectStrength, double radius, double effectChance){
+        livingEntity.level().getNearbyEntities(
             LivingEntity.class,
             TargetingConditions.DEFAULT,
-            this,
-            this.getBoundingBox().inflate(3)
+            livingEntity,
+            livingEntity.getBoundingBox().inflate(radius, 1, radius)
         ).forEach(
-            livingEntity -> {
-                livingEntity.addEffect(new JahdooMobEffect(this.getElementType().effect(), 100, 0));
-                DamageUtils.damageWithJahdoo(livingEntity, this, 10, getElementType().damageTypeResourceKey());
+            lEntity -> {
+                if(Maths.percentageChance(effectChance) && lEntity != livingEntity){
+                    lEntity.addEffect(new JahdooMobEffect(element.effect(), (int) effectDuration, (int) effectStrength));
+                }
+                DamageUtils.damageWithJahdoo(lEntity, lEntity, damage, element.damageTypeResourceKey());
             }
         );
     }
+
 }

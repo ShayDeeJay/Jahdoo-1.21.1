@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.abilities_combat.storm_rush.StormRushAbility;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -18,7 +18,7 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffectCategory.BENEFICIAL;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.particleBurst;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
@@ -88,7 +88,7 @@ public class FrostStormEffect extends MobEffect {
                     genericParticle(SOFT_PARTICLE, ElementReg.frost(), 5, 1.4f),
                     0, 1.5, 0, 0.1f
                 );
-                Helpers.getSoundWithPositionV(livingEntity.level(), livingEntity.position(), SoundReg.FROST_ABILITY.get(), 1, 1);
+                JahdooHelpers.getSoundWithPositionV(livingEntity.level(), livingEntity.position(), SoundReg.FROST_ABILITY.get(), 1, 1);
             }
         });
     }

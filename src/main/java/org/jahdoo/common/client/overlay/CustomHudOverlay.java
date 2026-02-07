@@ -43,9 +43,8 @@ import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.trial_nexus.attachments.CasterData.selectedAbility;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.Configuration.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.getUsedItem;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.ticksToTime;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getUsedItem;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class CustomHudOverlay implements LayeredDraw.Layer {
 
@@ -71,7 +70,6 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
     }
 
     public void progressOverlays(AlignedGui alignedGui, int startY, int manaProgress){
-//        alignedGui.displayGuiLayer(-manaProgress + 3, 18, 0, startY, manaProgress, 8, MANA_LEVEL_BAR);
         alignedGui.displayGuiLayer(-44 + (47 - manaProgress), 18, 50 - manaProgress, startY, manaProgress, 8, MANA_LEVEL_BAR);
     }
 
@@ -228,7 +226,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             var getCorrectY = graphics.guiHeight() * 2 - (CUSTOM_UI.get() ? 40 : 20) ;
 
             graphics.pose().translate(getCorrectX, getCorrectY, 10D);
-            centeredStringNoShadow(graphics, minecraft.font, literal(ticksToTime(valueOf(cooldownStatus))), 0, 0, -1, false);
+            centeredStringNoShadow(graphics, minecraft.font, literal(org.shaydee.shaydeeapi.Maths.ticksToTime(valueOf(cooldownStatus))), 0, 0, -1, false);
             graphics.pose().popPose();
         }
     }

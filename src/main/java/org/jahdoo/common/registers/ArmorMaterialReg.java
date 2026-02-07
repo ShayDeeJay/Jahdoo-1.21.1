@@ -9,7 +9,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -46,7 +46,7 @@ public class ArmorMaterialReg {
         float toughness,
         float knockBack
     ) {
-        var list = List.of(new ArmorMaterial.Layer(Helpers.res(name)));
+        var list = List.of(new ArmorMaterial.Layer(JahdooHelpers.res(name)));
         var material = new ArmorMaterial(defense, enchantmentValue, ARMOR_EQUIP_DIAMOND, Ingredient::of, list, toughness, knockBack);
 
         return ARMOR_MATERIALS.register(name, ()-> material);

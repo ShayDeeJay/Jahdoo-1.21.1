@@ -4,6 +4,7 @@ import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
@@ -21,7 +21,8 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -37,21 +38,21 @@ import static org.jahdoo.common.registers.BlockReg.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.*;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.getEliteShoppingItem;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class BlockSetupManager {
 
     public static void setAttributePerkTable(ServerLevel level, BlockPos pos, int roomId){
         setPerkTable(level, pos, 3);
         if(level.getBlockEntity(pos) instanceof SyncedBlockEntity syncedBlockEntity){
-            syncedBlockEntity.saveInt = roomId;
+            syncedBlockEntity.setSaveInt(roomId);
         }
     }
 
     public static void setCoinLootChest(ServerLevel level, BlockPos pos, Direction direction, int type, boolean ignore, int roomId){
         setLootChests(level, pos, direction, type, ignore);
         if(level.getBlockEntity(pos) instanceof SyncedBlockEntity syncedBlockEntity){
-            syncedBlockEntity.saveInt = roomId;
+            syncedBlockEntity.setSaveInt(roomId);
         }
     }
 
@@ -329,8 +330,8 @@ public class BlockSetupManager {
             }
         }
 
-        Helpers.getSoundWithPosition(level, startPlace, BLOCKER_BLOCK.getSoundType().getPlaceSound());
-        Helpers.getSoundWithPosition(level, startPlace, SoundReg.UNLOCK.get(), 1, 1.8F);
+        Helpers.getSoundWithPosition(level, startPlace, BLOCKER_BLOCK.getSoundType(level, pos, null).getBreakSound());
+        Helpers.getSoundWithPosition(level, startPlace, SoundReg.UNLOCK.get(), SoundSource.BLOCKS, 1F, 1.8F);
     }
 
 }

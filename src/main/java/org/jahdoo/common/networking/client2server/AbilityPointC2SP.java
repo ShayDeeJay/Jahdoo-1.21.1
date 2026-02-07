@@ -6,13 +6,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.registers.AttachmentReg;
 
 
 public class AbilityPointC2SP implements CustomPacketPayload {
 
-    public static final Type<AbilityPointC2SP> TYPE = new Type<>(Helpers.res("ability_points"));
+    public static final Type<AbilityPointC2SP> TYPE = new Type<>(JahdooHelpers.res("ability_points"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AbilityPointC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(AbilityPointC2SP::toBytes, AbilityPointC2SP::new);

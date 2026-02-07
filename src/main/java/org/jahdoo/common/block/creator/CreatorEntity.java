@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
@@ -15,8 +16,8 @@ import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.CreatorRecipeReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
@@ -90,7 +91,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     public static void successfulCraftVisual(Level level, BlockPos blockPos){
-        Helpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, 0.5f, 0.8f);
+        Helpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.5f, 0.8f);
     }
 
     public boolean isCompletedCraft(){
@@ -146,7 +147,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
     private void tableProcessingParticle(Level level){
         if(this.progress == 1 || this.progress % 25 == 0){
-            Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, 0.1f, Random.nextFloat(1.5F, 2F));
+            Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, SoundSource.BLOCKS, 0.1F, Random.nextFloat(1.5F, 2F));
         }
     }
 
@@ -154,13 +155,13 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         if(!this.isCompletedCraft()) return;
 
         this.chargeTankFuel(getCraftingCost());
-        this.outputItemHandler.insertItem(0, this.getResult.copy(), false);
+        this.getOutputItemHandler().insertItem(0, this.getResult.copy(), false);
         this.clearContentsOnCompletion();
         successfulCraftVisual(level, blockPos);
     }
 
     public void clearContentsOnCompletion(){
-        var handler = this.inputItemHandler;
+        var handler = this.getInputItemHandler();
         for(int i = 0; i < handler.getSlots(); i++) handler.getStackInSlot(i).shrink(1);
     }
 
@@ -173,15 +174,15 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         var a = !getAllCraftables().isEmpty();
         var b = getRecipe().isPresent();
         var c = this.hasTankAndFuel();
-        var d = this.outputItemHandler.getStackInSlot(0).isEmpty();
+        var d = this.getOutputItemHandler().getStackInSlot(0).isEmpty();
         var e = b && getRecipe().get().secondaryCheck(this);
         return a && b && c && d & e;
     }
 
     public List<ItemStack> getAllCraftables(){
         var x = new ArrayList<ItemStack>();
-        for (int i = 0; i < inputItemHandler.getSlots(); i++){
-            var stackInSlot = inputItemHandler.getStackInSlot(i);
+        for (int i = 0; i < getInputItemHandler().getSlots(); i++){
+            var stackInSlot = getInputItemHandler().getStackInSlot(i);
             if(!stackInSlot.isEmpty()) x.add(stackInSlot);
         }
         return x;

@@ -6,14 +6,14 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.Map;
 
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 public class CooldownsSyncS2CP implements CustomPacketPayload {
-    public static final Type<CooldownsSyncS2CP> TYPE = new Type<>(Helpers.res("player_cooldowns"));
+    public static final Type<CooldownsSyncS2CP> TYPE = new Type<>(JahdooHelpers.res("player_cooldowns"));
     public static final StreamCodec<RegistryFriendlyByteBuf, CooldownsSyncS2CP> STREAM_CODEC = CustomPacketPayload.codec(CooldownsSyncS2CP::toBytes, CooldownsSyncS2CP::new);
 
     private final Map<String, Integer> abilityCooldowns;

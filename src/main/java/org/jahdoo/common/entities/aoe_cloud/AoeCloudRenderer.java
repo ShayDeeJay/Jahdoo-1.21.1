@@ -11,7 +11,7 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonNov
 import org.jahdoo.trial_nexus.ability.abilities_combat.mob_abilities.Barrage;
 import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.Armageddon;
 import org.jahdoo.trial_nexus.ability.abilities_combat.permafrost.Permafrost;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.Objects;
 
@@ -28,7 +28,7 @@ public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
 
     @Override
     public ResourceLocation getTextureLocation(AoeCloud entity) {
-        return Helpers.res("textures/entity/shield.png");
+        return JahdooHelpers.res("textures/entity/shield.png");
     }
 
     @Override

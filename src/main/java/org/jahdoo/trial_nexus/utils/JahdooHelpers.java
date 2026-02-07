@@ -2,21 +2,17 @@ package org.jahdoo.trial_nexus.utils;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -30,8 +26,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -45,11 +39,13 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
-import org.jahdoo.common.networking.client2server.PlayerTrialDataC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.networking.server2client.*;
-import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
+import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
+import org.jahdoo.common.networking.server2client.QuestTrackerS2CP;
+import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
@@ -68,10 +64,13 @@ import static net.minecraft.sounds.SoundEvents.ITEM_BREAK;
 import static net.minecraft.world.item.enchantment.EnchantmentHelper.processDurabilityChange;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
+import static org.jahdoo.common.registers.mod.ElementReg.utility;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
-public class Helpers {
+public class JahdooHelpers {
     public static final String EASY = "novice";
     public static final String MEDIUM = "expert";
     public static final String HARD = "master";
@@ -82,20 +81,10 @@ public class Helpers {
         sendToServer(new AbilityHolderC2SP(AbilityHolder.DEFAULT, 0));
     }
 
-    public static void syncPlayerTrialData(int index){
-        sendToServer(new PlayerTrialDataC2SP(index));
-    }
 
     public static void syncSelectedAbility(Player player, String updateAbility) {
         player.getData(AttachmentReg.CASTER_DATA).setSelectedAbility(updateAbility);
         sendToServer(new SelectAbilityC2SP(updateAbility));
-    }
-
-    public static void syncAbilitiesServer(Entity player) {
-        if(player instanceof ServerPlayer serverPlayer){
-            var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
-            sendToPlayer(serverPlayer, new AbilityHolderS2CP(casterData.getUnlockedAbilities()));
-        }
     }
 
     public static void syncClientData(Entity player) {
@@ -136,22 +125,6 @@ public class Helpers {
 //                }
 //            }
 //        }
-    }
-
-    public static String capitaliseFirst(String name){
-        return name.substring(0,1).toUpperCase() + name.substring(1);
-    }
-
-    public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio){
-        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,1,1) ;
-    }
-
-    public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio, float volume){
-        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume,1) ;
-    }
-
-    public static void  getSoundWithPosition(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
-        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch) ;
     }
 
     public static void  getSoundWithPositionV(Level level, Vec3 position, SoundEvent audio, float volume, float pitch){
@@ -210,7 +183,7 @@ public class Helpers {
     }
 
     public static void addTransientAttribute(Player player, double value, String id, Holder<Attribute> attributeHolder) {
-        var modifier = new AttributeModifier(Helpers.res(id), value, AttributeModifier.Operation.ADD_VALUE);
+        var modifier = new AttributeModifier(JahdooHelpers.res(id), value, AttributeModifier.Operation.ADD_VALUE);
         Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
         multiMap.put(attributeHolder, modifier);
         player.getAttributes().addTransientAttributeModifiers(multiMap);
@@ -244,16 +217,6 @@ public class Helpers {
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch, boolean isLooping){
         sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, isLooping));
     }
-
-    public static Map<String, AbilityData.AbilityModifiers> getModifierValue(AbilityHolder abilityHolder, String tagName) {
-        if(abilityHolder != null){
-            var allModifiers = abilityHolder.data().abilityProperties();
-
-            if(allModifiers.get(tagName) != null) return allModifiers;
-        }
-        return emptyMap();
-    }
-
 
     public static Map<String, AbilityData.AbilityModifiers> getModifierValue(Player player, String abilityName) {
         var data = CasterData.entityHolder(player, abilityName);
@@ -318,6 +281,7 @@ public class Helpers {
     }
 
     public static int getRgb() {
+
         return new Color((int) (Math.random() * 0x1000000)).getRGB();
     }
 
@@ -331,26 +295,6 @@ public class Helpers {
     public static boolean canPathfindToTarget(Mob finder, LivingEntity target) {
         Path path = finder.getNavigation().createPath(target, 0);
         return path != null /*&& path.getDistToTarget() < distance*/;
-    }
-
-    public static void sendPacketsToPlayer(Level level, CustomPacketPayload payloads) {
-        if((level instanceof ServerLevel serverLevel)){
-            for (int j = 0; j < serverLevel.players().size(); ++j) {
-                var serverplayer = serverLevel.players().get(j);
-                sendToPlayer(serverplayer, payloads);
-            }
-        }
-    }
-
-    public static void sendPacketsToPlayerDistance(Vec3 pos, int distance, Level level, CustomPacketPayload payloads) {
-        if((level instanceof ServerLevel serverLevel)){
-            for (int j = 0; j < serverLevel.players().size(); ++j) {
-                var serverplayer = serverLevel.players().get(j);
-                if (pos.closerThan(serverplayer.position(), distance)) {
-                    sendToPlayer(serverplayer, payloads);
-                }
-            }
-        }
     }
 
     public static void sendPacketsToPlayerDistance(Vec3 pos, int distance, Level level, Consumer<ServerPlayer> serverPlayerConsumer) {
@@ -385,9 +329,9 @@ public class Helpers {
     }
 
     public static ParticleOptions getRandomColouredParticle(int colourA, int colourB, int lifetime, float size, boolean staticSize){
-        var generic = ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
-        var magic = ParticleHandlers.genericParticle(ParticleStore.MAGIC_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
-        var soft = ParticleHandlers.genericParticle(ParticleStore.SOFT_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
+        var generic = genericParticle(ParticleStore.GENERIC_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
+        var magic = genericParticle(ParticleStore.MAGIC_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
+        var soft = genericParticle(SOFT_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
         var collectTypes = List.of(generic, magic, soft);
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
@@ -424,23 +368,13 @@ public class Helpers {
         }
     }
 
-    public static boolean hasLineOfSightPos(Entity pathfinder, Vec3 target) {
-        var vec3 = new Vec3(pathfinder.getX(), pathfinder.getEyeY(), pathfinder.getZ());
-        var vec31 = new Vec3(target.x, target.y, target.z);
-        var context = new ClipContext(vec3, vec31, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, pathfinder);
-        return !(vec31.distanceTo(vec3) > (double) 128.0F) && pathfinder.level().clip(context).getType() == HitResult.Type.MISS;
-    }
-
     public static Vec3 getRandomParticleVelocity(Entity entity, double speed) {
         var theta = Random.nextDouble() * 2 * Math.PI; // Angle around the y-axis
         var phi = Random.nextDouble() * Math.PI; // Angle from the y-axis
-
-        // Convert spherical coordinates to Cartesian coordinates
         var x = Math.sin(phi) * Math.cos(theta);
         var y = Math.cos(phi);
         var z = Math.sin(phi) * Math.sin(theta);
 
-        // Scale the velocity vector by the desired speed
         return new Vec3(x, y, z).normalize().scale(speed);
     }
 
@@ -479,8 +413,6 @@ public class Helpers {
         var component = Component.empty();
         var split = text.split("");
         var nonSpaceIndices = new ArrayList<Integer>();
-//        var holderColour = ColourStore.CHAMPION_GOLD;
-//        component.append(withStyleComponent("❖ ", holderColour));
         for (var i = 0; i < split.length; i++) {
             if (!split[i].equals(" ")) nonSpaceIndices.add(i);
         }
@@ -497,7 +429,6 @@ public class Helpers {
                 component.append(withStyleComponent(split[i], colour));
             }
         }
-//        component.append(withStyleComponent(" ❖", holderColour));
         return component;
     }
 
@@ -540,7 +471,7 @@ public class Helpers {
             itemStack.setDamageValue(i);
 
             if (stackDurability(itemStack) == 0) {
-                Helpers.getSoundWithPositionV(level, livingEntity.position(), ITEM_BREAK, 1, 1);
+                JahdooHelpers.getSoundWithPositionV(level, livingEntity.position(), ITEM_BREAK, 1, 1);
             }
         }
     }
@@ -587,7 +518,7 @@ public class Helpers {
             }
         }
 
-        float getPercentageDamage = (float) Maths.getPercentage(initialValue, getAttribute);
+        float getPercentageDamage = (float) org.shaydee.shaydeeapi.Maths.getPercentage(initialValue, getAttribute);
 
         if(isAddition){
             reCalculatedDamage = reCalculatedDamage + getPercentageDamage;
@@ -608,7 +539,7 @@ public class Helpers {
                 new BiomeSpecialEffects.Builder()
                     .waterColor(4159204)
                     .waterFogColor(329011)
-                    .fogColor(ColourStore.PERK_GREEN)
+                    .fogColor(org.shaydee.shaydeeapi.Colours.getPerkGreen())
                     .skyColor(calculateSkyColor(0.7F))
                     .grassColorModifier(BiomeSpecialEffects.GrassColorModifier.DARK_FOREST)
                     .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS)
@@ -626,71 +557,12 @@ public class Helpers {
         return Mth.hsvToRgb(0.62222224F - $$1 * 0.05F, 0.5F + $$1 * 0.1F, 1.0F);
     }
 
-    public static void throwOrAddItem(Player player, ItemStack newItem){
-        var isValidSlot = player.getInventory().getFreeSlot() != -1;
-        if(isValidSlot) player.addItem(newItem); else throwNewItem(player, newItem);
-    }
-
-    public static void throwNewItem(LivingEntity livingEntity, ItemStack itemStack){
-        var offsetX = -Math.sin(Math.toRadians(livingEntity.yRotO)) * 2;
-        var offsetZ = Math.cos(Math.toRadians(livingEntity.yRotO)) * 2;
-        var spawnX = livingEntity.getX() + offsetX;
-        var spawnY = livingEntity.getY() + livingEntity.getEyeHeight() -0.7 ; // No vertical offset
-        var spawnZ = livingEntity.getZ() + offsetZ;
-        BehaviorUtils.throwItem(livingEntity, itemStack, new Vec3(spawnX, spawnY, spawnZ));
-    }
-
-    public static void throwItem(LivingEntity livingEntity, ItemStack stack) {
-        // Calculate spawn position in front of the entity
-        var yaw = Math.toRadians(livingEntity.yRotO);
-        var offsetX = -Math.sin(yaw) * 0.5;
-        var offsetZ = Math.cos(yaw) * 0.5;
-
-        var spawnX = livingEntity.getX() + offsetX;
-        var spawnY = livingEntity.getY() + 0.5;
-        var spawnZ = livingEntity.getZ() + offsetZ;
-
-        var spawnPos = new Vec3(spawnX, spawnY, spawnZ);
-        var x = 0.4;
-        var speedMultiplier = new Vec3(x, x, x); // Tweak as needed
-
-        throwItem(livingEntity.position(), stack, spawnPos, speedMultiplier, livingEntity.level());
-    }
-
-    public static void throwItem(Vec3 pos, ItemStack stack, Vec3 offset, Vec3 speedMultiplier, Level level) {
-        var itementity = new ItemEntity(level, pos.x, pos.y, pos.z, stack);
-        var direction = offset.subtract(pos).normalize();
-        var v = 0.4;
-        var randX = (Random.nextDouble() - 0.5) * v;
-        var randY = (Random.nextDouble() - 0.5) * v;
-        var randZ = (Random.nextDouble() - 0.5) * v;
-
-        var finalVelocity = new Vec3(
-            (direction.x + randX) * speedMultiplier.x,
-            (direction.y + randY) * speedMultiplier.y,
-            (direction.z + randZ) * speedMultiplier.z
-        );
-
-        itementity.setDeltaMovement(finalVelocity);
-        itementity.setDefaultPickUpDelay();
-        level.addFreshEntity(itementity);
-    }
-
-    public static void saveBlockPosNBT(CompoundTag tag, BlockPos returnLocation) {
-        var bPos = new CompoundTag();
-        bPos.putInt("x", returnLocation.getX());
-        bPos.putInt("y", returnLocation.getY());
-        bPos.putInt("z", returnLocation.getZ());
-        tag.put("block_pos", bPos);
-    }
-
-    public static BlockPos loadBlockPosNBT(CompoundTag tag) {
-        var returnLocation = tag.getCompound("block_pos");
-        return new BlockPos(returnLocation.getInt("x"), returnLocation.getInt("y"), returnLocation.getInt("z"));
-    }
-
-    public static boolean isKeyDown(int key){
-        var mc = Minecraft.getInstance().getWindow().getWindow();
-        return InputConstants.isKeyDown(mc, key);
+    public static GenericParticleOptions processingParticle(
+        int lifetime,
+        float size,
+        boolean staticSize,
+        double speed
+    ) {
+        return genericParticle(SOFT_PARTICLE, utility(), lifetime, size, staticSize, speed);
     }
 }

@@ -18,7 +18,7 @@ import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -31,7 +31,6 @@ import static org.jahdoo.common.client.screens.AbilityModificationScreen.headerW
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextSingle;
-import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeString;
 
 public class AugmentScreen extends Screen  {
 
@@ -116,7 +115,7 @@ public class AugmentScreen extends Screen  {
     private void displayButtons(LinkedHashMap<String, AbilityData.AbilityModifiers> copy1, AtomicInteger verticalSpacing) {
         copy1.forEach(
             (e, v) -> {
-                var value = getModifierContextSingle(e, roundNonWholeString(v.setValue()), 1).getString();
+                var value = getModifierContextSingle(e, org.shaydee.shaydeeapi.Maths.roundNonWholeString(v.setValue()), 1).getString();
                 if(e.contains("Toggle")){
 //                    System.out.println(e);
 //                    System.out.println(v.);
@@ -135,7 +134,7 @@ public class AugmentScreen extends Screen  {
     public void buildCarouselComponent(int posX, int posY, String label, Runnable onLeft, Runnable onRight, String value){
         var widget = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
         var adjustX = 2;
-        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll),  Helpers.withStyleComponent(value, ElementReg.utility().textColourB()), this.getMinecraft(), Component.literal(label), 10, true));
+        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll),  JahdooHelpers.withStyleComponent(value, ElementReg.utility().textColourB()), this.getMinecraft(), Component.literal(label), 10, true));
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 10 + adjustX, (int) (posY + yScroll), (press) -> onLeft.run(), DIRECTION_ARROW_BACK, 22, false,0, widget, true));
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 104 + adjustX, (int) (posY+ yScroll), (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  22,  false, 0, widget, true));
     }

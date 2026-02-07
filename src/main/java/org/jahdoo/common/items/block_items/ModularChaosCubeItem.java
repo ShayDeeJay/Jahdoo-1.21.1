@@ -1,9 +1,9 @@
 package org.jahdoo.common.items.block_items;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeBlockRenderer;
+import org.jahdoo.common.items.BaseJahdooBlockItem;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -12,10 +12,11 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.RenderUtil;
+
 import java.util.function.Consumer;
 
 
-public class ModularChaosCubeItem extends BlockItem implements GeoItem {
+public class ModularChaosCubeItem extends BaseJahdooBlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
      public ModularChaosCubeItem(Block pBlock) {

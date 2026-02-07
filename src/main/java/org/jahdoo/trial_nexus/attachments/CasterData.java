@@ -32,7 +32,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +45,8 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.entity.ai.attributes.Attributes.STEP_HEIGHT;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class CasterData implements IAttachment {
 
@@ -348,7 +348,7 @@ public class CasterData implements IAttachment {
         if(this.multiKill > 0){
             if(multiKill > multiKillTarget){
                 player.sendSystemMessage(withStyleComponent("MULTIKILL!!", ColourStore.MAGNET_RANGE_GREEN).copy());
-                Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.QUEST_COMPLETE.get(), 1, 1.6F);
+                JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.QUEST_COMPLETE.get(), 1, 1.6F);
             }
             this.multiKill = 0;
         }
@@ -429,8 +429,8 @@ public class CasterData implements IAttachment {
 
             sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
             if(playAudio) {
-                Helpers.sendClientSound(serverPlayer, SoundReg.REJECT.get(), 1, 1, false);
-                Helpers.sendClientSound(serverPlayer, SoundReg.ORB_CREATE.get(), 0.4F, 2, false);
+                JahdooHelpers.sendClientSound(serverPlayer, SoundReg.REJECT.get(), 1, 1, false);
+                JahdooHelpers.sendClientSound(serverPlayer, SoundReg.ORB_CREATE.get(), 0.4F, 2, false);
             }
         }
     }
@@ -547,8 +547,8 @@ public class CasterData implements IAttachment {
                 var shieldSlots = curioSlotsItems.get().findCurios("relic");
                 if(!shieldSlots.isEmpty()){
                     var getTome = shieldSlots.getFirst().stack();
-                    if (Helpers.durabilityDamageCount(getTome) > 0 && getTome.is(ItemReg.TOME_OF_UNITY)) {
-                        Helpers.hurtAndKeepItemChanced(getTome, 1, player.level(), player, 200);
+                    if (JahdooHelpers.durabilityDamageCount(getTome) > 0 && getTome.is(ItemReg.TOME_OF_UNITY)) {
+                        JahdooHelpers.hurtAndKeepItemChanced(getTome, 1, player.level(), player, 200);
                     }
                 }
             }
@@ -588,14 +588,14 @@ public class CasterData implements IAttachment {
 
     public static void addStep(Player player){
         var attributes = player.getAttributes();
-        var stepSkill = Helpers.res("step_skill");
+        var stepSkill = JahdooHelpers.res("step_skill");
         if (hasSkill(player, SkillReg.CLIMBER.get().id())) {
             if(!attributes.hasModifier(STEP_HEIGHT, stepSkill)){
                 var modifier = new AttributeModifier(stepSkill, 1, AttributeModifier.Operation.ADD_VALUE);
                 Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
                 multiMap.put(STEP_HEIGHT, modifier);
                 attributes.addTransientAttributeModifiers(multiMap);
-                Helpers.addTransientAttribute(player, 1, "step_skill", STEP_HEIGHT);
+                JahdooHelpers.addTransientAttribute(player, 1, "step_skill", STEP_HEIGHT);
             }
         } else if (attributes.hasModifier(STEP_HEIGHT, stepSkill)) {
             Objects.requireNonNull(player.getAttribute(STEP_HEIGHT)).removeModifiers();
@@ -644,7 +644,7 @@ public class CasterData implements IAttachment {
     public static boolean isNewLoadout(LivingEntity livingEntity){
         var data = livingEntity.getData(CASTER_DATA);
         System.out.println(data.loadoutIndex);
-        return data.loadoutIndex == -1;
+        return data.loadoutIndex == -1 && data.refundableSkillPoints == data.abilityPoints;
     }
 
     public static boolean hasLoadout(LivingEntity livingEntity, int index){

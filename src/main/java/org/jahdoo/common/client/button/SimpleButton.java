@@ -8,12 +8,12 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
+import org.shaydee.shaydeeapi.Colours;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker2;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class SimpleButton extends ImageButton {
 
@@ -59,13 +59,13 @@ public class SimpleButton extends ImageButton {
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         var fade = isSelected && isHovered ? color(60, uiColour()) : fadeBlack(0.8f);
         var minecraft = Minecraft.getInstance();
-        var isSelected = !this.isSelected ? HEADER_COLOUR : uiColour();
+        var isSelected = !this.isSelected ? Colours.getHeaderColour() : uiColour();
 
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 1);
         boxMaker2(graphics, this.getX(), this.getY(), (int) width, (int) height, isSelected, fade, fade);
         graphics.drawCenteredString(minecraft.font, label, (int) (this.getX() + width/2), (int) (this.getY() + height/2) - 4, isSelected);
-        graphics.pose().popPose();;
+        graphics.pose().popPose();
     }
 
 

@@ -11,22 +11,20 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public class Magnet extends BaseItem implements ICurioItem {
     public Magnet() {
@@ -52,19 +50,19 @@ public class Magnet extends BaseItem implements ICurioItem {
     public void implicitModifiers(ItemStack stack, List<Component> toolTips) {
         super.implicitModifiers(stack, toolTips);
         var magnetData = MagnetData.getMagnetData(stack);
-        toolTips.add(Helpers.withStyleComponent("Range: " + magnetData.range(), MAGNET_RANGE_GREEN));
-        toolTips.add(Helpers.withStyleComponent("Strength: " + Maths.roundNonWholeString(magnetData.strength()), MAGNET_STRENGTH_RED));
+        toolTips.add(JahdooHelpers.withStyleComponent("Range: " + magnetData.range(), MAGNET_RANGE_GREEN));
+        toolTips.add(JahdooHelpers.withStyleComponent("Strength: " + org.shaydee.shaydeeapi.Maths.roundNonWholeString(magnetData.strength()), MAGNET_STRENGTH_RED));
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        var switchActive = Helpers.getUsedItem(player);
+        var switchActive = JahdooHelpers.getUsedItem(player);
         var magnetData = switchActive.get(MAGNET_DATA);
 
         if(magnetData == null) return InteractionResultHolder.fail(switchActive);
         MagnetData.updateActive(switchActive, !magnetData.active());
-        var active = Helpers.withStyleComponent("Active", ColourStore.MAGNET_RANGE_GREEN);
-        var deactivate = Helpers.withStyleComponent("Deactivated", ColourStore.MAGNET_STRENGTH_RED);
+        var active = JahdooHelpers.withStyleComponent("Active", org.shaydee.shaydeeapi.Colours.getMagnetRangeGreen());
+        var deactivate = JahdooHelpers.withStyleComponent("Deactivated", org.shaydee.shaydeeapi.Colours.getMagnetStrengthRed());
         player.displayClientMessage(!magnetData.active() ? active : deactivate, true);
         player.playSound(SoundReg.SELECT.get());
         return super.use(level, player, usedHand);

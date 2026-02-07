@@ -21,7 +21,7 @@ import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -41,8 +41,8 @@ import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour.canDamageEntity;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.hasLineOfSight;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.hasLineOfSight;
 import static software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
@@ -189,7 +189,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     private void damageWithModifiers(AbilityHolder holder) {
         var player = this.getOwner();
         var damage = getTag(DAMAGE, holder);
-        this.damage = Helpers.attributeModifierCalculator(
+        this.damage = JahdooHelpers.attributeModifierCalculator(
             (LivingEntity) player,
             (float) damage,
             true,

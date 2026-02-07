@@ -14,7 +14,7 @@ import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.ability.UtilityHelpers.canBreakInDim;
@@ -22,7 +22,7 @@ import static org.jahdoo.trial_nexus.ability.UtilityHelpers.dropItemsOrBlock;
 
 public class Hammer extends AbstractUtilityProjectile {
 
-    private static final ResourceLocation abilityId = Helpers.res("hammer_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("hammer_property");
     private double breakerSize;
     private double voidBlocks;
     private double fortune;

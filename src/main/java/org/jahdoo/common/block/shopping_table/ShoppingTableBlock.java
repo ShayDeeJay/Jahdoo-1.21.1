@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,18 +24,17 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.EMPTY;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.checkAndPurchase;
-import static org.jahdoo.trial_nexus.utils.Helpers.throwOrAddItem;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -123,15 +123,15 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
             var stackInSlot = item.extractItem(0, item.getStackInSlot(0).getCount(), false);
             if (!stackInSlot.isEmpty()) {
                 player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
-                throwOrAddItem(player, stackInSlot);
+                Helpers.throwOrAddItem(player, stackInSlot);
                 item.setStackInSlot(1, ItemStack.EMPTY);
                 table.itemCosts = EMPTY;
-                Helpers.getSoundWithPosition(level, pos, SoundReg.COINBOX_OPEN.get(), 1F, 2F);
+                Helpers.getSoundWithPosition(level, pos, SoundReg.COINBOX_OPEN.get(), SoundSource.BLOCKS, 1F, 2F);
             }
 
         } else {
             player.displayClientMessage(withStyleComponent("Insufficient Funds!", ColourStore.NEGATIVE_RED), true);
-            Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+            Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 0.3F, 2F);
         }
 
         return SUCCESS;

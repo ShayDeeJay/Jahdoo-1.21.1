@@ -44,13 +44,13 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         top(pPoseStack, creatorEntity, itemRenderer, pBuffer, pPartialTick, pPackedLight);
         focusedItem(pPoseStack, creatorEntity, itemRenderer, pBuffer, pPartialTick, pPackedLight);
 
-        for(int i = 0; i < creatorEntity.inputItemHandler.getSlots(); i++){
-            ItemStack itemStack = creatorEntity.inputItemHandler.getStackInSlot(i);
+        for(int i = 0; i < creatorEntity.getInputItemHandler().getSlots(); i++){
+            ItemStack itemStack = creatorEntity.getInputItemHandler().getStackInSlot(i);
             if(!itemStack.isEmpty()) atomicInteger.set(atomicInteger.get() + 1);
         }
 
-        for(int i = 0; i < creatorEntity.inputItemHandler.getSlots(); i++){
-            ItemStack itemStack = creatorEntity.inputItemHandler.getStackInSlot(i);
+        for(int i = 0; i < creatorEntity.getInputItemHandler().getSlots(); i++){
+            ItemStack itemStack = creatorEntity.getInputItemHandler().getStackInSlot(i);
             rotateAllItems(pPoseStack, creatorEntity, () -> rotateItem(pPoseStack, creatorEntity, itemRenderer, itemStack, pBuffer, pPartialTick), i, atomicInteger.get(), pPartialTick);
         }
     }
@@ -151,7 +151,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
 
         var getCurrentTime = level.getGameTime() + partialTicks;
         var outputSlot = pBlockEntity.getResult();
-        var itemStack = outputSlot == null ? pBlockEntity.outputItemHandler.getStackInSlot(0) : outputSlot;
+        var itemStack = outputSlot == null ? pBlockEntity.getOutputItemHandler().getStackInSlot(0) : outputSlot;
         var scaleItem = 0.3F;
         var maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 

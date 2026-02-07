@@ -7,7 +7,7 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -17,7 +17,7 @@ import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ANCIENT_GOLEM
 
 public class SummonAncientGolemAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("ancient_golem");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("ancient_golem");
 
     @Override
     public JahdooRarity rarity() {

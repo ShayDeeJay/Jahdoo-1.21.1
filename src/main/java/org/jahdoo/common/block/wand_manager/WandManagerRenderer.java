@@ -12,8 +12,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 import static net.minecraft.core.Direction.NORTH;
 import static net.minecraft.core.Direction.SOUTH;
@@ -81,7 +81,7 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
 
         var scaleItem = 0.80f;
         var getItem = outputSlot.isEmpty() ? ItemStack.EMPTY : outputSlot;
-        var ticks = ((entity.privateTicks + partialTicks) / 18) ;
+        var ticks = ((entity.getPrivateTicks() + partialTicks) / 18) ;
         var animatePlace = Math.max(1.1, 1.4 - ticks) ;
 
         poseStack.translate(0.5f, animatePlace, 0.5f);

@@ -3,13 +3,13 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 public class FrostMissileAbility extends ElementalMissileAbility {
 
-    public static final ResourceLocation abilityId = Helpers.res("frost_missile");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("frost_missile");
 
     @Override
     public ResourceLocation getAbilityResource() {

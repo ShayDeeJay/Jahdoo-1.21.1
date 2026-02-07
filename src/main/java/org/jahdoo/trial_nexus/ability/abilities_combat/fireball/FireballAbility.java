@@ -8,7 +8,7 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.registers.EntityReg;
@@ -19,7 +19,7 @@ import static org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.Armaged
 
 public class FireballAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("fireball");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("fireball");
     public static final String NOVA_RANGE = "Explosion Radius";
 
     @Override

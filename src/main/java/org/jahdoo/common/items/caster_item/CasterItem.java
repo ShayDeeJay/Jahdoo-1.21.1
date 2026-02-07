@@ -15,7 +15,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.lock.LockBlockEntity;
-import org.jahdoo.common.items.BaseItem;
+import org.jahdoo.common.items.BaseJahdooItem;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -29,7 +29,7 @@ import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.trial_nexus.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 
-public class CasterItem extends BaseItem {
+public class CasterItem extends BaseJahdooItem {
 
     public CasterItem(Properties properties) {
         super(properties);
@@ -53,6 +53,8 @@ public class CasterItem extends BaseItem {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
+
+
     }
 
     @Override

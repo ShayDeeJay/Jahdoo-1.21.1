@@ -9,7 +9,7 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.quests.*;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 public class QuestReg {
 
-    public static final ResourceKey<Registry<AbstractQuest>> QUEST_REGISTRY_KEY = ResourceKey.createRegistryKey(Helpers.res("quest"));
+    public static final ResourceKey<Registry<AbstractQuest>> QUEST_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("quest"));
     private static final DeferredRegister<AbstractQuest> QUEST = DeferredRegister.create(QUEST_REGISTRY_KEY, JahdooMod.MOD_ID);
     public static final Registry<AbstractQuest> REGISTRY =  new RegistryBuilder<>(QUEST_REGISTRY_KEY).create();
 
@@ -32,7 +32,7 @@ public class QuestReg {
     }
 
     public static AbstractQuest getRandomQuest() {
-        return Helpers.listRandom(REGISTRY.stream().toList());
+        return JahdooHelpers.listRandom(REGISTRY.stream().toList());
     }
 
     public static List<AbstractQuest> getAllQuests() {

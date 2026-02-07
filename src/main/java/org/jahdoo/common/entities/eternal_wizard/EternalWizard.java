@@ -38,14 +38,14 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.abilities_combat.EtherealArrow;
 import org.jahdoo.trial_nexus.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.jahdoo.common.entities.SharedEntityBehaviours.canTarget;
+import static org.jahdoo.common.entities.EntityHelpers.canTarget;
 import static org.jahdoo.common.items.caster_item.CastHelper.castAnimation;
 import static org.jahdoo.common.items.caster_item.ItemAnimations.SINGLE_CAST_ID;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
@@ -62,6 +62,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     private final RangedCustomAttackGoal<AbstractSkeleton> wandGoal = new RangedCustomAttackGoal<>(this, 1.0D, 0, 60.0F);
 
     private LivingEntity owner;
+    private UUID ownerUUID;
     private double damage;
     private double effectDuration;
     private double effectStrength;
@@ -217,10 +218,13 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     @Override
     public void tick() {
         super.tick();
-        privateTicks++;
         if(!(this.level() instanceof ServerLevel serverLevel)) return;
+
+        privateTicks++;
         this.setPrivateTicks(this.privateTicks);
-        if(owner == null && this.getOwnerUUIDOptional().isPresent()) this.owner = serverLevel.getPlayerByUUID(this.getOwnerUUIDOptional().get());
+        if(this.owner == null) {
+            this.owner = this.reassignOwner(level(), owner, ownerUUID);
+        }
         if(this.lifeTime != -1) if (this.privateTicks >= lifeTime) this.discard();
         var nearestTarget = serverLevel.getNearestEntity(LivingEntity.class, TargetingConditions.DEFAULT, null, getX(), getY(), getZ(), this.getBoundingBox().inflate(20, 20, 20));
         if(this.getMode()){
@@ -255,7 +259,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
             .setEffectDurationWithValue(0,0,this.effectDuration)
             .setEffectChanceWithValue(0,0, this.effectChance)
             .setEffectStrengthWithValue(0,0,this.effectStrength)
-            .setModifier(FireballAbility.NOVA_RANGE, 0,0,true, Helpers.Random.nextInt(4,6))
+            .setModifier(FireballAbility.NOVA_RANGE, 0,0,true, JahdooHelpers.Random.nextInt(4,6))
             .setModifierWithoutBounds(IS_BUDDY, 0)
             .buildAndReturn();
     }
@@ -326,12 +330,12 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         tag.putInt(LIFETIME, this.lifeTime);
         tag.putDouble(LIFE_LEECH, this.leechChance);
         tag.putInt("private_ticks", this.privateTicks);
+        saveTag(owner, tag);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.setOwnerUUIDOptional(tag.getUUID("owner"));
         this.setMode(tag.getBoolean("mode"));
         this.damage = tag.getDouble(DAMAGE);
         this.effectDuration = tag.getDouble(EFFECT_DURATION);
@@ -343,5 +347,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         this.setLifetimes(this.lifeTime);
         this.setScale(1);
         this.setMode(tag.getBoolean("mode"));
+        var uuid1 = loadTag(tag);
+        if(uuid1 != null) this.ownerUUID = uuid1;
     }
 }

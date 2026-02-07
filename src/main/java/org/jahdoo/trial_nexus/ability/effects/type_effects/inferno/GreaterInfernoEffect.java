@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.effects.EffectHelpers;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
 
@@ -72,11 +72,11 @@ public class GreaterInfernoEffect extends MobEffect {
         var positionScrambler = worldPosition.add(0,1,0);
         var directions = positionScrambler.subtract(livingEntity.position()).normalize();
         var lifetime = 4;
-        var size = Helpers.Random.nextDouble(0.2, 0.4);
+        var size = JahdooHelpers.Random.nextDouble(0.2, 0.4);
         var col1 = element.textColourA();
         var col2 = element.textColourB();
         var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, (float) (size - 0.2), col1, col2, true);
-        var randomSpeed = Helpers.Random.nextDouble(0.1, 0.3);
+        var randomSpeed = JahdooHelpers.Random.nextDouble(0.1, 0.3);
 
         ParticleHandlers.sendParticles(
             livingEntity.level(), genericParticle, worldPosition, 0, directions.x, directions.y + 0.05, directions.z, randomSpeed

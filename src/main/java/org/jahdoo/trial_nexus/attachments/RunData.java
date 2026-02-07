@@ -98,7 +98,6 @@ public class RunData implements IAttachment {
         return getStat(CHESTS_COMMON);
     }
 
-
     public int getRareChests(){
         return getStat(CHESTS_RARE);
     }
@@ -242,7 +241,7 @@ public class RunData implements IAttachment {
         sendToPlayer(player, new RunDataS2CP(runData));
     }
 
-    public static void incrementClearedRoomExp(ServerPlayer player, String difficulty) {
+    public static void incrementRoomExp(ServerPlayer player, String difficulty) {
         var runData = player.getData(AttachmentReg.RUN_DATA.get());
         runData.incrementStat(ROOMS_CLEARED);
         runData.setExperienceGained(difficulty, 5);

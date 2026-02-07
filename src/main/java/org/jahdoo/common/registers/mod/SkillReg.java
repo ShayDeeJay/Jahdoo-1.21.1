@@ -9,14 +9,14 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.ability.skills.*;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 public class SkillReg {
 
-    public static final ResourceKey<Registry<AbstractSkill>> SKILL_REGISTRY_KEY = ResourceKey.createRegistryKey(Helpers.res("skill"));
+    public static final ResourceKey<Registry<AbstractSkill>> SKILL_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("skill"));
     private static final DeferredRegister<AbstractSkill> ELEMENT = DeferredRegister.create(SKILL_REGISTRY_KEY, JahdooMod.MOD_ID);
     public static final Registry<AbstractSkill> REGISTRY =  new RegistryBuilder<>(SKILL_REGISTRY_KEY).create();
 

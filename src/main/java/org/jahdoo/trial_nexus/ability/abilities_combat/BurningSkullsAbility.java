@@ -9,7 +9,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.burning_skull.BurningSkull;
 import org.jahdoo.common.registers.SoundReg;
@@ -21,33 +21,33 @@ import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SHOT_MULTIPLIER;
 
 public class BurningSkullsAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("burning_skulls");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("burning_skulls");
 
     public static void vitalitySoundEffect(Player player) {
         if(player instanceof ServerPlayer serverPlayer){
-            Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
-            Helpers.sendClientSound(serverPlayer, SoundReg.VITALITY_ABILITY.get(), 2, 1.2F);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.VITALITY_ABILITY.get(), 2, 1.2F);
         }
     }
 
     public static void mysticSoundEffect(Player player) {
         if(player instanceof ServerPlayer serverPlayer){
-            Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
-            Helpers.sendClientSound(serverPlayer, SoundReg.MYSTIC_ABILITY.get(), 2, 1.2F);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.MYSTIC_ABILITY.get(), 2, 1.2F);
         }
     }
 
     public static void frostSoundEffect(Player player) {
         if(player instanceof ServerPlayer serverPlayer){
-            Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
-            Helpers.sendClientSound(serverPlayer, SoundReg.FROST_ABILITY.get(), 1F, 1.2F);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.FROST_ABILITY.get(), 1F, 1.2F);
         }
     }
 
     public static void infernoSoundEffect(Player player) {
         if(player instanceof ServerPlayer serverPlayer){
-            Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
-            Helpers.sendClientSound(serverPlayer, SoundReg.FIRE_ABILITY.get(), 2, 1.2F);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+            JahdooHelpers.sendClientSound(serverPlayer, SoundReg.FIRE_ABILITY.get(), 2, 1.2F);
         }
     }
 
@@ -107,7 +107,7 @@ public class BurningSkullsAbility extends Ability {
 
             for (int i = 0; i < projectileCount; i++) {
                 var isValid = !getLocalEntities.isEmpty();
-                var randomTarget = isValid ? Helpers.listRandom(getLocalEntities) : null;
+                var randomTarget = isValid ? JahdooHelpers.listRandom(getLocalEntities) : null;
                 var skull = new BurningSkull(player, 0);
                 skull.setTarget(randomTarget);
                 if (isValid) getLocalEntities.remove(randomTarget);

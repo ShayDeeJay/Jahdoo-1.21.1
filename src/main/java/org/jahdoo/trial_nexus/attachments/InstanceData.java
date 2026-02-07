@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public class InstanceData implements IAttachment {
 
@@ -32,6 +32,7 @@ public class InstanceData implements IAttachment {
     public static final String KEY_GOLD_COIN = "gold_coin";
     public static final String KEY_PLATINUM_COIN = "platinum_coin";
     public static final String KEY_HEALTH = "mob_health";
+    public static final String KEY_KNOCKBACK = "mob_knockback";
     public static final String KEY_SPEED = "mob_speed";
     public static final String KEY_ARMOR = "mob_armor";
     public static final String KEY_ATTACK_DAMAGE = "mob_attack_damage";
@@ -140,6 +141,10 @@ public class InstanceData implements IAttachment {
         return get(KEY_ARMOR);
     }
 
+    public double getKnockback() {
+        return get(KEY_KNOCKBACK);
+    }
+
     public int getQuestCrateMultiplier() {
         return (int) get(KEY_QUEST_CRATE_MULTIPLIER);
     }
@@ -217,6 +222,10 @@ public class InstanceData implements IAttachment {
         increment(KEY_INFERNO_CREEPER, mobs);
     }
 
+    public void incrementKnockBack(double amount) {
+        increment(KEY_KNOCKBACK, amount);
+    }
+
     public void incrementHealth(double amount) {
         increment(KEY_HEALTH, amount);
     }
@@ -231,10 +240,6 @@ public class InstanceData implements IAttachment {
 
     public void incrementAttackDamage(double amount) {
         increment(KEY_ATTACK_DAMAGE, amount);
-    }
-
-    public void ince(double amount) {
-        increment(KEY_EXPERIENCE, amount);
     }
 
     public void incrementClearedRooms() {

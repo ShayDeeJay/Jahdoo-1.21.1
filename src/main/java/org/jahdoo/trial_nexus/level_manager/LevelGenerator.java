@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.portal.DimensionTransition;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -22,7 +22,7 @@ import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.DamageTypeReg.BIOME_SOURCE;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.generateStartingRoom;
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public class LevelGenerator {
 
@@ -35,9 +35,9 @@ public class LevelGenerator {
     public static void debugLevels(ServerLevel serverLevel, Player player) {
         for (ServerLevel allLevel : serverLevel.getServer().getAllLevels()) {
             if (allLevel instanceof CustomLevel cLevel) {
-                var rgb = Helpers.getRgb();
-                player.sendSystemMessage(Helpers.withStyleComponent(cLevel.getDescription().getString(), rgb));
-                player.sendSystemMessage(Helpers.withStyleComponent(cLevel.getData(INSTANCE_DATA).toString(), rgb));
+                var rgb = JahdooHelpers.getRgb();
+                player.sendSystemMessage(JahdooHelpers.withStyleComponent(cLevel.getDescription().getString(), rgb));
+                player.sendSystemMessage(JahdooHelpers.withStyleComponent(cLevel.getData(INSTANCE_DATA).toString(), rgb));
             }
         }
     }

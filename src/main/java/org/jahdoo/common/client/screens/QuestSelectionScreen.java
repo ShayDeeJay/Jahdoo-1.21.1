@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.trial_nexus.quests.AbstractQuest;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.items.CoinSack;
@@ -34,8 +34,8 @@ import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.getWalletValue;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponentTrans;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
@@ -85,14 +85,14 @@ public class QuestSelectionScreen extends Screen  {
         var roll = "Re-Roll";
         var table = getPerkTable();
 
-        getToolTip.add(Helpers.withStyleComponent(roll, uiColour()));
+        getToolTip.add(JahdooHelpers.withStyleComponent(roll, uiColour()));
         if(table.isPresent()){
             var getTable = table.get();
             var counter = getTable.getReRollCounter();
             var playerLevel = CasterData.getLevel(getMinecraft().player);
 
             if(counter == 0){
-                getToolTip.add(Helpers.withStyleComponent("Free", uiColour()));
+                getToolTip.add(JahdooHelpers.withStyleComponent("Free", uiColour()));
                 this.converter = new CurrencyConverter(0,0,0,0);
             } else {
                 var wallet = playerLevel * (counter * counter + 2);

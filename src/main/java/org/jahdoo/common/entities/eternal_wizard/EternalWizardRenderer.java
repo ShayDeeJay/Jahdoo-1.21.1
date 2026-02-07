@@ -13,8 +13,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.joml.Matrix4f;
 
-import static org.jahdoo.trial_nexus.utils.Maths.ticksToTime;
-
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardRenderer extends EternalWizardBodyRenderer {
 
@@ -27,7 +25,7 @@ public class EternalWizardRenderer extends EternalWizardBodyRenderer {
         entity.setScale(Math.min(1, (entity.getInternalScale() + 0.017f)));
         poseStack.pushPose();
         var scale = entity.getOwner() != null ? entity.getInternalScale() : 1;
-        var lifetime = ticksToTime(String.valueOf(entity.getLifetime() - entity.getPrivateTicks()));
+        var lifetime = org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(entity.getLifetime() - entity.getPrivateTicks()));
 
         if(entity.getOwner() != null){
             this.renderNameTags(entity, Component.literal(lifetime), poseStack, buffer, 255, 3);

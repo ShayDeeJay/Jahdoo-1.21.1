@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
         var itemRenderer = mc.getItemRenderer();
         int state = entity.getBlockState().getValue(TEXTURE);
         var render = new ItemStack(getByIndex.get(state));
-        var rotate = entity.privateTicks + partialTick;
+        var rotate = entity.getPrivateTicks() + partialTick;
         var animate = rotate / 12;
         var scale = Math.min(1.2F, animate);
         var bobOff = Math.sin(rotate / 10.0F) * 0.08F + 2F - 0.51;
@@ -66,11 +66,11 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
 
         if(state == 2){
             var offWhite = ColourStore.EXPERIENCE_GREEN;
-            var displayName = Helpers.withStyleComponent("Quest", FastColor.ARGB32.color(232, 169, 0));
+            var displayName = JahdooHelpers.withStyleComponent("Quest", FastColor.ARGB32.color(232, 169, 0));
             var font = Minecraft.getInstance().font;
             var f1 = (float)(-font.width(displayName) / 2);
             var x = 0.020F;
-            var scaled = Math.sin(((entity.privateTicks + partialTick) / 10.0F)) * 0.2F + 5;
+            var scaled = Math.sin(((entity.getPrivateTicks() + partialTick) / 10.0F)) * 0.2F + 5;
             var scale1 = (float) scaled/2;
 
             stack.pushPose();

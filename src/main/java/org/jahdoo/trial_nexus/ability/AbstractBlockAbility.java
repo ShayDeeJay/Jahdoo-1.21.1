@@ -1,9 +1,9 @@
 package org.jahdoo.trial_nexus.ability;
 
 import net.minecraft.core.Vec3i;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 public abstract class AbstractBlockAbility extends Ability {
 

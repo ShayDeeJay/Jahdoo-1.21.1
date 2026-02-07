@@ -6,7 +6,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.trial_nexus.ability.effects.EffectHelpers;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 
@@ -37,7 +37,7 @@ public class FrostEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(LivingEntity targetEntity, int amplifier) {
         if(targetEntity.level() instanceof ServerLevel serverLevel){
-            int getRandomChance = Helpers.Random.nextInt(0,20);
+            int getRandomChance = JahdooHelpers.Random.nextInt(0,20);
             EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementReg.frost(), SoundReg.FROST_ABILITY.get());
             if(getRandomChance == 0){
                 DamageUtils.damageWithJahdoo(targetEntity, amplifier, ElementReg.frost().damageTypeResourceKey());

@@ -14,12 +14,11 @@ import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static net.minecraft.network.chat.Component.translatable;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponentTrans;
-import static org.jahdoo.trial_nexus.utils.Maths.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 
 public class OverlayHelpers {
 
@@ -61,11 +60,11 @@ public class OverlayHelpers {
                     var withoutType = prefix.getString().replace(filterType + " ", "");
                     var prefix2 = withStyleComponentTrans(withoutType, SUB_HEADER_COLOUR);
                     var value = syncableAttribute.getValue();
-                    var readableValues = roundNonWholeString(singleFormattedDouble(value));
+                    var readableValues = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.singleFormattedDouble(value));
                     var suffix = withStyleComponent(" " + readableValues, value > 0 ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED);
                     var string = prefix2.copy().append(Component.literal(":")).append(suffix);
 
-                    graphics.drawString(minecraft.font, string, startX1 + 56, adjustForHeader + 13 + attSpacer.get(), HEADER_COLOUR);
+                    graphics.drawString(minecraft.font, string, startX1 + 56, adjustForHeader + 13 + attSpacer.get(), org.shaydee.shaydeeapi.Colours.getHeaderColour());
                     attSpacer.addAndGet(10);
                 }
             }
@@ -94,7 +93,7 @@ public class OverlayHelpers {
         int maxLength = 0;
 
         for (var attribute : attributes) {
-            var s = roundNonWholeString(doubleFormattedDouble(attribute.getValue()));
+            var s = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(attribute.getValue()));
             var length = Component.translatable(attribute.getAttribute().value().getDescriptionId()).getString().length() + s.length();
             if(length > maxLength) maxLength = length;
         }
@@ -107,12 +106,12 @@ public class OverlayHelpers {
             var text = syncableAttribute.getAttribute().value().getDescriptionId();
             var prefix = withStyleComponentTrans(text, SUB_HEADER_COLOUR);
             var value = syncableAttribute.getValue();
-            var readableValues = roundNonWholeString(doubleFormattedDouble(value));
+            var readableValues = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(value));
 
             var suffix = withStyleComponent(" " + readableValues, value > 0 ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED);
             var string = prefix.copy().append(Component.literal(":")).append(suffix);
 
-            graphics.drawString(minecraft.font, string, startX1 + 56, adjustForHeader + 13 + attSpacer.get(), HEADER_COLOUR);
+            graphics.drawString(minecraft.font, string, startX1 + 56, adjustForHeader + 13 + attSpacer.get(), org.shaydee.shaydeeapi.Colours.getHeaderColour());
             attSpacer.addAndGet(10);
         }
 

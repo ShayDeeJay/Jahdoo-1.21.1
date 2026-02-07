@@ -3,7 +3,7 @@ package org.jahdoo.trial_nexus.tasks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public abstract class AbstractTask {
     public abstract List<ItemStack> rewards(int tick);
 
     public String taskId() {
-        return MOD_ID +"-"+ Helpers.nameToId(taskName()) + "-task";
+        return MOD_ID +"-"+ JahdooHelpers.nameToId(taskName()) + "-task";
     }
 
     public enum TriggerType {

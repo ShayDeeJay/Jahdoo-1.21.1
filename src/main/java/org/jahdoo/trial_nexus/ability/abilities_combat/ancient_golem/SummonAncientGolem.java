@@ -5,36 +5,34 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 
 import java.util.UUID;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusList;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusList;
 
 public class SummonAncientGolem extends DefaultEntityBehaviour {
 
-    private static final ResourceLocation abilityId = Helpers.res("summon_ancient_golem_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("summon_ancient_golem_property");
     private AncientGolem ancientGolem;
     private UUID uuid;
     private double increaseRate = 0.5;
@@ -56,7 +54,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
         this.effectChance = getTag(EFFECT_CHANCE);
         this.lifeTime = getTag(LIFETIME);
         if(player != null){
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                 player, (float) damage, true,
                 MAGIC_DAMAGE_MULTIPLIER,
                 VITALITY_MAGIC_DAMAGE_MULTIPLIER
@@ -195,14 +193,8 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
 
             ancientGolemLocal.setInvulnerable(true);
             ancientGolemLocal.moveTo(spawnPosition);
-            ancientGolemLocal.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemReg.WAND_ITEM_VITALITY.get()));
-            ancientGolemLocal.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemReg.MAGE_HELMET.get()));
-            ancientGolemLocal.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemReg.MAGE_CHESTPLATE.get()));
-            ancientGolemLocal.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ItemReg.MAGE_LEGGINGS.get()));
-            ancientGolemLocal.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemReg.MAGE_BOOTS.get()));
             var directionToEntity = spawnPosition.subtract(cloud.getOwner().position()).normalize();
 
-            // Calculate the yaw so that the skeleton faces away from the player
             double yaw = Math.toDegrees(Math.atan2(directionToEntity.z, directionToEntity.x)) + 90.0;
             ancientGolemLocal.setYRot((float) yaw);
             ancientGolemLocal.setYHeadRot((float) yaw);
@@ -212,6 +204,11 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
             ancientGolemLocal.yHeadRotO = (float) yaw;
             ancientGolemLocal.setPersistenceRequired();
             cloud.level().addFreshEntity(ancientGolemLocal);
+            if(cloud.getOwner() instanceof ServerPlayer player){
+                ancientGolemLocal.setOwnerUUIDOptional(player.getUUID());
+
+            }
+
             ancientGolemLocal.setNoAi(true);
             this.ancientGolem = ancientGolemLocal;
         }

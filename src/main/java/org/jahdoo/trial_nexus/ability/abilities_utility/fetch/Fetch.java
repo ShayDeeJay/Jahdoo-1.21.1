@@ -12,16 +12,14 @@ import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.utils.Helpers;
-
-import java.util.List;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
 
 public class Fetch extends AbstractUtilityProjectile {
 
-     private static final ResourceLocation abilityId = Helpers.res("fetch_property");
+     private static final ResourceLocation abilityId = JahdooHelpers.res("fetch_property");
      private int range;
 
     @Override
@@ -91,18 +89,17 @@ public class Fetch extends AbstractUtilityProjectile {
         var player = (Player) generic.getOwner();
         var pickedUpItem = false;
 
-        List<ItemEntity> items = this.generic.level().getEntitiesOfClass(
+        var items = this.generic.level().getEntitiesOfClass(
             ItemEntity.class,
             this.generic.getBoundingBox().inflate(range, range, range),
             entity -> true
         );
 
         for(ItemEntity itemEntity : items){
-            int col1 = this.getElementType().partColourA();
-            int col2 = this.getElementType().partColourFade();
+            var col1 = this.getElementType().partColourA();
+            var col2 = this.getElementType().partColourFade();
             var genericParticle = ParticleHandlers.genericParticle(MAGIC_PARTICLE, 8,2f, col1, col2, false);
 
-            ParticleHandlers.invisibleLight(generic.level(), itemEntity.position().add(0,0.5,0), genericParticle, 0.03, 0.04, 8);
             if (player != null) {
                 var isPicked = handlePlayerPickup(itemEntity, player);
                 if(isPicked){
@@ -115,14 +112,15 @@ public class Fetch extends AbstractUtilityProjectile {
                 var level = entity.level();
                 var bE = level.getBlockEntity(BlockPos.containing(pos));
                 if(bE instanceof ChaosCubeEntity autoEntity){
-                    autoEntity.externalOutputInventory(level, itemEntity);
-
+                    pickedUpItem = autoEntity.externalOutputInventory(level, itemEntity);
                 }
             }
+
+            if(pickedUpItem) ParticleHandlers.invisibleLight(generic.level(), itemEntity.position().add(0,0.5,0), genericParticle, 0.03, 0.04, 8);
         };
 
         if(pickedUpItem && player instanceof ServerPlayer player1) {
-            Helpers.sendClientSound(player1, SoundEvents.ITEM_PICKUP, 1.15f, 1);
+            JahdooHelpers.sendClientSound(player1, SoundEvents.ITEM_PICKUP, 1.15f, 1);
         }
         generic.discard();
     }

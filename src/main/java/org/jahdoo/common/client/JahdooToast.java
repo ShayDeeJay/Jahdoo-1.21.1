@@ -12,6 +12,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 
 public class JahdooToast implements Toast {
+
     private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/advancement");
     private boolean playedSound;
     private final String header;

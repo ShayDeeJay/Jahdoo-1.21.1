@@ -10,7 +10,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -37,7 +37,7 @@ public class CoinSack extends Item implements JahdooItem {
     @Override
     public Component getName(ItemStack stack) {
         var getCoins = stack.get(ComponentReg.STORE_INTEGER);
-        return Helpers.withStyleComponent((getCoins == null ? "Empty " : "") + "Coin Sack", ColourStore.CHAMPION_GOLD);
+        return JahdooHelpers.withStyleComponent((getCoins == null ? "Empty " : "") + "Coin Sack", ColourStore.CHAMPION_GOLD);
     }
 
     @Override
@@ -50,12 +50,12 @@ public class CoinSack extends Item implements JahdooItem {
     public static void coinToolTip(List<Component> tooltipComponents, int coins) {
         var asWallet = PlayerWallet.CurrencyConverter.convertToCoins(coins);
         if (asWallet.platinum() > 0)
-            tooltipComponents.add(Helpers.withStyleComponent("Platinum: " + asWallet.platinum(), ColourStore.PLATINUM_COIN));
+            tooltipComponents.add(JahdooHelpers.withStyleComponent("Platinum: " + asWallet.platinum(), ColourStore.PLATINUM_COIN));
         if (asWallet.gold() > 0)
-            tooltipComponents.add(Helpers.withStyleComponent("Gold: " + asWallet.gold(), ColourStore.GOLD_COIN));
+            tooltipComponents.add(JahdooHelpers.withStyleComponent("Gold: " + asWallet.gold(), ColourStore.GOLD_COIN));
         if (asWallet.silver() > 0)
-            tooltipComponents.add(Helpers.withStyleComponent("Silver: " + asWallet.silver(), ColourStore.SILVER_COIN));
+            tooltipComponents.add(JahdooHelpers.withStyleComponent("Silver: " + asWallet.silver(), ColourStore.SILVER_COIN));
         if (asWallet.bronze() > 0)
-            tooltipComponents.add(Helpers.withStyleComponent("Bronze: " + asWallet.bronze(), ColourStore.BRONZE_COIN));
+            tooltipComponents.add(JahdooHelpers.withStyleComponent("Bronze: " + asWallet.bronze(), ColourStore.BRONZE_COIN));
     }
 }

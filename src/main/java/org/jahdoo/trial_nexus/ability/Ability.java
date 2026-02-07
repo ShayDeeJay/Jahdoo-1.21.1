@@ -4,18 +4,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -58,11 +58,11 @@ public abstract class Ability {
     abstract public int getAbilityCost();
 
     public String getAbilityName(){
-        return Helpers.stringIdToName(this.abilityId);
+        return JahdooHelpers.stringIdToName(this.abilityId);
     }
 
     public ResourceLocation getAbilityIconLocation(){
-        return Helpers.res("textures/ability_icons/"+abilityId+".png");
+        return JahdooHelpers.res("textures/ability_icons/"+abilityId+".png");
     }
 
     public static double offsetShoot(LivingEntity livingEntity){
@@ -137,7 +137,7 @@ public abstract class Ability {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                Helpers.getSoundWithPositionV(projectile.level(), player.position(), SoundReg.ORB_FIRE.get(), 0.4f, 1f);
+                JahdooHelpers.getSoundWithPositionV(projectile.level(), player.position(), SoundReg.ORB_FIRE.get(), 0.4f, 1f);
             }
         }
     }
@@ -149,9 +149,14 @@ public abstract class Ability {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, hexedEffect(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                Helpers.getSoundWithPositionV(projectile.level(), player.position(), SoundEvents.BREEZE_CHARGE , 0.05f, 1.4f);
+                utilitySpellCastSound(player.level(), player.position());
             }
         }
+    }
+
+    public static void utilitySpellCastSound(Level level, Vec3 position){
+        JahdooHelpers.getSoundWithPositionV(level, position, SoundReg.SUSPEND.get(), 0.3f, 1.6f);
+        JahdooHelpers.getSoundWithPositionV(level, position, SoundReg.IMPACT.get(), 0.04f, 1.6f);
     }
 
     public static void fireMultiShotProjectile(

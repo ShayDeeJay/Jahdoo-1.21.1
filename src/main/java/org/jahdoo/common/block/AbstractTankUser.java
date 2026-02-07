@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.registers.BlockReg;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
     public abstract int setCraftingCost();
 
     public int getNexiteCount(){
-        return this.getTankEntity().inputItemHandler.getStackInSlot(0).getCount();
+        return this.getTankEntity().getInputItemHandler().getStackInSlot(0).getCount();
     }
 
     protected void chargeTankFuel(int craftingFuelCost){
@@ -66,7 +67,7 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         if(this.level == null || this.tankPosition == null) return false;
         if (!(this.level.getBlockEntity(this.tankPosition) instanceof TankBlockEntity tankBlockEntity)) return false;
 
-        var getNexite = tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount();
+        var getNexite = tankBlockEntity.getInputItemHandler().getStackInSlot(0).getCount();
         var hasEnoughNexite = getNexite >= this.setCraftingCost();
 
         return this.tankPosition != null && hasEnoughNexite && this.setCraftingCost() > 0;

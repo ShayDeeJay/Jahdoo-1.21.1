@@ -3,6 +3,7 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.permafrost;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -12,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
@@ -20,11 +21,12 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.EffectReg.FROST_EFFECT;
@@ -75,7 +77,7 @@ public class Permafrost extends DefaultEntityBehaviour {
         return ElementReg.frost();
     }
 
-    public static ResourceLocation abilityId = Helpers.res("arctic_storm_property");
+    public static ResourceLocation abilityId = JahdooHelpers.res("arctic_storm_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -207,7 +209,7 @@ public class Permafrost extends DefaultEntityBehaviour {
                 );
 
                 if(Random.nextInt(0,30) == 0){
-                    Helpers.getSoundWithPosition(cloud.level(), cloud.blockPosition(), SoundReg.DASH_EFFECT.get(), 0, 0.3f);
+                    Helpers.getSoundWithPosition(cloud.level(), cloud.blockPosition(), SoundReg.DASH_EFFECT.get(), SoundSource.NEUTRAL, 0F, 0.3f);
                 }
             }
         );

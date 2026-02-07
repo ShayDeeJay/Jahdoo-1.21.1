@@ -4,30 +4,33 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
-import org.jahdoo.trial_nexus.ability.AbilityBuilder;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.AbilityBuilder;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.DamageUtils;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.Maths;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.particle.ParticleStore.PLUS_PARTICLE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 
 public class EtherealArrow extends DefaultEntityBehaviour {
 
-    public static ResourceLocation abilityId = Helpers.res("ethereal_arrow_property");
+    public static ResourceLocation abilityId = JahdooHelpers.res("ethereal_arrow_property");
 
     double damage;
     double effectDuration;
@@ -132,27 +135,30 @@ public class EtherealArrow extends DefaultEntityBehaviour {
             .buildAndReturn();
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(this.generic.level(), this.generic.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         if(this.generic != null){
             var element = generic.getElementType();
+            var isVital = element.equals(ElementReg.vitality());
+            var canLeech = Maths.percentageChance(this.lifeLeechChance);
 
-            if (element.equals(ElementReg.vitality())) {
-                if(Maths.percentageChance(this.lifeLeechChance)){
-                    if (generic.getOwner() instanceof EternalWizard eternalWizard) {
-                        eternalWizard.heal(2);
-                        Helpers.getSoundWithPositionV(eternalWizard.level(), eternalWizard.position(), ElementReg.vitality().sound(), 1f, 1.2f);
-                        Helpers.getSoundWithPositionV(eternalWizard.level(), eternalWizard.position(), SoundReg.IMPACT.get(), 1f, 0.8f);
-                        particleBurst(
-                            eternalWizard.level(), eternalWizard.position().add(0, 0.2, 0), 15,
-                            genericParticle(PLUS_PARTICLE, element, 5, 1.4f),
-                            0, 1.5, 0, 0.1f
-                        );
-                    }
-                }
+            if (isVital && canLeech && generic.getOwner() instanceof EternalWizard eternalWizard) {
+                eternalWizard.heal(2);
+                sharedSound(ElementReg.vitality().sound(), 1f, 1.2f);
+                sharedSound(SoundReg.IMPACT.get(), 1f, 0.8f);
+                particleBurst(
+                    eternalWizard.level(), eternalWizard.position().add(0, 0.2, 0), 15,
+                    genericParticle(PLUS_PARTICLE, element, 5, 1.4f),
+                    0, 1.5, 0, 0.1f
+                );
             }
 
-            Helpers.getSoundWithPosition(this.generic.level(), hitEntity.blockPosition(), element.sound(),0.4f);
+            sharedSound(element.sound(), 0.4F, 1F);
+
             if (hitEntity.isAlive()) {
                 if (!(this.generic.level() instanceof ServerLevel serverLevel)) return;
                 var type = bakedParticle(element.id(), 10, 1, false);
@@ -162,7 +168,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
                 spawnElectrifiedParticles(serverLevel, hitEntity.position(), generic,3, hitEntity, 0.2);
             }
 
-            if (Helpers.Random.nextInt(0, (int) Math.max(effectChance, 1)) == 0 || effectChance == -1) {
+            if (JahdooHelpers.Random.nextInt(0, (int) Math.max(effectChance, 1)) == 0 || effectChance == -1) {
                 var effect = new JahdooMobEffect(element.effect(), (int) effectDuration, (int) effectStrength);
                 hitEntity.addEffect(effect);
             }

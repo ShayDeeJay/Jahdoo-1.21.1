@@ -7,23 +7,24 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.DIAMOND_BOX;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getNameWithStyle;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
+import static org.jahdoo.trial_nexus.utils.ColourStore.DIAMOND_BOX;
+import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class RuneItem extends BaseItem {
 
@@ -69,7 +70,7 @@ public class RuneItem extends BaseItem {
     }
 
     static void randomRune(Player player, JahdooRarity tierRarity, JahdooRarity runeRarity) {
-        var stack = Helpers.getUsedItem(player);
+        var stack = JahdooHelpers.getUsedItem(player);
         if(!player.level().isClientSide){
             var newStack = stack.copyWithCount(1);
             stack.shrink(1);
@@ -95,7 +96,7 @@ public class RuneItem extends BaseItem {
         }
 
         if(!description.getString().isEmpty() && !AbilityComponentHelper.shiftForDetails(tooltipComponents, false)) {
-            tooltipComponents.add(Helpers.withStyleComponent(description.getString(), ColourStore.HEADER_COLOUR));
+            tooltipComponents.add(JahdooHelpers.withStyleComponent(description.getString(), Colours.getHeaderColour()));
         }
 
         return tooltipComponents;

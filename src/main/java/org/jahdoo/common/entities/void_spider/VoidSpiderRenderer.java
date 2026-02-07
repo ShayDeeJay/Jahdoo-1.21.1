@@ -7,12 +7,12 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.Spider;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 
 public class VoidSpiderRenderer<T extends Spider> extends MobRenderer<T, SpiderModel<T>> {
-    private static final ResourceLocation SPIDER_MOTHER = Helpers.res("textures/entity/void_spider.png");
-    private static final ResourceLocation SPIDER_LOCATION_SPAWN = Helpers.res("textures/entity/void_spider_next.png");
+    private static final ResourceLocation SPIDER_MOTHER = JahdooHelpers.res("textures/entity/void_spider.png");
+    private static final ResourceLocation SPIDER_LOCATION_SPAWN = JahdooHelpers.res("textures/entity/void_spider_next.png");
 
     public VoidSpiderRenderer(EntityRendererProvider.Context p_174401_) {
         this(p_174401_, ModelLayers.SPIDER);

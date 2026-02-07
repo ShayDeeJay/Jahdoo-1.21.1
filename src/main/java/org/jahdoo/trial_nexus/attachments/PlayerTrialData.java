@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.networking.server2client.ClearPlayerTrialDataS2CP;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.networking.server2client.PlayerTrialDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 
@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.jahdoo.trial_nexus.attachments.RunData.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.common.registers.AttachmentReg.PLAYER_TRIAL_DATA;
 
 public class PlayerTrialData implements IAttachment{
@@ -208,7 +208,7 @@ public class PlayerTrialData implements IAttachment{
                 for(int i = 0; i < multiplier; i++){
                     var newInstance = new InstanceData();
                     var newRunData = new RunData();
-                    var name = Helpers.listRandom(Arrays.stream(InstanceDifficulty.values()).toList()).getSerializedName();
+                    var name = JahdooHelpers.listRandom(Arrays.stream(InstanceDifficulty.values()).toList()).getSerializedName();
 
                     newInstance.setPlatinumCoin(Random.nextInt(5, 30));
                     newInstance.setGoldCoin(Random.nextInt(10, 50));

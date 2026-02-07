@@ -5,6 +5,7 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -26,14 +27,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.sounds.SoundEvents.LODESTONE_COMPASS_LOCK;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.coinChestGetter;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.lootChestGetter;
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class LootChestBlock extends BaseEntityBlock {
 
@@ -112,7 +113,7 @@ public class LootChestBlock extends BaseEntityBlock {
                 if (success != null) return success;
             }
 
-            getSoundWithPosition(level, pos, LODESTONE_COMPASS_LOCK, 1,1.8F);
+            Helpers.getSoundWithPosition(level, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 1F,1.8F);
         }
 
         return SUCCESS;

@@ -6,7 +6,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
@@ -17,7 +16,8 @@ import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -96,8 +96,8 @@ public class  OverlayBlockTooltip {
             if(needed <= count) return;
 
             var list = new ArrayList<Component>();
-            list.add(Helpers.withStyleComponent("Needed: " + needed, MAGNET_RANGE_GREEN));
-            list.add(Helpers.withStyleComponent("In Tank: " + count, MAGNET_STRENGTH_RED));
+            list.add(JahdooHelpers.withStyleComponent("Needed: " + needed, MAGNET_RANGE_GREEN));
+            list.add(JahdooHelpers.withStyleComponent("In Tank: " + count, MAGNET_STRENGTH_RED));
 
             var mouseY = height - (list.size() * 5);
             pose.pushPose();
@@ -106,7 +106,7 @@ public class  OverlayBlockTooltip {
             pose.popPose();
         }
 
-        var handler = tableEntity.inputItemHandler;
+        var handler = tableEntity.getInputItemHandler();
         if(handler.getSlots() == 0) return;
 
         var stackInSlot = handler.getStackInSlot(0);
@@ -117,8 +117,8 @@ public class  OverlayBlockTooltip {
             var components = new ArrayList<Component>();
             var slotLimit = handler.getSlotLimit(0);
             var count = stackInSlot.getCount();
-            components.add(Helpers.withStyleComponentTrans("block.jahdoo.tank", utility().textColourB()));
-            components.add(Helpers.withStyleComponent(count +"/"+ slotLimit, Helpers.colourByPercent(slotLimit, count, true)));
+            components.add(JahdooHelpers.withStyleComponentTrans("block.jahdoo.tank", utility().textColourB()));
+            components.add(JahdooHelpers.withStyleComponent(count +"/"+ slotLimit, JahdooHelpers.colourByPercent(slotLimit, count, true)));
             pose.pushPose();
             pose.translate(0,0,1);
             graphics.renderTooltip(font, components, Optional.empty(), width, mouseY + 6);

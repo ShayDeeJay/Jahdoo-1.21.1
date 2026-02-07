@@ -4,10 +4,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DropExperienceBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -17,27 +18,29 @@ import org.jahdoo.common.block.TrialPortalBlock;
 import org.jahdoo.common.block.altar.AltarBlock;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeBlock;
 import org.jahdoo.common.block.creator.CreatorBlock;
+import org.jahdoo.common.block.dissembler.DisassemblerBlock;
+import org.jahdoo.common.block.divine_forge.DivineForge;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlock;
+import org.jahdoo.common.block.light_block.LightBlock;
 import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.loot_chest.LootChestBlock;
-import org.jahdoo.common.block.dissembler.DisassemblerBlock;
-import org.jahdoo.common.block.light_block.LightBlock;
 import org.jahdoo.common.block.loot_crate.LootCrateBlock;
 import org.jahdoo.common.block.loot_pot.LootPotBlock;
+import org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterBlock;
 import org.jahdoo.common.block.perk_table.PerkTable;
 import org.jahdoo.common.block.power_up_station.PowerUpStation;
-import org.jahdoo.common.block.divine_forge.DivineForge;
-import org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterBlock;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.tank.TankBlock;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlock;
 import org.jahdoo.common.block.wand_manager.WandManagerBlock;
+import org.jahdoo.common.items.BaseJahdooBlockItem;
 
 import java.util.function.Supplier;
 
 import static net.minecraft.world.level.block.Blocks.*;
-import static net.minecraft.world.level.block.state.BlockBehaviour.*;
-import static net.minecraft.world.level.block.state.BlockBehaviour.Properties.*;
+import static net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import static net.minecraft.world.level.block.state.BlockBehaviour.Properties.of;
+import static net.minecraft.world.level.block.state.BlockBehaviour.Properties.ofFullCopy;
 
 public class BlockReg {
 
@@ -170,12 +173,12 @@ public class BlockReg {
     }
 
     private static <T extends Block> void registerBlockItem(String name, DeferredHolder<Block, T> block) {
-        ItemReg.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        ItemReg.ITEMS.register(name, () -> new BaseJahdooBlockItem(block.get(), new Item.Properties()));
     }
 
     private static <T extends Block> void registerCreativeBlockItem(String name, DeferredHolder<Block, T> block) {
         ItemReg.ITEMS.register(name, () ->
-            new BlockItem(block.get(), new Item.Properties()){
+            new BaseJahdooBlockItem(block.get(), new Item.Properties()){
                 @Override
                 public Component getName(ItemStack stack) {
                     return stack.has(ComponentReg.STORE_INTEGER) ? Component.literal("Creative " + super.getName(stack).getString()) : super.getName(stack);

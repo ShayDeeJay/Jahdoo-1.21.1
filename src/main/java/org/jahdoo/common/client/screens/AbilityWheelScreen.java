@@ -19,7 +19,7 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.registers.mod.AbilityReg;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.jahdoo.trial_nexus.attachments.CasterData.entityHolderWithSelected;
-import static org.jahdoo.trial_nexus.utils.Helpers.syncSelectedAbility;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.syncSelectedAbility;
 import static org.jahdoo.common.client.Icons.COG;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.isConfigAbility;
@@ -63,7 +63,7 @@ public class AbilityWheelScreen extends Screen  {
 
     public AbilityWheelScreen() {
         super(Component.literal("Ability Menu"));
-        Helpers.syncAbilities();
+        JahdooHelpers.syncAbilities();
     }
 
     private void onClick(List<String> abilityHolder, int finalI, Player player) {
@@ -197,7 +197,7 @@ public class AbilityWheelScreen extends Screen  {
     private void setRadialTexture(GuiGraphics guiGraphics, int easedValue, float fade){
         var xRadial = (this.width - easedValue) / 2;
         var yRadial = (this.height - easedValue) / 2;
-        var atlasLocation = Helpers.res("textures/gui/ability_wheel_background.png");
+        var atlasLocation = JahdooHelpers.res("textures/gui/ability_wheel_background.png");
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();

@@ -21,7 +21,7 @@ import java.util.List;
 import static net.minecraft.util.RandomSource.create;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class ParticleHandlers {
 

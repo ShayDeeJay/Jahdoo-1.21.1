@@ -11,14 +11,14 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.element.*;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 public class ElementReg {
 
-    public static final ResourceKey<Registry<AbstractElement>> ELEMENT_REGISTRY_KEY = ResourceKey.createRegistryKey(Helpers.res("element"));
+    public static final ResourceKey<Registry<AbstractElement>> ELEMENT_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("element"));
     private static final DeferredRegister<AbstractElement> ELEMENT = DeferredRegister.create(ELEMENT_REGISTRY_KEY, JahdooMod.MOD_ID);
     public static final Registry<AbstractElement> REGISTRY =  new RegistryBuilder<>(ELEMENT_REGISTRY_KEY).create();
 
@@ -54,14 +54,14 @@ public class ElementReg {
         var list = REGISTRY.stream()
             .filter(e -> e != utility())
             .toList();
-        return Helpers.listRandom(list);
+        return JahdooHelpers.listRandom(list);
     }
 
     public static AbstractElement random(long seed) {
         var list = REGISTRY.stream()
             .filter(e -> e != utility())
             .toList();
-        return Helpers.listRandom(list, seed);
+        return JahdooHelpers.listRandom(list, seed);
     }
 
     private static DeferredHolder<AbstractElement, AbstractElement> registerElement(Supplier<AbstractElement> element) {

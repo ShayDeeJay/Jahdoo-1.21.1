@@ -4,12 +4,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.shaydee.shaydeeapi.Maths;
 
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_HEALTH;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.trial_nexus.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class MobHealth extends AbstractLevelBoon {
 
@@ -42,7 +42,7 @@ public class MobHealth extends AbstractLevelBoon {
     @Override
     public double value(JahdooRarity rarity) {
         var getRarity = rarity.getAttributes();
-        return doubleFormattedDouble(getRarity.getRandomManaReduction());
+        return Maths.doubleFormattedDouble(getRarity.getRandomManaReduction());
     }
 
     @Override

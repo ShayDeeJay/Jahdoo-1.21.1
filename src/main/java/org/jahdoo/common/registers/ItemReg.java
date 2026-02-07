@@ -7,7 +7,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.*;
 import org.jahdoo.common.items.ability_augment.AugmentCrystal;
 import org.jahdoo.common.items.armor.ancient_golem_armor.AncientGolemArmor;
@@ -37,7 +36,6 @@ import java.util.function.Supplier;
 
 import static net.minecraft.world.item.ArmorItem.Type.*;
 import static org.jahdoo.common.registers.BlockReg.*;
-import static org.jahdoo.common.registers.ComponentReg.CORE_DATA;
 
 public class ItemReg {
 
@@ -83,22 +81,26 @@ public class ItemReg {
 
     //Core Items
     public static final DeferredHolder<Item, Item> CHARGED_AUGMENT_CORE =
-        complexItem("augment_core_filled", () -> new CoreItem(new Item.Properties()));
+        chargedCoreItems("augment_core_filled");
 
     public static final DeferredHolder<Item, Item> CHARGED_ADVANCED_AUGMENT_CORE =
-        complexItem("advanced_augment_core_filled", () -> new CoreItem(new Item.Properties()));
+        chargedCoreItems("advanced_augment_core_filled");
 
     public static final DeferredHolder<Item, Item> CHARGED_AUGMENT_HYPER_CORE =
-        complexItem("augment_hyper_core_filled", () -> new CoreItem(new Item.Properties()));
+        chargedCoreItems("augment_hyper_core_filled");
 
     public static final DeferredHolder<Item, Item> AUGMENT_CORE =
-        complexItem("augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(50, 0))));
+        complexItem("augment_core", () -> new CoreItem(50));
 
     public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE =
-        complexItem("advanced_augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(150, 0))));
+        complexItem("advanced_augment_core", () -> new CoreItem(150));
 
     public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE =
-        complexItem("augment_hyper_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(500, 0))));
+        complexItem("augment_hyper_core", () -> new CoreItem(500));
+
+    public static DeferredHolder<Item, Item> chargedCoreItems(String name){
+        return complexItem(name, () -> new CoreItem(0));
+    }
 
     //Keys
     public static final DeferredHolder<Item, Item> KEY_FRAGMENT =
@@ -116,6 +118,8 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> CRYPT_KEY =
         complexItem("crypt_key", KeyItem::new);
 
+    public static final DeferredHolder<Item, Item> CHALLENGER_KEY =
+        complexItem("challenger_key", KeyItem::new);
 
     //Complex Items
     public static final DeferredHolder<Item, Item> PERKA_SODA =
@@ -311,13 +315,12 @@ public class ItemReg {
         complexItem("skill_point", SkillPointItem::new);
 
 
-
     public static DeferredHolder<Item, Item> complexItem(String name, Supplier<? extends Item> sup){
         return ITEMS.register(name, sup);
     }
 
     public static DeferredHolder<Item, Item> basicItem(String name){
-        return ITEMS.register(name, () -> new Item(new Item.Properties()));
+        return ITEMS.register(name, () -> new BaseJahdooItem(new Item.Properties()));
     }
 
     public static void register(IEventBus eventBus){

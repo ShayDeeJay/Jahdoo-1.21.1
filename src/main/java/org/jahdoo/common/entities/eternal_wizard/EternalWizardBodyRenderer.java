@@ -6,14 +6,14 @@ import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.minecraft.client.renderer.entity.EntityRendererProvider.*;
 
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardBodyRenderer extends HumanoidMobRenderer<EternalWizard, WizardModel<EternalWizard>> {
 
-    private static final ResourceLocation SKELETON_LOCATION = Helpers.res("textures/entity/eternal_wizard/eternal_wizard.png");
+    private static final ResourceLocation SKELETON_LOCATION = JahdooHelpers.res("textures/entity/eternal_wizard/eternal_wizard.png");
 
     public EternalWizardBodyRenderer(
         Context context,

@@ -2,28 +2,30 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.trial_nexus.attachments.AbstractHoldUseAttachment;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.attachments.AbstractHoldUseAttachment;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.MANA_COST;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.CASTING_TIME;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.abilityId;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.items.caster_item.CastHelper.validManaAndCooldown;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.MANA_COST;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.CASTING_TIME;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.abilityId;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public class DimensionalRecall extends AbstractHoldUseAttachment {
 
@@ -56,8 +58,11 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
                 serverPlayer.teleportTo(getLevelDimension, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yya, serverPlayer.rotA);
                 CastHelper.chargeMana(abilityName, serverPlayer);
                 CastHelper.chargeCooldown(abilityName, serverPlayer);
-                getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getTeleportSound, 0.8f);
-                getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getSuccessSound, 1, 1.2f);
+
+                var level = serverPlayer.level();
+                var position = serverPlayer.position();
+                Helpers.getSoundWithPosition(level, position, getTeleportSound, SoundSource.PLAYERS, 1, 0.8f);
+                Helpers.getSoundWithPosition(level, position, getSuccessSound, SoundSource.PLAYERS, 1, 1.2f);
             }
         }
     }
@@ -66,7 +71,6 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     public void onTickMethod(Player player){
         super.onTickMethod(player);
         var getHolder = CasterData.entityHolderWithSelected(player);
-        getModifierValue(getHolder, abilityId.getPath().intern());
         var getCastTime = CasterData.getSpecificValue(getHolder, CASTING_TIME);
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         var pos = serverPlayer.getRespawnPosition();

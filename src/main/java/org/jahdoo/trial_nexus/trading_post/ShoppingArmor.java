@@ -5,28 +5,27 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.items.armor.battle_mage.BattleMageArmor;
 import org.jahdoo.common.items.armor.knight_king.KnightKingArmor;
 import org.jahdoo.common.items.armor.mage.MageArmor;
 import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.RuneReg;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
-import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.trial_nexus.loot.RewardLootTables.attachEnchantmentWithChance;
-import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.listRandom;
 import static org.jahdoo.common.items.runes.rune_data.RuneCategories.*;
 import static org.jahdoo.common.items.runes.rune_data.RuneCategories.INFINITY;
 import static org.jahdoo.common.registers.AttributeReg.replaceOrAddAttribute;
+import static org.jahdoo.trial_nexus.loot.RewardLootTables.enchantmentWithChance;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
+import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.listRandom;
 
 public class ShoppingArmor {
 
@@ -167,7 +166,7 @@ public class ShoppingArmor {
     private static void attachMageData(JahdooRarity jahdooRarity, ItemStack itemStack) {
         var i = jahdooRarity.getId() + 1;
         if(itemStack.getItem() instanceof ArmorItem armorItem){
-            if(Maths.percentageChance(10 * i)){
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(10 * i)){
                 var tier = getRarity(List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000)));
                 var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(PERK, RESILIENCE, INFINITY, COSMIC);
                 if(!getAllAllowed.isEmpty()){
@@ -176,7 +175,7 @@ public class ShoppingArmor {
             }
         }
 
-        var attachRuneSlots = Maths.percentageChance(10 * i) ? 1 : 0;
+        var attachRuneSlots = org.shaydee.shaydeeapi.Maths.percentageChance(10 * i) ? 1 : 0;
         sharedArmorData(jahdooRarity, itemStack, attachRuneSlots, -15, -50);
     }
 
@@ -185,7 +184,7 @@ public class ShoppingArmor {
             var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(INFINITY, COSMIC);
             addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
 
-            if(Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
                 addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
             }
         }
@@ -195,7 +194,7 @@ public class ShoppingArmor {
 
     private static void attachKnightKingData(JahdooRarity jahdooRarity, ItemStack itemStack) {
         if(itemStack.getItem() instanceof ArmorItem armorItem){
-            if(Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
                 addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, RuneReg.RESILIENCE.get());
             }
         }
@@ -237,21 +236,21 @@ public class ShoppingArmor {
         var slot = armorItem.getEquipmentSlot();
         var isSpecial = jahdooRarity == UNIQUE;
 
-        if (Maths.percentageChance(isSpecial ? 60 : 10)) return;
+        if (org.shaydee.shaydeeapi.Maths.percentageChance(isSpecial ? 60 : 10)) return;
 
-        attachEnchantmentWithChance(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isSpecial);
-        attachEnchantmentWithChance(itemStack, serverLevel, PROJECTILE_PROTECTION, 5, 10, isSpecial);
-        attachEnchantmentWithChance(itemStack, serverLevel, PROTECTION, 5, 10, isSpecial);
-        attachEnchantmentWithChance(itemStack, serverLevel, UNBREAKING, 4, 9, isSpecial);
+        enchantmentWithChance(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isSpecial);
+        enchantmentWithChance(itemStack, serverLevel, PROJECTILE_PROTECTION, 5, 10, isSpecial);
+        enchantmentWithChance(itemStack, serverLevel, PROTECTION, 5, 10, isSpecial);
+        enchantmentWithChance(itemStack, serverLevel, UNBREAKING, 4, 10, isSpecial);
 
         if(slot == FEET){
-            attachEnchantmentWithChance(itemStack, serverLevel, SOUL_SPEED, 4, 9, isSpecial);
-            attachEnchantmentWithChance(itemStack, serverLevel, DEPTH_STRIDER, 4, 9, isSpecial);
-            attachEnchantmentWithChance(itemStack, serverLevel, FEATHER_FALLING, 5, 10, isSpecial);
+            enchantmentWithChance(itemStack, serverLevel, SOUL_SPEED, 4, 9, isSpecial);
+            enchantmentWithChance(itemStack, serverLevel, DEPTH_STRIDER, 4, 9, isSpecial);
+            enchantmentWithChance(itemStack, serverLevel, FEATHER_FALLING, 5, 10, isSpecial);
         }
 
-        if(slot == LEGS) attachEnchantmentWithChance(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isSpecial);
-        if(slot == HEAD) attachEnchantmentWithChance(itemStack, serverLevel, RESPIRATION, 4, 9, isSpecial);
+        if(slot == LEGS) enchantmentWithChance(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isSpecial);
+        if(slot == HEAD) enchantmentWithChance(itemStack, serverLevel, RESPIRATION, 4, 9, isSpecial);
     }
 
     public static void attachCustomArmorData(ServerLevel serverLevel, ItemStack itemStack, JahdooRarity jahdooRarity) {

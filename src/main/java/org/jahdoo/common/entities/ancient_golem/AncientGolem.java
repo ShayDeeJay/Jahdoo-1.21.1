@@ -5,7 +5,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -26,25 +26,30 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.common.entities.EntityHelpers;
 import org.jahdoo.common.entities.ITamableEntity;
+import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.entities.goals.*;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
-import static net.minecraft.network.syncher.EntityDataSerializers.*;
-import static net.minecraft.network.syncher.SynchedEntityData.*;
-import static net.minecraft.world.entity.ai.targeting.TargetingConditions.*;
+import static net.minecraft.network.syncher.EntityDataSerializers.FLOAT;
+import static net.minecraft.network.syncher.EntityDataSerializers.INT;
+import static net.minecraft.network.syncher.SynchedEntityData.Builder;
+import static net.minecraft.network.syncher.SynchedEntityData.defineId;
+import static net.minecraft.world.entity.ai.targeting.TargetingConditions.DEFAULT;
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.common.entities.SharedEntityBehaviours.canTarget;
+import static org.jahdoo.common.entities.EntityHelpers.canTarget;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 
 public class AncientGolem extends IronGolem implements ITamableEntity {
 
@@ -52,18 +57,22 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
     private static final EntityDataAccessor<Integer> LIFETIMES = defineId(AncientGolem.class, INT);
     private static final EntityDataAccessor<Integer> PRIVATE_TICKS = defineId(AncientGolem.class, INT);
     private static final EntityDataAccessor<Float> SCALE = defineId(AncientGolem.class, FLOAT);
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = defineId(AncientGolem.class, EntityDataSerializers.OPTIONAL_UUID);
 
     private LivingEntity owner;
     private UUID ownerUUID;
     public AnimationState smash = new AnimationState();
     public AnimationState normal = new AnimationState();
     public AnimationState jump = new AnimationState();
+    public AnimationState novaSmash = new AnimationState();
     public double effectDuration;
     public double effectStrength;
     public double effectChance;
     public double damage;
     public int lifeTime;
     public int privateTicks;
+    public int damageDelay;
+    public boolean triggerDamage;
 
     public AncientGolem(
         EntityType<? extends AncientGolem> entityType,
@@ -109,11 +118,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
         return this.entityData.get(PRIVATE_TICKS);
     }
 
-    public void setPrivateTicks(int privateTicks) {
-        this.entityData.set(PRIVATE_TICKS, privateTicks);
-    }
-
-    private AbstractElement element(){
+    public AbstractElement element(){
         return ElementReg.vitality();
     }
 
@@ -157,12 +162,9 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
     @Override
     public void handleEntityEvent(byte id) {
         if(id == 4) this.normal.start(this.tickCount);
+        if(id == 5) this.smash.start(this.tickCount);
+        if(id == 6) this.novaSmash.start(this.tickCount);
         super.handleEntityEvent(id);
-    }
-
-    private void reassignPlayer() {
-        if(!(this.level() instanceof ServerLevel serverLevel)) return;
-        if(this.owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
     }
 
     @Override
@@ -187,7 +189,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
     public boolean canDamageEntity(LivingEntity hitEntity, LivingEntity owner){
         if(owner != null) {
             var uuidMatched = hitEntity.getUUID() != owner.getUUID();
-            var isTamable = !(hitEntity instanceof ITamableEntity tamableEntity && tamableEntity.getOwner() == owner);
+            var isTamable = EntityHelpers.canTarget(hitEntity, owner);
             return uuidMatched && isTamable;
         }
         return true;
@@ -197,9 +199,12 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
     public void tick() {
         privateTicks++;
         super.tick();
-        reassignPlayer();
+        if(this.owner == null) {
+            this.owner = this.reassignOwner(level(), owner, ownerUUID);
+        }
         this.resetFallDistance();
         this.endOfLife();
+        Decoy.attractPlayersOps(this, 50, this.getOwner());
     }
 
     @Override
@@ -208,6 +213,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
         builder.define(SCALE, 0f);
         builder.define(LIFETIMES, this.lifeTime);
         builder.define(PRIVATE_TICKS, this.privateTicks);
+        builder.define(OWNER_UUID, Optional.empty());
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -216,7 +222,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
             .add(Attributes.MOVEMENT_SPEED, 0.25F)
             .add(Attributes.KNOCKBACK_RESISTANCE, 1.0F)
             .add(Attributes.STEP_HEIGHT, 1.0F)
-            .add(Attributes.ATTACK_DAMAGE, 15f);
+            .add(Attributes.ATTACK_DAMAGE, 25f);
     }
 
     @Override
@@ -233,7 +239,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
         if(!this.level().isClientSide){
             var isRunning = this.getSpeed() > 0.25 && isEntityMoving();
             if (isRunning) {
-                this.setKnockback(this);
+//                this.setKnockback(this);
                 clientDiggingParticles(this, level());
             }
         }
@@ -258,6 +264,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
     public void particle(){
         if(!this.level().isClientSide){
             var isRunning = this.getSpeed() > 0.25 && isEntityMoving();
+            System.out.println(this.getSpeed());
             if (this.tickCount % (isRunning ? 1 : 4) == 0) {
                 var level = this.level();
                 var position = new Vec3(this.getRandomX(1), this.getRandomY(), this.getRandomZ(1));
@@ -283,6 +290,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
                 return InteractionResult.PASS;
             } else {
                 var f1 = 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F;
+
                 this.playSound(SoundEvents.VAULT_PLACE, 2, 1.2f);
                 this.playSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, f1, 0.7f);
                 itemstack.consume(1, player);
@@ -305,6 +313,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
             var y = targetEntity.onGround() ? Math.min(0.8D, vec3.y / 2.0D + strength) : vec3.y;
             var z = vec3.z / 2.0D - vec31.z;
             var x = vec3.x / 2.0D - vec31.x;
+            System.out.println(y);
             targetEntity.setDeltaMovement(x, y, z);
         }
     }
@@ -322,6 +331,16 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
                 ParticleHandlers.sendParticles(level, blockParticle, pos, 2, 0, 0.4,0,1.5);
             }
         }
+    }
+
+    @Override
+    public Optional<UUID> getOwnerUUIDOptional() {
+        return this.entityData.get(OWNER_UUID);
+    }
+
+    @Override
+    public void setOwnerUUIDOptional(UUID uuid) {
+        this.entityData.set(OWNER_UUID, Optional.ofNullable(uuid));
     }
 
     protected void registerGoals() {
@@ -345,7 +364,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
         compound.putDouble(DAMAGE, damage);
         compound.putInt(LIFETIME, lifeTime);
         compound.putInt("ticks", privateTicks);
-        if(this.owner != null) compound.putUUID("saveOwner", owner.getUUID());
+        saveTag(owner, compound);
     }
 
     @Override
@@ -357,6 +376,8 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
         this.damage = compound.getDouble(DAMAGE);
         this.lifeTime = compound.getInt(LIFETIME);
         this.privateTicks = compound.getInt("ticks");
-        if(compound.hasUUID("saveOwner")) this.ownerUUID = compound.getUUID("saveOwner");
+        var uuid1 = loadTag(compound);
+        if(uuid1 != null) this.ownerUUID = uuid1;
+
     }
 }

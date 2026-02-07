@@ -4,14 +4,14 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 
 import java.util.List;
 
 import static net.minecraft.world.effect.MobEffectCategory.BENEFICIAL;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class ChampionEffect extends MobEffect {
 
@@ -44,7 +44,7 @@ public class ChampionEffect extends MobEffect {
 
         if(level.isClientSide){
             var width = targetEntity.getBbWidth();
-            var color = Helpers.listRandom(List.of(AETHER_BLUE, CHAMPION_GOLD, EXPERIENCE_GREEN, NEGATIVE_RED));
+            var color = JahdooHelpers.listRandom(List.of(AETHER_BLUE, CHAMPION_GOLD, EXPERIENCE_GREEN, NEGATIVE_RED));
             var particle = ParticleHandlers.getNonBakedParticles(color, color, 27, Random.nextFloat(Math.max(width, 1F), Math.max(width * 1.5F, 1.5F)));
             var x = targetEntity.getRandomX(0.5);
             var y = targetEntity.getRandomY();

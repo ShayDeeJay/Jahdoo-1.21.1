@@ -6,8 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -19,17 +17,17 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -41,11 +39,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import static java.lang.String.valueOf;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static net.minecraft.network.chat.Component.literal;
+import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SET_ELEMENT_TYPE;
 import static org.jahdoo.trial_nexus.attachments.CasterData.getXpNeededForNextLevel;
 import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.trial_nexus.utils.ColourStore.BOX_COLOUR;
-import static org.jahdoo.common.client.Icons.*;
 
 public class SharedUI {
 
@@ -146,8 +144,8 @@ public class SharedUI {
     }
 
     public static void renderMiniXPBar(GuiGraphics guiGraphics, int x, int l, Player player) {
-        var expBackground = Helpers.res("textures/gui/xp_bar_container.png");
-        var expProgress = Helpers.res("textures/gui/xp_bar.png");
+        var expBackground = JahdooHelpers.res("textures/gui/xp_bar_container.png");
+        var expProgress = JahdooHelpers.res("textures/gui/xp_bar.png");
         var data = player.getData(AttachmentReg.CASTER_DATA);
         var customLevel = data.getLevel();
 
@@ -162,8 +160,8 @@ public class SharedUI {
 
     public static void renderMiniXPBar(GuiGraphics graphics, int x, int l, Minecraft minecraft) {
         if(minecraft == null || minecraft.player == null) return;
-        var expBackground = Helpers.res("textures/gui/xp_bar_container.png");
-        var expProgress = Helpers.res("textures/gui/xp_bar.png");
+        var expBackground = JahdooHelpers.res("textures/gui/xp_bar_container.png");
+        var expProgress = JahdooHelpers.res("textures/gui/xp_bar.png");
         var literal = getLiteral(minecraft);
 
         minecraft.getProfiler().push("expBar");
@@ -396,31 +394,6 @@ public class SharedUI {
         }
     }
 
-    public static void renderItem(@NotNull GuiGraphics guiGraphics, double width, double height, Player player, ItemStack itemStack, float partialTicks, float scale) {
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(width, height, 400);
-        guiGraphics.pose().scale(scale, scale, -scale);
-
-//        guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(-5), 0,0,0); // Horizontal rotation
-        guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(45), 0,0,0); // Horizontal rotation
-
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        itemRenderer.renderStatic(
-            itemStack,
-            ItemDisplayContext.FIXED,
-            255,
-            OverlayTexture.NO_OVERLAY,
-            guiGraphics.pose(),
-            buffer,
-            Minecraft.getInstance().level,
-            1
-        );
-
-        guiGraphics.pose().popPose();
-        Lighting.setupForFlatItems();
-    }
-
     public static void renderItem(@NotNull GuiGraphics guiGraphics, double width, double height, ItemStack itemStack, float scale, float mouseX, float mouseY, float rotationSpeed) {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(width/2, height/2, 5);
@@ -461,8 +434,8 @@ public class SharedUI {
         int xSpacing,
         int ySpacing
     ) {
-        int centerX = sharedScreenWidth / 2;
-        int centerY = shareScreenHeight / 2;
+        var centerX = sharedScreenWidth / 2;
+        var centerY = shareScreenHeight / 2;
 
         if (totalSlots <= 4) {
             int startX = centerX - (totalSlots - 1) * xSpacing / 2; // Center the row
@@ -475,7 +448,6 @@ public class SharedUI {
         } else {
             var slotsInTopRow = (totalSlots + 1) / 2;
             var slotsInBottomRow = totalSlots / 2;
-
             var startXTopRow = centerX - (slotsInTopRow - 1) * xSpacing / 2;
             var startXBottomRow = centerX - (slotsInBottomRow - 1) * xSpacing / 2;
             var startYTopRow = centerY - ySpacing / 2;
@@ -501,9 +473,10 @@ public class SharedUI {
     public static void renderEntityInInventoryFollowsAngle(GuiGraphics guiGraphics, int i, int i1, int i2, int i3, int i4, float v, float angleXComponent, float angleYComponent, LivingEntity livingEntity) {
         var f = (float)(i + i2) / 2.0F;
         var f1 = (float)(i1 + i3) / 2.0F;
-        Quaternionf quaternionf = (new Quaternionf()).rotateZ((float)Math.PI);
-        Quaternionf quaternionfA = (new Quaternionf()).rotateX(angleYComponent * 20.0F * ((float)Math.PI / 180F));
+        var quaternionf = (new Quaternionf()).rotateZ((float)Math.PI);
+        var quaternionfA = (new Quaternionf()).rotateX(angleYComponent * 20.0F * ((float)Math.PI / 180F));
         quaternionf.mul(quaternionfA);
+
         var f4 = livingEntity.yBodyRot;
         var f5 = livingEntity.getYRot();
         var f6 = livingEntity.getXRot();
@@ -514,8 +487,10 @@ public class SharedUI {
         livingEntity.setXRot(-angleYComponent * 20.0F);
         livingEntity.yHeadRot = livingEntity.getYRot();
         livingEntity.yHeadRotO = livingEntity.getYRot();
+
         var f9 = livingEntity.getScale();
         Vector3f vector3f = new Vector3f(0.0F, livingEntity.getBbHeight() / 2.0F + v * f9, 0.0F);
+
         var f10 = (float)i4 / f9;
         renderEntityInInventory(guiGraphics, f, f1, f10, vector3f, quaternionf, quaternionfA, livingEntity);
         livingEntity.yBodyRot = f4;

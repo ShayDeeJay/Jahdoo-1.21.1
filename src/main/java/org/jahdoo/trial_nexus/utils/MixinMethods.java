@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import static net.minecraft.world.level.block.ComposterBlock.LEVEL;
 import static net.minecraft.world.level.block.ComposterBlock.getValue;
 import static org.jahdoo.trial_nexus.ability.abilities_combat.permafrost.PermafrostAbility.abilityId;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class MixinMethods {
 

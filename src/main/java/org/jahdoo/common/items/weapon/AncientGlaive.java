@@ -11,10 +11,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class AncientGlaive extends BaseWeapon {
 
@@ -38,7 +38,7 @@ public class AncientGlaive extends BaseWeapon {
         float attackSpeed = -1.4F;
         var modifier = new AttributeModifier(BASE_ATTACK_DAMAGE_ID, attackDamage + Tiers.NETHERITE.getAttackDamageBonus(), AttributeModifier.Operation.ADD_VALUE);
         var modifier1 = new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE);
-        var modifier2 = new AttributeModifier(Helpers.res("reach"), 2, AttributeModifier.Operation.ADD_VALUE);
+        var modifier2 = new AttributeModifier(JahdooHelpers.res("reach"), 2, AttributeModifier.Operation.ADD_VALUE);
         var mainHand = EquipmentSlotGroup.MAINHAND;
         var attributes = ItemAttributeModifiers.builder()
                 .add(Attributes.ATTACK_DAMAGE, modifier, mainHand)

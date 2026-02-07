@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -29,8 +30,8 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.*;
@@ -42,7 +43,7 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeNewSide;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
@@ -141,7 +142,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
             Helpers.getSoundWithPosition(level, pos, SoundReg.RE_ROLL.get());
             var getPositions = innerRadiusRandom(pos.getCenter().subtract(0, 1, 0), 2, 100);
             for (var vec3 : getPositions) {
-                var colour = ColourStore.UNIQUE_B;
+                var colour = org.shaydee.shaydeeapi.Colours.getUniqueB();
                 var particle = getNonBakedParticles(colour, colour, Random.nextInt(6, 12), Random.nextInt(2, 4));
                 sendParticles(level, particle, vec3, 0, 0, 0.5, 0, Random.nextDouble(0.6, 2.2));
             }
@@ -166,29 +167,29 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         if (noDifficultySelected) {
             entity.setDifficulty();
             if(player instanceof ServerPlayer serverPlayer){
-                Helpers.sendClientSound(serverPlayer, SoundReg.LOOP.get(), 0.4F, 1, true);
+                JahdooHelpers.sendClientSound(serverPlayer, SoundReg.LOOP.get(), 0.4F, 1, true);
             }
         }
 
         if ((!entity.getDifficulty.isEmpty() && !noDifficultySelected)) {
             var message = "Difficulty already selected";
-            player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
-            getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+            player.displayClientMessage(withStyleComponent(message, org.shaydee.shaydeeapi.Colours.getNegativeRed()), true);
+            Helpers.getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 0.3F, 2F);
             return FAIL;
         }
 
         if (!entity.isStartingRoom() && !entity.canPlace()) {
             var message = "Can't place, room already generated";
-            player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
-            getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+            player.displayClientMessage(withStyleComponent(message, org.shaydee.shaydeeapi.Colours.getNegativeRed()), true);
+            Helpers.getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 2F);
             return FAIL;
         }
 
         onUnlock(entity, serverLevel);
 
         entity.clicked = true;
-        getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 1, 1.4F);
-        getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, 1, 0.6F);
+        Helpers.getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 1, 1.4F);
+        Helpers.getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, SoundSource.BLOCKS, 0.6F);
         placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()), keyUsed);
 
         if (entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));

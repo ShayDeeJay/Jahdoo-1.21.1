@@ -6,12 +6,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 
 public class FlyingC2SP implements CustomPacketPayload{
-    public static final Type<FlyingC2SP> TYPE = new Type<>(Helpers.res("send_flying_update"));
+    public static final Type<FlyingC2SP> TYPE = new Type<>(JahdooHelpers.res("send_flying_update"));
     public static final StreamCodec<RegistryFriendlyByteBuf, FlyingC2SP> STREAM_CODEC = CustomPacketPayload.codec(FlyingC2SP::toBytes, FlyingC2SP::new);
     private final boolean isJumpKeyDown;
 

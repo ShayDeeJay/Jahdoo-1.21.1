@@ -3,6 +3,7 @@ package org.jahdoo.common.block.mystical_augmenter;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -26,9 +27,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
@@ -175,8 +176,8 @@ public class MysticalAugmenterBlock extends BaseEntityBlock {
 //                );
 //            }
 //        );
-        Helpers.getSoundWithPosition(level, pos, SoundReg.DASH_EFFECT_INSTANT.get(), 0.5F, 2F);
-        Helpers.getSoundWithPosition(level, pos, SoundReg.LEVITATE.get(), 0.8F, 1F);
+        Helpers.getSoundWithPosition(level, pos, SoundReg.DASH_EFFECT_INSTANT.get(), SoundSource.BLOCKS, 0.5F, 2F);
+        Helpers.getSoundWithPosition(level, pos, SoundReg.LEVITATE.get(), SoundSource.BLOCKS, 0.8F, 1F);
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 }

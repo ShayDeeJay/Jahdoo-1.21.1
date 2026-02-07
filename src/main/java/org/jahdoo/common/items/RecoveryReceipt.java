@@ -17,6 +17,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +28,7 @@ import static org.jahdoo.trial_nexus.attachments.PlayerWallet.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.throwNewItem;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class RecoveryReceipt extends BaseItem {
 
@@ -121,7 +121,7 @@ public class RecoveryReceipt extends BaseItem {
             var content = stack.get(DataComponents.BUNDLE_CONTENTS);
             var getPrice = getRecoveryCost(stack);
             if(content != null && getPrice != null){
-                for (var itemStack : content.items()) throwNewItem(player, itemStack);
+                for (var itemStack : content.items()) Helpers.throwNewItem(player, itemStack);
 
                 player.playSound(SoundReg.COINBOX_OPEN.get(), 1, 1.8F);
                 purchase(getPrice.getSecond(), player);

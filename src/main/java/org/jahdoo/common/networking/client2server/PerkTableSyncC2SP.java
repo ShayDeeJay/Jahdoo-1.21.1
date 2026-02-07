@@ -7,13 +7,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 
 import java.util.UUID;
 
 public class PerkTableSyncC2SP implements CustomPacketPayload {
-    public static final Type<PerkTableSyncC2SP> TYPE = new Type<>(Helpers.res("perk_table_sync"));
+    public static final Type<PerkTableSyncC2SP> TYPE = new Type<>(JahdooHelpers.res("perk_table_sync"));
     public static final StreamCodec<RegistryFriendlyByteBuf, PerkTableSyncC2SP> STREAM_CODEC =
             CustomPacketPayload.codec(PerkTableSyncC2SP::toBytes, PerkTableSyncC2SP::new);
 

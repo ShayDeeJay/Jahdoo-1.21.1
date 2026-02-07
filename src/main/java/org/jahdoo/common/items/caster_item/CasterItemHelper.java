@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWandItemRenderer;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 
 import static net.minecraft.world.InteractionHand.OFF_HAND;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
 import static org.jahdoo.common.registers.ComponentReg.*;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
@@ -67,9 +67,9 @@ public class CasterItemHelper {
         var damageTaken = wandItem.get(DataComponents.DAMAGE);
         if(maxDamage != null && damageTaken != null){
             var durabilityColourIndicator = colourByPercent(maxDamage, damageTaken, false);
-            var prefix = Helpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
-            var currentDurability = Helpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
-            var maxDurability = Helpers.withStyleComponent("/" + maxDamage, BORDER_COLOUR);
+            var prefix = JahdooHelpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
+            var currentDurability = JahdooHelpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
+            var maxDurability = JahdooHelpers.withStyleComponent("/" + maxDamage, BORDER_COLOUR);
             return prefix.copy().append(currentDurability).copy().append(maxDurability);
         }
         return Component.empty();
@@ -109,7 +109,7 @@ public class CasterItemHelper {
 
     private static void sendCantUseMessage(LivingEntity entity, AbstractElement abstractElement) {
         var getOffhand = getGauntlet(entity);
-        var getDura = Helpers.durabilityDamageCount(getOffhand);
+        var getDura = JahdooHelpers.durabilityDamageCount(getOffhand);
         var equipped = !getOffhand.isEmpty() && getDura == 0;
         var text = equipped ? "Gauntlet is broken." : "You unable to offhand this.";
         var colour = abstractElement.textColourA();
@@ -218,7 +218,7 @@ public class CasterItemHelper {
             if(curio.isEmpty()) return false;
 
             var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
-            var getDura = Helpers.durabilityDamageCount(getGauntlet(entity));
+            var getDura = JahdooHelpers.durabilityDamageCount(getGauntlet(entity));
             if(isGauntletEquipped && getDura > 0) return true;
 
             if(shouldSendMessage){

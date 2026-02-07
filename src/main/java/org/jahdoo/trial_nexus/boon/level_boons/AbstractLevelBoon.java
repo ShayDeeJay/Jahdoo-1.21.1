@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Maths;
 
 import java.util.Objects;
 
@@ -15,7 +14,7 @@ import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_STRENGTH_RED;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public abstract class AbstractLevelBoon {
 
@@ -34,8 +33,8 @@ public abstract class AbstractLevelBoon {
     abstract public void execute(ServerLevel level, double value);
 
     public int getHeaderColour(){
-        return -1;
-    };
+        return MAGNET_STRENGTH_RED;
+    }
 
     public int getStampIndex(){
         return -1;
@@ -46,8 +45,8 @@ public abstract class AbstractLevelBoon {
     }
 
     public Component boonLabel(double value, String id){
-        var displayValue = Maths.roundNonWholeString(value);
-        var displayTime = Maths.ticksToTime(valueOf(value));
+        var displayValue = org.shaydee.shaydeeapi.Maths.roundNonWholeString(value);
+        var displayTime = org.shaydee.shaydeeapi.Maths.ticksToTime(valueOf(value));
         var getBy = Objects.equals(id, "max_time") ? displayTime : displayValue;
 
         return withStyleComponent("+" + getBy + (isPercentageOf() ? "% " : " ") + stringIdToName(id), textColour());

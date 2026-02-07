@@ -69,6 +69,7 @@ public class CreativeTab {
                 outPut.accept(SANCTUARY_KEY.get());
                 outPut.accept(BAZAAR_KEY.get());
                 outPut.accept(CRYPT_KEY.get());
+                outPut.accept(CHALLENGER_KEY.get());
 
                 registerRecoveryReceipts(outPut);
                 registerCarePackages(outPut);
@@ -123,7 +124,7 @@ public class CreativeTab {
                 outPut.accept(ANCIENT_GOLEM_LEGGINGS.get());
                 outPut.accept(ANCIENT_GOLEM_BOOTS.get());
 
-                outPut.accept(WAND_MANAGER_TABLE.get());
+//                outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(ELEMENTAL_STAFF.get());
                 outPut.accept(STARTER_WAND.get());
                 outPut.accept(WAND_ITEM_MYSTIC.get());

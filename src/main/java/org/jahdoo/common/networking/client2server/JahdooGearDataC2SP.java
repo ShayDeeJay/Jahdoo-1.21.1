@@ -7,13 +7,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 public class JahdooGearDataC2SP implements CustomPacketPayload {
-    public static final Type<JahdooGearDataC2SP> TYPE = new Type<>(Helpers.res("gear_data_sync"));
+    public static final Type<JahdooGearDataC2SP> TYPE = new Type<>(JahdooHelpers.res("gear_data_sync"));
     public static final StreamCodec<RegistryFriendlyByteBuf, JahdooGearDataC2SP> STREAM_CODEC =
             CustomPacketPayload.codec(JahdooGearDataC2SP::toBytes, JahdooGearDataC2SP::new);
 
@@ -45,10 +45,10 @@ public class JahdooGearDataC2SP implements CustomPacketPayload {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
                     if(bEntity instanceof AbstractBEInventory wandBlock){
-                        var original = wandBlock.inputItemHandler.getStackInSlot(index);
+                        var original = wandBlock.getInputItemHandler().getStackInSlot(index);
                         original.set(ComponentReg.JAHDOO_GEAR_DATA, gearData);
-                        Helpers.repairDurability(original);
-                        wandBlock.inputItemHandler.setStackInSlot(index, original);
+                        JahdooHelpers.repairDurability(original);
+                        wandBlock.getInputItemHandler().setStackInSlot(index, original);
                     }
                 }
             }

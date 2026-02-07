@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.abilities_combat.EtherealArrow;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.items.caster_item.CastHelper;
@@ -20,6 +21,7 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,7 @@ import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 
 public class FrostBolts  extends DefaultEntityBehaviour {
 
-    private static final ResourceLocation abilityId = Helpers.res("frost_bolts_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("frost_bolts_property");
     private final List<GenericProjectile> assignArrows = new ArrayList<>();
     private double projectileMultiplier;
     private double effectDuration;
@@ -55,7 +57,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
         this.projectileMultiplier = this.getTag(SHOT_MULTIPLIER);
         if(this.generic.getOwner() != null) {
             var player = this.generic.getOwner();
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                 (LivingEntity) player, (float) this.getTag(DAMAGE), true, MAGIC_DAMAGE_MULTIPLIER, FROST_MAGIC_DAMAGE_MULTIPLIER
             );
         }
@@ -151,8 +153,8 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             CastHelper.failedCastNotification(player);
             var value = String.valueOf(Math.round(castDistance));
             var element = this.getElementType().partColourA();
-            var targetDistance = Helpers.withStyleComponent(value, element);
-            player.displayClientMessage(Helpers.withStyleComponentTrans("ability.jahdoo.frost_bolts.no_target", -1, targetDistance), true);
+            var targetDistance = JahdooHelpers.withStyleComponent(value, element);
+            player.displayClientMessage(JahdooHelpers.withStyleComponentTrans("ability.jahdoo.frost_bolts.no_target", -1, targetDistance), true);
         }
     }
 
@@ -188,8 +190,8 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             this.generic.setDeltaMovement(0,0,0);
             var level = player.level();
             var position = player.position();
-            Helpers.getSoundWithPositionV(level, position, SoundReg.ELEMENTAL_BULLET.get(), 1.2F, 1.4F);
-            Helpers.getSoundWithPositionV(level, position, SoundReg.FROST_ABILITY.get(), 0.2F, 1);
+            JahdooHelpers.getSoundWithPositionV(level, position, SoundReg.ELEMENTAL_BULLET.get(), 1.2F, 1.4F);
+            JahdooHelpers.getSoundWithPositionV(level, position, SoundReg.FROST_ABILITY.get(), 0.2F, 1);
         } else {
             sendNoTargetMessage();
             this.generic.discard();
@@ -225,8 +227,8 @@ public class FrostBolts  extends DefaultEntityBehaviour {
     private void shootArrowsAtTarget(LivingEntity hitEntity, Player player, int tickCount){
 
         if(tickCount % 2 == 0){
-            var randomAngle = 2 * Math.PI * Helpers.Random.nextDouble();
-            var randomRadius = (hitEntity.getBbWidth() * 2) * Math.sqrt(Helpers.Random.nextDouble());
+            var randomAngle = 2 * Math.PI * JahdooHelpers.Random.nextDouble();
+            var randomRadius = (hitEntity.getBbWidth() * 2) * Math.sqrt(JahdooHelpers.Random.nextDouble());
             var arrowX = hitEntity.getX() + randomRadius * Math.cos(randomAngle);
             var arrowZ = hitEntity.getZ() + randomRadius * Math.sin(randomAngle);
             var arrowY = hitEntity.getY() + (hitEntity.getBbHeight() / 2) + 4;
@@ -261,7 +263,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             this.generic.level().addFreshEntity(arrow);
             this.currentShotCount++;
 
-            Helpers.getSoundWithPosition(generic.level(), hitEntity.blockPosition(), SoundReg.TELEPORT.get(), 1.4f, 1.6f);
+            Helpers.getSoundWithPosition(generic.level(), hitEntity.blockPosition(), SoundReg.TELEPORT.get(), SoundSource.NEUTRAL,  1.4f, 1.6f);
         }
     }
 

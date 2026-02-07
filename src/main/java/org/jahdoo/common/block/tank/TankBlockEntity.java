@@ -8,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -18,16 +17,18 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.common.block.AbstractTankUser.findInRange;
 import static org.jahdoo.common.block.tank.TankBlock.LIT;
-import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_MOVE_PARTICLE;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.processingParticle;
 
 
 public class TankBlockEntity extends AbstractBEInventory {
@@ -70,11 +71,11 @@ public class TankBlockEntity extends AbstractBEInventory {
     }
 
     public int getCount(){
-        return this.inputItemHandler.getStackInSlot(0).getCount();
+        return this.getInputItemHandler().getStackInSlot(0).getCount();
     }
 
     public ItemStack getRenderer() {
-        return this.inputItemHandler.getStackInSlot(INPUT);
+        return this.getInputItemHandler().getStackInSlot(INPUT);
     }
 
     @Override
@@ -99,7 +100,7 @@ public class TankBlockEntity extends AbstractBEInventory {
     public void chargeTankFuel(int craftingFuelCost){
         if(this.getData(AttachmentReg.BOOL)) return;
         if(this.getLevel() == null) return;
-        this.inputItemHandler.getStackInSlot(0).shrink(craftingFuelCost);
+        this.getInputItemHandler().getStackInSlot(0).shrink(craftingFuelCost);
         var blockstate = getLevel().getBlockState(this.getBlockPos());
         this.getLevel().sendBlockUpdated(this.getBlockPos(), blockstate, blockstate,1);
     }
@@ -127,7 +128,7 @@ public class TankBlockEntity extends AbstractBEInventory {
         }
 
         if(!(level instanceof ServerLevel serverLevel)) return;
-        int tankSlotSize = this.inputItemHandler.getStackInSlot(INPUT).getCount();
+        int tankSlotSize = this.getInputItemHandler().getStackInSlot(INPUT).getCount();
         this.beamParticlesToUser(serverLevel, pos, tankSlotSize);
         this.harvestOreBelow(serverLevel, pos, tankSlotSize);
     }
@@ -153,7 +154,7 @@ public class TankBlockEntity extends AbstractBEInventory {
                         serverLevel, processingParticle(5,1.1f, false, 0.2),
                         positions, 0,
                         direction.x, direction.y, direction.z,
-                        Helpers.Random.nextDouble(0.08,0.12)
+                        JahdooHelpers.Random.nextDouble(0.08,0.12)
                     );
                 }
             );
@@ -174,7 +175,7 @@ public class TankBlockEntity extends AbstractBEInventory {
                 var powderItem = new ItemStack(ItemReg.NEXITE_POWDER.get());
                 var amountToCopy = Math.min(6 + tankSlotSize, 64);
                 serverLevel.destroyBlock(pos.below(), false);
-                this.inputItemHandler.setStackInSlot(INPUT, powderItem.copyWithCount(amountToCopy));
+                this.getInputItemHandler().setStackInSlot(INPUT, powderItem.copyWithCount(amountToCopy));
             }
             counter = 0;
         }

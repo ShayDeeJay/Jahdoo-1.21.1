@@ -3,7 +3,9 @@ package org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
@@ -16,18 +18,19 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.trial_nexus.ability.UtilityHelpers.destroySpeed;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBombAbility.EXPLOSION_RANGE;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class BlockBomb extends AbstractUtilityProjectile {
 
-    private static final ResourceLocation abilityId = Helpers.res("block_bomb_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("block_bomb_property");
     private static final int explosionTimerMax = 50;
     private double projectileSphere;
     private boolean hasHitBlock;
@@ -48,7 +51,7 @@ public class BlockBomb extends AbstractUtilityProjectile {
     }
 
     private void tickingSound() {
-        Helpers.getSoundWithPosition(generic.level(), generic.blockPosition(), SoundReg.TIMER.get(), 1f, 1.5f);
+        sharedSound(SoundReg.TIMER.get(), 1f, 1.5f);
     }
 
     @Override
@@ -73,12 +76,16 @@ public class BlockBomb extends AbstractUtilityProjectile {
         );
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(level(), generic.blockPosition(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
         if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         this.hasHitBlock = true;
-        Helpers.getSoundWithPosition(generic.level(), generic.blockPosition(), SoundEvents.SLIME_BLOCK_PLACE, 1.5f);
+        sharedSound(SoundEvents.SLIME_BLOCK_PLACE, 1.5f, 1F);
         generic.setDeltaMovement(0, 0, 0);
     }
 
@@ -140,7 +147,7 @@ public class BlockBomb extends AbstractUtilityProjectile {
                 totalRadiusMax, 0.05, 0.05, 0.05, (double) totalRadiusMax / 15
             );
 
-            Helpers.getSoundWithPosition(generic.level(), generic.blockPosition(), SoundReg.EXPLOSION.get(), 2f);
+            sharedSound(SoundReg.EXPLOSION.get(), 2F, 1F);
             if(!(level instanceof CustomLevel)){
                 handleItemsAndExplosion(level);
             }

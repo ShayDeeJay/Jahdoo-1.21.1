@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.armor.BaseArmor;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -31,7 +31,7 @@ public class WizardArmor extends BaseArmor implements GeoItem, JahdooItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return Helpers.withStyleComponent(super.getName(stack).getString(), ElementReg.mystic().partColourA());
+        return JahdooHelpers.withStyleComponent(super.getName(stack).getString(), ElementReg.mystic().partColourA());
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -17,7 +17,7 @@ import static org.jahdoo.trial_nexus.ability.AbilityBuilder.OFFSET;
 
 public class HammerAbility extends AbstractBlockAbility {
 
-    public static final ResourceLocation abilityId = Helpers.res("hammer");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("hammer");
 
     @Override
     public JahdooRarity rarity() {

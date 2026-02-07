@@ -8,6 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,12 @@ public record TicketData(
     public static void initTicket(ItemStack itemStack, int setType){
         itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(setType));
         itemStack.set(ComponentReg.STORE_INTEGER, setType);
+        CoreData.setFilled(itemStack);
+    }
+
+    public static void initTicket(ItemStack itemStack, JahdooRarity rarity){
+        itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(rarity.getId()));
+        itemStack.set(ComponentReg.STORE_INTEGER, rarity.getId());
         CoreData.setFilled(itemStack);
     }
 

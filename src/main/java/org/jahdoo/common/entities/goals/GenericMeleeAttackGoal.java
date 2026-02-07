@@ -2,22 +2,25 @@ package org.jahdoo.common.entities.goals;
 
 import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
-import org.jahdoo.trial_nexus.utils.DamageUtils;
+import org.jahdoo.common.entities.explosive_barrel.ExplosiveBarrel;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.utils.DamageUtils;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.EnumSet;
 
 import static net.minecraft.world.entity.EntitySelector.NO_CREATIVE_OR_SPECTATOR;
-import static org.jahdoo.common.registers.EffectReg.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class GenericMeleeAttackGoal extends Goal {
     protected final PathfinderMob mob;
@@ -41,7 +44,7 @@ public class GenericMeleeAttackGoal extends Goal {
     }
 
     protected void resetAttackCooldown() {
-        this.ticksUntilNextAttack = this.adjustedTickDelay(50);
+        this.ticksUntilNextAttack = this.adjustedTickDelay(70);
     }
 
     protected boolean isTimeToAttack() {
@@ -90,21 +93,12 @@ public class GenericMeleeAttackGoal extends Goal {
     protected void checkAndPerformAttack(LivingEntity target) {
         if (this.canPerformAttack(target)) {
             if(this.mob instanceof AncientGolem ancientGolem){
-                DamageUtils.damageWithJahdoo(target, this.mob, ancientGolem.damage, ElementReg.vitality().damageTypeResourceKey());
                 if(ancientGolem.level() instanceof ServerLevel serverLevel){
-                    serverLevel.getChunkSource().broadcast(this.mob, new ClientboundEntityEventPacket(this.mob, (byte)4));
+                    serverLevel.getChunkSource().broadcast(this.mob, new ClientboundEntityEventPacket(this.mob, isSwarmed(ancientGolem) ? (byte)5 : 4));
+                    ancientGolem.triggerDamage = true;
                 }
-                new ClientboundEntityEventPacket(this.mob, (byte)9);
-                var chance = ancientGolem.effectChance;
-                var strength = ancientGolem.effectStrength;
-                var duration = ancientGolem.effectDuration;
-                var wild = chance == 0 ? 20 : chance;
-                if(Random.nextInt((int) wild) == 0){
-                    var instance = new JahdooMobEffect(VITALITY_EFFECT, (int) duration, (int) strength);
-                    target.addEffect(instance);
-                }
+                this.resetAttackCooldown();
             }
-            this.resetAttackCooldown();
         }
     }
 
@@ -184,10 +178,51 @@ public class GenericMeleeAttackGoal extends Goal {
                 if(this.isTimeToAttack()){
                     ancientGolem.runningParticle();
                 }
+                if(ancientGolem.triggerDamage) {
+                    ancientGolem.damageDelay++;
+                    var target = ancientGolem.getTarget();
+                    var damage = ancientGolem.damage;
+
+                    if(isSwarmed(ancientGolem)){
+                        if(ancientGolem.damageDelay == 6){
+                            DamageUtils.damageWithJahdoo(target, this.mob, damage, ElementReg.vitality().damageTypeResourceKey());
+
+                            var chance = ancientGolem.effectChance;
+                            var strength = ancientGolem.effectStrength;
+                            var duration = ancientGolem.effectDuration;
+
+                            ExplosiveBarrel.novaExplosion(ancientGolem, ancientGolem.element(), damage, duration, strength, 4, chance, ancientGolem.position());
+
+                            attackSound(ancientGolem);
+                            ancientGolem.triggerDamage = false;
+                            ancientGolem.damageDelay = 0;
+                        }
+                    } else {
+                        //Add Heal
+                        DamageUtils.damageWithJahdoo(target, this.mob, damage, ElementReg.vitality().damageTypeResourceKey());
+                        attackSound(ancientGolem);
+                        ancientGolem.triggerDamage = false;
+                        ancientGolem.damageDelay = 0;
+                    }
+                }
             }
 
             this.checkAndPerformAttack(livingentity);
+
         }
 
+    }
+
+    private static void attackSound(AncientGolem ancientGolem) {
+        Helpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundEvents.VAULT_PLACE, SoundSource.NEUTRAL, 2, 0.4f);
+        Helpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundEvents.IRON_GOLEM_STEP, SoundSource.NEUTRAL, 2, 0.6f);
+        Helpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundReg.IMPACT.get(), SoundSource.NEUTRAL, 0.8F, 0.1f);
+    }
+
+    private static boolean isSwarmed(AncientGolem ancientGolem) {
+        return ancientGolem
+            .level()
+            .getEntities(null, ancientGolem.getBoundingBox().inflate(2))
+            .stream().filter(Mob.class::isInstance).toList().size() > 5;
     }
 }

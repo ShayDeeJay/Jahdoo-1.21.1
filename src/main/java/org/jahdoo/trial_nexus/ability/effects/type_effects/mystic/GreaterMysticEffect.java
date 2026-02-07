@@ -3,6 +3,7 @@ package org.jahdoo.trial_nexus.ability.effects.type_effects.mystic;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
@@ -12,23 +13,23 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.ability.effects.EffectHelpers;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.effects.EffectHelpers;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.DamageUtils;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class GreaterMysticEffect extends MobEffect {
 
@@ -99,7 +100,7 @@ public class GreaterMysticEffect extends MobEffect {
             targetEntity,
             targetEntity.getBoundingBox().inflate(4)
         ).forEach(damage -> DamageUtils.damageWithJahdoo(damage, (double) pAmplifier /2, getElement().damageTypeResourceKey()));
-        Helpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), getElement().sound(), 1.2F, 1F);
+        Helpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), getElement().sound(), SoundSource.NEUTRAL, 1.2F, 1F);
     }
 
     private void setParticleNova(LivingEntity livingEntity, Vec3 worldPosition, AbstractElement element){

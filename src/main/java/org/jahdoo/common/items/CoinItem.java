@@ -5,22 +5,23 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.utils.IItemEntityBehaviour;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.utils.IItemEntityBehaviour;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties;
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.COIN;
 import static org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg.INSTANCE;
 
@@ -54,7 +55,7 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
                 sendToPlayer(player, new WalletSyncS2CP(getWallet.getWallet()));
             }
 
-            getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), 1, 0.8F);
+            Helpers.getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), SoundSource.MASTER, 1F, 0.8F);
             
             if(level instanceof CustomLevel cLevel && entity instanceof LivingEntity lEntity) {
                 RunData.incrementCoin(cLevel, lEntity, data == null ? 0 : data.value(), count);

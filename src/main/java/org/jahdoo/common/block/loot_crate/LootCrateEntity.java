@@ -5,8 +5,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 
 public class LootCrateEntity extends AbstractBEInventory {

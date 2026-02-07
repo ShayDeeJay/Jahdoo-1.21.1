@@ -21,8 +21,9 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,11 @@ import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.farmers_touch.FarmersTouchAbility.GROWTH_CHANCE;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.farmers_touch.FarmersTouchAbility.HARVEST_CHANCE;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class FarmersTouch extends AbstractUtilityProjectile {
 
-    private static final ResourceLocation abilityId = Helpers.res("farmers_touch_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("farmers_touch_property");
     private final List<BlockPos> effectedPos = new ArrayList<>();
     private double counter = 0.05;
     private double harvestChance;

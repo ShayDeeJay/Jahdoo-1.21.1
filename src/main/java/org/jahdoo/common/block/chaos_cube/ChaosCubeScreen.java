@@ -15,8 +15,6 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,8 +30,8 @@ import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackground;
 import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.trial_nexus.utils.ColourStore.BOX_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.colourByPercent;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.colourByPercent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
 
@@ -275,8 +273,8 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
 
                     if(abilityModifiers != null){
                         var operationCost = abilityModifiers.setValue();
-                        var roundCost = Maths.roundNonWholeString(operationCost);
-                        tooltipLines2.add(withStyleComponent("Cost: ", colourSet).copy().append(withStyleComponent(roundCost, ColourStore.SUB_HEADER_COLOUR)));
+                        var roundCost = org.shaydee.shaydeeapi.Maths.roundNonWholeString(operationCost);
+                        tooltipLines2.add(withStyleComponent("Cost: ", colourSet).copy().append(withStyleComponent(roundCost, org.shaydee.shaydeeapi.Colours.getSubHeaderColour())));
                     }
                 }
                 tooltipLines.add(withStyleComponent("Tank: ", colourSet).copy().append(withStyleComponent(tracker, colour)));

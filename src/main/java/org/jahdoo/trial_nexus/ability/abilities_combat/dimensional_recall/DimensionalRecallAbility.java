@@ -9,7 +9,7 @@ import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.mod.ElementReg;
 
@@ -17,7 +17,7 @@ import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
 
 public class DimensionalRecallAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("dimensional_recall");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("dimensional_recall");
     public static final String CASTING_TIME = "Cast Time";
 
     @Override
@@ -65,7 +65,7 @@ public class DimensionalRecallAbility extends Ability {
         if(!(player.level() instanceof CustomLevel)){
             player.getData(DIMENSIONAL_RECALL).setStartedUsing(true);
         } else {
-            player.displayClientMessage(Helpers.withStyleComponent("You can't use this here", ColourStore.NEGATIVE_RED), true);
+            player.displayClientMessage(JahdooHelpers.withStyleComponent("You can't use this here", ColourStore.NEGATIVE_RED), true);
         }
     }
 

@@ -8,7 +8,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.DamageTypeReg;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +18,7 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.registers.EffectReg.MYSTIC_EFFECT;
 
 public class Utility extends AbstractElement {
-    ResourceLocation abilityId = Helpers.res("utility");
+    ResourceLocation abilityId = JahdooHelpers.res("utility");
 
     @Override
     public ResourceLocation abilityResource() {

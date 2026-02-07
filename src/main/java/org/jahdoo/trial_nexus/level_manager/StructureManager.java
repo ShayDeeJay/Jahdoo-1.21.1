@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
@@ -25,18 +26,20 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.loot.LootHelpers;
 import org.jahdoo.trial_nexus.loot.RewardLootTables;
+import org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
+import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.Maths;
 
 import java.util.*;
 
 import static com.mojang.datafixers.util.Pair.of;
-import static net.minecraft.core.BlockPos.betweenClosed;
-import static net.minecraft.core.BlockPos.withinManhattan;
+import static net.minecraft.core.BlockPos.*;
 import static net.minecraft.core.Direction.*;
-import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
-import static net.minecraft.world.level.block.Blocks.TINTED_GLASS;
+import static net.minecraft.world.level.block.Blocks.*;
+import static org.jahdoo.common.block.altar.AltarBlockEntity.getAllBlockPos;
 import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
@@ -46,8 +49,7 @@ import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setLocks;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.*;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
-import static org.jahdoo.trial_nexus.utils.Maths.percentageChance;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 public class StructureManager {
@@ -63,6 +65,9 @@ public class StructureManager {
 
     public static final String BOSS_CRUCIBLE = "boss_crucible";
     public static final Component BOSS_COMPONENT = withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED);
+
+    public static final String CHALLENGER_DOME = "challenger_dome";
+    public static final Component CHALLENGER_DOME_COMPONENT = withStyleComponent(stringIdToName(CHALLENGER_DOME), Colours.getPerkGreen());
 
     public static final String EASY_EXIT = "exit";
     public static final Component EXIT_ROOM_COMPONENT = withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN);
@@ -83,7 +88,7 @@ public class StructureManager {
     public static final List<String> VALID_ROOMS;
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
-        var templates = level.getStructureManager().get(Helpers.res(roomId));
+        var templates = level.getStructureManager().get(JahdooHelpers.res(roomId));
         var flag = Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS;
         var pos1 = new BlockPos(-22, 0, -22);
 
@@ -154,7 +159,8 @@ public class StructureManager {
 
         if(!data.getDifficulty().isEmpty()){
             JahdooMod.LOGGER.log(org.apache.logging.log4j.Level.INFO, "Error, boss room generated as starting room");
-            if(percentageChance(forBoss)) roomGen.put(roomGen.size(), BOSS_COMPONENT);
+            if(Maths.percentageChance(forBoss)) roomGen.put(roomGen.size(), BOSS_COMPONENT);
+            if(Maths.percentageChance(forBoss * 2)) roomGen.put(roomGen.size(), CHALLENGER_DOME_COMPONENT);
         }
 
         while (roomGen.size() < 4) roomGen.put(roomGen.size(), getBattleRoom());
@@ -241,6 +247,16 @@ public class StructureManager {
 
             placeStructure(serverLevel, newPos, settings, roomId);
 
+            var adjust = newPos.relative(direction, 25).relative(direction.getCounterClockWise(), 25);
+            var box = new AABB(
+                adjust.getX() - 24, adjust.getY() - 1, adjust.getZ() - 24,
+                adjust.getX() + 24, adjust.getY() - 1, adjust.getZ() + 24
+            );
+            var bounding = getAllBlockPos(box);
+            for (BlockPos blockPos : bounding) {
+                serverLevel.setBlockAndUpdate(blockPos, STONE.defaultBlockState());
+            }
+
             var relative = newPos.relative(direction, distance).above(19);
             var findBlock = switch (direction){
                 case NORTH -> withinManhattan(relative.west(distance), distance, 19, distance);
@@ -261,6 +277,22 @@ public class StructureManager {
                     placeOres(level, blockPos, placerState, instanceData);
                 }
 
+                if(roomId.equals(CHALLENGER_DOME)){
+                    if (placerState.is(Blocks.DIAMOND_BLOCK)) {
+                        level.setBlockAndUpdate(blockPos, AIR.defaultBlockState());
+//                        if (level.getBlockEntity(blockPos) instanceof AltarBlockEntity e) {
+//                            e.roomId = roomId;
+//                            e.direction = direction;
+//                        }
+                        var direction1 = direction.getOpposite();
+                        var miniBoss = MiniBossMobs.getMiniBoss(direction1, serverLevel, instanceData);
+                        miniBoss.moveTo(blockPos.getCenter().subtract(0, 0.5, 0));
+                        miniBoss.setYBodyRot(direction1.toYRot());
+                        miniBoss.setYHeadRot(direction1.toYRot());
+                        serverLevel.addFreshEntity(miniBoss);
+                    }
+                }
+
                 if(placerState.is(Blocks.OBSERVER)) setLocks(serverLevel, blockPos, true);
                 if(placerState.is(NETHERITE_BLOCK)) level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
             }
@@ -272,16 +304,16 @@ public class StructureManager {
         if (placerState.is(Blocks.PINK_STAINED_GLASS)) {
             if(level instanceof ServerLevel sLevel){
                 var aStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
-                var aItems = Helpers.listRandom(aStates);
+                var aItems = JahdooHelpers.listRandom(aStates);
                 var aBase = Block.byItem(aItems.getItem()).defaultBlockState();
-                placer(blockPos, sLevel, percentageChance(10), aBase);
+                placer(blockPos, sLevel, org.shaydee.shaydeeapi.Maths.percentageChance(10), aBase);
 
                 var bPos = blockPos;
                 var multiplier = instanceData.getOreMultiplier();
                 for (int i = 0; i < multiplier; i++) {
-                    if(percentageChance(20)){
+                    if(org.shaydee.shaydeeapi.Maths.percentageChance(20)){
                         var bStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
-                        var bItems = Helpers.listRandom(bStates);
+                        var bItems = JahdooHelpers.listRandom(bStates);
                         var bBase = Block.byItem(bItems.getItem()).defaultBlockState();
                         var poss = new ArrayList<BlockPos>();
                         for (var direction1 : stream().toList()) {
@@ -291,7 +323,7 @@ public class StructureManager {
                                 poss.add(relativeA);
                             }
                         }
-                        if (!poss.isEmpty()) bPos = Helpers.listRandom(poss);
+                        if (!poss.isEmpty()) bPos = JahdooHelpers.listRandom(poss);
                     }
                 }
             }
@@ -302,12 +334,12 @@ public class StructureManager {
         if (placerState.is(Blocks.ORANGE_STAINED_GLASS)) {
             if(level instanceof ServerLevel sLevel){
                 var bPos = blockPos;
-                var spawnChance = percentageChance(20);
+                var spawnChance = org.shaydee.shaydeeapi.Maths.percentageChance(20);
                 placePot(level, sLevel, blockPos, spawnChance);
 
                 var multiplier = instanceData.getLootPotMultiplier();
                 for (int i = 0; i < multiplier; i++) {
-                    if(percentageChance(20)){
+                    if(org.shaydee.shaydeeapi.Maths.percentageChance(20)){
                         var poss = new ArrayList<BlockPos>();
                         for (var direction1 : NO_Y) {
                             var relativeA = bPos.relative(direction1);
@@ -316,7 +348,7 @@ public class StructureManager {
                                 poss.add(relativeA);
                             }
                         }
-                        if (!poss.isEmpty()) bPos = Helpers.listRandom(poss);
+                        if (!poss.isEmpty()) bPos = JahdooHelpers.listRandom(poss);
                     }
                 }
             }
@@ -325,7 +357,7 @@ public class StructureManager {
 
     private static boolean placePowerUpStation(Level level, BlockPos blockPos, BlockState placerState, boolean alreadyPlaced) {
         if (placerState.is(Blocks.MAGENTA_STAINED_GLASS)) {
-            var spawnChance = percentageChance(20) && !alreadyPlaced;
+            var spawnChance = org.shaydee.shaydeeapi.Maths.percentageChance(20) && !alreadyPlaced;
             var station = POWER_UP_STATION.get().defaultBlockState();
             var air = Blocks.AIR.defaultBlockState();
             if (spawnChance) alreadyPlaced = true;

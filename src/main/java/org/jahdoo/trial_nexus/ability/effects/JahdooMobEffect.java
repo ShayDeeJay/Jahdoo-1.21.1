@@ -6,7 +6,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.sendEffectPacketsToPlayer;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.sendEffectPacketsToPlayer;
 
 public class JahdooMobEffect extends MobEffectInstance {
 

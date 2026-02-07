@@ -36,7 +36,7 @@ import org.jahdoo.trial_nexus.ability.abilities_utility.wall_placer.WallPlacer;
 import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.ArmageddonModule;
 import org.jahdoo.trial_nexus.ability.abilities_combat.EtherealArrow;
 import org.jahdoo.trial_nexus.ability.abilities_combat.ice_bomb.IceBomb;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -44,7 +44,7 @@ import java.util.function.Supplier;
 public class EntityDataReg {
 
     public static final ResourceKey<Registry<AbstractEntityProperty>> PROJECTILE_PROPERTY_REGISTRY_KEY =
-        ResourceKey.createRegistryKey(Helpers.res("projectile_properties"));
+        ResourceKey.createRegistryKey(JahdooHelpers.res("projectile_properties"));
 
     private static final DeferredRegister<AbstractEntityProperty> PROJECTILE_PROPERTY =
         DeferredRegister.create(PROJECTILE_PROPERTY_REGISTRY_KEY, JahdooMod.MOD_ID);
@@ -150,7 +150,7 @@ public class EntityDataReg {
     }
 
     public static DefaultEntityBehaviour getProperty(String location){
-        return Objects.requireNonNull(REGISTRY.get(Helpers.res(location))).getEntityProperty();
+        return Objects.requireNonNull(REGISTRY.get(JahdooHelpers.res(location))).getEntityProperty();
     }
 
     public static void registerRegistry(NewRegistryEvent event) {

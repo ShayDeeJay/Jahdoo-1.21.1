@@ -2,12 +2,12 @@ package org.jahdoo.common.block.dissembler;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 
 public class DisassemblerModel extends DefaultedBlockGeoModel<DisassemblerBlockEntity> {
     public DisassemblerModel() {
-        super(Helpers.res("disassembler"));
+        super(JahdooHelpers.res("disassembler"));
     }
 
     @Override

@@ -13,15 +13,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.getStoredBlock;
 
 public class BlockPlacer extends AbstractUtilityProjectile {
 
-    private static final ResourceLocation abilityId = Helpers.res("block_placer_property");
+    private static final ResourceLocation abilityId = JahdooHelpers.res("block_placer_property");
     private Level level;
 
     @Override
@@ -96,7 +97,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         var replaceBlock = Blocks.AIR;
 
         if(player != null){
-            var mainHandItem = Helpers.getUsedItem(player);
+            var mainHandItem = JahdooHelpers.getUsedItem(player);
             targetBlock = new ItemStack(getStoredBlock(level, mainHandItem));
             replaceBlock = getStoredBlock(level, mainHandItem);
         } else {

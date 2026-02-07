@@ -21,7 +21,7 @@ import static org.jahdoo.common.client.overlay.WalletOverlay.renderWallet;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 public class StatScreen extends AbstractPanableScreen {
 
     public static int fadeBackground = fadeBlack(0.6F);

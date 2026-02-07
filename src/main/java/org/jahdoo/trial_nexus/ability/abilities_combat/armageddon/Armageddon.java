@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
@@ -37,7 +37,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         if(this.cloud.getOwner() != null){
             var player = this.cloud.getOwner();
             var damage = this.getTag(DAMAGE);
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                 player,
                 (float) damage,
                 true,
@@ -69,7 +69,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         return ElementReg.inferno();
     }
 
-    public static ResourceLocation abilityId = Helpers.res("armageddon_property");
+    public static ResourceLocation abilityId = JahdooHelpers.res("armageddon_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -83,7 +83,7 @@ public class Armageddon extends DefaultEntityBehaviour {
 
     private void createModules(){
         var getPositionInRadius = PositionFinders.innerRadiusRandom(cloud.position(), this.cloud.getRadius() * 2, 100);
-        this.createModule(getPositionInRadius.get(Helpers.Random.nextInt(0, getPositionInRadius.size())));
+        this.createModule(getPositionInRadius.get(JahdooHelpers.Random.nextInt(0, getPositionInRadius.size())));
     }
 
     public AbilityData setAbilityModifiers(String name, double value){
@@ -119,7 +119,7 @@ public class Armageddon extends DefaultEntityBehaviour {
             armageddonModule(),
             ArmageddonAbility.abilityId.getPath().intern()
         );
-        aoeCloud.setPos(location.x, location.y + Helpers.Random.nextInt(6, 12), location.z);
+        aoeCloud.setPos(location.x, location.y + JahdooHelpers.Random.nextInt(6, 12), location.z);
         aoeCloud.level().addFreshEntity(aoeCloud);
     }
 

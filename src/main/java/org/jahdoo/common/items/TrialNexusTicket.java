@@ -3,7 +3,6 @@ package org.jahdoo.common.items;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
@@ -24,24 +23,33 @@ import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.registers.ComponentReg.CORE_DATA;
 import static org.jahdoo.common.registers.ComponentReg.STORE_INTEGER;
-import static org.jahdoo.trial_nexus.attachments.InstanceData.*;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_MAX_TIME;
 import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
-import static org.jahdoo.trial_nexus.utils.Maths.*;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
+import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public class TrialNexusTicket extends Item implements JahdooItem {
+
+    public static final List<Integer> colourWithRarity= List.of(
+        color(225, 176, 73),
+        RARE.getColour(),
+        EPIC.getColour(),
+        MYTHIC.getColour(),
+        COMMON.getColour()
+    );
 
     public TrialNexusTicket() {
         super(
@@ -54,18 +62,16 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        var type = "Trial Ticket";
         var getType = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        return getType == null ? withStyleComponent("Empty "+type, SUB_HEADER_COLOUR) :
-        withStyleComponent(
-            type, switch (getType.value()){
-                case 1 -> JahdooRarity.RARE.getColour();
-                case 2 -> JahdooRarity.EPIC.getColour();
-                case 3 -> JahdooRarity.MYTHIC.getColour();
-                case 4 -> JahdooRarity.COMMON.getColour();
-                default ->  color(225, 176, 73);
-            }
-        );
+        var name = super.getName(stack).getString();
+        var colour = getType == null ? SUB_HEADER_COLOUR : colourWithRarity.get(getType.value()-1);
+
+        return withStyleComponent(name, colour);
+    }
+
+    @Override
+    public String descriptionId() {
+        return "description.item.jahdoo.ticket";
     }
 
     @Override
@@ -78,15 +84,13 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.BLOCK;
+        return UseAnim.BOW;
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var itemInHand = player.getItemInHand(usedHand);
         if(CoreData.isFull(itemInHand)) player.startUsingItem(usedHand);
-
-        TicketData.initTicket(itemInHand, 1);
         return super.use(level, player, usedHand);
     }
 
@@ -96,16 +100,13 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
         if(getType != null){
             var getTicketMods = stack.get(ComponentReg.TICKET_DATA);
-            var getUses = stack.get(STORE_INTEGER);
+            var getUses = stack.get(STORE_INTEGER).intValue();
 
-            tooltips.add(withStyleComponent("Teleports you to the trial nexus", ColourStore.SUB_HEADER_COLOUR));
+            tooltips.add(withStyleComponentTrans("info.jahdoo.ticket.teleport", org.shaydee.shaydeeapi.Colours.getSubHeaderColour()));
             tooltips.add(Component.literal(" "));
             appendCapacity(tooltips, stack);
             usesTooltips(tooltips, getType.value(), getUses);
-            if(getTicketMods != null && !getTicketMods.values().isEmpty()){
-                tooltips.add(Component.literal(" "));
-                tooltips.add(withStyleComponent("⏮ Trial Modifier ⏭", ColourStore.OFF_WHITE).copy().setStyle(Style.EMPTY.withBold(true)));
-            }
+
             modifierTooltips(tooltips, getTicketMods, stack);
         }
     }
@@ -115,8 +116,8 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         if(stack.has(CORE_DATA) && !CoreData.isFull(stack)){
             var current = CoreData.getFilled(stack);
             var max = CoreData.getRequired(stack);
-            var capacity = withStyleComponent("Capacity: ", ColourStore.SUB_HEADER_COLOUR);
-            var capacity1 = withStyleComponent(current + "/" + max, Helpers.colourByPercent(max, current, true));
+            var capacity = withStyleComponentTrans("info.jahdoo.capacity", org.shaydee.shaydeeapi.Colours.getSubHeaderColour());
+            var capacity1 = withStyleComponent(current + "/" + max, JahdooHelpers.colourByPercent(max, current, true));
             var append = capacity.copy().append(capacity1);
             toolTips.add(append);
         }
@@ -138,60 +139,50 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     }
 
     private static void usesTooltips(List<Component> tooltips, int getTypeValue, int getUseValue) {
-        var prefix = withStyleComponent("Uses: ", HEADER_COLOUR);
+        var prefix = withStyleComponent("Uses: ", org.shaydee.shaydeeapi.Colours.getHeaderColour());
         var useRemainingColour = colourByPercent(getTypeValue, getUseValue, true);
         var suffix = withStyleComponent(getUseValue + "/" + getTypeValue, useRemainingColour);
         tooltips.add(prefix.copy().append(suffix));
     }
 
-    private static void comp(List<Component> tooltipComponents, @Nullable TicketData getTicketMods, String key, boolean isPercent, ItemStack stack) {
+    private static void comp(List<Component> tooltipComponents, @Nullable TicketData getTicketMods, String key, boolean isPercent) {
         var getBoon = LevelBoonReg.fromId(key).orElseThrow();
         var colour = getBoon.getHeaderColour();
         if(getTicketMods != null && getTicketMods.get(key) > 0){
             var v = getTicketMods.get(key);
-            tooltipComponents.add(withStyleComponent("+" + roundNonWholeString(doubleFormattedDouble(v)) + (isPercent ? "% " : " ") + stringIdToName(key), colour));
-        }
-    }
-
-    private static void mobComp(List<Component> tooltipComponents, @Nullable TicketData getTicketMods, String key, boolean isPercent) {
-        if(getTicketMods != null && getTicketMods.get(key) > 0){
-            var v = getTicketMods.get(key);
-            tooltipComponents.add(withStyleComponent("+" + roundNonWholeString(doubleFormattedDouble(v)) + (isPercent ? "% " : " ") + stringIdToName(key), MAGNET_STRENGTH_RED));
+            var s = Objects.equals(key, KEY_MAX_TIME) ? org.shaydee.shaydeeapi.Maths.ticksToTime(v + "") : org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(v));
+            tooltipComponents.add(withStyleComponent("+" + s + (isPercent ? "% " : " ") + stringIdToName(key), colour));
         }
     }
 
     public static void modifierTooltips(List<Component> tooltips, TicketData getTicketMods, ItemStack stack) {
         if(getTicketMods != null && !getTicketMods.values().isEmpty()){
-            var keyMaxTime = KEY_MAX_TIME;
-            if (getTicketMods.get(keyMaxTime) > 0) {
-                var v = getTicketMods.get(keyMaxTime);
-                var getBoon = LevelBoonReg.fromId(keyMaxTime).orElseThrow();
-                var colour = getBoon.getHeaderColour();
-                tooltips.add(withStyleComponent("+" + ticksToTime(v + "") + " " + Helpers.stringIdToName(keyMaxTime), colour));
+            var hasPos = 0;
+            for (var s : getTicketMods.values().keySet()) {
+                hasPos += getFromReg(LevelBoonReg.positiveFromId(s), tooltips, getTicketMods, s, hasPos);
+            }
+            if(hasPos > 0) {
+                tooltips.add(tooltips.size() - hasPos, withStyleComponentTrans("info.jahdoo.ticket.positive_modifiers", SUB_HEADER_COLOUR));
             }
 
-            comp(tooltips, getTicketMods, KEY_BRONZE_COIN, false, stack);
-            comp(tooltips, getTicketMods, KEY_SILVER_COIN, false, stack);
-            comp(tooltips, getTicketMods, KEY_GOLD_COIN, false, stack);
-            comp(tooltips, getTicketMods, KEY_COMMON_LOOT_MULTIPLIER, false, stack);
-            comp(tooltips, getTicketMods, KEY_RARE_LOOT_MULTIPLIER, false, stack);
-            comp(tooltips, getTicketMods, KEY_LEGENDARY_LOOT_MULTIPLIER, false, stack);
-            comp(tooltips, getTicketMods, KEY_MYTHIC_LOOT_MULTIPLIER, false, stack);
-            comp(tooltips, getTicketMods, KEY_QUEST_CRATE_MULTIPLIER, false, stack);
-            comp(tooltips, getTicketMods, KEY_SAFE_LOOT_MULTIPLIER, false, stack);
-            comp(tooltips, getTicketMods, KEY_EXPERIENCE, false, stack);
-            comp(tooltips, getTicketMods, KEY_ORE_MULTIPLIER, false, stack);
-            comp(tooltips, getTicketMods, KEY_LOOT_POT_MULTIPLIER, false, stack);
-
-            mobComp(tooltips, getTicketMods, KEY_HEALTH, true);
-            mobComp(tooltips, getTicketMods, KEY_ARMOR, true);
-            mobComp(tooltips, getTicketMods, KEY_SPEED, true);
-            mobComp(tooltips, getTicketMods, KEY_HORDE, false);
-            mobComp(tooltips, getTicketMods, KEY_SKELETON, false);
-            mobComp(tooltips, getTicketMods, KEY_ETERNAL_WIZARD, false);
-            mobComp(tooltips, getTicketMods, KEY_VOID_SPIDER, false);
-            mobComp(tooltips, getTicketMods, KEY_INFERNO_CREEPER, false);
+            var hasNeg = 0;
+            for (var s : getTicketMods.values().keySet()) {
+                hasNeg += getFromReg(LevelBoonReg.negativeFromId(s), tooltips, getTicketMods, s, hasNeg);
+            }
+            if(hasNeg > 0) {
+                tooltips.add(tooltips.size() - hasNeg, Component.literal(" "));
+                tooltips.add(tooltips.size() - hasNeg, withStyleComponentTrans("info.jahdoo.ticket.negative_modifiers", org.shaydee.shaydeeapi.Colours.getHeaderColour()));
+            }
         }
+    }
+
+    public static int getFromReg(Optional<AbstractLevelBoon> boonOptional, List<Component> tooltips, TicketData getTicketMods, String key, int counter){
+        if(boonOptional.isPresent()){
+            var boon = boonOptional.get();
+            comp(tooltips, getTicketMods, key, boon.isPercentageOf());
+            return 1;
+        }
+        return 0;
     }
 
     private static void onComplete(Level level, LivingEntity player, ServerPlayer serverPlayer, int ticksUsingItem, int getCastTime) {
@@ -233,8 +224,8 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
             if(countdown != 0){
                 serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(5, 10, 5));
-                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(withStyleComponent("Loading" + dots, ColourStore.OFF_WHITE)));
-                serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(withStyleComponent(String.valueOf(countdown), ColourStore.UNIQUE_A)));
+                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(withStyleComponent("Loading" + dots, org.shaydee.shaydeeapi.Colours.getOffWhite())));
+                serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(withStyleComponent(String.valueOf(countdown), org.shaydee.shaydeeapi.Colours.getOffWhite())));
                 getSoundWithPositionV(player.level(), player.position(), SoundReg.TIMER.get(), 0.5F, 0.8F);
             }
         }

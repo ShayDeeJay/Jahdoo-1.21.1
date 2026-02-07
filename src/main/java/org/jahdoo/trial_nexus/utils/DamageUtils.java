@@ -12,7 +12,7 @@ import net.minecraft.world.level.LevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.common.registers.DamageTypeReg.JAHDOO_SOURCE;
-import static org.jahdoo.trial_nexus.utils.Helpers.attributeModifierCalculator;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.attributeModifierCalculator;
 
 public class DamageUtils {
 
@@ -24,6 +24,7 @@ public class DamageUtils {
         target.hurt(DamageUtils.source(target.level(), key, target, null), (float) damage);
     }
 
+    @SafeVarargs
     public static void damageEntityWithModifiers(LivingEntity target, LivingEntity player, float currentDamage, Holder<Attribute> ... attributes){
         target.hurt(DamageUtils.source(target.level(), JAHDOO_SOURCE, target, player), attributeModifierCalculator(player, currentDamage, true, attributes));
     }

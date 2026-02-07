@@ -32,7 +32,7 @@ public class DisassemblerRenderer extends GeoBlockRenderer<DisassemblerBlockEnti
         var pos = new Vec3(0f, 0.7f, 0f);
         var scaleItem = 0.35f;
         this.focusedItem(poseStack, entity, itemRenderer, bufferSource, packedLight, item, pos, scaleItem);
-        this.focusedItem(poseStack, entity, itemRenderer, bufferSource, packedLight, entity.outputItemHandler.getStackInSlot(1), pos, scaleItem);
+        this.focusedItem(poseStack, entity, itemRenderer, bufferSource, packedLight, entity.getOutputItemHandler().getStackInSlot(1), pos, scaleItem);
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 

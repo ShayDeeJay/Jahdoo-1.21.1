@@ -8,7 +8,7 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.registers.EntityReg;
@@ -17,7 +17,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 
 public class MysticalSemtexAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("mystical_semtex");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("mystical_semtex");
     public static final String CLUSTER_COUNT = "Cluster Count";
     public static final String EXPLOSION_DELAYS = "Explosion Delay";
     public static final String CLUSTER_CHANCE = "Cluster Chance";

@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -23,8 +24,9 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
 
 public class MysticalSemtex extends DefaultEntityBehaviour {
 
-    ResourceLocation abilityId = Helpers.res("mystical_semtex_property");
+    ResourceLocation abilityId = JahdooHelpers.res("mystical_semtex_property");
     private boolean isAttached;
     private int explosionDelay;
     private double aoe = 0.1;
@@ -60,7 +62,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         var player = this.element.getOwner();
         if(player instanceof Player){
             var damage = this.getTag(DAMAGE);
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
                 true,
@@ -184,7 +186,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         compoundTag.putDouble(MysticalSemtexAbility.EXPLOSION_DELAYS, this.explosionRadius);
         compoundTag.putDouble(DAMAGE, this.damage);
         if(localOffset != null){
-            compoundTag.put("offset", Helpers.nbtDoubleList(localOffset.x, localOffset.y, localOffset.z));
+            compoundTag.put("offset", JahdooHelpers.nbtDoubleList(localOffset.x, localOffset.y, localOffset.z));
         }
         if(target != null){
             compoundTag.putUUID("new_target", target.getUUID());
@@ -218,7 +220,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         var getRandomParticle = List.of(bakedParticle, genericParticle);
 
         ParticleHandlers.sendParticles(
-            element.level(), getRandomParticle.get(Helpers.Random.nextInt(2)), worldPosition, 0, directions.x, directions.y, directions.z, Math.min(this.aoe, 2)
+            element.level(), getRandomParticle.get(JahdooHelpers.Random.nextInt(2)), worldPosition, 0, directions.x, directions.y, directions.z, Math.min(this.aoe, 2)
         );
     }
 
@@ -252,7 +254,8 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
             if(aoe == 0.1) {
                 element.setShowTrailParticles(false);
                 this.element.setInvisible(true);
-                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound(), 2F, 1F);
+                sharedSound(element.getOnPos().getCenter(), 2F, 1F);
+
                 additionalProjectileSpread();
                 if(this.element.level() instanceof ServerLevel serverLevel){
                     particleBurst(
@@ -272,6 +275,10 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
             }
         }
     }
+    public void sharedSound(Vec3 pos, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(this.element.level(), pos, getElementType().sound(), SoundSource.NEUTRAL, volume, pitch);
+    }
+
 
     public static boolean altOnHitCheck(Player player) {
         var missileAtt = AttributeReg.CHAINED_SEMTEX;
@@ -283,7 +290,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         var restriction = projectile.getAdditionalRestriction();
         var b = altOnHitCheck((Player) projectile.getOwner());
 
-        if(!restriction || b && Helpers.Random.nextInt(0, 3) == 0) {
+        if(!restriction || b && JahdooHelpers.Random.nextInt(0, 3) == 0) {
             var getType = EntityReg.MYSTIC_ELEMENT_PROJECTILE.get();
             var abilityId = EntityDataReg.MYSTICAL_SEMTEX.get().setAbilityId();
             var abilityHolder = projectile.getAbilityHolder();
@@ -303,7 +310,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                     this.target.level().addFreshEntity(newElementProjectile);
                 }
             );
-            Helpers.getSoundWithPosition(projectile.level(), this.target.blockPosition(), getElementType().sound(), 0.05f);
+            sharedSound(this.target.position(), 0.05f, 1F);
         }
     }
 }

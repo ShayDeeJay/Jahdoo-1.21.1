@@ -4,29 +4,28 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.effects.type_effects.vitality.VitalityEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonAbility.HEAL_VALUE;
-import static org.jahdoo.trial_nexus.utils.Helpers.listRandom;
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonAbility.HEAL_VALUE;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.listRandom;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public class LifeSiphonNova extends DefaultEntityBehaviour {
 
@@ -125,7 +124,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
             if(canDamage && !beenTargeted){
                 targetedEntities.add(livingEntity);
                 DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), getValue(DAMAGE), getElementType().damageTypeResourceKey());
-                if(Maths.percentageChance(50)){
+                if(org.shaydee.shaydeeapi.Maths.percentageChance(50)){
                     VitalityEffect.throwHeartContainer(livingEntity, getValue(HEAL_VALUE));
                 }
             }

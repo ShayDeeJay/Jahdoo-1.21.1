@@ -9,10 +9,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class EffectSyncS2CP implements CustomPacketPayload {
-    public static final Type<EffectSyncS2CP> TYPE = new Type<>(Helpers.res("get_entity"));
+    public static final Type<EffectSyncS2CP> TYPE = new Type<>(JahdooHelpers.res("get_entity"));
     public static final StreamCodec<RegistryFriendlyByteBuf, EffectSyncS2CP> STREAM_CODEC = CustomPacketPayload.codec(EffectSyncS2CP::toBytes, EffectSyncS2CP::new);
 
     int id;

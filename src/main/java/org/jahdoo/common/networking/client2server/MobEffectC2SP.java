@@ -10,11 +10,11 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class MobEffectC2SP implements CustomPacketPayload {
 
-    public static final Type<MobEffectC2SP> TYPE = new Type<>(Helpers.res("sync_mob_effect"));
+    public static final Type<MobEffectC2SP> TYPE = new Type<>(JahdooHelpers.res("sync_mob_effect"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, MobEffectC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(MobEffectC2SP::toBytes, MobEffectC2SP::new);

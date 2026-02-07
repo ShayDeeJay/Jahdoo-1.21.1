@@ -9,7 +9,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_CRYSTAL_ORE = registerKey("add_crystal_ore");
@@ -27,6 +27,6 @@ public class ModBiomeModifiers {
     }
 
     private static ResourceKey<BiomeModifier> registerKey(String name) {
-        return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Helpers.res(name));
+        return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, JahdooHelpers.res(name));
     }
 }

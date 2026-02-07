@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.common.items.caster_item.CastHelper;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
 
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
@@ -54,7 +54,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         if(!entity.getItem().getStackInSlot(0).isEmpty()){
             poseStack.pushPose();
             var coin = CurrencyConverter.getCoin(entity.itemCosts);
-            renderCostText(Helpers.withStyleComponent(String.valueOf(coin.getSecond()), coin.getFirst().getTextColour()), poseStack, source, -1, direction);
+            renderCostText(JahdooHelpers.withStyleComponent(String.valueOf(coin.getSecond()), coin.getFirst().getTextColour()), poseStack, source, -1, direction);
             poseStack.translate(direction.x(), number, direction.z());
 
             var x = 0.6f;
@@ -67,7 +67,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
     }
 
     private void renderSaleItem(ShoppingTableEntity entity, PoseStack poseStack, MultiBufferSource source, int packedLight, ItemRenderer renderer, DisplayDirection direction, float partialTick) {
-        var itemStack1 = entity.inputItemHandler.getStackInSlot(0);
+        var itemStack1 = entity.getInputItemHandler().getStackInSlot(0);
         if(!itemStack1.isEmpty()){
 
             var rotate = entity.ticks + partialTick;

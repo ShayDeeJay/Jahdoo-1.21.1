@@ -7,7 +7,6 @@ import org.jahdoo.common.components.AbilityHolder;
 
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextRange;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.Maths.FORMAT;
 
 public class AbilityRating {
 
@@ -30,8 +29,8 @@ public class AbilityRating {
     public static Component hoverTextHelper(AbilityHolder holder, String keys, boolean isHigherBetter) {
         if (holder != null) {
             var modifiers = getModifier(holder, keys);
-            var max = FORMAT.format(modifiers.highestValue());
-            var min = FORMAT.format(modifiers.lowestValue());
+            var max = org.shaydee.shaydeeapi.Maths.getFORMAT().format(modifiers.highestValue());
+            var min = org.shaydee.shaydeeapi.Maths.getFORMAT().format(modifiers.lowestValue());
             var getLowest = isHigherBetter ? min : max;
             var getHighest = isHigherBetter ? max : min;
 

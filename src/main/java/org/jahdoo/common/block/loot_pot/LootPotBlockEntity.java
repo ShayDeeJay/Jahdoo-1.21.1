@@ -17,17 +17,17 @@ import net.minecraft.world.level.block.entity.PotDecorations;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.ticks.ContainerSingleItem;
-import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static org.jahdoo.common.block.loot_pot.LootPotBlock.TEXTURE;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class LootPotBlockEntity extends SyncedBlockEntity implements RandomizableContainer, ContainerSingleItem.BlockContainerSingleItem {
 

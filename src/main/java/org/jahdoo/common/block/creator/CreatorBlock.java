@@ -20,9 +20,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
@@ -94,8 +94,8 @@ public class CreatorBlock extends BaseEntityBlock{
     ) {
         if(!(level.getBlockEntity(pos) instanceof CreatorEntity wandManager)) return FAIL;
         var stack = player.getMainHandItem();
-        var inputIHandler = wandManager.inputItemHandler;
-        var outputIHandler = wandManager.outputItemHandler;
+        var inputIHandler = wandManager.getInputItemHandler();
+        var outputIHandler = wandManager.getOutputItemHandler();
 
         if(setChaosCubeAbility(player, level, pos, stack)) return SUCCESS;
 

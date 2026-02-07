@@ -8,27 +8,25 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.items.runes.AbstractRune;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.RuneReg;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
-import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.attachLootBeamComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeString;
-import static org.jahdoo.trial_nexus.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.runes.rune_data.RuneCategories.fromName;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.DEFAULT;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.DEFAULT_NAME;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_DATA;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.attachLootBeamComponent;
 
 public class RuneHelpers {
 
@@ -44,7 +42,7 @@ public class RuneHelpers {
             var fromCategory = RuneReg.getRuneFromId(name.name());
             return withStyleComponent(stringIdToName(fromCategory.runeCategory().getName()) + " " + RuneData.SUFFIX, getColourLight(fromCategory.runeColour(), 1.6));
         }
-        return Helpers.withStyleComponent("Blank Rune", -1);
+        return JahdooHelpers.withStyleComponent("Blank Rune", -1);
     }
 
     public static RuneData getRuneData(ItemStack stack){
@@ -65,7 +63,7 @@ public class RuneHelpers {
 
     public static String getName(ItemStack itemStack){
         var data = getRuneData(itemStack);
-        if(!Objects.equals(data.name(), DEFAULT_NAME)) return Helpers.stringIdToName(data.name());
+        if(!Objects.equals(data.name(), DEFAULT_NAME)) return JahdooHelpers.stringIdToName(data.name());
         return DEFAULT_NAME;
     }
 
@@ -102,8 +100,8 @@ public class RuneHelpers {
     }
 
     private static @NotNull MutableComponent getComponents(double amount, String descriptionId, boolean isAbsorption, boolean isMaxHealth, int colourPre, Component compName) {
-        var number = singleFormattedDouble(amount);
-        var value = roundNonWholeString(number);
+        var number = org.shaydee.shaydeeapi.Maths.singleFormattedDouble(amount);
+        var value = org.shaydee.shaydeeapi.Maths.roundNonWholeString(number);
 
         if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth || descriptionId.contains("armor") || descriptionId.contains("attack_damage")) {
             var text = "+" + value + " ";
@@ -178,7 +176,7 @@ public class RuneHelpers {
     ) {
         var stack = new ItemStack(ItemReg.RUNE);
         if(stack.getAttributeModifiers().modifiers().isEmpty()){
-            var rune = Helpers.listRandom(RuneReg.getAllRuneWithRarity(jahdooRarities));
+            var rune = JahdooHelpers.listRandom(RuneReg.getAllRuneWithRarity(jahdooRarities));
 
             attachLootBeamComponent(stack, tierRarity);
             generateFullRune(stack, tierRarity , rune);

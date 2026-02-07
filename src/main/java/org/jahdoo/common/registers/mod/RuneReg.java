@@ -11,7 +11,7 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.items.runes.AbstractRune;
 import org.jahdoo.common.items.runes.BlankRune;
 import org.jahdoo.common.items.runes.aether_rune.ManaPoolRune;
@@ -51,7 +51,7 @@ import java.util.function.Supplier;
 
 public class RuneReg {
 
-    public static final ResourceKey<Registry<AbstractRune>> RUNE_REGISTRY_KEY = ResourceKey.createRegistryKey(Helpers.res("rune"));
+    public static final ResourceKey<Registry<AbstractRune>> RUNE_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("rune"));
     private static final DeferredRegister<AbstractRune> RUNE = DeferredRegister.create(RUNE_REGISTRY_KEY, JahdooMod.MOD_ID);
     public static final Registry<AbstractRune> REGISTRY =  new RegistryBuilder<>(RUNE_REGISTRY_KEY).create();
 
@@ -75,11 +75,11 @@ public class RuneReg {
 
     public static AbstractRune getRuneFromAttribute(Holder<Attribute> attributeHolder) {
         var list = getAllRunes().stream().filter(s -> s.attributeHolder().equals(attributeHolder)).toList();
-        return list.isEmpty() ? null : Helpers.listRandom(list);
+        return list.isEmpty() ? null : JahdooHelpers.listRandom(list);
     }
 
     public static Optional<AbstractRune> getRuneWithRarity(JahdooRarity rarity) {
-        return Optional.of(Helpers.listRandom(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList()));
+        return Optional.of(JahdooHelpers.listRandom(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList()));
     }
 
     public static List<AbstractRune> getAllRuneWithRarity(JahdooRarity...rarity) {

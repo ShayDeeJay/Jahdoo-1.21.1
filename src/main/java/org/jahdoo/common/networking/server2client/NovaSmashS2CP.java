@@ -6,13 +6,13 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
 
 public class NovaSmashS2CP implements CustomPacketPayload {
 
-    public static final Type<NovaSmashS2CP> TYPE = new Type<>(Helpers.res("nova_smash_sync"));
+    public static final Type<NovaSmashS2CP> TYPE = new Type<>(JahdooHelpers.res("nova_smash_sync"));
     public static final StreamCodec<RegistryFriendlyByteBuf, NovaSmashS2CP> STREAM_CODEC = CustomPacketPayload.codec(NovaSmashS2CP::toBytes, NovaSmashS2CP::new);
 
     int highestDelta;

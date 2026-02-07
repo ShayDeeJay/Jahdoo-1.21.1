@@ -1,17 +1,18 @@
 package org.jahdoo.trial_nexus.ability.abilities_combat.storm_rush;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.ability.AbstractAbility;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.AbstractAbility;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static org.jahdoo.common.registers.SoundReg.DASH_EFFECT_INSTANT;
 import static org.jahdoo.common.registers.SoundReg.FROST_ABILITY;
@@ -47,8 +48,8 @@ public class StormRush extends AbstractAbility {
             var launchDistances = getTag(StormRushAbility.LAUNCH_DISTANCE);
             var lookVector = serverPlayer.getLookAngle().scale(launchDistances);
             PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntityS2CP(lookVector.x, lookVector.y, lookVector.z, serverPlayer.getId()));
-            Helpers.getSoundWithPosition(level, serverPlayer.blockPosition(), DASH_EFFECT_INSTANT.get(), 2f);
-            Helpers.getSoundWithPosition(level, serverPlayer.blockPosition(), FROST_ABILITY.get(), 0.2f, 0.8F);
+            Helpers.getSoundWithPosition(level, serverPlayer.blockPosition(), DASH_EFFECT_INSTANT.get(), SoundSource.NEUTRAL, 2f);
+            Helpers.getSoundWithPosition(level, serverPlayer.blockPosition(), FROST_ABILITY.get(), SoundSource.NEUTRAL, 0.2f, 0.8F);
         }
 
         player.addEffect(new JahdooMobEffect(EffectReg.FROST_STORM_RUSH, 10, 1));

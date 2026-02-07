@@ -2,13 +2,13 @@ package org.jahdoo.common.block.altar;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 
 public class AltarModel extends DefaultedBlockGeoModel<AltarBlockEntity> {
 
     public AltarModel() {
-        super(Helpers.res("challenge_altar"));
+        super(JahdooHelpers.res("challenge_altar"));
     }
 
     @Override

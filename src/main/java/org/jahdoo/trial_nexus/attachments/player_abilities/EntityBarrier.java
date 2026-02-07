@@ -2,22 +2,20 @@ package org.jahdoo.trial_nexus.attachments.player_abilities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 
-import static java.lang.Math.*;
-import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.trial_nexus.utils.PositionFinders.getRandomSphericalPositions;
+import static java.lang.Math.sqrt;
 import static org.jahdoo.common.particle.ParticleHandlers.particleBurst;
+import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.getRandomSphericalPositions;
 
 public class EntityBarrier {
 
@@ -64,7 +62,7 @@ public class EntityBarrier {
                     entity.setDeltaMovement(deltaX * 1, 0, deltaZ * 1);
                 }
 
-                getSoundWithPosition(level, entity.blockPosition(), SoundEvents.BEACON_POWER_SELECT, 0.1f, 1.5f);
+//                Helpers.getSoundWithPosition(level, entity.blockPosition(), SoundEvents.BEACON_POWER_SELECT, 0.1f, 1.5f);
                 damageWithJahdoo(entity, 1, ElementReg.mystic().damageTypeResourceKey());
                 particleBurst(serverLevel, entity.position().add(0, entity.getBbHeight() / 2, 0), 5, getType.getParticleGroup().bakedSlow(), 0, 0, 0, 0.2f);
             }

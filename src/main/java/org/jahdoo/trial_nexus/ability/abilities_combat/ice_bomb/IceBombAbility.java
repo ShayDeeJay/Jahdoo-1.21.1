@@ -8,7 +8,7 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.registers.EntityReg;
@@ -17,7 +17,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 
 public class IceBombAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("ice_bomb");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("ice_bomb");
 
     @Override
     public JahdooRarity rarity() {

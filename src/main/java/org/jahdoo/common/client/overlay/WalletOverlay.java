@@ -21,7 +21,7 @@ import static org.jahdoo.trial_nexus.attachments.PlayerWallet.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToWallet;
 import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
 public class WalletOverlay implements LayeredDraw.Layer {

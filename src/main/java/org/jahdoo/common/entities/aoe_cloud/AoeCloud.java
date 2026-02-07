@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -50,7 +50,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.reapplyPosition();
         this.setRadius(setWidth);
         this.owner = livingEntity;
-        this.getRandomCloudRadius = Helpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
+        this.getRandomCloudRadius = JahdooHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
 
 
@@ -70,7 +70,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.abilityId = abilityId;
         this.getAoe = EntityDataReg.getProperty(selectedAbility);
         this.getAoe.getAoeCloud(this);
-        this.getRandomCloudRadius = Helpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
+        this.getRandomCloudRadius = JahdooHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
 
     public AoeCloud(
@@ -90,7 +90,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.abilityId = abilityId;
         this.getAoe = EntityDataReg.getProperty(selectedAbility);
         this.getAoe.getAoeCloud(this);
-        this.getRandomCloudRadius = Helpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
+        this.getRandomCloudRadius = JahdooHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
 
     public double getRandomRadius(){
@@ -173,7 +173,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.setRadius(tag.getFloat("radius"));
         if(getAoe == null){
             this.getAoe = EntityDataReg.REGISTRY
-                .get(Helpers.res(tag.getString("get_selection")))
+                .get(JahdooHelpers.res(tag.getString("get_selection")))
                 .getEntityProperty();
             getAoe.getAoeCloud(this);
             getAoe.readCompoundTag(tag);

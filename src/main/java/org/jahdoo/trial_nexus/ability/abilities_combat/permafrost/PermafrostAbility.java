@@ -7,7 +7,7 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.SoundReg;
@@ -16,7 +16,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 
 public class PermafrostAbility extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("permafrost");
+    public static final ResourceLocation abilityId = JahdooHelpers.res("permafrost");
 
     @Override
     public JahdooRarity rarity() {
@@ -58,9 +58,9 @@ public class PermafrostAbility extends Ability {
         var aoeCloud = new AoeCloud(player.level(), player, 0f, EntityDataReg.ARCTIC_STORM.get().setAbilityId(), abilityId.getPath().intern());
         var position = player.position();
         aoeCloud.setPos(position.x, position.y, position.z);
-        Helpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.FROST_ABILITY.get(), 1f, 0.8f);
-        Helpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.IMPACT.get(),0.8f, 1f);
-        Helpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.DASH_EFFECT_INSTANT.get(),1f, 0.8f);
+        JahdooHelpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.FROST_ABILITY.get(), 1f, 0.8f);
+        JahdooHelpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.IMPACT.get(),0.8f, 1f);
+        JahdooHelpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.DASH_EFFECT_INSTANT.get(),1f, 0.8f);
         player.level().addFreshEntity(aoeCloud);
     }
 

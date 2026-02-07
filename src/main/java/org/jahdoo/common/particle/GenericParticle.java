@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.trial_nexus.utils.Configuration.BRIGHT_PARTICLE;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class GenericParticle extends SimpleAnimatedParticle {
 

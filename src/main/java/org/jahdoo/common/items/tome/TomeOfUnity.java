@@ -6,10 +6,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.BaseItem;
-import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -18,7 +17,7 @@ import java.util.List;
 import static org.jahdoo.common.items.caster_item.CasterItem.addSlot;
 import static org.jahdoo.common.items.caster_item.CasterItem.removeSlot;
 
-public class TomeOfUnity extends BaseItem implements ICurioItem, JahdooItem {
+public class TomeOfUnity extends BaseItem implements ICurioItem {
 
     public TomeOfUnity() {
         super(new Item.Properties().stacksTo(1));
@@ -31,7 +30,7 @@ public class TomeOfUnity extends BaseItem implements ICurioItem, JahdooItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return Helpers.withStyleComponent(super.getName(stack).getString(), ColourStore.PERK_GREEN);
+        return JahdooHelpers.withStyleComponent(super.getName(stack).getString(), ColourStore.PERK_GREEN);
     }
 
     @Override
@@ -45,13 +44,13 @@ public class TomeOfUnity extends BaseItem implements ICurioItem, JahdooItem {
 
     @Override
     public void onEquip(SlotContext slotContext, ItemStack prevStack, ItemStack stack) {
-        addSlot(slotContext.entity(), "relic", Helpers.res("relics/new"), 2);
+        addSlot(slotContext.entity(), "relic", JahdooHelpers.res("relics/new"), 2);
         ICurioItem.super.onEquip(slotContext, prevStack, stack);
     }
 
     @Override
     public void onUnequip(SlotContext slotContext, ItemStack newStack, ItemStack stack) {
-        removeSlot(slotContext.entity(), "relic", Helpers.res("relics/new"));
+        removeSlot(slotContext.entity(), "relic", JahdooHelpers.res("relics/new"));
         ICurioItem.super.onUnequip(slotContext, newStack, stack);
     }
 
@@ -59,4 +58,5 @@ public class TomeOfUnity extends BaseItem implements ICurioItem, JahdooItem {
     public boolean canEquip(ItemStack stack, EquipmentSlot armorType, LivingEntity entity) {
         return super.canEquip(stack, armorType, entity);
     }
+
 }

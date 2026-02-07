@@ -2,7 +2,9 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.quantum_destroyer;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -12,18 +14,19 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.EntityMovers;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
@@ -50,7 +53,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         if(this.element.getOwner() != null){
             var player = this.element.getOwner();
             var damage = this.getTag(DAMAGE);
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
                 true,
@@ -84,7 +87,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         return ElementReg.mystic();
     }
 
-    ResourceLocation abilityId = Helpers.res("quantum_destroyer_property");
+    ResourceLocation abilityId = JahdooHelpers.res("quantum_destroyer_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -96,11 +99,12 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         return new QuantumDestroyer();
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition( this.element.level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     private void ambientSound() {
-        Helpers.getSoundWithPosition(
-            this.element.level(), this.element.blockPosition(),
-            SoundEvents.ELDER_GUARDIAN_AMBIENT, 1.5f, 0.6f
-        );
+        sharedSound(SoundEvents.ELDER_GUARDIAN_AMBIENT, 1.5f, 0.6f);
     }
 
     @Override
@@ -108,7 +112,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         if (privateTicks > lifetime) {
             if (this.element.tickCount == lifetime + 1) {
                 element.setAnimation(5);
-                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound(), 2.5F, 0.6F);
+                sharedSound(getElementType().sound(), 2.5F, 0.6F);
             }
 
             if(privateTicks > lifetime + 6) this.element.discard();
@@ -167,10 +171,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
             if(this.element.tickCount % 40 == 0) ambientSound();
         }
         if(Random.nextInt(0, 20) == 0){
-            Helpers.getSoundWithPosition(
-                this.element.level(), this.element.blockPosition(),
-                SoundEvents.AMETHYST_BLOCK_RESONATE, 1.5f, 0.1f
-            );
+            sharedSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 1.5f, 0.1f);
         }
     }
 
@@ -252,7 +253,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
             if(privateTicks == 1) this.entitySpawnParticles(element.level());
             if(this.element.tickCount % 2 == 0) {
                 PositionFinders.getOuterRingOfRadius(this.element.position(), 0.05, 100, this::pullParticlesIn);
-                Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.TIMER.get(), 1.5f, 1.5f);
+                sharedSound(SoundReg.TIMER.get(), 1.5f, 1.5f);
                 this.entitySpawnParticles(element.level());
             }
             this.element.setDeltaMovement(0, 0.5, 0);
@@ -260,7 +261,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         } else {
             if(!isFullForm){
                 isFullForm = true;
-                Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), getElementType().sound(), 2f, 1f);
+                sharedSound(getElementType().sound(), 2f, 1f);
                 particleBurst(
                     element.level(), this.element.position(), 20,
                     genericParticle(MAGIC_PARTICLE, this.getElementType(), 15,4),

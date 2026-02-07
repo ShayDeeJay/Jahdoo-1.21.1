@@ -3,22 +3,23 @@ package org.jahdoo.trial_nexus.loot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
@@ -27,9 +28,9 @@ import static net.minecraft.sounds.SoundEvents.LODESTONE_COMPASS_LOCK;
 import static net.minecraft.sounds.SoundEvents.VAULT_EJECT_ITEM;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static org.jahdoo.trial_nexus.loot.RewardLootTables.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.loot.RewardLootTables.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public class LootHelpers {
 
@@ -43,10 +44,10 @@ public class LootHelpers {
         var coinItems = getCoinItems(lootChestEntity.getData(INSTANCE_DATA));
         if(!coinItems.isEmpty()){
             lootChestEntity.setOpen(true);
-            lootsplosian(pos.getCenter(), serverLevel, ColourStore.ABSORPTION_YELLOW, coinItems, false, 20, 0);
+            lootsplosian(pos.getCenter(), serverLevel, org.shaydee.shaydeeapi.Colours.getAbsorptionYellow(), coinItems, false, 20, 0);
             openingSoundEffect(pos, serverLevel, false);
         } else {
-            player.displayClientMessage(withStyleComponent("Chest is empty!", ColourStore.NEGATIVE_RED), true);
+            player.displayClientMessage(withStyleComponent("Chest is empty!", org.shaydee.shaydeeapi.Colours.getNegativeRed()), true);
         }
         return SUCCESS;
     }
@@ -99,7 +100,7 @@ public class LootHelpers {
 
     public static ItemStack potLoot(ServerLevel serverLevel, Vec3 pos, String difficulty, int keyValue){
         var rewards = getCompletionLoot(serverLevel, pos, difficulty, keyValue);
-        var getItem = Helpers.listRandom(rewards);
+        var getItem = JahdooHelpers.listRandom(rewards);
         attachItemData(serverLevel, getItem, null, keyValue);
         return getItem;
     }
@@ -152,14 +153,14 @@ public class LootHelpers {
     }
 
     private static void openingSoundEffect(BlockPos pos, ServerLevel serverLevel, boolean isLootChest) {
-        getSoundWithPosition(serverLevel, pos, VAULT_EJECT_ITEM, 2F, 0.8F);
-        getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 2F, 1.4F);
-        getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_PLACE, 2F, 0.4F);
+        Helpers.getSoundWithPosition(serverLevel, pos, VAULT_EJECT_ITEM, SoundSource.BLOCKS, 2F, 0.8F);
+        Helpers.getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 2F, 1.4F);
+        Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_PLACE, SoundSource.BLOCKS, 2F, 0.4F);
 
         if(isLootChest) {
-            getSoundWithPosition(serverLevel, pos, SoundReg.LOOTBOX_OPEN.get(), 2F, 1F);
+            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.LOOTBOX_OPEN.get(), SoundSource.BLOCKS, 2F, 1F);
         } else {
-            getSoundWithPosition(serverLevel, pos, SoundReg.COINBOX_OPEN.get(), 0.6F, 1F);
+            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.COINBOX_OPEN.get(), SoundSource.BLOCKS, 0.6F, 1F);
         }
     }
 

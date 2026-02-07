@@ -6,7 +6,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class SoundReg {
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, JahdooMod.MOD_ID);
@@ -142,6 +142,6 @@ public class SoundReg {
         registerSoundEvent("reroll");
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
-        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(JahdooHelpers.res(name)));
     }
 }

@@ -10,7 +10,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.CustomModelData;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -140,8 +140,8 @@ public class SaveItemData implements IAttachment {
             var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
             var value = new CustomModelData(
                 switch (data.getDifficulty()){
-                    case Helpers.MEDIUM -> 2;
-                    case Helpers.HARD -> 3;
+                    case JahdooHelpers.MEDIUM -> 2;
+                    case JahdooHelpers.HARD -> 3;
                     default -> 1;
                 }
             );

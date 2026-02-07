@@ -17,7 +17,7 @@ public class ModTags {
 
 
         private static TagKey<Item> tag(String name) {
-            return ItemTags.create(Helpers.res(name));
+            return ItemTags.create(JahdooHelpers.res(name));
         }
     }
 
@@ -45,7 +45,7 @@ public class ModTags {
         public static final TagKey<net.minecraft.world.level.block.Block> OPULENT_BLOCKS = tag("opulent_block");
 
         private static TagKey<net.minecraft.world.level.block.Block> tag(String name) {
-            return BlockTags.create(Helpers.res(name));
+            return BlockTags.create(JahdooHelpers.res(name));
         }
         
     }

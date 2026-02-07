@@ -9,11 +9,11 @@ import net.minecraft.client.renderer.entity.layers.CreeperPowerLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.monster.Creeper;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class InfernoCreeperRenderer extends MobRenderer<Creeper, CreeperModel<Creeper>> {
 
-    private static final ResourceLocation INFERNO_CREEPER = Helpers.res("textures/entity/inferno_creeper.png");
+    private static final ResourceLocation INFERNO_CREEPER = JahdooHelpers.res("textures/entity/inferno_creeper.png");
 
     public InfernoCreeperRenderer(EntityRendererProvider.Context context) {
         super(context, new CreeperModel<>(context.bakeLayer(ModelLayers.CREEPER)), 0.5F);

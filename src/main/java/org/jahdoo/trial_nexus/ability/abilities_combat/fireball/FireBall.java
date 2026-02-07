@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -18,13 +20,15 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.ArmageddonModu
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +38,7 @@ import static net.minecraft.sounds.SoundEvents.FIRE_AMBIENT;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.*;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.*;
@@ -70,7 +74,7 @@ public class FireBall extends DefaultEntityBehaviour {
         } else {
             var player = this.element.getOwner();
             var damage = this.getTag(DAMAGE);
-            this.damage = Helpers.attributeModifierCalculator(
+            this.damage = JahdooHelpers.attributeModifierCalculator(
                     (LivingEntity) player,
                     (float) damage,
                     true,
@@ -104,7 +108,7 @@ public class FireBall extends DefaultEntityBehaviour {
         return ElementReg.inferno();
     }
 
-    ResourceLocation abilityId = Helpers.res("fireball_property");
+    ResourceLocation abilityId = JahdooHelpers.res("fireball_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -116,11 +120,15 @@ public class FireBall extends DefaultEntityBehaviour {
         return new FireBall();
     }
 
+    public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
+        Helpers.getSoundWithPosition(this.element.level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+    }
+
     private void fireballTrailingSound(){
         var projectile = this.element;
 
         if (projectile.tickCount % 7 == 0) {
-            Helpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), FIRE_AMBIENT, 1, 1.5f);
+            sharedSound(FIRE_AMBIENT, 1F, 1.5f);
         }
     }
 
@@ -145,7 +153,7 @@ public class FireBall extends DefaultEntityBehaviour {
         var directions = worldPosition.subtract(this.element.position()).normalize();
         var lifetime = Random.nextInt(4, 6);
         var col1 = ColourStore.SUB_HEADER_COLOUR;
-        var col2 = ColourStore.HEADER_COLOUR;
+        var col2 = Colours.getHeaderColour();
         var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, 0.2f, col1, col2, true);
 
         ParticleHandlers.sendParticles(
@@ -278,8 +286,8 @@ public class FireBall extends DefaultEntityBehaviour {
             );
         }
 
-        Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.EXPLOSION.get(), 1.4f, 0.8F);
-        Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.FIRE_ABILITY.get());
+        sharedSound(SoundReg.EXPLOSION.get(), 1.4F, 0.8F);
+        sharedSound(SoundReg.FIRE_ABILITY.get(), 1F, 1F);
 
         this.element.setDeltaMovement(0,0,0);
         this.hasHitLocation = true;
@@ -288,8 +296,8 @@ public class FireBall extends DefaultEntityBehaviour {
     }
 
     private void fireball(){
-        var getPositions = Helpers.getRandomParticleVelocity(this.element, 0.1);
-        var getPositions2 = Helpers.getRandomParticleVelocity(this.element, 0.05);
+        var getPositions = JahdooHelpers.getRandomParticleVelocity(this.element, 0.1);
+        var getPositions2 = JahdooHelpers.getRandomParticleVelocity(this.element, 0.05);
 
         getRandomSphericalPositions(this.element, maxRadius, 16,
             position -> {

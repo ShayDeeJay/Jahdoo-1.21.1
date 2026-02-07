@@ -13,9 +13,7 @@ import static net.minecraft.network.chat.Component.translatable;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
 import static org.jahdoo.trial_nexus.utils.ColourStore.UNIQUE_A;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeString;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public abstract class AbstractPlayerBoon {
 
@@ -23,7 +21,7 @@ public abstract class AbstractPlayerBoon {
         var id = attribute().value().getDescriptionId();
         var split = translatable(id).getString();
         var string = stream(split.split(" ")).toList();
-        var getValue = roundNonWholeString(doubleFormattedDouble(value()));
+        var getValue = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(value()));
         var formattedString = (value() < 0 ? "" : "+") + getValue + (isPercentage() ? "% " : " ");
         var colourBy = RuneReg.getRuneFromAttribute(attribute()).runeColour();
         var componentList = new ArrayList<net.minecraft.network.chat.Component>();
@@ -40,7 +38,7 @@ public abstract class AbstractPlayerBoon {
         }
 
         return new Boon(componentList, colourBy, () -> sendToServer(new AttributeC2SP(attribute(), value())), icon());
-    };
+    }
 
     public abstract boolean isPercentage();
 

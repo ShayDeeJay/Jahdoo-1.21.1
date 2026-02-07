@@ -28,8 +28,8 @@ import java.util.UUID;
 
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.Helpers.attributeModifierCalculator;
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.attributeModifierCalculator;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;

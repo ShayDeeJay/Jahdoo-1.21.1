@@ -17,7 +17,7 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -36,7 +36,7 @@ public class VeinMiner extends AbstractUtilityProjectile {
 
     private static final Direction[] ALL_DIRECTIONS = Direction.values();
     private static final Direction[] HORIZONTAL_DIRECTIONS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
-    private final ResourceLocation abilityId = Helpers.res("vein_miner_property");
+    private final ResourceLocation abilityId = JahdooHelpers.res("vein_miner_property");
     private int veinSize;
     private double voidBlocks;
     private double fortune;

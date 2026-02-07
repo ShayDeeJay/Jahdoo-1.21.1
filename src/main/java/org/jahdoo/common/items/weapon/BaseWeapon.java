@@ -12,7 +12,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.items.JahdooItem;
 
 import java.util.List;
@@ -83,7 +83,7 @@ public class BaseWeapon extends SwordItem implements JahdooItem {
     @Override
     public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if(attacker.level() instanceof ServerLevel serverLevel){
-            Helpers.hurtAndKeepItem(stack, 1, serverLevel, attacker);
+            JahdooHelpers.hurtAndKeepItem(stack, 1, serverLevel, attacker);
         }
     }
 }

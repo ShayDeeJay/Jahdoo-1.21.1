@@ -32,7 +32,6 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
 import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
 import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 
@@ -49,7 +48,7 @@ import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateRandom
 import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.*;
 import static org.jahdoo.trial_nexus.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.trial_nexus.utils.EnchantmentHelpers.randomApplicableEnchantment;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class RewardLootTables {
 
@@ -121,6 +120,12 @@ public class RewardLootTables {
 
     public static final LootPoolSingletonContainer.Builder<?> STAMP =
         lootTableItem(ItemReg.STAMP.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> DICE =
+        lootTableItem(ItemReg.DICE.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> ASTRINIUM_INGOT =
+        lootTableItem(ItemReg.ASTRINIUM_INGOT.get());
 
     public static final LootPoolSingletonContainer.Builder<?> KNIGHT_KING_HELM_BUILDER =
         lootTableItem(ItemReg.KNIGHT_KING_HELMET.get());
@@ -261,7 +266,7 @@ public class RewardLootTables {
         return lootTableItem(wand);
     }
 
-    public static void attachEnchantmentWithChance(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isSpecial) {
+    public static void enchantmentWithChance(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isSpecial) {
         if (Random.nextInt(isSpecial ? 5 : 20) != 0) return;
 
         enchant(itemStack, serverLevel.registryAccess(), enchantmentKey, Random.nextInt(minVal, maxVal));
@@ -333,7 +338,7 @@ public class RewardLootTables {
             case Magnet ignored -> magnetItem(itemStack, raritiesByChestRarity);
             case JahdooShieldItem ignored -> basicShieldWithRarity(itemStack, raritiesByChestRarity);
             case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, raritiesByChestRarity);
-            case TrialNexusTicket ignore -> TicketData.initTicket(itemStack, 1);
+            case TrialNexusTicket ignore -> TicketData.initTicket(itemStack, raritiesByChestRarity);
             case Stamp ignore -> Stamp.addBoon(itemStack, raritiesByChestRarity);
             default -> { /*IGNORE*/ }
         }
@@ -405,11 +410,11 @@ public class RewardLootTables {
             //Rare
             builder.add(ESSENCE_FRAGMENT.setWeight(5));
 
-            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
                 builder.add(AUGMENT_CORE_BUILDER.setWeight((int) calculateChance(1, difficulty, newRarity)));
             }
 
-            if(Maths.percentageChance(calculateChance(30, difficulty, newRarity))){
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(30, difficulty, newRarity))){
                 builder.add(RUNE.setWeight((int) calculateChance(35, difficulty, newRarity)));
                 builder.add(MAGNET.setWeight((int) calculateChance(15, difficulty, newRarity)));
                 builder.add(getRandomWand().setWeight((int) calculateChance(5, difficulty, newRarity)));
@@ -418,44 +423,49 @@ public class RewardLootTables {
 
         if(newRarity >= 3){
             //Legendary
-            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
                 builder.add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight((int) calculateChance(1, difficulty, newRarity)));
             }
-            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
                 builder.add(CHALLENGER_TICKET.setWeight((int) calculateChance(1, difficulty, newRarity)));
+            }
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(50, difficulty, newRarity))){
+                builder.add(DICE.setWeight((int) calculateChance(20, difficulty, newRarity)));
             }
         }
 
         if(newRarity == 4){
             //Eternal
-            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
                 builder.add(AUGMENT_HYPER_CORE_BUILDER.setWeight((int) calculateChance(1, difficulty, newRarity)));
+            }
+            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                builder.add(ASTRINIUM_INGOT.setWeight((int) calculateChance(1, difficulty, newRarity)));
             }
         }
 
-        if(Maths.percentageChance(calculateChance(15, difficulty, newRarity))){
+        if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(15, difficulty, newRarity))){
             builder.add(TOME_OF_UNITY_BUILDER.setWeight((int) calculateChance(4, difficulty, newRarity)));
             builder.add(INGMAS_SWORD.setWeight((int) calculateChance(3, difficulty, newRarity)));
             addMageArmor(builder, newRarity);
         }
 
-        if(Maths.percentageChance(calculateChance(8, difficulty, newRarity))){
+        if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(8, difficulty, newRarity))){
             builder.add(GLAIVE.setWeight((int) calculateChance(2, difficulty, newRarity)));
             builder.add(BASIC_SHIELD.setWeight((int) calculateChance(4, difficulty, newRarity)));
         }
 
-        if(Maths.percentageChance(calculateChance(5, difficulty, newRarity))){
-//            builder.add(UNDEAD_PROTECTOR_SHIELD.setWeight(2));
+        if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(5, difficulty, newRarity))){
             builder.add(ELEMENTAL_SWORD.setWeight((int) calculateChance(1, difficulty, newRarity)));
             builder.add(GAUNTLET.setWeight((int) calculateChance(1, difficulty, newRarity)));
             addBattlemageArmor(builder, newRarity);
         }
 
-        if(Maths.percentageChance(calculateChance(1.5, difficulty, newRarity))){
+        if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(1.5, difficulty, newRarity))){
             addWizardArmor(builder, newRarity);
         }
 
-        if(Maths.percentageChance(calculateChance(0.5, difficulty, newRarity))){
+        if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(0.5, difficulty, newRarity))){
             addKnightKingArmor(builder, newRarity);
         }
 

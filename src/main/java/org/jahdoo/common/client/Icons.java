@@ -2,9 +2,9 @@ package org.jahdoo.common.client;
 
 import net.minecraft.resources.ResourceLocation;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
-public class Icons {
+public class    Icons {
 
     private static final String PREFIX = "textures/gui/";
     private static final String BUTTON_PREFIX = PREFIX + "gui_buttons/";
@@ -17,8 +17,14 @@ public class Icons {
     public static final ResourceLocation ORE_MULTIPLIER =
         res(PREFIX + "ore_icon.png");
 
+    public static final ResourceLocation CODEX =
+        res(PREFIX + "codex.png");
+
     public static final ResourceLocation LOOT_POT_ICON =
         res(PREFIX + "loot_pot_icon.png");
+
+    public static final ResourceLocation HISTORY =
+        res(PREFIX + "history.png");
 
     public static final ResourceLocation COMMON_TAG =
         res(RARITY_TAG_PREFIX + "common.png");
@@ -169,6 +175,9 @@ public class Icons {
 
     public static final ResourceLocation INFERNO_CREEPER =
         res(ABILITY_PREFIX + "inferno_creeper.png");
+
+    public static final ResourceLocation KNOCKBACK_RESISTANCE =
+        res(ABILITY_PREFIX + "knockback_resist.png");
 
     public static final ResourceLocation GUI_BUTTON =
         res(BUTTON_PREFIX + "gui_button.png");
