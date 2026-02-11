@@ -9,24 +9,24 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.element_projectile.ElementProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.common.registers.SoundReg;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class Boltz extends DefaultEntityBehaviour {
 
@@ -90,7 +90,7 @@ public class Boltz extends DefaultEntityBehaviour {
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
     @Override

@@ -29,9 +29,10 @@ import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.CoreItem;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
@@ -69,7 +70,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     public static int colourByState(int state){
-        return state == 0 ? ElementReg.utility().partColourB() : ColourStore.RATING_4_YELLOW;
+        return state == 0 ? ElementReg.utility().partColourB() : ColourHelpers.getRating4Yellow();
     }
 
     @Override
@@ -114,9 +115,9 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
     private static void getItemInteractionResult(ItemStack heldItem, PowerUpStationEntity powerUpStationEntity, Player player, Level level) {
         if (heldItem.getItem() == AUGMENT_CORE.get()) {
             if(player.isCreative()) {
-                Helpers.getSoundWithPosition(level, powerUpStationEntity.getBlockPos(), NOTE_BLOCK_BELL.value());
+                SoundHelpers.getSoundWithPosition(level, powerUpStationEntity.getBlockPos(), NOTE_BLOCK_BELL.value());
                 powerUpStationEntity.setData(BOOL, !powerUpStationEntity.getData(BOOL));
-            };
+            }
         }
     }
 
@@ -153,9 +154,9 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
             if(stack.has(CORE_DATA) && !CoreData.isFull(stack)){
                 swapItemsWithHand(handler, 0, player, hand);
                 if(!stack.isEmpty()){
-                    Helpers.getSoundWithPosition(level, pos, SoundReg.LEVEL_UP.get(), SoundSource.BLOCKS, 1, 0.5F);
+                    SoundHelpers.getSoundWithPosition(level, pos, SoundReg.LEVEL_UP.get(), SoundSource.BLOCKS, 1, 0.5F);
                 } else {
-                    Helpers.getSoundWithPosition(level, pos, SoundReg.IMPACT.get(), SoundSource.BLOCKS, 1, 0.85F);
+                    SoundHelpers.getSoundWithPosition(level, pos, SoundReg.IMPACT.get(), SoundSource.BLOCKS, 1, 0.85F);
                 }
                 return SUCCESS;
             }
@@ -176,11 +177,11 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
                     }
                 }
             } else {
-                Helpers.throwOrAddItem(player, handler.getStackInSlot(0));
+                ItemHelpers.throwOrAddItem(player, handler.getStackInSlot(0));
                 handler.setStackInSlot(0, ItemStack.EMPTY);
             }
 
-            Helpers.getSoundWithPosition(level, pos, SoundReg.REJECT.get(), SoundSource.BLOCKS, 1, 1);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.REJECT.get(), SoundSource.BLOCKS, 1, 1);
         }
 
         return SUCCESS;
@@ -189,7 +190,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
     private static @Nullable ItemInteractionResult sharedPlace(Level level, BlockPos pos, PowerUpStationEntity powerUpStation, ItemStack item) {
         if (item.getItem() instanceof CoreItem && item.has(CORE_DATA)) {
             powerUpStation.getInputItemHandler().insertItem(0, item.copyWithCount(1), false);
-            Helpers.getSoundWithPosition(level, pos, SoundReg.LEVEL_UP.get(), SoundSource.BLOCKS, 1, 0.5F);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.LEVEL_UP.get(), SoundSource.BLOCKS, 1, 0.5F);
             item.shrink(1);
             return SUCCESS;
         }

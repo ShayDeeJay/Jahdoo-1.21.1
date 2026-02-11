@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 
 public class GivePlayerItemsC2SP implements CustomPacketPayload {
     public static final Type<GivePlayerItemsC2SP> TYPE = new Type<>(JahdooHelpers.res("give_player_items"));
@@ -35,7 +35,7 @@ public class GivePlayerItemsC2SP implements CustomPacketPayload {
                 @Override
                 public void run() {
                     if(ctx.player() instanceof ServerPlayer serverPlayer) {
-                        Helpers.throwOrAddItem(serverPlayer, reward);
+                        ItemHelpers.throwOrAddItem(serverPlayer, reward);
                     }
                 }
             }

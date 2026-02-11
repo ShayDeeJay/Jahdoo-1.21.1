@@ -51,6 +51,10 @@
   "item.jahdoo.bazaar_key": "Bazaar Key",
   "item.jahdoo.sanctuary_key": "Sanctuary Key",
   "item.jahdoo.crypt_key": "Crypt Key",
+  "item.jahdoo.challenger_key": "Challenger Key",
+  "item.jahdoo.challenger_soul": "Challenger Soul",
+  "item.jahdoo.rune": "Rune",
+  "item.jahdoo.ancient_glaive": "Ancient Glaive",
 
   "item.jahdoo.mage_helmet": "Mage Hood",
   "item.jahdoo.mage_chestplate": "Mage Chest Piece",
@@ -214,9 +218,10 @@
   "info.jahdoo.capacity": "Capacity: ",
   "info.jahdoo.requires_level": "Requires Level: ",
   "info.jahdoo.implicit_modifiers": "Implicit Modifiers",
+  "info.jahdoo.challenge_accepted": "Challenge Accepted",
   "info.jahdoo.altar_complete": "Altar Complete",
 
-
+  "description.item.jahdoo.challenger_soul": "The Challenger Soul is a rare crafting item with a chance to drop from Challengers within the Nexus.",
   "description.item.jahdoo.stamp": "Stamps can be applied to Trial Tickets at the Ticket Bureau. Each stamp adds a positive modifier, increasing the amount the ticket must be filled before use. Most tickets naturally come with a high chance of having a negative modifier.",
   "description.item.jahdoo.battlemage_gauntlet": "The Battlemage Gauntlet is an arcane relic that allows wands to be wielded in the offhand, freeing the main hand for another weapon or tool while maintaining magical control.",
   "description.item.jahdoo.tome_of_unity": "The Tome of Unity is an ancient mana-bound relic that deepens your connection to arcane forces, increasing both your maximum mana and mana regeneration.",
@@ -233,5 +238,7 @@
   "description.block.jahdoo.disassembler": "The Disassembler acts as a recycling station for unwanted or discarded gear. Recycling items requires power from a Nexite Tank, but in return it can yield useful materials. Higher-rarity gear can yield better materials.",
   "description.block.jahdoo.rune_table": "The Divine Forge serves as a modification station for gear and weapons. It allows you to repair equipment, add or remove runes from slots, and perform additional upgrades.",
   "description.block.jahdoo.mystical_augmenter": "The Mystical Augmenter is an incredibly powerful block with many unique properties. When attached to other blocks, it enhances their functionality, including converting a composter’s output from bonemeal into Nexite Powder.",
-  "description.block.jahdoo.creator": "The Creator Pedestal enables the creation of mystical items and operations not usually possible. This includes enchanting Over-Enchanted books onto compatible items."
+  "description.block.jahdoo.creator": "The Creator Pedestal enables the creation of mystical items and operations not usually possible. This includes enchanting Over-Enchanted books onto compatible items.",
+  "description.ability.jahdoo.test": "This is just a test for testing"
+
 }

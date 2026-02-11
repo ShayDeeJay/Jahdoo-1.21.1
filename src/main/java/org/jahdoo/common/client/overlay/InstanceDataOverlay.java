@@ -1,6 +1,7 @@
 package org.jahdoo.common.client.overlay;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,27 +22,22 @@ import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
-import org.jahdoo.trial_nexus.quests.AbstractQuest;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ClientHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.lang.String.valueOf;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
 import static org.jahdoo.common.client.screens.RunScreen.componentTemplate;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllNegative;
-import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllPositive;
+import static org.jahdoo.common.registers.mod.LevelBoonReg.*;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class InstanceDataOverlay implements LayeredDraw.Layer {
 
@@ -73,21 +69,22 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var screen = mc.screen;
         var font = mc.font;
 
-        if(player == null || mc.options.hideGui || level == null) return;
-        var runData = RunData.getRunData(player);
-        var getQuest =  overlayQuest(graphics, mc, runData, font);
-
+        if(player == null || mc.options.hideGui || level == null || screen != null) return;
         slideGuiStats();
-        if(level.getDescription().getString().contains(LevelGenerator.LEVEL_PREFIX)){
-            overlayTimer(getQuest.isEmpty(), level, screen);
+
+        var runData = RunData.getRunData(player);
+        if(LevelGenerator.isNexus(level)) {
+            overlayTimer(level, screen);
             overlayInstanceModifiers(graphics, mc, player);
             overlayAlwaysOnInfo(graphics, runData, font);
         }
+
+        overlayQuest(graphics, mc, runData, font);
     }
 
-    private void overlayTimer(boolean questIsEmpty, ClientLevel level, Screen screen) {
+    private void overlayTimer(ClientLevel level, Screen screen) {
         var currentData = level.getData(INSTANCE_DATA);
-        if(currentData.getDifficulty().isEmpty() && questIsEmpty) timer = 0;
+        if(currentData.getDifficulty().isEmpty()) timer = 0;
         if(currentData != instanceData) timer = 400;
         if(screen instanceof InventoryScreen) timer = 30;
 
@@ -101,13 +98,35 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var spacer = 20;
         var remainingTime = instanceData.getMaxTime() - instanceData.getTicks();
         var startY = 20;
-        var barColour = Helpers.colourByPercent(instanceData.getMaxTime(), remainingTime, true);
-        var borderColour = org.shaydee.shaydeeapi.Colours.getNetheriteBox();
+        var barColour = ColourHelpers.colourByPercent(instanceData.getMaxTime(), remainingTime, true);
+        var borderColour = ColourHelpers.getNetheriteBox();
         var time = HudEntry.getTime(instanceData);
 
         if(instanceData.getMaxTime() > 0){
             progressBar(graphics, 8, startY, 38, 4, remainingTime, instanceData.getMaxTime(), 2, barColour, borderColour, uiFade());
             alwaysOnEntry(graphics, time.icon(), x - 2, startY - 18, size, -1, font, time.value());
+
+            if(!ClientHelpers.isKeyDown(InputConstants.KEY_TAB)){
+                var scale = 0.5F;
+                graphics.pose().pushPose();
+                graphics.pose().scale(scale, scale, scale);
+                graphics.pose().translate(-8, 34, 0);
+                RenderSystem.enableBlend();
+                RenderSystem.setShaderColor(1, 1, 1, 0.5F);
+                alwaysOnEntry(
+                    graphics,
+                    Icons.BLANK,
+                    x,
+                    startY,
+                    size,
+                    -1,
+                    font,
+                    TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", ColourHelpers.getHeaderColour(), TextHelpers.withStyleComponent("[Tab]", ColourHelpers.getOffWhite()))
+                );
+                RenderSystem.setShaderColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+                graphics.pose().popPose();
+            }
         }
 
         var listOfEntries = List.of(
@@ -128,9 +147,10 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         );
 
         for (var listOfEntry : listOfEntries) {
-            alwaysOnEntry(graphics, listOfEntry.icon(), x, (int) fade + spacer, size, -1, font, listOfEntry.value());
+            alwaysOnEntry(graphics, listOfEntry.icon(), x-3, (int) fade + spacer, size, -1, font, listOfEntry.value());
             spacer += 16;
         }
+
 
     }
 
@@ -138,19 +158,19 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
 
         public static HudEntry getTime(InstanceData instanceData){
             var remainingTime = instanceData.getMaxTime() - instanceData.getTicks();
-            var colour = remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED;
+            var colour = remainingTime > 400 ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getNegativeRed();
             var time = appendStat("", org.shaydee.shaydeeapi.Maths.ticksToTime(valueOf(remainingTime)), colour);
             return new HudEntry(Icons.CLOCK, time);
         }
 
         public static HudEntry roomsCleared(InstanceData instanceData){
             var roomsCleared = instanceData.getClearedRooms();
-            var info = withStyleComponent("" + roomsCleared, -1);
+            var info = TextHelpers.withStyleComponent("" + roomsCleared, -1);
             return new HudEntry(Icons.ROOMS_CLEARED, info);
         }
 
         public static Component getComp(Object info){
-            return JahdooHelpers.withStyleComponent(String.valueOf(info), -1);
+            return TextHelpers.withStyleComponent(String.valueOf(info), -1);
         }
 
         public static HudEntry chestCommon(RunData runData){
@@ -200,63 +220,76 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         graphics.drawString(font, info, x+18, y + 6, colour, false);
     }
 
-    private @NotNull Optional<AbstractQuest> overlayQuest(GuiGraphics graphics, Minecraft mc, RunData runData, Font font) {
+    private void overlayQuest(GuiGraphics graphics, Minecraft mc, RunData runData, Font font) {
         var questId = runData.getCurrentQuestId();
         var getQuest = QuestReg.getQuestByName(questId);
+
         if(getQuest.isPresent()){
             var baseWidth = 60;
             var offsetX = graphics.guiWidth()/2 - baseWidth;
-            var offsetY = (int) fade - 20;
             var quest = getQuest.get();
             var current = runData.getStat(questId);
             var needed = quest.questQuantity(mc.player);
             var isComplete = current >= needed;
-            var display = isComplete ? "Quest Complete" : current + "/" + needed;
-            var colour = isComplete ? PERK_GREEN : OFF_WHITE;
-            var startY = offsetY + 30;
+            var display = isComplete ? "Quest Complete" : TextHelpers.stringIdToName(quest.questName()) + " "+ current + "/" + needed;
+            var colour = isComplete ? ColourHelpers.getPerkGreen() : ColourHelpers.getOffWhite();
+            var startY = 20;
             var height = 4;
             var offset = 3;
             var colourBorder = quest.questColour();
-
             progressBar(graphics, offsetX, startY, baseWidth, height, current, needed, offset, colourBorder, uiColour(), uiFade());
             graphics.drawCenteredString(font, appendStat("Quest: ", quest.getDisplayName(), quest.questColour()), offsetX + baseWidth, startY - 12, -1);
-            graphics.drawCenteredString(font, withStyleComponent(display, colour), offsetX + baseWidth, startY + (height * 2) + 3, -1);
+            graphics.drawCenteredString(font, TextHelpers.withStyleComponent(display, colour), offsetX + baseWidth, startY + (height * 2) + 3, -1);
         }
-        return getQuest;
     }
 
     private void overlayInstanceModifiers(GuiGraphics graphics, Minecraft mc, LocalPlayer player) {
         var window = mc.getWindow().getWindow();
+        var height = graphics.guiHeight();
+        var width = graphics.guiWidth();
+
+        if(!instanceData.getDifficulty().isEmpty()) {
+            SharedUI.boxMaker(graphics, 0, 0, width, height, 0, SharedUI.fadeBlack(getMax(0.8F)));
+        }
         if (!InputConstants.isKeyDown(window, InputConstants.KEY_TAB)) {
             timer = 0;
             return;
         }
+        var runData = RunData.getRunData(player);
+        var getQuest = QuestReg.getQuestByName(runData.getCurrentQuestId());
 
         var trialData = PlayerTrialData.getData(player);
         var positives = getBoons(true, instanceData, trialData);
         var negatives = getBoons(false, instanceData, trialData);
-        var width = graphics.guiWidth();
-        var height = graphics.guiHeight();
 
-        final int startY = (int) (fade * 5);
-        final var startX = width / 2 + 14;
+
+        final int spacer = 50;
+        final int startY = (int) (fade * 5) + (getQuest.isPresent() ? spacer : 0);
+        final var startX = width / 2 + 22;
         final var iconSize = 14;
         final var rowHeight = 14;
         final var negativeOffsetX = -150;
 
-        var difficultyId = JahdooHelpers.stringIdToName(instanceData.getDifficulty());
+        var difficultyId = TextHelpers.stringIdToName(instanceData.getDifficulty());
         var difficultyName = difficultyId.isEmpty() ? "Unselected" : difficultyId;
-        var difficultyColor = difficultyId.isEmpty() ? ColourStore.OFF_WHITE : getFromName(difficultyName).getColor();
+        var difficultyColor = difficultyId.isEmpty() ? ColourHelpers.getOffWhite() : getFromName(difficultyName).getColor();
         var header = new RunScreen.StatEntry(componentTemplate("Difficulty", difficultyName, difficultyColor), null);
 
         graphics.pose().pushPose();
         graphics.pose().scale(2, 2, 2);
-        graphics.drawCenteredString(mc.font, header.component(), width / 4 - 8, (int) ( fade), -1);
+
+        graphics.drawCenteredString(mc.font, header.component(), width / 4 , (int) (fade) + (getQuest.isPresent() ? (spacer/2) : 0), -1);
         graphics.pose().popPose();
 
-        SharedUI.boxMaker(graphics, 0, 0, width, height, 0, SharedUI.fadeBlack(0.5F));
+
         drawBoonList(graphics, positives, startX, startY, 0, iconSize, rowHeight);
         drawBoonList(graphics, negatives, startX + negativeOffsetX, startY, 0, iconSize, rowHeight);
+    }
+
+    private float getMax(float maxAlpha) {
+        var fade1 = Math.min(Math.abs(fade/220), 1);
+        var v =  Math.min(maxAlpha, 1F - fade1);
+        return Math.max(0, v);
     }
 
     private void drawBoonList(
@@ -302,9 +335,9 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
                 displayValue = v + (boon.isPercentageOf() ? "%" : "");
             }
 
-            var color = positive ? boon.getHeaderColour() : MAGNET_STRENGTH_RED;
+            var color = positive ? boon.getHeaderColour() : ColourHelpers.getMagnetStrengthRed();
             var component = componentTemplate(
-                JahdooHelpers.stringIdToName(boon.id()), displayValue, color
+                TextHelpers.stringIdToName(boon.id()), displayValue, color
             );
             components.add(new RunScreen.StatEntry(component, boon.getIcon()));
         }
@@ -323,7 +356,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
     }
 
     private static @NotNull MutableComponent appendStat(String prefix, String value, int colour) {
-        return withStyleComponent(prefix, SUB_HEADER_COLOUR).copy().append(withStyleComponent(value, colour));
+        return TextHelpers.withStyleComponent(prefix, ColourHelpers.getSubHeaderColour()).copy().append(TextHelpers.withStyleComponent(value, colour));
     }
 
 }

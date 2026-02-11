@@ -20,7 +20,8 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -34,7 +35,6 @@ import static org.jahdoo.common.entities.EntityAnimations.SLAM;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.ItemReg.ESSENCE_FRAGMENT;
-import static org.jahdoo.trial_nexus.utils.ColourStore.ABSORPTION_YELLOW;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.processingParticle;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
@@ -78,7 +78,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         assignTankBlockInRange(pLevel, pPos, RECYCLING_COST);
 
         if(this.progress == 0){
-            var yColour = ABSORPTION_YELLOW;
+            var yColour = ColourHelpers.getAbsorptionYellow();
             var particleOptions = genericParticle(SOFT_PARTICLE, yColour, yColour, 5, 0.3F, false, 0);
             ParticleHandlers.particleBurst(level, pPos.getCenter().add(0,0.9,0), 1, particleOptions, 0.01f);
         }
@@ -177,7 +177,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(level, getBlockPos(), sEvent, SoundSource.BLOCKS, volume, pitch);
+        SoundHelpers.getSoundWithPosition(level, getBlockPos(), sEvent, SoundSource.BLOCKS, volume, pitch);
     }
 
     private void recyclingProcess(){

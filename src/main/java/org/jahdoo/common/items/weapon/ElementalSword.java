@@ -8,14 +8,14 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.Objects;
 
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromId;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class ElementalSword extends BaseWeapon {
 
@@ -35,7 +35,7 @@ public class ElementalSword extends BaseWeapon {
         var name = element.name() + " Twinblade";
         var colour = element.partColourB();
 
-        return withStyleComponent(name, colour);
+        return TextHelpers.withStyleComponent(name, colour);
     }
 
     @Override

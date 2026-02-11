@@ -30,8 +30,11 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
+import org.jahdoo.trial_nexus.level_manager.RoomData;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.*;
@@ -43,7 +46,7 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeNewSide;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
@@ -139,10 +142,10 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         if(stack.is(ItemReg.DICE)) {
             entity.setDataByDifficulty();
             entity.updateBlock();
-            Helpers.getSoundWithPosition(level, pos, SoundReg.RE_ROLL.get());
+            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.RE_ROLL.get());
             var getPositions = innerRadiusRandom(pos.getCenter().subtract(0, 1, 0), 2, 100);
             for (var vec3 : getPositions) {
-                var colour = org.shaydee.shaydeeapi.Colours.getUniqueB();
+                var colour = ColourHelpers.getUniqueB();
                 var particle = getNonBakedParticles(colour, colour, Random.nextInt(6, 12), Random.nextInt(2, 4));
                 sendParticles(level, particle, vec3, 0, 0, 0.5, 0, Random.nextDouble(0.6, 2.2));
             }
@@ -151,9 +154,11 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         }
 
         var keyUsed = false;
-        if(!KeyItem.isLockKey(stack).equals(KeyItem.KeyTypes.KEY_PIECE)) {
+        //Todo Check logic as seems non useful right now
+        if(RoomData.isLockKey(stack)) {
             if(KeyItem.isValidKey(stack, level)){
-                entity.setRoomData(KeyItem.isLockKey(stack).getRoomId());
+                var component = RoomData.getByItem(stack).getComponent();
+                entity.setRoomData(component);
                 keyUsed = true;
                 stack.shrink(1);
             } else {
@@ -173,24 +178,24 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         if ((!entity.getDifficulty.isEmpty() && !noDifficultySelected)) {
             var message = "Difficulty already selected";
-            player.displayClientMessage(withStyleComponent(message, org.shaydee.shaydeeapi.Colours.getNegativeRed()), true);
-            Helpers.getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 0.3F, 2F);
+            player.displayClientMessage(TextHelpers.withStyleComponent(message, ColourHelpers.getNegativeRed()), true);
+            SoundHelpers.getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 0.3F, 2F);
             return FAIL;
         }
 
         if (!entity.isStartingRoom() && !entity.canPlace()) {
             var message = "Can't place, room already generated";
-            player.displayClientMessage(withStyleComponent(message, org.shaydee.shaydeeapi.Colours.getNegativeRed()), true);
-            Helpers.getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 2F);
+            player.displayClientMessage(TextHelpers.withStyleComponent(message, ColourHelpers.getNegativeRed()), true);
+            SoundHelpers.getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 2F);
             return FAIL;
         }
 
         onUnlock(entity, serverLevel);
 
         entity.clicked = true;
-        Helpers.getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 1, 1.4F);
-        Helpers.getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, SoundSource.BLOCKS, 0.6F);
-        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()), keyUsed);
+        SoundHelpers.getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 1, 1.4F);
+        SoundHelpers.getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, SoundSource.BLOCKS, 0.6F);
+        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), TextHelpers.nameToId(entity.roomId.getString()), keyUsed);
 
         if (entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
         destroyDoors(serverLevel, pos);
@@ -202,7 +207,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
         if (noDifficultySelected) entity.setDifficulty();
 
-        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()), false);
+        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), TextHelpers.nameToId(entity.roomId.getString()), false);
         destroyDoors(serverLevel, pos);
         entity.clicked = true;
     }

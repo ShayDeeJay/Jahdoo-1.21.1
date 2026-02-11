@@ -12,8 +12,8 @@ import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.tasks.RookieAssassin;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -29,7 +29,7 @@ public class ModAdvancementProvider extends AdvancementProvider {
         public void generate(HolderLookup.Provider provider, Consumer<AdvancementHolder> consumer, ExistingFileHelper existingFileHelper) {
             var rookie = new RookieAssassin();
             Advancement.Builder.advancement()
-                .display(new ItemStack(Items.ROTTEN_FLESH), JahdooHelpers.withStyleComponent(rookie.taskName(), ColourStore.RATING_4_YELLOW), JahdooHelpers.withStyleComponent(rookie.taskDescription(), ColourStore.GOLD_COIN), null, AdvancementType.CHALLENGE, true, true, false)
+                .display(new ItemStack(Items.ROTTEN_FLESH), TextHelpers.withStyleComponent(rookie.taskName(), ColourHelpers.getRating4Yellow()), TextHelpers.withStyleComponent(rookie.taskDescription(), ColourHelpers.getGoldCoin()), null, AdvancementType.CHALLENGE, true, true, false)
                 .addCriterion("rookie_assassin", InventoryChangeTrigger.TriggerInstance.hasItems(ItemReg.BOON_CONTAINER.get()))
                 .save(consumer, "rookie_assassin");
         }

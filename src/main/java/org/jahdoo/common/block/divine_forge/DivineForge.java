@@ -29,10 +29,10 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
-import org.shaydee.shaydeeapi.block.BlockInteractionHandler;
+import org.shaydee.shaydeeapi.helpers.BlockHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
@@ -94,8 +94,8 @@ public class DivineForge extends BaseEntityBlock {
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if(!level.isClientSide){
-            Helpers.getSoundWithPosition(level, pos, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.1F, 0.6F);
-            Helpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), SoundSource.BLOCKS, 0.6F, 1.2F);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.1F, 0.6F);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), SoundSource.BLOCKS, 0.6F, 1.2F);
         }
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
@@ -179,11 +179,11 @@ public class DivineForge extends BaseEntityBlock {
             return SUCCESS;
         } else if (stack.has(JAHDOO_GEAR_DATA)) {
 
-            BlockInteractionHandler.swapItemsWithHand(divineForge.getInputItemHandler(), 0, player, hand);
+            BlockHelpers.swapItemsWithHand(divineForge.getInputItemHandler(), 0, player, hand);
             divineForge.stand = EntityType.ARMOR_STAND.create(level);
-            setOuterRingPulse(level, pos, 0.8, 20, 1.5, 0.2, ColourStore.NEGATIVE_RED, 80);
-            Helpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), SoundSource.BLOCKS, 0.4F);
-            Helpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get());
+            setOuterRingPulse(level, pos, 0.8, 20, 1.5, 0.2, ColourHelpers.getNegativeRed(), 80);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), SoundSource.BLOCKS, 0.4F);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get());
             divineForge.setPrivateTicks(0);
 
             return SUCCESS;

@@ -6,7 +6,7 @@ import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_EXPERIENCE;
 
@@ -58,6 +58,6 @@ public class Experience extends AbstractLevelBoon {
 
     @Override
     public int getHeaderColour() {
-        return ColourStore.COSMIC_PURPLE;
+        return ColourHelpers.getCosmicPurple();
     }
 }

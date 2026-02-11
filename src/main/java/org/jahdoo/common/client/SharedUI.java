@@ -26,11 +26,11 @@ import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,8 +42,6 @@ import static net.minecraft.network.chat.Component.literal;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SET_ELEMENT_TYPE;
 import static org.jahdoo.trial_nexus.attachments.CasterData.getXpNeededForNextLevel;
-import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.ColourStore.BOX_COLOUR;
 
 public class SharedUI {
 
@@ -65,8 +63,8 @@ public class SharedUI {
         int widthTo = startX + widthOffset * 2;
         int heightTo = startY + heightOffset * 2;
 
-        guiGraphics.fill(startX, startY, widthTo, heightTo, BOX_COLOUR);
-        guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, BORDER_COLOUR);
+        guiGraphics.fill(startX, startY, widthTo, heightTo, ColourHelpers.getBoxColour());
+        guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, ColourHelpers.getBorderColour());
     }
 
     public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder, int fillColour) {
@@ -173,7 +171,7 @@ public class SharedUI {
             graphics.blit(expBackground, x, l, 0, 0, x1, 5, x1, 5);
             if (k > 0) graphics.blit(expProgress, x, l, 0, 0, k, 5, 82, 5);
         }
-        drawStringWithBackground(graphics, minecraft.font, literal, x + 42, l - 2, 0, ColourStore.EXPERIENCE_GREEN, true);
+        drawStringWithBackground(graphics, minecraft.font, literal, x + 42, l - 2, 0, ColourHelpers.getExperienceGreen(), true);
 
         minecraft.getProfiler().pop();
     }
@@ -228,9 +226,9 @@ public class SharedUI {
         var widthTo = i + widthOffset;
         var heightTo = i1 + heightOffset;
 
-        guiGraphics.fill(widthFrom, heightFrom, widthTo, heightTo, BOX_COLOUR);
-        guiGraphics.hLine(i -100, i + 99, i1 - 70, BORDER_COLOUR);
-        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, BORDER_COLOUR);
+        guiGraphics.fill(widthFrom, heightFrom, widthTo, heightTo, ColourHelpers.getBoxColour());
+        guiGraphics.hLine(i -100, i + 99, i1 - 70, ColourHelpers.getBorderColour());
+        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, ColourHelpers.getBorderColour());
     }
 
     public static void bezelMaker(GuiGraphics guiGraphics, int posX, int posY, int offsetX, int offsetY, int size, AbstractElement element) {

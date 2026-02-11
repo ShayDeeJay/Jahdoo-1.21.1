@@ -6,11 +6,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
-
-import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class AddAbilityC2SP implements CustomPacketPayload {
 
@@ -39,7 +37,7 @@ public class AddAbilityC2SP implements CustomPacketPayload {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
                     var castingData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
                     castingData.addAbilitySlot(currentAbility);
-                    sendToPlayer(serverPlayer, new CastingDataSyncS2CP(castingData));
+                    CasterData.sharedPackets(serverPlayer, castingData);
                 }
             }
         );

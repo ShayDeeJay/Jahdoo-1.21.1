@@ -10,10 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.ability.abilities_combat.EtherealArrow;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.items.caster_item.CastHelper;
@@ -21,20 +17,25 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
-import org.shaydee.shaydeeapi.Helpers;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.ability.abilities_combat.EtherealArrow;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility.NUMBER_OF_PROJECTILES;
 import static org.jahdoo.common.items.caster_item.CastHelper.castAnimation;
 import static org.jahdoo.common.items.caster_item.ItemAnimations.SINGLE_CAST_ID;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttributeReg.FROST_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility.NUMBER_OF_PROJECTILES;
 
 public class FrostBolts  extends DefaultEntityBehaviour {
 
@@ -153,8 +154,8 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             CastHelper.failedCastNotification(player);
             var value = String.valueOf(Math.round(castDistance));
             var element = this.getElementType().partColourA();
-            var targetDistance = JahdooHelpers.withStyleComponent(value, element);
-            player.displayClientMessage(JahdooHelpers.withStyleComponentTrans("ability.jahdoo.frost_bolts.no_target", -1, targetDistance), true);
+            var targetDistance = TextHelpers.withStyleComponent(value, element);
+            player.displayClientMessage(TextHelpers.withStyleComponentTrans("ability.jahdoo.frost_bolts.no_target", -1, targetDistance), true);
         }
     }
 
@@ -263,7 +264,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             this.generic.level().addFreshEntity(arrow);
             this.currentShotCount++;
 
-            Helpers.getSoundWithPosition(generic.level(), hitEntity.blockPosition(), SoundReg.TELEPORT.get(), SoundSource.NEUTRAL,  1.4f, 1.6f);
+            SoundHelpers.getSoundWithPosition(generic.level(), hitEntity.blockPosition(), SoundReg.TELEPORT.get(), SoundSource.NEUTRAL,  1.4f, 1.6f);
         }
     }
 

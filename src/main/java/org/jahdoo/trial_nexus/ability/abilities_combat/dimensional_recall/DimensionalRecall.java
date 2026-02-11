@@ -14,7 +14,8 @@ import org.jahdoo.trial_nexus.attachments.AbstractHoldUseAttachment;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
@@ -25,7 +26,8 @@ import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.CASTING_TIME;
 import static org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.abilityId;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getSoundWithPositionV;
 
 public class DimensionalRecall extends AbstractHoldUseAttachment {
 
@@ -34,7 +36,7 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     }
 
     public static void sendNoHomeMessage(Player player, AbstractElement element){
-        player.displayClientMessage(withStyleComponentTrans("ability.jahdoo.no_home", element.textColourA()), true);
+        player.displayClientMessage(TextHelpers.withStyleComponentTrans("ability.jahdoo.no_home", element.textColourA()), true);
     }
 
     public AbstractElement getElement(){
@@ -61,8 +63,8 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
 
                 var level = serverPlayer.level();
                 var position = serverPlayer.position();
-                Helpers.getSoundWithPosition(level, position, getTeleportSound, SoundSource.PLAYERS, 1, 0.8f);
-                Helpers.getSoundWithPosition(level, position, getSuccessSound, SoundSource.PLAYERS, 1, 1.2f);
+                SoundHelpers.getSoundWithPosition(level, position, getTeleportSound, SoundSource.PLAYERS, 1, 0.8f);
+                SoundHelpers.getSoundWithPosition(level, position, getSuccessSound, SoundSource.PLAYERS, 1, 1.2f);
             }
         }
     }

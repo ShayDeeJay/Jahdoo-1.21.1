@@ -17,7 +17,9 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +29,6 @@ import static net.minecraft.world.InteractionResultHolder.success;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class RecoveryReceipt extends BaseItem {
 
@@ -55,7 +55,7 @@ public class RecoveryReceipt extends BaseItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return withStyleComponent("Recovery Receipt", SUB_HEADER_COLOUR);
+        return TextHelpers.withStyleComponent("Recovery Receipt", ColourHelpers.getSubHeaderColour());
     }
 
     @Override
@@ -95,7 +95,7 @@ public class RecoveryReceipt extends BaseItem {
         } else {
             player.stopUsingItem();
             var message = "Insufficient Funds";
-            player.displayClientMessage(withStyleComponent(message, NEGATIVE_RED), true);
+            player.displayClientMessage(TextHelpers.withStyleComponent(message, ColourHelpers.getNegativeRed()), true);
             player.playSound(SoundEvents.CAMEL_DASH_READY, 1F, 0.6F);
             return fail(stack);
         }
@@ -107,9 +107,9 @@ public class RecoveryReceipt extends BaseItem {
         if (getPrice == null) return;
 
         tooltipComponents
-            .add(withStyleComponent("Cost: ", OFF_WHITE)
+            .add(TextHelpers.withStyleComponent("Cost: ", ColourHelpers.getOffWhite())
             .copy()
-            .append(withStyleComponent("20" + " " + getPrice.getFirst().getSerializedName(), getPrice.getFirst().getTextColour())));
+            .append(TextHelpers.withStyleComponent("20" + " " + getPrice.getFirst().getSerializedName(), getPrice.getFirst().getTextColour())));
     }
 
     @Override
@@ -121,7 +121,7 @@ public class RecoveryReceipt extends BaseItem {
             var content = stack.get(DataComponents.BUNDLE_CONTENTS);
             var getPrice = getRecoveryCost(stack);
             if(content != null && getPrice != null){
-                for (var itemStack : content.items()) Helpers.throwNewItem(player, itemStack);
+                for (var itemStack : content.items()) ItemHelpers.throwNewItem(player, itemStack);
 
                 player.playSound(SoundReg.COINBOX_OPEN.get(), 1, 1.8F);
                 purchase(getPrice.getSecond(), player);

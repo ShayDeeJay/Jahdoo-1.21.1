@@ -36,6 +36,7 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
@@ -49,7 +50,6 @@ import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.common.client.RenderHelpers.drawHealthBar;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.LEVEL_PREFIX;
 
 public class RenderEventHelper {
 
@@ -175,7 +175,7 @@ public class RenderEventHelper {
         var getConfig = Configuration.SHOW_HOSTILE_ONLY.get();
         var getCheck = switch (getConfig){
             case "Hostile" -> entity instanceof Monster || entity instanceof ITamableEntity || entity instanceof NeutralMob;
-            case "Nexus Trial Only" -> entity.level().getDescription().getString().contains(LEVEL_PREFIX);
+            case "Nexus Trial Only" -> LevelGenerator.isNexus(entity.level());
             case "All" -> true;
             default -> false;
         };

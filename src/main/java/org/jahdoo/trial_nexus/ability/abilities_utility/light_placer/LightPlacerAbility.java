@@ -6,7 +6,6 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.GlobalStrings;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
@@ -30,7 +29,7 @@ public class LightPlacerAbility extends AbstractBlockAbility {
 
     @Override
     public String getDescription() {
-        return GlobalStrings.BLOCK_PLACER;
+        return "description.ability.jahdoo.test";
     }
 
     @Override

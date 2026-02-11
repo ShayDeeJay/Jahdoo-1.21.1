@@ -31,9 +31,11 @@ import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
 import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
+import org.jahdoo.trial_nexus.utils.EnchantmentHelpers;
 import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
+import org.shaydee.shaydeeapi.Maths;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +49,6 @@ import static net.minecraft.world.level.storage.loot.providers.number.UniformGen
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateRandomTypAttribute;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.*;
 import static org.jahdoo.trial_nexus.utils.EnchantmentHelpers.enchant;
-import static org.jahdoo.trial_nexus.utils.EnchantmentHelpers.randomApplicableEnchantment;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class RewardLootTables {
@@ -105,17 +106,17 @@ public class RewardLootTables {
 
     public static final LootPoolSingletonContainer.Builder<?> GEAR_SCRAP =
         lootTableItem(ItemReg.GEAR_SCRAP.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> NETHERITE_SWORD_BUILDER = 
+
+    public static final LootPoolSingletonContainer.Builder<?> NETHERITE_SWORD_BUILDER =
         lootTableItem(Items.NETHERITE_SWORD);
-    
-    public static final LootPoolSingletonContainer.Builder<?> ADVANCED_AUGMENT_CORE_BUILDER = 
+
+    public static final LootPoolSingletonContainer.Builder<?> ADVANCED_AUGMENT_CORE_BUILDER =
         lootTableItem(ItemReg.ADVANCED_AUGMENT_CORE.get());
-    
+
     public static final LootPoolSingletonContainer.Builder<?> TOME_OF_UNITY_BUILDER =
         lootTableItem(ItemReg.TOME_OF_UNITY.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> AUGMENT_HYPER_CORE_BUILDER = 
+
+    public static final LootPoolSingletonContainer.Builder<?> AUGMENT_HYPER_CORE_BUILDER =
         lootTableItem(ItemReg.AUGMENT_HYPER_CORE.get());
 
     public static final LootPoolSingletonContainer.Builder<?> STAMP =
@@ -140,29 +141,29 @@ public class RewardLootTables {
         lootTableItem(ItemReg.KNIGHT_KING_BOOTS.get());
 
 
-    public static final LootPoolSingletonContainer.Builder<?> WIZARD_HELM_BUILDER = 
+    public static final LootPoolSingletonContainer.Builder<?> WIZARD_HELM_BUILDER =
         lootTableItem(ItemReg.WIZARD_HELMET.get());
-    
+
     public static final LootPoolSingletonContainer.Builder<?> WIZARD_CHEST_BUILDER =
         lootTableItem(ItemReg.WIZARD_CHESTPLATE.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> WIZARD_LEGGINGS_BUILDER = 
+
+    public static final LootPoolSingletonContainer.Builder<?> WIZARD_LEGGINGS_BUILDER =
         lootTableItem(ItemReg.WIZARD_LEGGINGS.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> WIZARD_BOOTS_BUILDER = 
+
+    public static final LootPoolSingletonContainer.Builder<?> WIZARD_BOOTS_BUILDER =
         lootTableItem(ItemReg.WIZARD_BOOTS.get());
 
 
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_HELM_BUILDER = 
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_HELM_BUILDER =
         lootTableItem(ItemReg.BATTLEMAGE_HELMET.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_CHEASTPLATE_BUILDER = 
+
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_CHEASTPLATE_BUILDER =
         lootTableItem(ItemReg.BATTLEMAGE_CHESTPLATE.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_LEGGINGS_BUILDER = 
+
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_LEGGINGS_BUILDER =
         lootTableItem(ItemReg.BATTLEMAGE_LEGGINGS.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_BOOTS_BUILDER = 
+
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_BOOTS_BUILDER =
         lootTableItem(ItemReg.BATTLEMAGE_BOOTS.get());
 
 
@@ -179,19 +180,19 @@ public class RewardLootTables {
         lootTableItem(ItemReg.MAGE_BOOTS.get());
 
 
-    public static final LootPoolSingletonContainer.Builder<?> ELYTRA_BUILDER = 
+    public static final LootPoolSingletonContainer.Builder<?> ELYTRA_BUILDER =
         lootTableItem(Items.ELYTRA);
-    
+
     public static final LootPoolSingletonContainer.Builder<?> COIN =
         lootTableItem(ItemReg.COIN.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> XP = 
+
+    public static final LootPoolSingletonContainer.Builder<?> XP =
         lootTableItem(ItemReg.EXPERIENCE_ORB.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> RUNE = 
+
+    public static final LootPoolSingletonContainer.Builder<?> RUNE =
         lootTableItem(ItemReg.RUNE.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> INGMAS_SWORD = 
+
+    public static final LootPoolSingletonContainer.Builder<?> INGMAS_SWORD =
         lootTableItem(ItemReg.INGMAS_SWORD.get());
 
     public static final LootPoolSingletonContainer.Builder<?> GLAIVE =
@@ -255,14 +256,14 @@ public class RewardLootTables {
 
     private static void attachLootBeam(ItemStack itemStack, LootBeamComponent data) {
         var lootBeamData = DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA();
-        
+
         if(!itemStack.has(lootBeamData)) itemStack.set(lootBeamData, data);
     }
 
     private static LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>> getRandomWand() {
         var randomWand = ElementReg.random().getWand();
         var wand = randomWand != null ? randomWand : ItemReg.WAND_ITEM_FROST.get();
-        
+
         return lootTableItem(wand);
     }
 
@@ -279,10 +280,12 @@ public class RewardLootTables {
     }
 
     private static ObjectArrayList<ItemStack> createLootParams(ServerLevel serverLevel, Vec3 pos, LootTable.Builder loot) {
-        var shouldEnchant = Random.nextInt(10) == 0 ? loot.apply(randomApplicableEnchantment(serverLevel.registryAccess())) : loot;
-        var lootParams = new LootParams.Builder(serverLevel).withParameter(ORIGIN, pos).create(VAULT);
-        
-        return shouldEnchant.build().getRandomItems(lootParams);
+        var lootParams = new LootParams
+            .Builder(serverLevel)
+            .withParameter(ORIGIN, pos)
+            .create(VAULT);
+
+        return loot.build().getRandomItems(lootParams);
     }
 
     public static ObjectArrayList<ItemStack> getCompletionLoot(
@@ -297,7 +300,11 @@ public class RewardLootTables {
         loot.withPool(multiPoolBuilder(getDifficulty, chestRarity));
         loot.withPool(singlePoolBuilder(getDifficulty, chestRarity));
 
-        return createLootParams(serverLevel, pos, loot);
+        var lootParams = createLootParams(serverLevel, pos, loot);
+        for (var lootParam : lootParams) {
+            EnchantmentHelpers.randomApplicableEnchantment(lootParam);
+        }
+        return lootParams;
     }
 
 
@@ -426,10 +433,10 @@ public class RewardLootTables {
             if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
                 builder.add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight((int) calculateChance(1, difficulty, newRarity)));
             }
-            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
                 builder.add(CHALLENGER_TICKET.setWeight((int) calculateChance(1, difficulty, newRarity)));
             }
-            if(org.shaydee.shaydeeapi.Maths.percentageChance(calculateChance(50, difficulty, newRarity))){
+            if(Maths.percentageChance(calculateChance(20, difficulty, newRarity))){
                 builder.add(DICE.setWeight((int) calculateChance(20, difficulty, newRarity)));
             }
         }
@@ -505,6 +512,6 @@ public class RewardLootTables {
     }
 
     public static double calculateChance(double baseChance, InstanceDifficulty diff, int chestRarity) {
-        return baseChance * diff.expMultiplier() + chestRarity;
+        return Math.min(100, baseChance * diff.expMultiplier() + chestRarity);
     }
 }

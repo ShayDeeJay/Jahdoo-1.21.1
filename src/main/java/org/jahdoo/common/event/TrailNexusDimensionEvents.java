@@ -4,17 +4,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.ModTags;
-
-import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.LEVEL_PREFIX;
 
 public class TrailNexusDimensionEvents {
 
     public static boolean blockInteractionRules(Level level, Player player){
-        var isTrailNexus = level.getDescription().getString().contains(LEVEL_PREFIX);
         var isNotCreative = !player.isCreative();
 
-        return isTrailNexus && isNotCreative;
+        return LevelGenerator.isNexus(level) && isNotCreative;
     }
 
     public static void useItemBlockEvent(PlayerEvent.BreakSpeed event){

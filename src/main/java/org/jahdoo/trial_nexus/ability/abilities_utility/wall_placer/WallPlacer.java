@@ -17,7 +17,7 @@ import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.getStoredBlock;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.OFFSET;
@@ -109,7 +109,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
         }
 
         var placeSound = replaceBlock.getSoundType(replaceBlock.defaultBlockState(), level, pos, null).getPlaceSound();
-        Helpers.getSoundWithPosition(level, pos, placeSound, SoundSource.NEUTRAL, 1, 1);
+        SoundHelpers.getSoundWithPosition(level, pos, placeSound, SoundSource.NEUTRAL, 1, 1);
         generic.discard();
     }
 

@@ -8,21 +8,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.client.SharedUI;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 import static net.minecraft.network.chat.Component.empty;
+import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToWallet;
-import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
-import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
 public class WalletOverlay implements LayeredDraw.Layer {
     private int previousWallet;
@@ -76,13 +75,14 @@ public class WalletOverlay implements LayeredDraw.Layer {
         var minecraft = Minecraft.getInstance();
         var level = minecraft.level;
         var currentWallet = previousWallet;
-        var screen = minecraft.screen;
         var player = minecraft.player;
 
         if(player == null || minecraft.options.hideGui || level == null) return;
         var shoppingTable = isLookingAtBlock(player);
 
-        renderWallet(graphics, minecraft, fadeIn, 0 , 0, true, null);
+//        timer = 10;
+        renderWallet(graphics, minecraft, fadeIn, 0 , 0, true, true, false, null);
+
         slideGui();
 
         timer = Math.max(0, timer - 1);
@@ -107,10 +107,10 @@ public class WalletOverlay implements LayeredDraw.Layer {
 
         var newWallet = convertToCoins(validAmount).coins().reversed();
         var prop2 = newWallet.get(index);
-        var name = withStyleComponent(prop.getSerializedName() + ": ", prop.getTextColour());
+        var name = TextHelpers.withStyleComponent(/*prop.getSerializedName() + ": "*/"", prop.getTextColour());
         var isDeductible = !Objects.equals(coin, prop2);
 
-        return name.copy().append(withStyleComponent(prop2 + (isDeductible ? "↓" : ""), isDeductible ? NEGATIVE_RED : prop.getTextColour()));
+        return name.copy().append(TextHelpers.withStyleComponent(prop2 + (isDeductible ? "↓" : ""), isDeductible ? ColourHelpers.getNegativeRed() : prop.getTextColour()));
     }
 
     public static void renderWallet(
@@ -120,6 +120,8 @@ public class WalletOverlay implements LayeredDraw.Layer {
         double adjustX,
         double adjustY,
         boolean hideBackground,
+        boolean isHorizontal,
+        boolean showText,
         @Nullable CurrencyConverter converter
     ) {
         var player = minecraft.player;
@@ -139,27 +141,41 @@ public class WalletOverlay implements LayeredDraw.Layer {
             var currencyConverter = shoppingTable != null ? shoppingTable.itemCosts : converter;
             var cantPurchase = canPurchase(wallet, currencyConverter) <= 0;
             if(cantPurchase){
-                var comp = withStyleComponent("Insufficient Funds!", NEGATIVE_RED);
+                var comp = TextHelpers.withStyleComponent("Insufficient Funds!", ColourHelpers.getNegativeRed());
                 graphics.drawString(minecraft.font, comp, getX + 15, getY + 84 + spacer, -1, false);
             }
         }
 
         if(!hideBackground){
-            SharedUI.boxMaker(graphics, getX + 6, getY - 10, 48, 46, 0, fadeBackground, fadeBackground);
-            graphics.drawString(minecraft.font, withStyleComponent("Wallet", ColourStore.SUB_HEADER_COLOUR), getX + 16, getY + spacer - 2, -1, false);
+            var x = getX + 6;
+            var y = getY - 10;
+            var startX = x + (isHorizontal ? 4 : -2);
+            var startY = y + (isHorizontal ? 28 : 8);
+
+            SharedUI.boxMaker(graphics, startX, startY, isHorizontal ? 60 : (showText ? 48 : 26), isHorizontal ? 10 : 42, 0, fadeBackground);
+            var wallet1 = TextHelpers.withStyleComponent("Wallet", ColourHelpers.getSubHeaderColour());
+            graphics.drawString(minecraft.font, wallet1, getX + 14, getY + spacer + 8, -1, false);
         }
 
         for (int i = 0; i < properties.size(); i++){
             var prop = properties.get(i);
             var coin = coinsTypes.get(i);
-            var text = withStyleComponent(prop.getSerializedName() + ": "+ coin, prop.getTextColour());
+            var s = prop.getSerializedName() + ": ";
+            var coin1 = (showText ? s : "") + coin.intValue();
+            var text = TextHelpers.withStyleComponent(coin1, prop.getTextColour());
             var priceDifference = displayDifference(wallet, shoppingTable != null ? shoppingTable.itemCosts : converter, i, coin, prop);
             var getTextType = !priceDifference.equals(empty()) ? priceDifference : text;
+            var x = getX + 6 + (isHorizontal ? spacer : 0);
+            var y = getY + 12 + (!isHorizontal ? spacer : 0);
 
-            graphics.blit(prop.getLocation(), getX + 6, getY + spacer + 6, 0, 0, size, size, size, size);
-            graphics.drawString(minecraft.font, getTextType, getX + 28, getY + 15 + spacer, -1, false);
+            graphics.blit(prop.getLocation(), x, y, 0, 0, size, size, size, size);
+            graphics.drawString(minecraft.font, getTextType, x + 19, y + 10, -1, false);
 
-            spacer += 16;
+            var length = coin1.length();
+
+            var horizontalSpacing = 20 + (length * 5);
+            var verticalSpacing = 14;
+            spacer += (isHorizontal ? horizontalSpacing : verticalSpacing);
         }
 
     }

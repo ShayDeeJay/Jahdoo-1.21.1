@@ -9,27 +9,27 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.shaydee.shaydeeapi.Helpers;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonAbility.HEAL_VALUE;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonAbility.PULSES;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.mod.EntityDataReg.SOUL_SIPHON_NOVA;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonAbility.HEAL_VALUE;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonAbility.PULSES;
 
 public class LifeSiphon extends DefaultEntityBehaviour {
 
@@ -112,7 +112,7 @@ public class LifeSiphon extends DefaultEntityBehaviour {
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
     @Override

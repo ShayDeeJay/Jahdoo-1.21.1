@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_SAFE_LOOT_MULTIPLIER;
@@ -55,6 +55,6 @@ public class SafeLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public int getHeaderColour() {
-        return ColourStore.RATING_5_GREEN;
+        return ColourHelpers.getRating5Green();
     }
 }

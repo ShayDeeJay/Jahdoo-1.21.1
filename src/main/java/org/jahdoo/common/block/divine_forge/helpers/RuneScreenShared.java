@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static org.jahdoo.common.block.divine_forge.helpers.RuneTableScreen.groupFade;
+import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreen.groupFade;
 import static org.jahdoo.common.client.SharedUI.*;
 
 public class RuneScreenShared {

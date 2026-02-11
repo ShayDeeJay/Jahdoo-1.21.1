@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class CoreItem extends Item implements JahdooItem{
         var colour = getColorTransition(color, color1, (int) tick, 50);
         var string = super.getName(stack).getString();
         var filledColour = isFilled ? colour : color(182, 156, 180);
-        return JahdooHelpers.withStyleComponent(string, filledColour);
+        return TextHelpers.withStyleComponent(string, filledColour);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CoreItem extends Item implements JahdooItem{
         if(!CoreData.isFull(stack) && stack.has(ComponentReg.CORE_DATA)){
             var current = CoreData.getFilled(stack);
             var max = CoreData.getRequired(stack);
-            tooltipComponents.add(JahdooHelpers.withStyleComponent(current + "/" + max, ColourStore.PERK_GREEN));
+            tooltipComponents.add(TextHelpers.withStyleComponent(current + "/" + max, ColourHelpers.getPerkGreen()));
         }
     }
 

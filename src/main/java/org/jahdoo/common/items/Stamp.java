@@ -8,6 +8,8 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
@@ -15,8 +17,6 @@ import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.common.components.TicketData.addNewEntry;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.getRarity;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.getReverseRarity;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 
 public class Stamp extends BaseJahdooItem implements JahdooItem{
 
@@ -44,8 +44,8 @@ public class Stamp extends BaseJahdooItem implements JahdooItem{
     }
 
     public static void appendCapacity(List<Component> tooltipComponents, int i) {
-        var capacity = withStyleComponentTrans("info.jahdoo.capacity", org.shaydee.shaydeeapi.Colours.getSubHeaderColour());
-        var capacity1 = withStyleComponent("+" + i, org.shaydee.shaydeeapi.Colours.getUniqueA());
+        var capacity = TextHelpers.withStyleComponentTrans("info.jahdoo.capacity", ColourHelpers.getSubHeaderColour());
+        var capacity1 = TextHelpers.withStyleComponent("+" + i, ColourHelpers.getUniqueA());
         var append = capacity.copy().append(capacity1);
 
         tooltipComponents.add(append);

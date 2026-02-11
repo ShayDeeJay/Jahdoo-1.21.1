@@ -17,11 +17,11 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.utils.IItemEntityBehaviour;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.COIN;
 import static org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg.INSTANCE;
 
@@ -55,7 +55,7 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
                 sendToPlayer(player, new WalletSyncS2CP(getWallet.getWallet()));
             }
 
-            Helpers.getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), SoundSource.MASTER, 1F, 0.8F);
+            SoundHelpers.getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), SoundSource.MASTER, 1F, 0.8F);
             
             if(level instanceof CustomLevel cLevel && entity instanceof LivingEntity lEntity) {
                 RunData.incrementCoin(cLevel, lEntity, data == null ? 0 : data.value(), count);
@@ -68,14 +68,14 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
     @Override
     public Component getName(ItemStack stack) {
         var data = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        if(data == null) return withStyleComponent("Bronze Coin", CoinProperties.BRONZE.getTextColour());
+        if(data == null) return TextHelpers.withStyleComponent("Bronze Coin", CoinProperties.BRONZE.getTextColour());
         var value = switch (data.value()) {
             case 1 -> CoinProperties.SILVER;
             case 2 -> CoinProperties.GOLD;
             default -> CoinProperties.PLATINUM;
         };
 
-        return withStyleComponent(value.getSerializedName() + " Coin", value.getTextColour());
+        return TextHelpers.withStyleComponent(value.getSerializedName() + " Coin", value.getTextColour());
     }
 
     @Override

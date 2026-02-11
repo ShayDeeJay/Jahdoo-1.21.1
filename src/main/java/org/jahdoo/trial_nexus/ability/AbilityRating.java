@@ -4,9 +4,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextRange;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
 public class AbilityRating {
 
@@ -71,11 +71,11 @@ public class AbilityRating {
             isHigherBetter = modifier.isHigherBetter();
 
             switch (getRating){
-                case 1 -> chatFormatting = RATING_1_GRAY;
-                case 2 -> chatFormatting = RATING_2_RED;
-                case 3 -> chatFormatting = RATING_3_ORANGE;
-                case 4 -> chatFormatting = RATING_4_YELLOW;
-                default -> chatFormatting = RATING_5_GREEN;
+                case 1 -> chatFormatting = ColourHelpers.getRating1Gray();
+                case 2 -> chatFormatting = ColourHelpers.getRating2Red();
+                case 3 -> chatFormatting = ColourHelpers.getRating3Orange();
+                case 4 -> chatFormatting = ColourHelpers.getRating4Yellow();
+                default -> chatFormatting = ColourHelpers.getRating5Green();
             }
 
         } else {

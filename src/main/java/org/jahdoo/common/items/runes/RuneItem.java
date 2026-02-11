@@ -14,17 +14,15 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Colours;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getNameWithStyle;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
-import static org.jahdoo.trial_nexus.utils.ColourStore.DIAMOND_BOX;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class RuneItem extends BaseItem {
 
@@ -74,7 +72,7 @@ public class RuneItem extends BaseItem {
         if(!player.level().isClientSide){
             var newStack = stack.copyWithCount(1);
             stack.shrink(1);
-            Helpers.throwOrAddItem(player, newStack);
+            ItemHelpers.throwOrAddItem(player, newStack);
         }
     }
 
@@ -85,8 +83,8 @@ public class RuneItem extends BaseItem {
         var hasTier = RuneHelpers.getTier(stack);
         var componentRune = JahdooRarity.attachRuneTierTooltip(stack);
         var carriedRuneCost = String.valueOf(RuneHelpers.getCostFromRune(stack));
-        var carriedCostComponent = withStyleComponent(carriedRuneCost, DIAMOND_BOX);
-        var potentialCostPreFix = withStyleComponent("Potential Cost: ", SUB_HEADER_COLOUR);
+        var carriedCostComponent = TextHelpers.withStyleComponent(carriedRuneCost, ColourHelpers.getDiamondBox());
+        var potentialCostPreFix = TextHelpers.withStyleComponent("Potential Cost: ", ColourHelpers.getSubHeaderColour());
 
         if (!component.getString().isEmpty()) {
             tooltipComponents.add(potentialCostPreFix.copy().append(carriedCostComponent));
@@ -96,7 +94,7 @@ public class RuneItem extends BaseItem {
         }
 
         if(!description.getString().isEmpty() && !AbilityComponentHelper.shiftForDetails(tooltipComponents, false)) {
-            tooltipComponents.add(JahdooHelpers.withStyleComponent(description.getString(), Colours.getHeaderColour()));
+            tooltipComponents.add(TextHelpers.withStyleComponent(description.getString(), ColourHelpers.getHeaderColour()));
         }
 
         return tooltipComponents;

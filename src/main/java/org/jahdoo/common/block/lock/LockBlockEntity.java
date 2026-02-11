@@ -14,9 +14,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.level_manager.RoomData;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +30,6 @@ import static org.jahdoo.trial_nexus.attachments.RunData.setDateAndTime;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.*;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromLevel;
-import static org.jahdoo.trial_nexus.level_manager.StructureManager.getBattleRoom;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
 
 
@@ -67,11 +68,11 @@ public class LockBlockEntity extends SyncedBlockEntity {
         };
 
         level.setData(INSTANCE_DATA, instanceData);
-        Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundReg.SWORD_THUD.get(), SoundSource.BLOCKS, 1F, 1.4F);
+        SoundHelpers.getSoundWithPosition(level, this.getBlockPos(), SoundReg.SWORD_THUD.get(), SoundSource.BLOCKS, 1F, 1.4F);
         JahdooHelpers.sendPacketsToPlayerDistance(getBlockPos().getCenter(), 400, level,
             (serverPlayer) -> {
                 serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(10, 30, 20));
-                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(JahdooHelpers.withStyleComponent("BEGIN", getFromLevel(instanceData).getColor())));
+                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(TextHelpers.withStyleComponent("BEGIN", getFromLevel(instanceData).getColor())));
             }
         );
 
@@ -99,7 +100,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
     }
 
     public void setRoomData(Component roomId){
-        this.roomId = this.isStartingRoom() ? getBattleRoom() : roomId;
+        this.roomId = this.isStartingRoom() ? RoomData.getRandomBattleRoom() : roomId;
         setDataByDifficulty();
         this.updateBlock();
     }

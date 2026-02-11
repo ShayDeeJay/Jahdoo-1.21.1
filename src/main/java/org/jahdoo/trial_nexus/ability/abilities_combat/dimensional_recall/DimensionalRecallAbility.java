@@ -3,15 +3,15 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.GlobalStrings;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.mod.ElementReg;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
 
@@ -42,7 +42,7 @@ public class DimensionalRecallAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return GlobalStrings.BLOCK_MINER_DESCRIPTION;
+        return "description.ability.jahdoo.test";
     }
 
     @Override
@@ -65,7 +65,7 @@ public class DimensionalRecallAbility extends Ability {
         if(!(player.level() instanceof CustomLevel)){
             player.getData(DIMENSIONAL_RECALL).setStartedUsing(true);
         } else {
-            player.displayClientMessage(JahdooHelpers.withStyleComponent("You can't use this here", ColourStore.NEGATIVE_RED), true);
+            player.displayClientMessage(TextHelpers.withStyleComponent("You can't use this here", ColourHelpers.getNegativeRed()), true);
         }
     }
 

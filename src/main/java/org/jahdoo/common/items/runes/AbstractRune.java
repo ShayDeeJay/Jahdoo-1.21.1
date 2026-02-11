@@ -24,6 +24,6 @@ public abstract class AbstractRune {
 
     public double baseValue(){
         return 0.0;
-    };
+    }
 
 }

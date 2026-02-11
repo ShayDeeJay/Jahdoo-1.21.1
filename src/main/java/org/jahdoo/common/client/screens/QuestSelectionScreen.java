@@ -9,10 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.attachments.PlayerWallet;
-import org.jahdoo.trial_nexus.quests.AbstractQuest;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.items.CoinSack;
@@ -22,6 +18,11 @@ import org.jahdoo.common.networking.client2server.WalletSyncC2SP;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.QuestReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.PlayerWallet;
+import org.jahdoo.trial_nexus.quests.AbstractQuest;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +31,6 @@ import java.util.Optional;
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
-import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
-import static org.jahdoo.trial_nexus.attachments.PlayerWallet.getWalletValue;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
@@ -44,6 +39,9 @@ import static org.jahdoo.common.client.screens.AbilityUnlockScreen.toComponent;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
 import static org.jahdoo.common.registers.SoundReg.SELECT;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.getWalletValue;
 
 public class QuestSelectionScreen extends Screen  {
 
@@ -85,14 +83,14 @@ public class QuestSelectionScreen extends Screen  {
         var roll = "Re-Roll";
         var table = getPerkTable();
 
-        getToolTip.add(JahdooHelpers.withStyleComponent(roll, uiColour()));
+        getToolTip.add(TextHelpers.withStyleComponent(roll, uiColour()));
         if(table.isPresent()){
             var getTable = table.get();
             var counter = getTable.getReRollCounter();
             var playerLevel = CasterData.getLevel(getMinecraft().player);
 
             if(counter == 0){
-                getToolTip.add(JahdooHelpers.withStyleComponent("Free", uiColour()));
+                getToolTip.add(TextHelpers.withStyleComponent("Free", uiColour()));
                 this.converter = new CurrencyConverter(0,0,0,0);
             } else {
                 var wallet = playerLevel * (counter * counter + 2);
@@ -212,7 +210,7 @@ public class QuestSelectionScreen extends Screen  {
         fadeEntryBack = Math.min(0.9F, fadeEntryBack + 0.03F);
 
         renderBlurredBackground(partialTick);
-        WalletOverlay.renderWallet(guiGraphics, getMinecraft(), 1, 10, 0, true, this.converter);
+        WalletOverlay.renderWallet(guiGraphics, getMinecraft(), 1, 10, 0, false, true, false, this.converter);
         sectionHighlight(mouseX);
         boxMaker(guiGraphics, getPositions(), -1, getSize(), this.height, fadeBlack(0.1f), uiFade());
         selectionBox(guiGraphics, getSize());
@@ -235,13 +233,13 @@ public class QuestSelectionScreen extends Screen  {
                 var adjustY = this.height/2 - 40;
                 var space = 0;
                 var body = quest.questDescription(getMinecraft().player);
-                var comp = toComponent(body, "Optional Quest", ABSORPTION_YELLOW, uiColour());
+                var comp = toComponent(body, "Optional Quest", ColourHelpers.getAbsorptionYellow(), uiColour());
 
                 var y2 = this.height/4;
                 guiGraphics.renderItem(new ItemStack(ItemReg.QUEST_CONTAINER.get()), getX-8, y2 - 20);
                 guiGraphics.drawCenteredString(font, comp.getFirst(), getX, y2, uiColour());
 
-                var text = withStyleComponentTrans(quest.getDisplayName(), PERK_GREEN);
+                var text = TextHelpers.withStyleComponentTrans(quest.getDisplayName(), ColourHelpers.getPerkGreen());
                 guiGraphics.drawCenteredString(font, text, getX, adjustY - 5, -1);
                 guiGraphics.blit(quest.questIcon(), getX - scale/2, adjustY, 0, 0, scale, scale, scale, scale);
 
@@ -252,8 +250,8 @@ public class QuestSelectionScreen extends Screen  {
                 }
 
                 var y = adjustY + 80;
-                guiGraphics.drawCenteredString(font, withStyleComponent("Rewards: ", OFF_WHITE), getX, y, -1);
-                guiGraphics.drawCenteredString(font, withStyleComponent("+" + quest.questXp(getMinecraft().player) + " XP", COSMIC_PURPLE), getX, y+12, -1);
+                guiGraphics.drawCenteredString(font, TextHelpers.withStyleComponent("Rewards: ", ColourHelpers.getOffWhite()), getX, y, -1);
+                guiGraphics.drawCenteredString(font, TextHelpers.withStyleComponent("+" + quest.questXp(getMinecraft().player) + " XP", ColourHelpers.getCosmicPurple()), getX, y+12, -1);
 
                 var y1 = y + 24;
                 var spaceBy = 0;

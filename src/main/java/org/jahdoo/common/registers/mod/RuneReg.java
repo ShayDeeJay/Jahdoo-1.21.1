@@ -43,6 +43,7 @@ import org.jahdoo.common.items.runes.sympathiser_rune.AbsorptionHeartRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.CastHealRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.SkipCooldownRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.SkipManaRune;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,11 +76,11 @@ public class RuneReg {
 
     public static AbstractRune getRuneFromAttribute(Holder<Attribute> attributeHolder) {
         var list = getAllRunes().stream().filter(s -> s.attributeHolder().equals(attributeHolder)).toList();
-        return list.isEmpty() ? null : JahdooHelpers.listRandom(list);
+        return list.isEmpty() ? null : Helpers.listRandom(list);
     }
 
     public static Optional<AbstractRune> getRuneWithRarity(JahdooRarity rarity) {
-        return Optional.of(JahdooHelpers.listRandom(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList()));
+        return Optional.of(Helpers.listRandom(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList()));
     }
 
     public static List<AbstractRune> getAllRuneWithRarity(JahdooRarity...rarity) {

@@ -16,6 +16,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -58,7 +59,7 @@ public abstract class Ability {
     abstract public int getAbilityCost();
 
     public String getAbilityName(){
-        return JahdooHelpers.stringIdToName(this.abilityId);
+        return TextHelpers.stringIdToName(this.abilityId);
     }
 
     public ResourceLocation getAbilityIconLocation(){

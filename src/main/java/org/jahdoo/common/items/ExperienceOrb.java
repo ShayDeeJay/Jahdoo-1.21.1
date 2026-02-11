@@ -12,10 +12,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.EXPERIENCE_GREEN;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 
@@ -28,7 +28,7 @@ public class ExperienceOrb extends Item {
     public Component getName(ItemStack stack) {
         var data = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         var getExp = data == null ? "Greater" : data.value() == 1 ? "Lesser" : "Better";
-        return JahdooHelpers.withStyleComponent(getExp + " XP Relic", EXPERIENCE_GREEN) ;
+        return TextHelpers.withStyleComponent(getExp + " XP Relic", ColourHelpers.getExperienceGreen()) ;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ExperienceOrb extends Item {
         item.shrink(1);
 
         for(int i = 0; i < (getExp/8); i++){
-            var particle = ParticleHandlers.getNonBakedParticles(EXPERIENCE_GREEN, EXPERIENCE_GREEN, 17, 1F);
+            var particle = ParticleHandlers.getNonBakedParticles(ColourHelpers.getExperienceGreen(), ColourHelpers.getExperienceGreen(), 17, 1F);
             var x = player.getRandomX(0.5);
             var y = player.getRandomY();
             var z = player.getRandomZ(0.5);

@@ -34,7 +34,7 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
@@ -165,7 +165,7 @@ public class WandManagerBlock extends BaseEntityBlock {
         double radius
     ) {
         if (CastHelper.validCasterType(hand.getItem()) || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
-            if(!hand.isEmpty()) Helpers.getSoundWithPosition(pLevel, pPos, soundEvent, SoundSource.BLOCKS, 1, 1.2f);
+            if(!hand.isEmpty()) SoundHelpers.getSoundWithPosition(pLevel, pPos, soundEvent, SoundSource.BLOCKS, 1, 1.2f);
             swapItemsWithHand(wandManagerTable.getInputItemHandler(), 0, pPlayer, pHand);
 
             var stackInSlot = wandManagerTable.getInputItemHandler().getStackInSlot(0);

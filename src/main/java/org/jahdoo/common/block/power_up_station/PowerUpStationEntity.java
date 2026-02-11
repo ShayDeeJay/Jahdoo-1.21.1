@@ -20,8 +20,8 @@ import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +136,7 @@ public class PowerUpStationEntity extends AbstractBEInventory {
 
         if(!getItem().has(ComponentReg.CORE_DATA)) {
             var pos1 = pos.getCenter();
-            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.QUEST_COMPLETE.get(), SoundSource.BLOCKS, 4F, 0.8F);
+            SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundReg.QUEST_COMPLETE.get(), SoundSource.BLOCKS, 4F, 0.8F);
 
             var newItemEntity = new ItemEntity(serverLevel, pos1.x, pos1.y+0.5, pos1.z, getItem());
             serverLevel.addFreshEntity(newItemEntity);
@@ -154,8 +154,8 @@ public class PowerUpStationEntity extends AbstractBEInventory {
 
             genericProjectile.getPersistentData().putInt(POWER_UP_KEY, Math.max(1, entityValue));
             genericProjectile.shoot(eastDirection.x, eastDirection.y, eastDirection.z, 0.5f, 0);
-            Helpers.getSoundWithPosition(level, add, SoundReg.VITALITY_ABILITY.get(), SoundSource.BLOCKS, 1, 1.4F);
-            Helpers.getSoundWithPosition(level, add, SoundEvents.SOUL_ESCAPE.value(), SoundSource.BLOCKS,2, 1);
+            SoundHelpers.getSoundWithPosition(level, add, SoundReg.VITALITY_ABILITY.get(), SoundSource.BLOCKS, 1, 1.4F);
+            SoundHelpers.getSoundWithPosition(level, add, SoundEvents.SOUL_ESCAPE.value(), SoundSource.BLOCKS,2, 1);
             serverLevel.addFreshEntity(genericProjectile);
         }
     }

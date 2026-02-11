@@ -20,7 +20,7 @@ import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_INFERNO;
 
 public class Inferno extends AbstractElement {
-    private ResourceLocation abilityId = res("inferno");
+    private final ResourceLocation abilityId = res("inferno");
 
     @Override
     public ResourceLocation abilityResource() {

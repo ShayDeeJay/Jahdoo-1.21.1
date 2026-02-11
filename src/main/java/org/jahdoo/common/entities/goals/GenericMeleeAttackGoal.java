@@ -16,7 +16,7 @@ import org.jahdoo.common.entities.explosive_barrel.ExplosiveBarrel;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.EnumSet;
 
@@ -214,9 +214,9 @@ public class GenericMeleeAttackGoal extends Goal {
     }
 
     private static void attackSound(AncientGolem ancientGolem) {
-        Helpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundEvents.VAULT_PLACE, SoundSource.NEUTRAL, 2, 0.4f);
-        Helpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundEvents.IRON_GOLEM_STEP, SoundSource.NEUTRAL, 2, 0.6f);
-        Helpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundReg.IMPACT.get(), SoundSource.NEUTRAL, 0.8F, 0.1f);
+        SoundHelpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundEvents.VAULT_PLACE, SoundSource.NEUTRAL, 2, 0.4f);
+        SoundHelpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundEvents.IRON_GOLEM_STEP, SoundSource.NEUTRAL, 2, 0.6f);
+        SoundHelpers.getSoundWithPosition(ancientGolem.level(), ancientGolem.position(), SoundReg.IMPACT.get(), SoundSource.NEUTRAL, 0.8F, 0.1f);
     }
 
     private static boolean isSwarmed(AncientGolem ancientGolem) {

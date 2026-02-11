@@ -33,7 +33,7 @@ public class AddQuestC2SP implements CustomPacketPayload {
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(
             () -> {
-                if(ctx.player() instanceof ServerPlayer serverPlayer){;
+                if(ctx.player() instanceof ServerPlayer serverPlayer){
                     RunData.addNewQuest(serverPlayer, questId);
                 }
             }

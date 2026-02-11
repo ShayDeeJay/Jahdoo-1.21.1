@@ -21,7 +21,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.PlayerBoonReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,7 +53,7 @@ public class PerkaSoda extends Item implements JahdooItem {
         if(customModelData != null){
             var getId = stack.get(ComponentReg.ID);
             var getNameById = PlayerBoonReg.getFromId(getId);
-            this.standAloneModifiersWithLabel(stack, tooltipComponents, context, getNameById.getLabel(), Colours.getHeaderColour(), getNameById.colour(), 2, 20, false);
+            this.standAloneModifiersWithLabel(stack, tooltipComponents, context, getNameById.getLabel(), ColourHelpers.getHeaderColour(), getNameById.colour(), 2, 20, false);
         }
     }
 

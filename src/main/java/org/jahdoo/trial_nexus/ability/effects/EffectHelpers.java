@@ -9,7 +9,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.particle.ParticleHandlers.spawnElectrifiedParticles;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.sendEffectPacketsToPlayerDistance;
@@ -38,7 +38,7 @@ public class EffectHelpers {
         boolean isChance = getRandomChance == 0;
         if(targetEntity.isAlive()){
             if (isChance) {
-                Helpers.getSoundWithPosition(targetEntity.level(), targetEntity.position(), soundEvents, SoundSource.NEUTRAL, 0.3F, 1F);
+                SoundHelpers.getSoundWithPosition(targetEntity.level(), targetEntity.position(), soundEvents, SoundSource.NEUTRAL, 0.3F, 1F);
                 spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().magicSlow(), 3, targetEntity, -0.3, -1);
             }
             spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().bakedSlow(), isChance ? 10 : 1, targetEntity, isChance ? 0.1 : 0.08);
@@ -58,7 +58,7 @@ public class EffectHelpers {
         boolean isChance = getRandomChance == 0;
         if(targetEntity.isAlive()){
             if (isChance) {
-                Helpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), soundEvents, SoundSource.NEUTRAL, volume, pitch);
+                SoundHelpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), soundEvents, SoundSource.NEUTRAL, volume, pitch);
                 spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().magicSlow(), 3, targetEntity, -0.3, -1);
             }
             spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().bakedSlow(), isChance ? 10 : 1, targetEntity, isChance ? 0.1 : 0.08);

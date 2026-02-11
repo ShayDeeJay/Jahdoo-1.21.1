@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
             var getLabel = itemStack.isEmpty() ? Component.literal("Empty Slot") : components;
             var posY = mouseY + 3 + this.spacing * spacer;
 
-            font.drawInBatch(getLabel, mouseX + 15, posY, Colours.getHeaderColour(), true, matrix, bufferSource, SEE_THROUGH, 0, FULL_BRIGHT);
+            font.drawInBatch(getLabel, mouseX + 15, posY, ColourHelpers.getHeaderColour(), true, matrix, bufferSource, SEE_THROUGH, 0, FULL_BRIGHT);
             spacer++;
         }
     }

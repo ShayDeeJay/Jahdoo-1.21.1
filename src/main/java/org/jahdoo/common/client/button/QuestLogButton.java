@@ -10,13 +10,12 @@ import net.minecraft.network.chat.FormattedText;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.tasks.AbstractTask;
-import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
-import static org.jahdoo.trial_nexus.utils.ColourStore.RATING_5_GREEN;
 
 public class QuestLogButton extends ImageButton {
 
@@ -63,7 +62,7 @@ public class QuestLogButton extends ImageButton {
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
-        var fade1 = RATING_5_GREEN;
+        var fade1 = ColourHelpers.getRating5Green();
         var fade = isHovered ? color(60, uiColour()) : fadeBlack(1);
         var minecraft = Minecraft.getInstance();
         var getXStart = this.getX();
@@ -76,7 +75,7 @@ public class QuestLogButton extends ImageButton {
 
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 1);
-        var selectedColour = isSelected ? ColourStore.BORDER_COLOUR : fade;
+        var selectedColour = isSelected ? ColourHelpers.getBorderColour() : fade;
         boxMaker(graphics, this.getX(), this.getY(), width, height, questComplete ? fade1 : color(100, uiColour()), selectedColour, selectedColour);
         graphics.blit(task.taskIcon(), getXStart, startY2, 0, 0, sizeIcon, sizeIcon, sizeIcon, sizeIcon);
 

@@ -8,15 +8,15 @@ import org.jahdoo.common.block.divine_forge.RuneTableMenu;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.common.networking.client2server.JahdooGearDataC2SP;
 import org.jahdoo.common.registers.SoundReg;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.client.SharedUI.getCore;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.repairDurability;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class RepairManager {
 
@@ -38,15 +38,15 @@ public class RepairManager {
         if(hoverTooltip.isEmpty()){
             var stack = coreCost(itemStack);
             if(!stack.isEmpty()){
-                var subHeaderColour = SUB_HEADER_COLOUR;
-                var prefix = withStyleComponent("Potential: ", subHeaderColour);
-                var value = withStyleComponent("" + repairPotentialCost(itemStack), borderColour);
+                var subHeaderColour = ColourHelpers.getSubHeaderColour();
+                var prefix = TextHelpers.withStyleComponent("Potential: ", subHeaderColour);
+                var value = TextHelpers.withStyleComponent("" + repairPotentialCost(itemStack), borderColour);
 
-                hoverTooltip.add(withStyleComponent("Cost:", borderColour));
+                hoverTooltip.add(TextHelpers.withStyleComponent("Cost:", borderColour));
                 hoverTooltip.add(prefix.copy().append(value));
 
-                var hoverName = withStyleComponent(stack.getHoverName().getString() + ":", subHeaderColour);
-                hoverTooltip.add(hoverName.copy().append(withStyleComponent(" 1", borderColour)));
+                var hoverName = TextHelpers.withStyleComponent(stack.getHoverName().getString() + ":", subHeaderColour);
+                hoverTooltip.add(hoverName.copy().append(TextHelpers.withStyleComponent(" 1", borderColour)));
             }
         }
     }

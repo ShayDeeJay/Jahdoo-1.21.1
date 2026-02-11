@@ -1,10 +1,13 @@
 package org.jahdoo.common.block.altar.altar_states;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
@@ -13,17 +16,19 @@ import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.level_manager.BlockSetupManager;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.utils.ModTags;
-import org.shaydee.shaydeeapi.Colours;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static org.jahdoo.common.block.altar.AltarBlockEntity.getAllBlockPos;
 import static org.jahdoo.common.block.altar.AltarBlockEntity.roomBounding;
 import static org.jahdoo.trial_nexus.attachments.RunData.incrementRoomExp;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setCoinLootChest;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeLocksWithData;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 
 public class EndAltar {
 
@@ -31,14 +36,13 @@ public class EndAltar {
         if (aEntity.getPrivateTicks() > 30 && aEntity.started && aEntity.onField.isEmpty() && aEntity.spawnableMobs.isEmpty()) {
             var pos = aEntity.getBlockPos();
             serverLevel.destroyBlock(pos, false);
+            aEntity.data().incrementClearedRooms();
 
             placeLocksWithData(serverLevel, pos.below(2), false, false);
-            oneEndAltarNotification(serverLevel, pos);
+            sendAlterEndNotification(serverLevel, pos);
             removeLootAndOres(serverLevel, pos);
             manageEndEntities(aEntity, serverLevel);
-            setEndFocusBlock(aEntity, serverLevel, pos);
-
-            aEntity.data().incrementClearedRooms();
+            setEndFocusBlock(aEntity.data(), serverLevel, pos, aEntity.direction);
         }
     }
 
@@ -49,26 +53,32 @@ public class EndAltar {
         }
     }
 
-    public static void oneEndAltarNotification(ServerLevel serverLevel, BlockPos pos) {
-        Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), SoundSource.BLOCKS, 2F, 1.5F);
+    public static void sendAlterEndNotification(ServerLevel serverLevel, BlockPos pos) {
+        sendNotification(serverLevel, pos, SoundReg.END_TRIAL.get(), TextHelpers.withStyleComponentTrans("info.jahdoo.altar_complete", ColourHelpers.getMagnetRangeGreen()));
+    }
+
+    public static void sendNotification(ServerLevel serverLevel, BlockPos pos, SoundEvent event, Component component) {
+        SoundHelpers.getSoundWithPosition(serverLevel, pos, event, SoundSource.BLOCKS, 2F, 1.5F);
         for (var player : serverLevel.players()) {
             var connection = player.connection;
             connection.send(new ClientboundSetTitlesAnimationPacket(5, 20, 20));
-            connection.send(new ClientboundSetTitleTextPacket(withStyleComponentTrans("info.jahdoo.altar_complete", Colours.getMagnetRangeGreen())));
+            connection.send(new ClientboundSetTitleTextPacket(component));
             TriggerEvents.triggerRoomClearEvent(player, serverLevel);
         }
     }
 
-    private static void setEndFocusBlock(AltarBlockEntity aEntity, ServerLevel serverLevel, BlockPos pos) {
-        var clearedRooms = aEntity.data().getClearedRooms();
-        var interval = aEntity.getInstanceDifficulty().getSanctumIntervals();
+    public static void setEndFocusBlock(InstanceData data, ServerLevel serverLevel, BlockPos pos, Direction direction) {
+        var clearedRooms = data.getClearedRooms();
+        var interval = InstanceDifficulty.getFromLevel(data).getSanctumIntervals();
 
+        System.out.println(clearedRooms);
+        System.out.println(interval);
         if(clearedRooms % interval == 0){
             BlockSetupManager.setPerkTable(serverLevel, pos, 4);
             return;
         }
 
-        setCoinLootChest(serverLevel, pos, aEntity.direction, -1, true, clearedRooms-1);
+        setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms);
     }
 
     public static void removeLootAndOres(ServerLevel serverLevel, BlockPos pos) {

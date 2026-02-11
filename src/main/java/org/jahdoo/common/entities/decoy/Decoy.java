@@ -20,7 +20,7 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.EscapeDecoyAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.UUID;
 
@@ -103,7 +103,7 @@ public class Decoy extends Mob implements ITamableEntity {
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
     @Override

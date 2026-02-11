@@ -17,7 +17,7 @@ public class EffectC2SP implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, EffectC2SP> STREAM_CODEC =
         CustomPacketPayload.codec(EffectC2SP::toBytes, EffectC2SP::new);
 
-    private JahdooMobEffect effect;
+    private final JahdooMobEffect effect;
 
     public EffectC2SP(JahdooMobEffect effect) { this.effect = effect; }
 

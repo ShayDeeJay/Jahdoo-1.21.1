@@ -22,6 +22,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -29,18 +30,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.*;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.networking.server2client.QuestTrackerS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
@@ -51,13 +49,67 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.QuestTracker;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
+import static com.github.L_Ender.cataclysm.init.ModEntities.*;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ABYSS_BLAST_PORTAL;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ABYSS_MINE;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ABYSS_PORTAL;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ACCRETION;
+import static com.github.L_Ender.cataclysm.init.ModEntities.AMETHYST_CRAB;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ANCIENT_ANCIENT_REMNANT;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ANCIENT_DESERT_STELE;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ANCIENT_REMNANT;
+import static com.github.L_Ender.cataclysm.init.ModEntities.APTRGANGR;
+import static com.github.L_Ender.cataclysm.init.ModEntities.CINDARIA;
+import static com.github.L_Ender.cataclysm.init.ModEntities.CLAWDIAN;
+import static com.github.L_Ender.cataclysm.init.ModEntities.CM_FALLING_BLOCK;
+import static com.github.L_Ender.cataclysm.init.ModEntities.CORALSSUS;
+import static com.github.L_Ender.cataclysm.init.ModEntities.CORAL_GOLEM;
+import static com.github.L_Ender.cataclysm.init.ModEntities.CURSED_SANDSTORM;
+import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING;
+import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING_ANGLER;
+import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING_BRUTE;
+import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING_PRIEST;
+import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING_WARLOCK;
+import static com.github.L_Ender.cataclysm.init.ModEntities.DIMENSIONAL_RIFT;
+import static com.github.L_Ender.cataclysm.init.ModEntities.DRAUGR;
+import static com.github.L_Ender.cataclysm.init.ModEntities.DROWNED_HOST;
+import static com.github.L_Ender.cataclysm.init.ModEntities.EARTHQUAKE;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ELITE_DRAUGR;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ENDERMAPTERA;
+import static com.github.L_Ender.cataclysm.init.ModEntities.EYE_OF_DUNGEON;
+import static com.github.L_Ender.cataclysm.init.ModEntities.FLAME_STRIKE;
+import static com.github.L_Ender.cataclysm.init.ModEntities.HIPPOCAMTUS;
+import static com.github.L_Ender.cataclysm.init.ModEntities.IGNIS;
+import static com.github.L_Ender.cataclysm.init.ModEntities.IGNITED_BERSERKER;
+import static com.github.L_Ender.cataclysm.init.ModEntities.IGNITED_REVENANT;
+import static com.github.L_Ender.cataclysm.init.ModEntities.KOBOLEDIATOR;
+import static com.github.L_Ender.cataclysm.init.ModEntities.KOBOLETON;
+import static com.github.L_Ender.cataclysm.init.ModEntities.LIGHTNING_AREA_EFFECT;
+import static com.github.L_Ender.cataclysm.init.ModEntities.LIONFISH;
+import static com.github.L_Ender.cataclysm.init.ModEntities.MALEDICTUS;
+import static com.github.L_Ender.cataclysm.init.ModEntities.MODERN_REMNANT;
+import static com.github.L_Ender.cataclysm.init.ModEntities.NETHERITE_MINISTROSITY;
+import static com.github.L_Ender.cataclysm.init.ModEntities.ROYAL_DRAUGR;
+import static com.github.L_Ender.cataclysm.init.ModEntities.SANDSTORM;
+import static com.github.L_Ender.cataclysm.init.ModEntities.SCYLLA;
+import static com.github.L_Ender.cataclysm.init.ModEntities.SYMBIOCTO;
+import static com.github.L_Ender.cataclysm.init.ModEntities.THE_BABY_LEVIATHAN;
+import static com.github.L_Ender.cataclysm.init.ModEntities.THE_HARBINGER;
+import static com.github.L_Ender.cataclysm.init.ModEntities.THE_LEVIATHAN;
+import static com.github.L_Ender.cataclysm.init.ModEntities.THE_PROWLER;
+import static com.github.L_Ender.cataclysm.init.ModEntities.THE_WATCHER;
+import static com.github.L_Ender.cataclysm.init.ModEntities.URCHINKIN;
+import static com.github.L_Ender.cataclysm.init.ModEntities.VOID_RUNE;
+import static com.github.L_Ender.cataclysm.init.ModEntities.VOID_VORTEX;
+import static com.github.L_Ender.cataclysm.init.ModEntities.WADJET;
+import static com.github.L_Ender.cataclysm.init.ModEntities.WITHER_SMOKE_EFFECT;
 import static java.util.Collections.emptyMap;
 import static net.minecraft.advancements.CriteriaTriggers.ITEM_DURABILITY_CHANGED;
 import static net.minecraft.sounds.SoundEvents.ITEM_BREAK;
@@ -68,7 +120,6 @@ import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
 public class JahdooHelpers {
     public static final String EASY = "novice";
@@ -92,7 +143,7 @@ public class JahdooHelpers {
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
             var wallet = player.getData(PLAYER_WALLET_DATA).getWallet();
             sendToPlayer(serverPlayer, new WalletSyncS2CP(wallet));
-            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
+            CasterData.sharedPackets(serverPlayer, casterData);
             sendToPlayer(serverPlayer, new QuestTrackerS2CP(QuestTracker.getQuestTracker(serverPlayer)));
             PlayerTrialData.updateClientData(serverPlayer);
         }
@@ -160,22 +211,6 @@ public class JahdooHelpers {
         return position.z + size * scale;
     }
 
-    public static double getRandomZ(Vec3 position, double size,double scale) {
-        return getZ(position, size, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale);
-    }
-
-    public static Color getCyclicColorVariant(int baseColor, int ticker, double range, double transitionDelay) {
-        int red = (baseColor >> 16) & 0xFF;
-        int green = (baseColor >> 8) & 0xFF;
-        int blue = baseColor & 0xFF;
-
-        double phase = Math.sin(ticker / transitionDelay);
-        int variantRed = (int) Math.min(Math.max(red + phase * range, 0.0), 255.0);
-        int variantGreen = (int) Math.min(Math.max(green + phase * range, 0.0), 255.0);
-        int variantBlue = (int) Math.min(Math.max(blue + phase * range, 0.0), 255.0);
-
-        return new Color(variantRed, variantGreen, variantBlue);
-    }
 
     public static double getAttributeValue(Player player, Holder<Attribute> attribute){
         var attributes = player.getAttribute(attribute);
@@ -198,16 +233,6 @@ public class JahdooHelpers {
 
     public static ResourceLocation res(String location) {
         return ResourceLocation.fromNamespaceAndPath(JahdooMod.MOD_ID, location);
-    }
-
-    public static <T> T listRandom(List<T> collection){
-        var index = collection.size() > 1 ? Random.nextInt(collection.size()) : 0 ;
-        return collection.get(index);
-    }
-
-    public static <T> T listRandom(List<T> collection, long seed){
-        var index = collection.size() > 1 ? new Random(seed).nextInt(collection.size()) : 0 ;
-        return collection.get(index);
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
@@ -259,42 +284,9 @@ public class JahdooHelpers {
         return listtag;
     }
 
-    public static Component withStyleComponent(String text, int colour){
-        return Component.literal(text).withStyle(style -> style.withColor(colour));
-    }
-
-    public static Component withStyleComponentTrans(String text, int colour, Object... args){
-        return Component.translatable(text,args).withStyle(style -> style.withColor(colour));
-    }
-
-    public static int colourByPercent(int targetNumber, int currentNumber, boolean reversed) {
-        var split = targetNumber / 3;
-        var green = PERK_GREEN;
-        var yellow = ABSORPTION_YELLOW;
-        var red = NEGATIVE_RED;
-        return currentNumber <= split ? reversed ? red : green : currentNumber <= split * 2.5 ? yellow : reversed ? green : red;
-    }
-
     public static void playDebugMessage(Player player, Object... info){
-        var randomColour = getRgb();
+        var randomColour = ColourHelpers.getRgb();
         player.sendSystemMessage(Component.literal(Arrays.toString(info)).withStyle(style -> style.withColor(randomColour)));
-    }
-
-    public static int getRgb() {
-
-        return new Color((int) (Math.random() * 0x1000000)).getRGB();
-    }
-
-    public static void playDebugMessageComp(Player player, String... info){
-        var randomColour = getRgb();
-        for (String o : Arrays.stream(info).toList()) {
-            player.sendSystemMessage(withStyleComponentTrans(o,randomColour));
-        }
-    }
-
-    public static boolean canPathfindToTarget(Mob finder, LivingEntity target) {
-        Path path = finder.getNavigation().createPath(target, 0);
-        return path != null /*&& path.getDistToTarget() < distance*/;
     }
 
     public static void sendPacketsToPlayerDistance(Vec3 pos, int distance, Level level, Consumer<ServerPlayer> serverPlayerConsumer) {
@@ -350,22 +342,11 @@ public class JahdooHelpers {
         player.sendSystemMessage(Component.literal("New Request"));
         player.sendSystemMessage(Component.literal("-----------------------------------------------------"));
         for (TypedDataComponent<?> component : itemStack.getComponents()) {
-            player.sendSystemMessage(withStyleComponent(component.toString(), getRgb()));
+            player.sendSystemMessage(TextHelpers.withStyleComponent(component.toString(), ColourHelpers.getRgb()));
             player.sendSystemMessage(Component.literal(" "));
         }
         player.sendSystemMessage(Component.literal("-----------------------------------------------------"));
         player.sendSystemMessage(Component.literal(" "));
-    }
-
-    public static boolean hasLineOfSight(Entity pathfinder, Entity target) {
-        if (target.level() != pathfinder.level()) {
-            return false;
-        } else {
-            var vec3 = new Vec3(pathfinder.getX(), pathfinder.getEyeY(), pathfinder.getZ());
-            var vec31 = new Vec3(target.getX(), target.getEyeY(), target.getZ());
-            var context = new ClipContext(vec3, vec31, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, pathfinder);
-            return !(vec31.distanceTo(vec3) > (double) 128.0F) && pathfinder.level().clip(context).getType() == HitResult.Type.MISS;
-        }
     }
 
     public static Vec3 getRandomParticleVelocity(Entity entity, double speed) {
@@ -376,30 +357,6 @@ public class JahdooHelpers {
         var z = Math.sin(phi) * Math.sin(theta);
 
         return new Vec3(x, y, z).normalize().scale(speed);
-    }
-
-    public static String stringIdToName(String input) {
-        if(input == null) return "";
-        var words = input.split("_");
-        var result = new StringBuilder();
-        for (String word : words) {
-            word = word.trim();
-            if (!word.isEmpty()) {
-                result.append(Character.toUpperCase(word.charAt(0)))
-                    .append(word.substring(1).toLowerCase())
-                    .append(" ");
-            }
-        }
-        return result.toString().trim();
-    }
-
-    public static String nameToId(String input) {
-        var lowercaseId = new StringBuilder();
-        for (var s : input.split(" ")) {
-            lowercaseId.append(s.toLowerCase()).append("_");
-        }
-        lowercaseId.deleteCharAt(lowercaseId.length()-1);
-        return lowercaseId.toString();
     }
 
     public static MutableComponent highlightTextComponent(
@@ -426,7 +383,7 @@ public class JahdooHelpers {
 
             for (var i = 0; i < split.length; i++) {
                 var colour = i == highlightIndex ? c2 : c1;
-                component.append(withStyleComponent(split[i], colour));
+                component.append(TextHelpers.withStyleComponent(split[i], colour));
             }
         }
         return component;
@@ -539,7 +496,7 @@ public class JahdooHelpers {
                 new BiomeSpecialEffects.Builder()
                     .waterColor(4159204)
                     .waterFogColor(329011)
-                    .fogColor(org.shaydee.shaydeeapi.Colours.getPerkGreen())
+                    .fogColor(ColourHelpers.getPerkGreen())
                     .skyColor(calculateSkyColor(0.7F))
                     .grassColorModifier(BiomeSpecialEffects.GrassColorModifier.DARK_FOREST)
                     .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS)
@@ -565,4 +522,110 @@ public class JahdooHelpers {
     ) {
         return genericParticle(SOFT_PARTICLE, utility(), lifetime, size, staticSize, speed);
     }
+
+    public static void spawnAllTestEntities(Player player) {
+        if (!(player.level() instanceof ServerLevel serverLevel)) return;
+
+        BlockPos origin = player.blockPosition().offset(0, 0, 6);
+
+        int spacing = 8;      // blocks between entities
+        int perRow = 4;       // grid width
+
+        int index = 0;
+
+        for (DeferredHolder<EntityType<?>, ? extends EntityType<? extends Entity>> supplier : SPAWN_TEST_ENTITIES) {
+            EntityType<? extends Entity> type = supplier.get();
+
+            Entity entity = type.create(serverLevel);
+            if (entity == null) continue;
+
+            int xOffset = (index % perRow) * spacing;
+            int zOffset = (index / perRow) * spacing;
+
+            entity.moveTo(
+                origin.getX() + xOffset + 0.5,
+                origin.getY(),
+                origin.getZ() + zOffset + 0.5,
+                player.getYRot(),
+                0
+            );
+
+            if (entity instanceof Mob mob) {
+                mob.setNoAi(true);
+                mob.setPersistenceRequired();
+            }
+
+            serverLevel.addFreshEntity(entity);
+            index++;
+        }
+    }
+
+    public static final List<DeferredHolder<EntityType<?>, ? extends EntityType<? extends Entity>>> SPAWN_TEST_ENTITIES = List.of(
+
+        // ===== BOSSES / LARGE MOBS =====
+        ENDER_GOLEM,
+        ENDER_GUARDIAN,
+        NETHERITE_MONSTROSITY,
+        IGNIS,
+        THE_HARBINGER,
+        THE_PROWLER,
+        THE_LEVIATHAN,
+        ANCIENT_REMNANT,
+        ANCIENT_ANCIENT_REMNANT,
+        MALEDICTUS,
+        CLAWDIAN,
+        SCYLLA,
+        WADJET,
+        KOBOLEDIATOR,
+        APTRGANGR,
+
+        // ===== MEDIUM MOBS =====
+        CORAL_GOLEM,
+        CORALSSUS,
+        IGNITED_REVENANT,
+        IGNITED_BERSERKER,
+        AMETHYST_CRAB,
+        HIPPOCAMTUS,
+        CINDARIA,
+        DRAUGR,
+        ROYAL_DRAUGR,
+        ELITE_DRAUGR,
+        DEEPLING_BRUTE,
+        DEEPLING_ANGLER,
+        DEEPLING_PRIEST,
+        DEEPLING_WARLOCK,
+
+        // ===== SMALL / NORMAL MOBS =====
+        DEEPLING,
+        ENDERMAPTERA,
+        LIONFISH,
+        URCHINKIN,
+        KOBOLETON,
+        THE_WATCHER,
+        SYMBIOCTO,
+        DROWNED_HOST,
+        MODERN_REMNANT,
+
+        // ===== CREATURES / PASSIVES =====
+        NETHERITE_MINISTROSITY,
+        THE_BABY_LEVIATHAN,
+
+        // ===== SOLID MISC ENTITIES (SAFE TO SPAWN) =====
+        VOID_RUNE,
+        ABYSS_MINE,
+        CM_FALLING_BLOCK,
+        VOID_VORTEX,
+        DIMENSIONAL_RIFT,
+        ABYSS_PORTAL,
+        ABYSS_BLAST_PORTAL,
+        ACCRETION,
+        EYE_OF_DUNGEON,
+        SANDSTORM,
+        CURSED_SANDSTORM,
+        ANCIENT_DESERT_STELE,
+        WITHER_SMOKE_EFFECT,
+        LIGHTNING_AREA_EFFECT,
+        FLAME_STRIKE,
+        EARTHQUAKE
+    );
 }

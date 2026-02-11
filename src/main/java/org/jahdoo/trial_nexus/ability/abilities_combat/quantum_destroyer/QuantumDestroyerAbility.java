@@ -6,7 +6,6 @@ import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.GlobalStrings;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
@@ -33,7 +32,7 @@ public class QuantumDestroyerAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return GlobalStrings.BLOCK_MINER_DESCRIPTION;
+        return "description.ability.jahdoo.test";
     }
 
     @Override

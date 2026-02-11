@@ -8,7 +8,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.entities.ITamableEntity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,7 +41,7 @@ public abstract class LivingEntityMixin extends Entity {
         } else if (this.hasEffect(VITALITY_EFFECT)) {
             color = vitality().textColourA();
         } else if (this.hasEffect(CHAMPION_EFFECT)) {
-            color = ColourStore.CHAMPION_GOLD;
+            color = ColourHelpers.getChampionGold();
         }
 
         return color;

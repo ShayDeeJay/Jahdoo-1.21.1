@@ -8,10 +8,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.List;
 
@@ -31,8 +31,8 @@ public class AltarAnim {
         PositionFinders.getOuterRingOfRadius(
             posA.getCenter().subtract(0,0.03,0), 0.1, 50, posB -> setShockwaveNova(posB.subtract(0, 0,0), posA, level)
         );
-        Helpers.getSoundWithPosition(level, posA, SoundEvents.DEEPSLATE_BREAK, SoundSource.BLOCKS, 1f, 0.6f);
-        Helpers.getSoundWithPosition(level, posA, SoundReg.SET_ACTIVE.get(), SoundSource.BLOCKS, 3f, 1f);
+        SoundHelpers.getSoundWithPosition(level, posA, SoundEvents.DEEPSLATE_BREAK, SoundSource.BLOCKS, 1f, 0.6f);
+        SoundHelpers.getSoundWithPosition(level, posA, SoundReg.SET_ACTIVE.get(), SoundSource.BLOCKS, 3f, 1f);
     }
 
     private static void setShockwaveNova(Vec3 pos, BlockPos blockPos, Level level){
@@ -50,8 +50,9 @@ public class AltarAnim {
     public static void idleParticleAnim(BlockPos pos, int ticks, Level level) {
         PositionFinders.innerRadiusRandom(pos, 0.25, 2,
             positions -> {
-                var colourDarker = JahdooHelpers.getColourDarker(ColourStore.PERK_GREEN, 0.5f);
-                var randomColouredParticle = JahdooHelpers.getRandomColouredParticle(ColourStore.PERK_GREEN, colourDarker, 10, 1, false);
+
+                var colourDarker = JahdooHelpers.getColourDarker(ColourHelpers.getPerkGreen(), 0.5f);
+                var randomColouredParticle = JahdooHelpers.getRandomColouredParticle(ColourHelpers.getPerkGreen(), colourDarker, 10, 1, false);
                 AltarAnim.placeParticle(positions, randomColouredParticle, level);
             }
         );
@@ -59,7 +60,7 @@ public class AltarAnim {
         if(ticks > 100){
             if (Random.nextInt(20) == 0) {
                 var randomSound = List.of(TRIAL_SPAWNER_AMBIENT, TRIAL_SPAWNER_AMBIENT_OMINOUS).get(Random.nextInt(2));
-                Helpers.getSoundWithPosition(level, pos, randomSound, SoundSource.BLOCKS, 1F, 2f);
+                SoundHelpers.getSoundWithPosition(level, pos, randomSound, SoundSource.BLOCKS, 1F, 2f);
             }
         }
     }

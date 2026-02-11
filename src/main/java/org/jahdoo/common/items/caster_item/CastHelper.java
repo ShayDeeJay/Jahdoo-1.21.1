@@ -18,7 +18,8 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static org.jahdoo.common.items.caster_item.ItemAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
@@ -146,9 +147,9 @@ public class CastHelper {
     }
 
     public static void brokenWandNotification(Player player, @Nullable AbstractElement element){
-        var colour = element == null ? org.shaydee.shaydeeapi.Colours.getOffWhite() : element.textColourA();
+        var colour = element == null ? ColourHelpers.getOffWhite() : element.textColourA();
         failedCastNotification(player);
-        player.displayClientMessage(withStyleComponent("Wand too damaged to cast", colour), true);
+        player.displayClientMessage(TextHelpers.withStyleComponent("Wand too damaged to cast", colour), true);
     }
 
     public static InteractionResultHolder<ItemStack> use(Player player) {
@@ -180,8 +181,8 @@ public class CastHelper {
             var isValidCastLocation = lookAtLocation.getType() == HitResult.Type.MISS;
             var getWandElement = fromWand(itemStack.getItem()).orElse(null);
             var distance = String.valueOf(Math.round(allowedDistance));
-            var colour = getWandElement == null ? Colours.getWalletBrown() : getWandElement.partColourB();
-            var distanceCompo = JahdooHelpers.withStyleComponent(distance, colour);
+            var colour = getWandElement == null ? ColourHelpers.getWalletBrown() : getWandElement.partColourB();
+            var distanceCompo = TextHelpers.withStyleComponent(distance, colour);
             var notAllowedDistanceMessage = Component.translatable("casting.jahdoo.distance", distanceCompo);
 
             if (isValidCastLocation) {
@@ -206,7 +207,7 @@ public class CastHelper {
 
         if(!player.isCreative()){
             if (abilityOnCooldown) {
-                var nameComp = JahdooHelpers.withStyleComponent(ability.getAbilityName(), element.partColourB());
+                var nameComp = TextHelpers.withStyleComponent(ability.getAbilityName(), element.partColourB());
                 var messageComp = Component.translatable("casting.jahdoo.on_cooldown", nameComp);
                 player.displayClientMessage(messageComp, true);
                 return false;
@@ -215,8 +216,8 @@ public class CastHelper {
             if (!sufficientMana) {
                 var formattedCost = org.shaydee.shaydeeapi.Maths.getFormattedFloat(adjustedMana);
                 var formattedAvailable = org.shaydee.shaydeeapi.Maths.getFormattedFloat((float) manaAvailable);
-                var costComp = JahdooHelpers.withStyleComponent(String.valueOf(formattedCost), element.partColourA());
-                var availComp = JahdooHelpers.withStyleComponent(String.valueOf(formattedAvailable), element.partColourB());
+                var costComp = TextHelpers.withStyleComponent(String.valueOf(formattedCost), element.partColourA());
+                var availComp = TextHelpers.withStyleComponent(String.valueOf(formattedAvailable), element.partColourB());
                 var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);
                 player.displayClientMessage(notEnoughManaMessage, true);
                 return false;

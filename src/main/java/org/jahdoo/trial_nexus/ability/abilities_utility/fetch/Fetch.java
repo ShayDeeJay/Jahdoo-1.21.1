@@ -117,7 +117,7 @@ public class Fetch extends AbstractUtilityProjectile {
             }
 
             if(pickedUpItem) ParticleHandlers.invisibleLight(generic.level(), itemEntity.position().add(0,0.5,0), genericParticle, 0.03, 0.04, 8);
-        };
+        }
 
         if(pickedUpItem && player instanceof ServerPlayer player1) {
             JahdooHelpers.sendClientSound(player1, SoundEvents.ITEM_PICKUP, 1.15f, 1);

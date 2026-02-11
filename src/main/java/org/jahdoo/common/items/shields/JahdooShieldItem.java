@@ -4,8 +4,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class JahdooShieldItem extends BaseItem implements ICurioItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return JahdooHelpers.withStyleComponent(super.getName(stack).getString(), ColourStore.BRONZE_COIN);
+        return TextHelpers.withStyleComponent(super.getName(stack).getString(), ColourHelpers.getBronzeCoin());
     }
 
     @Override
@@ -32,7 +32,7 @@ public class JahdooShieldItem extends BaseItem implements ICurioItem {
         var blockChance = stack.get(ComponentReg.SHIELD_BLOCK_CHANCE);
         if(blockChance != null){
             var newValue = org.shaydee.shaydeeapi.Maths.roundNonWholeDouble(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(blockChance)) + "%";
-            var value = JahdooHelpers.withStyleComponent(newValue + " Block Chance", ColourStore.GOLD_COIN);
+            var value = TextHelpers.withStyleComponent(newValue + " Block Chance", ColourHelpers.getGoldCoin());
             tooltipComponents.add(value);
         }
     }

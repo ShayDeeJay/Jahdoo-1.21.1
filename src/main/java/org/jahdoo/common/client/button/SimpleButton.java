@@ -8,7 +8,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker2;
@@ -59,7 +59,7 @@ public class SimpleButton extends ImageButton {
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         var fade = isSelected && isHovered ? color(60, uiColour()) : fadeBlack(0.8f);
         var minecraft = Minecraft.getInstance();
-        var isSelected = !this.isSelected ? Colours.getHeaderColour() : uiColour();
+        var isSelected = !this.isSelected ? ColourHelpers.getHeaderColour() : uiColour();
 
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 1);

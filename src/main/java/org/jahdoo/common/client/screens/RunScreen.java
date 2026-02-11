@@ -13,9 +13,10 @@ import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +30,7 @@ import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.trial_nexus.attachments.RunData.*;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.BRONZE_COIN;
-import static org.jahdoo.trial_nexus.utils.ColourStore.GOLD_COIN;
-import static org.jahdoo.trial_nexus.utils.ColourStore.PLATINUM_COIN;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SILVER_COIN;
+
 
 public class RunScreen extends AbstractPanableScreen {
 
@@ -198,7 +195,7 @@ public class RunScreen extends AbstractPanableScreen {
 
         pose.pushPose();
         pose.scale(scale, scale, scale);
-        graphics.drawCenteredString(getMinecraft().font, JahdooHelpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
+        graphics.drawCenteredString(getMinecraft().font, TextHelpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
         pose.popPose();
 
         if(runData != null) {
@@ -232,40 +229,40 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Trial No", trialData.getPastRuns().indexOf(runData) + 1 + "", uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
-        allComponents.add(new StatEntry(componentTemplate("Difficulty", JahdooHelpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
+        allComponents.add(new StatEntry(componentTemplate("Difficulty", TextHelpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Player Level", String.valueOf(runData.getStat(PLAYER_LEVEL)), uiColour()), null));
 
         var died = runData.died();
-        allComponents.add(new StatEntry(componentTemplate("Fate", died ? "Died!" : "Survived!", died ? RATING_2_RED : RATING_5_GREEN), null));
+        allComponents.add(new StatEntry(componentTemplate("Fate", died ? "Died!" : "Survived!", died ? ColourHelpers.getRating2Red() : ColourHelpers.getRating5Green()), null));
         allComponents.add(spacer);
 
         var stat = runData.getCurrentQuestId();
         if(!stat.isEmpty()){
             var completed = runData.isCompletedQuest();
-            var statusColour = completed ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED;
-            allComponents.add(new StatEntry(componentTemplate("Quest Type", QuestReg.getQuestByName(stat).get().getDisplayName(), RATING_5_GREEN), null));
+            var statusColour = completed ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed();
+            allComponents.add(new StatEntry(componentTemplate("Quest Type", QuestReg.getQuestByName(stat).get().getDisplayName(), ColourHelpers.getRating5Green()), null));
             allComponents.add(new StatEntry(componentTemplate("Quest Status", (completed ? "Completed" : "Failed"), statusColour), null));
         }
 
-        allComponents.add(new StatEntry(componentTemplate("Run Time", org.shaydee.shaydeeapi.Maths.ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
-        allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
-        allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(RunData.ROOMS_CLEARED) + "", AETHER_BLUE), Icons.ROOMS_CLEARED));
-        allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED), Icons.HORDE));
-        allComponents.add(new StatEntry(componentTemplate("Champions Killed", runData.getStat(CHAMPIONS_KILLED) + "", CHAMPION_GOLD), CHAMPIONS_CROWN));
-        allComponents.add(new StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", BRONZE_COIN), Icons.BRONZE_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", SILVER_COIN), Icons.SILVER_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", GOLD_COIN), Icons.GOLD_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", PLATINUM_COIN), Icons.PLATINUM_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Quest Loot Multiplier", instanceData.getQuestCrateMultiplier() + "", WALLET_BROWN), QUEST_CRATE));
+        allComponents.add(new StatEntry(componentTemplate("Run Time", org.shaydee.shaydeeapi.Maths.ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), ColourHelpers.getPerkGreen()), CLOCK));
+        allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", ColourHelpers.getCosmicPurple()), TRIAL_EXPERIENCE));
+        allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(RunData.ROOMS_CLEARED) + "", ColourHelpers.getAetherBlue()), Icons.ROOMS_CLEARED));
+        allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", ColourHelpers.getMagnetStrengthRed()), Icons.HORDE));
+        allComponents.add(new StatEntry(componentTemplate("Champions Killed", runData.getStat(CHAMPIONS_KILLED) + "", ColourHelpers.getChampionGold()), CHAMPIONS_CROWN));
+        allComponents.add(new StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", ColourHelpers.getBronzeCoin()), Icons.BRONZE_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", ColourHelpers.getSilverCoin()), Icons.SILVER_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", ColourHelpers.getGoldCoin()), Icons.GOLD_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", ColourHelpers.getPlatinumCoin()), Icons.PLATINUM_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Quest Loot Multiplier", instanceData.getQuestCrateMultiplier() + "", ColourHelpers.getWalletBrown()), QUEST_CRATE));
 
         addChestStats(allComponents, "Common Chest", COMMON.getColour(), CHESTS_COMMON, instanceData.getCommonLootMultiplier(), CHEST_COMMON, runData);
         addChestStats(allComponents, "Rare Chest", RARE.getColour(), CHESTS_RARE, instanceData.getRareLootMultiplier(), CHEST_RARE, runData);
         addChestStats(allComponents, "Legendary Chest", LEGENDARY.getColour(), CHESTS_LEGENDARY, instanceData.getLegendaryLootMultiplier(), CHEST_LEGENDARY, runData);
         addChestStats(allComponents, "Eternal Chest", MYTHIC.getColour(), CHESTS_MYTHIC, instanceData.getMythicLootMultiplier(), CHEST_MYTHIC, runData);
 
-        allComponents.add(new StatEntry(componentTemplate("Safe", "", GOLD_COIN, GOLD_COIN), SAFE));
-        allComponents.add(new StatEntry(componentTemplate("Opened", runData.getStat(RunData.SAFE) + "", GOLD_COIN), BLANK));
-        allComponents.add(new StatEntry(componentTemplate("Multiplier", instanceData.getSafeMultiplier() + "", GOLD_COIN), BLANK));
+        allComponents.add(new StatEntry(componentTemplate("Safe", "", ColourHelpers.getGoldCoin(), ColourHelpers.getGoldCoin()), SAFE));
+        allComponents.add(new StatEntry(componentTemplate("Opened", runData.getStat(RunData.SAFE) + "", ColourHelpers.getGoldCoin()), BLANK));
+        allComponents.add(new StatEntry(componentTemplate("Multiplier", instanceData.getSafeMultiplier() + "", ColourHelpers.getGoldCoin()), BLANK));
 
         allComponents.add(spacer);
 
@@ -276,11 +273,11 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Mob Speed","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
 
         // Mob counts / composition
-        allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", AETHER_BLUE), Icons.HORDE));
-        allComponents.add(new StatEntry(componentTemplate("Skeletons", instanceData.getSkeleton() + "", OFF_WHITE), Icons.SKELETON));
-        allComponents.add(new StatEntry(componentTemplate("Void Spiders", instanceData.getVoidSpider() + "", COSMIC_PURPLE), Icons.VOID_SPIDER));
-        allComponents.add(new StatEntry(componentTemplate("Inferno Creepers", instanceData.getInfernoCreeper() + "", SYMPATHISER_ORANGE), Icons.INFERNO_CREEPER));
-        allComponents.add(new StatEntry(componentTemplate("Eternal Wizards", instanceData.getEternalWizard() + "", MAGNET_STRENGTH_RED), Icons.ETERNAL_WIZARD));
+        allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", ColourHelpers.getAetherBlue()), Icons.HORDE));
+        allComponents.add(new StatEntry(componentTemplate("Skeletons", instanceData.getSkeleton() + "", ColourHelpers.getOffWhite()), Icons.SKELETON));
+        allComponents.add(new StatEntry(componentTemplate("Void Spiders", instanceData.getVoidSpider() + "", ColourHelpers.getCosmicPurple()), Icons.VOID_SPIDER));
+        allComponents.add(new StatEntry(componentTemplate("Inferno Creepers", instanceData.getInfernoCreeper() + "", ColourHelpers.getSympathiserOrange()), Icons.INFERNO_CREEPER));
+        allComponents.add(new StatEntry(componentTemplate("Eternal Wizards", instanceData.getEternalWizard() + "", ColourHelpers.getMagnetStrengthRed()), Icons.ETERNAL_WIZARD));
 
         return allComponents;
     }
@@ -292,12 +289,12 @@ public class RunScreen extends AbstractPanableScreen {
     }
 
     public static MutableComponent componentTemplate(String header, String stat, int statColour){
-        return componentTemplate(header, stat, statColour, SUB_HEADER_COLOUR);
+        return componentTemplate(header, stat, statColour, ColourHelpers.getSubHeaderColour());
     }
 
     public static MutableComponent componentTemplate(String header, String stat, int statColour, int headerColour){
-        var preMob = JahdooHelpers.withStyleComponent(header + ": ", headerColour);
-        var valueMob = JahdooHelpers.withStyleComponent(stat, statColour);
+        var preMob = TextHelpers.withStyleComponent(header + ": ", headerColour);
+        var valueMob = TextHelpers.withStyleComponent(stat, statColour);
         return preMob.copy().append(valueMob);
     }
 

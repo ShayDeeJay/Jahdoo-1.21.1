@@ -15,7 +15,6 @@ import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
 
-import static org.jahdoo.trial_nexus.utils.GlobalStrings.BLOCK_MINER_DESCRIPTION;
 import static org.jahdoo.common.registers.mod.ElementReg.inferno;
 
 public class ArmageddonAbility extends Ability {
@@ -35,7 +34,7 @@ public class ArmageddonAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return BLOCK_MINER_DESCRIPTION;
+        return "dsd";
     }
 
     @Override

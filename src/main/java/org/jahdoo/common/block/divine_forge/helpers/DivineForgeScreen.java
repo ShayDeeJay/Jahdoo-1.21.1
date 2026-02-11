@@ -16,7 +16,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jetbrains.annotations.NotNull;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.block.divine_forge.helpers.RepairManager.*;
-import static org.jahdoo.common.block.divine_forge.helpers.RuneManager.*;
+import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreenHelpers.*;
 import static org.jahdoo.common.block.divine_forge.helpers.RuneScreenShared.overlayInventory;
 import static org.jahdoo.common.block.divine_forge.helpers.RuneScreenShared.tooltipSlots;
 import static org.jahdoo.common.client.Icons.*;
@@ -37,7 +37,7 @@ import static org.jahdoo.common.client.screens.AbilityModificationScreen.WIDGET;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.canRepair;
 
-public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
+public class DivineForgeScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     private static final int RUNE_MANAGE = 0;
     private static final int REPAIR_MANAGE = 1;
@@ -50,7 +50,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     private int selection;
     private int coinCost;
 
-    public RuneTableScreen(RuneTableMenu menu, Inventory inventory, Component title) {
+    public DivineForgeScreen(RuneTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         var element = ElementReg.fromWand(menu.tableEntity().itemSlot().getItem());
 
@@ -102,7 +102,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
                 new Overlay() {
                     @Override
                     public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
-                        var color = color(200, canRepairItem ? Colours.getHeaderColour() : borderColour);
+                        var color = color(200, canRepairItem ? ColourHelpers.getHeaderColour() : borderColour);
                         SharedUI.boxMaker(guiGraphics, posX1 + 6, posY1 + 6, 16, 16, color, 0, 0);
                     }
                 }
@@ -136,7 +136,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
                 new Overlay() {
                     @Override
                     public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
-                        var color = color(200, canRepairItem ? Colours.getHeaderColour() : borderColour);
+                        var color = color(200, canRepairItem ? ColourHelpers.getHeaderColour() : borderColour);
                         SharedUI.boxMaker(guiGraphics, posX1 + 6, posY1 + 6, 16, 16, color, 0, 0);
                         guiGraphics.blit(GUI_ITEM_SLOT, posX1 + 6, posY1 - 22, 0,0,32,32,32,32);
                     }
@@ -224,15 +224,15 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         var startY = i1 + 22;
         scaleItem();
 
+        runeToolTip(guiGraphics, mouseX, mouseY, hoveredSlot, coinCost, borderColour, entity(), getMinecraft());
         tooltipSlots(hoverTooltip, hoveredSlot, menu.getCarried());
         augmentCoreSlots(guiGraphics, adjustX, adjustY+1, borderColour, this.width + 6, this.height + 6, groupFade());
-        togglePrimaryToolTip(guiGraphics);
-        runeSlotTexture(guiGraphics, mouseX, mouseY, width, height, isRuneManager(), hoveredSlot, getMinecraft(), coinCost, borderColour, runeTableMenu);
+        togglePrimaryToolTip(guiGraphics, mouseX - 5, mouseY + 20);
+        runeSlotTexture(guiGraphics, width, height, isRuneManager(), getMinecraft(), borderColour, runeTableMenu);
         overlayInventory(guiGraphics, startX, startY, this, borderColour);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
 
         hoverCarried(guiGraphics, mouseX, mouseY, hoveredSlot, runeTableMenu, getMinecraft());
-        runeToolTip(guiGraphics, mouseX, mouseY, hoveredSlot, coinCost, borderColour, entity(), getMinecraft());
         RuneScreenShared.renderItem(guiGraphics, mouseX, mouseY, startX, startY, width, height, scaleItem, getMinecraft(), getItem(), this.leftPos, this.topPos, borderColour);
         sharedGearData(guiGraphics, i, i1);
         costToolTip(guiGraphics, mouseX, mouseY);
@@ -242,10 +242,10 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         this.coinCost = 0;
     }
 
-    private void togglePrimaryToolTip(@NotNull GuiGraphics guiGraphics) {
+    private void togglePrimaryToolTip(@NotNull GuiGraphics guiGraphics, int x, int y) {
         if(!this.getItem().isEmpty() && this.showTooltip){
             var startX1 = this.width / 2 + 100;
-            var startY1 = this.height / 2 - 73;
+            var startY1 = this.height / 2 - 92;
             guiGraphics.renderTooltip(font, getItem(), startX1, startY1);
         }
     }
@@ -269,8 +269,8 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     private void header(@NotNull GuiGraphics guiGraphics) {
         var header = Component.literal(isRuneManager() ? "Rune Manager" : "Gear Repair");
-        var x = width / 2 - 70;
-        var y1 = height / 2 - 102;
+        var x = width / 2 + 32;
+        var y1 = height / 2 - 120;
         guiGraphics.drawString(font, header, x, y1, borderColour);
     }
 

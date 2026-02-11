@@ -13,10 +13,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.components.CoreData;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static java.lang.Math.min;
 import static net.minecraft.client.Minecraft.getInstance;
@@ -50,7 +51,7 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
 //            var i = level.getGameTime()
 //            var rad =  Math.min(0.06f, (float) level.getGameTime() / 300);
 //            var height = 200;
-//            var colourLight = getColourLight(ColourStore.RATING_4_YELLOW, 1.2);
+//            var colourLight = getColourLight(ColourHelpers.ColourHelpers.getRating4Yellow(), 1.2);
 //            renderBeaconBeam(stack, source, BEAM_LOCATION, partialTick, 1.1F, i, 0, height, colourLight, rad, 0);
             return;
         }
@@ -61,7 +62,7 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
         var current = CoreData.getFilled(render);
 
         var colour = PowerUpStation.colourByState(entity.getBlockState().getValue(TYPE));
-        renderName(dispatcher.camera.rotation(), JahdooHelpers.withStyleComponent(current + "/" + required, colour), stack, source, 1.8);
+        renderName(dispatcher.camera.rotation(), TextHelpers.withStyleComponent(current + "/" + required, colour), stack, source, 1.8);
 
         stack.pushPose();
         var ticks = getInstance().level.getGameTime();
@@ -119,7 +120,7 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
         pPoseStack.mulPose(rotation);
         pPoseStack.scale(x, -x, x);
         Matrix4f matrix4f = pPoseStack.last().pose();
-        font.drawInBatch(displayName, f1, 0, ColourStore.OFF_WHITE, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        font.drawInBatch(displayName, f1, 0, ColourHelpers.getOffWhite(), true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
 
     }

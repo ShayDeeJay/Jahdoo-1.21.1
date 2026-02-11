@@ -12,6 +12,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.element.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -54,14 +55,7 @@ public class ElementReg {
         var list = REGISTRY.stream()
             .filter(e -> e != utility())
             .toList();
-        return JahdooHelpers.listRandom(list);
-    }
-
-    public static AbstractElement random(long seed) {
-        var list = REGISTRY.stream()
-            .filter(e -> e != utility())
-            .toList();
-        return JahdooHelpers.listRandom(list, seed);
+        return Helpers.listRandom(list);
     }
 
     private static DeferredHolder<AbstractElement, AbstractElement> registerElement(Supplier<AbstractElement> element) {

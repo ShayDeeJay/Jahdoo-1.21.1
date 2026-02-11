@@ -8,7 +8,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -57,7 +57,7 @@ public abstract class AbstractElement {
     public abstract String elementDescription();
 
     public String name(){
-        return Helpers.stringIdToName(abilityResource().getPath().intern());
+        return TextHelpers.stringIdToName(abilityResource().getPath().intern());
     }
 
     public final String setAbilityId() {

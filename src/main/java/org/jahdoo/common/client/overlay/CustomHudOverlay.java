@@ -22,10 +22,15 @@ import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
@@ -41,10 +46,8 @@ import static org.jahdoo.common.client.SharedUI.centeredStringNoShadow;
 import static org.jahdoo.common.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.trial_nexus.attachments.CasterData.selectedAbility;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.Configuration.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getUsedItem;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class CustomHudOverlay implements LayeredDraw.Layer {
 
@@ -80,15 +83,6 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         if(player == null) return;
 
         var playerHealth = player.getHealth();
-        var absorption = player.getAbsorptionAmount();
-        var manaPoolCount = withStyleComponent(valueOf(Math.round(playerHealth)), MAGNET_STRENGTH_RED).copy();
-
-//        if(absorption > 0){
-//            manaPoolCount.append(withStyleComponent(" + ", SUB_HEADER_COLOUR));
-//            manaPoolCount.append(withStyleComponent("" + Math.round(absorption), ABSORPTION_TEXT_YELLOW));
-//        }
-
-        var colourBack = -13816531;
         var pose = graphics.pose();
 
         pose.pushPose();
@@ -105,25 +99,25 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             pose.popPose();
         }
 
-        pose.translate(-1, -1, 1000);
-        NumberText.drawCenteredNumber(graphics, Math.round(playerHealth), 0, 0, 0.4F);
-
-//        centeredStringNoShadow(graphics, mc.font, manaPoolCount, 0, 0, colourBack, false);
+        pose.translate(-1, -1, 10);
+        sharedHUDNumber(graphics, playerHealth);
         pose.popPose();
     }
 
     private void manaPoolCount(double data, GuiGraphics graphics, Minecraft mc, double x, double y, int colour){
         var height = graphics.guiHeight();
-//        var manaPoolCount = withStyleComponent(valueOf(Math.round(data)), colour);
-//        var colourBack = -13816531;
         var pose = graphics.pose();
 
         pose.pushPose();
         pose.translate(57 + this.alignedGui.shiftGuiX + x, height - 16.2 - this.alignedGui.shiftGuiY + y, 10D);
-        pose.translate(0, -0.9, 1000);
+        pose.translate(0, -0.9, 10);
 
-        NumberText.drawCenteredNumber(graphics, (int) Math.round(data), 0, 0, 0.4F);
+        sharedHUDNumber(graphics, (float) data);
         pose.popPose();
+    }
+
+    private void sharedHUDNumber(GuiGraphics graphics, Float value) {
+        NumberText.drawCenteredNumber(graphics, Math.round(value), 0, 0, 0.6F);
     }
 
     private void alignedGuiInstance(GuiGraphics graphics){
@@ -342,22 +336,23 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             xpBar(graphics, pose, minecraft);
             alignedGui.displayGuiLayer(-53, 29, 0, 0, 137, 29);
             inventory(graphics, player);
+            quickSelectBar(graphics, casterData, minecraft);
 
             this.healthAndAbsorptionCount(graphics, minecraft);
             this.progressOverlays(alignedGui, 19, (int) (healthProgress + 3));
             this.progressOverlays(alignedGui, 27, (int) (absorptionProgress + 3));
             if(DISPLAY_DURABILITY_OVERLAY.get()) overlayDurability(graphics, player, minecraft);
-            quickSelectBar(graphics, casterData, minecraft);
         }
 
         if(!CUSTOM_UI.get()){
             pose.translate(0, -fadeIn, 0);
             setShaderColor(1f, 1f, 1f, fadeIn);
+            quickSelectBar(graphics, casterData, minecraft);
             alignedGui.displayGuiLayer(1, 29, 0, 47, 82, 28);
         }
 
         alignedGui.displayGuiLayer(25, 18, 0, 43, manaProgress + 3, 8, MANA_LEVEL_BAR);
-        this.manaPoolCount(casterData.getManaPool(), graphics, minecraft, -5 , 0, AETHER_BLUE);
+        this.manaPoolCount(casterData.getManaPool(), graphics, minecraft, -5 , 0, ColourHelpers.getAetherBlue());
 
         abilityRegistrars.ifPresent(
             location -> {
@@ -372,13 +367,22 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         for (var activeSkill : skills) {
             var get = SkillReg.getAllSkills().stream().filter(abstractSkill -> Objects.equals(abstractSkill.id(), activeSkill)).findFirst();
             var size = skills.size() - 1;
-            var iconSize = num - 3;
+            var iconSize = num - 6;
             var xA = -(size * (num / 2)) + spread;
-            var yA = graphics.guiHeight() - 50;
+            var spacer = 0;
+
+            if(LevelGenerator.isNexus(player.level())){
+                var runData = RunData.getRunData(player);
+                var getQuest = QuestReg.getQuestByName(runData.getCurrentQuestId());
+                if(getQuest.isPresent()) spacer = 24;
+            }
+
+            var yA = graphics.guiHeight() - 50 - spacer;
             alignedGui.displayGuiLayer(xA, yA, 0, 0, iconSize, GUI_BUTTON_SKILL);
             var deScale = 8;
             var i = deScale / 2;
-            alignedGui.displayGuiLayer(xA + i, yA - i, 0, 0, iconSize - deScale, get.orElseThrow().icon());
+
+            get.ifPresent(abstractSkill -> alignedGui.displayGuiLayer(xA + i, yA - i, 0, 0, iconSize - deScale, abstractSkill.icon()));
             spread += num;
         }
 
@@ -428,7 +432,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             int drawX = 16 + spacer;
             var cooldownWithDurability = getDurabilityWithColor(stack);
             graphics.renderItem(stack, drawX, baseY);
-            graphics.drawCenteredString(minecraft.font, withStyleComponent(cooldownWithDurability.getFirst() + "%", cooldownWithDurability.getSecond()), drawX + 8, baseY + 18, -1);
+            graphics.drawCenteredString(minecraft.font, TextHelpers.withStyleComponent(cooldownWithDurability.getFirst() + "%", cooldownWithDurability.getSecond()), drawX + 8, baseY + 18, -1);
             spacer += 27;
         }
 
@@ -439,12 +443,12 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         var currentDamage = stack.getDamageValue();
         var remainingDurability = maxDurability - currentDamage;
         var percent = (int) ((remainingDurability * 100.0) / maxDurability);
-        var color = RATING_4_YELLOW;
+        var color = ColourHelpers.getRating4Yellow();
 
         if (percent <= 25.0) {
-            color = RATING_2_RED;
+            color = ColourHelpers.getRating2Red();
         } else if (percent >= 75.0) {
-            color = RATING_5_GREEN;
+            color = ColourHelpers.getRating5Green();
         }
 
         return new Pair<>(percent, color);

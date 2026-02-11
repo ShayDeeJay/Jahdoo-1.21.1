@@ -3,10 +3,10 @@ package org.jahdoo.common.items.runes;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import org.jahdoo.common.items.runes.rune_data.RuneCategories;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.rarity.RarityAttributes;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.common.items.runes.rune_data.RuneCategories;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 public class BlankRune extends AbstractRune{
 
@@ -27,7 +27,7 @@ public class BlankRune extends AbstractRune{
 
     @Override
     public int runeColour() {
-        return ColourStore.SUB_HEADER_COLOUR;
+        return ColourHelpers.getSubHeaderColour();
     }
 
     @Override

@@ -4,23 +4,22 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.decoy.Decoy;
+import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.GlobalStrings;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.decoy.Decoy;
-import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 
 
 public class EscapeDecoyAbility extends Ability {
@@ -33,7 +32,7 @@ public class EscapeDecoyAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return GlobalStrings.BLOCK_PLACER;
+        return "description.ability.jahdoo.test";
     }
 
     @Override

@@ -9,12 +9,12 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.JahdooItem;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 
 public class ItemCodexScreen extends Screen {
     public static int frameTicks;
@@ -23,7 +23,7 @@ public class ItemCodexScreen extends Screen {
     private final Screen lastScreen;
     private double mouseX;
     private double mouseY;
-    private boolean startAnim;
+    private final boolean startAnim;
     private float fade;
 
     private void slideGuiStats() {
@@ -98,7 +98,7 @@ public class ItemCodexScreen extends Screen {
         pose.scale(scale, scale, scale);
         var y1 = y + 30;
         var x1 = x + 54;
-        graphics.drawString(font, withStyleComponentTrans(codec.getDescriptionId(), uiColour()), x1, y1 -2, -1);
+        graphics.drawString(font, TextHelpers.withStyleComponentTrans(codec.getDescriptionId(), uiColour()), x1, y1 -2, -1);
         pose.popPose();
     }
 
@@ -132,13 +132,13 @@ public class ItemCodexScreen extends Screen {
     }
 
     private void additionalInformation(GuiGraphics graphics, int x, int y) {
-//        var text = withStyleComponentTrans(codex.description(), SUB_HEADER_COLOUR);
+//        var text = TextHelpers.withStyleComponentTrans(codex.description(), ColourHelpers.getSubHeaderColour());
 //        textWithWidthAdjust(font, x, y, text, graphics);
     }
 
     private void description(GuiGraphics graphics, int x, int y) {
         if(codec.getItem() instanceof JahdooItem item){
-            var text = withStyleComponentTrans(item.descriptionId(), SUB_HEADER_COLOUR);
+            var text = TextHelpers.withStyleComponentTrans(item.descriptionId(), ColourHelpers.getSubHeaderColour());
             textWithWidthAdjust(font, x+1, y-10, text, graphics);
         }
     }

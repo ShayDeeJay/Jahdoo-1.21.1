@@ -9,8 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class SkillPointItem extends Item  {
 
     @Override
     public Component getName(ItemStack stack) {
-        return JahdooHelpers.withStyleComponent(super.getName(stack).getString(), ColourStore.RATING_5_GREEN);
+        return TextHelpers.withStyleComponent(super.getName(stack).getString(), ColourHelpers.getRating5Green());
     }
 
     @Override

@@ -42,7 +42,7 @@ public abstract class AbstractPanableScreen extends Screen {
     }
 
     public static int uiColour(){
-        return SetingsScreen.uiColours.get(UI_COLOUR.get());
+        return SetingsScreen.uiColourHelpers.get(UI_COLOUR.get());
     }
 
     public static int uiColourAlpha(){
@@ -204,10 +204,10 @@ public abstract class AbstractPanableScreen extends Screen {
         var x = 2F;
         pose.pushPose();
         pose.scale(x, x, x);
-//        graphics.drawCenteredString(font, withStyleComponent("Abilities", uiColour()).copy(), (int)( centerX / x) + 1, (int) (5 + (10 / x)), -1);
+//        graphics.drawCenteredString(font, TextHelpers.withStyleComponent("Abilities", uiColour()).copy(), (int)( centerX / x) + 1, (int) (5 + (10 / x)), -1);
         pose.popPose();
         SharedUI.boxMaker(graphics, 4, 4, this.width / 2 - 4, 25);
         graphics.hLine(3, this.width - 5, 54, uiColour());
-    };
+    }
 
 }

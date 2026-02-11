@@ -8,10 +8,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.boon.player_boons.Boon;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.networking.client2server.PerkTableSyncC2SP;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.boon.player_boons.Boon;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,6 @@ import java.util.function.Consumer;
 
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_RANGE_GREEN;
-import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_STRENGTH_RED;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_FROST;
 
@@ -32,7 +31,7 @@ public class BoonSelectionScreen extends Screen  {
     private int selectionOffset;
     private final List<Boon> boonsPositive = new ArrayList<>();
     private final List<Boon> boonsNegative = new ArrayList<>();
-    private BlockPos pos;
+    private final BlockPos pos;
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
@@ -136,12 +135,12 @@ public class BoonSelectionScreen extends Screen  {
         var hasPositiveBoon = boonsPositive.get(index) != Boon.EMPTY;
 
         if(hasPositiveBoon){
-            var posColour = color((int) Math.max(0, fade), MAGNET_RANGE_GREEN);
+            var posColour = color((int) Math.max(0, fade), ColourHelpers.getMagnetRangeGreen());
             boxMaker(guiGraphics, selectionOffset, 0, xPos, this.height / (hasNegativeBoon ? 4 : 2), border, posColour);
         }
 
         if (hasNegativeBoon) {
-            var negColour = color((int) Math.max(0, fade), MAGNET_STRENGTH_RED);
+            var negColour = color((int) Math.max(0, fade), ColourHelpers.getMagnetStrengthRed());
             boxMaker(guiGraphics, selectionOffset, this.height, xPos, -this.height / (hasPositiveBoon ? 4 : 2), border, negColour);
         }
     }
@@ -218,7 +217,7 @@ public class BoonSelectionScreen extends Screen  {
                 var adjustHeight = this.height / (hasNegativeBoon ? 4 : 1);
                 var adjustY = hasNegativeBoon ? 0 : 70;
 
-                boxMaker(guiGraphics, x - 71, -1, 70, adjustHeight + 1, MAGNET_RANGE_GREEN, 0);
+                boxMaker(guiGraphics, x - 71, -1, 70, adjustHeight + 1, ColourHelpers.getMagnetRangeGreen(), 0);
                 guiGraphics.blit(boon.icon(), position + 60, (int) y - 55 + adjustY, 0, 0, scale, scale, scale, scale);
                 for (var component : labelPositive) {
                     centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labelPositive.size() * 5) + adjustY, -1, isHovered);
@@ -232,7 +231,7 @@ public class BoonSelectionScreen extends Screen  {
                 var adjustHeight = hasPositiveBoon ? (int) y + 47 : -1;
                 var adjustY = hasPositiveBoon ? 0 : -70;
 
-                boxMaker(guiGraphics, x - 71, adjustHeight, 70, this.height, MAGNET_STRENGTH_RED, 0);
+                boxMaker(guiGraphics, x - 71, adjustHeight, 70, this.height, ColourHelpers.getMagnetStrengthRed(), 0);
                 guiGraphics.blit(boonNeg.icon(), position + 60, (int) y + (79) + adjustY, 0, 0, scale, scale, scale, scale);
                 for(var component : labelNegative){
                     centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labelPositive.size() * 5) + 134 + adjustY, -1, isHovered);

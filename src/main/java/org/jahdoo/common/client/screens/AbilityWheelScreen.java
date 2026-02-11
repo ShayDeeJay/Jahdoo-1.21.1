@@ -16,27 +16,27 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
-import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.jahdoo.trial_nexus.attachments.CasterData.entityHolderWithSelected;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.syncSelectedAbility;
 import static org.jahdoo.common.client.Icons.COG;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.isConfigAbility;
+import static org.jahdoo.trial_nexus.attachments.CasterData.entityHolderWithSelected;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.syncSelectedAbility;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelScreen extends Screen  {
@@ -120,7 +120,7 @@ public class AbilityWheelScreen extends Screen  {
                         guiGraphics, Minecraft.getInstance().font,
                         Component.literal(String.valueOf(finalI + 1)),
                         buttonX + 13, buttonY + 9,
-                        1, ColourStore.SUB_HEADER_COLOUR, true
+                        1, ColourHelpers.getSubHeaderColour(), true
                     );
                 }
             }

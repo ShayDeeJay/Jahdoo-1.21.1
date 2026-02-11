@@ -30,7 +30,7 @@ import org.jahdoo.trial_nexus.attachments.IAttachment;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.List;
 
@@ -121,10 +121,10 @@ public class NovaSmash implements IAttachment {
     }
 
     private void setAbilityEffects(Player player){
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), getElement().sound(), SoundSource.PLAYERS, 1, 1f);
+        SoundHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
+        SoundHelpers.getSoundWithPosition(player.level(), player.blockPosition(), getElement().sound(), SoundSource.PLAYERS, 1, 1f);
         if(player.tickCount % 2 == 0){
-            Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.EXPLOSION.get(), SoundSource.PLAYERS, 0.5F, 1f);
+            SoundHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.EXPLOSION.get(), SoundSource.PLAYERS, 0.5F, 1f);
         }
         this.clientDiggingParticles(player, player.level());
 

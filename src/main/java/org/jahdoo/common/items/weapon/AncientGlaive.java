@@ -12,9 +12,9 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class AncientGlaive extends BaseWeapon {
 
@@ -24,7 +24,7 @@ public class AncientGlaive extends BaseWeapon {
 
     @Override
     public Component getName(ItemStack stack) {
-        return withStyleComponent("Ancient Glaive", SUB_HEADER_COLOUR);
+        return TextHelpers.withStyleComponent("Ancient Glaive", ColourHelpers.getSubHeaderColour());
     }
 
     @Override

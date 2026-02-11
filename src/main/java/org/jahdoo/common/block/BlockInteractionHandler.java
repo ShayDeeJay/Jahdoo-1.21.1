@@ -17,7 +17,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -38,7 +38,7 @@ public class BlockInteractionHandler {
 
         itemStackHandler.setStackInSlot(outputSlot, playerItem.copyWithCount(count));
         if(playerItem.getCount() > 1){
-            Helpers.throwOrAddItem(player, inventoryItem.copyWithCount(count));
+            ItemHelpers.throwOrAddItem(player, inventoryItem.copyWithCount(count));
             playerItem.shrink(1);
         } else {
             player.setItemInHand(hand, inventoryItem.copyWithCount(count));

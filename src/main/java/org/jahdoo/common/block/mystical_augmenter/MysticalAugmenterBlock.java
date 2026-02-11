@@ -29,7 +29,7 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
@@ -176,8 +176,8 @@ public class MysticalAugmenterBlock extends BaseEntityBlock {
 //                );
 //            }
 //        );
-        Helpers.getSoundWithPosition(level, pos, SoundReg.DASH_EFFECT_INSTANT.get(), SoundSource.BLOCKS, 0.5F, 2F);
-        Helpers.getSoundWithPosition(level, pos, SoundReg.LEVITATE.get(), SoundSource.BLOCKS, 0.8F, 1F);
+        SoundHelpers.getSoundWithPosition(level, pos, SoundReg.DASH_EFFECT_INSTANT.get(), SoundSource.BLOCKS, 0.5F, 2F);
+        SoundHelpers.getSoundWithPosition(level, pos, SoundReg.LEVITATE.get(), SoundSource.BLOCKS, 0.8F, 1F);
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 }

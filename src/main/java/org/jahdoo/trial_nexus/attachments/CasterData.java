@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
+import org.jahdoo.common.networking.server2client.CastingUnlocksSyncS2CP;
 import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
 import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -31,9 +32,10 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.SkillReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -46,7 +48,6 @@ import static net.minecraft.world.entity.ai.attributes.Attributes.STEP_HEIGHT;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class CasterData implements IAttachment {
 
@@ -225,6 +226,18 @@ public class CasterData implements IAttachment {
         return loadouts;
     }
 
+    public void setLoadouts(Map<Integer, LoadoutObj> loadouts) {
+        this.loadouts = loadouts;
+    }
+
+    public void setUnlockedAbilities(List<AbilityHolder> unlockedAbilities) {
+        this.unlockedAbilities = unlockedAbilities;
+    }
+
+    public void setUnlockedSkills(List<String> unlockedSkills) {
+        this.unlockedSkills = unlockedSkills;
+    }
+
     public CasterData(){
         abilitySlots.addAll(EMPTY);
     }
@@ -347,7 +360,7 @@ public class CasterData implements IAttachment {
     public void checkMultiKill(Player player, int multiKillTarget){
         if(this.multiKill > 0){
             if(multiKill > multiKillTarget){
-                player.sendSystemMessage(withStyleComponent("MULTIKILL!!", ColourStore.MAGNET_RANGE_GREEN).copy());
+                player.sendSystemMessage(TextHelpers.withStyleComponent("MULTIKILL!!", ColourHelpers.getMagnetRangeGreen()).copy());
                 JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.QUEST_COMPLETE.get(), 1, 1.6F);
             }
             this.multiKill = 0;
@@ -400,6 +413,10 @@ public class CasterData implements IAttachment {
         this.unlockedAbilities = holders;
     }
 
+    public int getMultiKill() {
+        return multiKill;
+    }
+
     public void clearData(){
         sharedReset();
 
@@ -427,12 +444,18 @@ public class CasterData implements IAttachment {
             data.sharedReset();
             data.abilityPoints = data.refundableSkillPoints;
 
-            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
+            sharedPackets(serverPlayer, data);
+
             if(playAudio) {
                 JahdooHelpers.sendClientSound(serverPlayer, SoundReg.REJECT.get(), 1, 1, false);
                 JahdooHelpers.sendClientSound(serverPlayer, SoundReg.ORB_CREATE.get(), 0.4F, 2, false);
             }
         }
+    }
+
+    public static void sharedPackets(ServerPlayer serverPlayer, CasterData data){
+        sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
+        sendToPlayer(serverPlayer, new CastingUnlocksSyncS2CP(data));
     }
 
     public List<String> getAbilitySlots(){
@@ -701,7 +724,7 @@ public class CasterData implements IAttachment {
         var data = player.getData(CASTER_DATA);
         data.clearData();
         if(player instanceof ServerPlayer serverPlayer){
-            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
+            CasterData.sharedPackets(serverPlayer, data);
         }
     }
 
@@ -747,7 +770,7 @@ public class CasterData implements IAttachment {
         data.clearLevels();
         CasterData.addExperience(player, CasterData.getExpFromLevel(level));
         if(player instanceof ServerPlayer serverPlayer){
-            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
+            sharedPackets(serverPlayer, data);
         }
     }
 
@@ -799,7 +822,7 @@ public class CasterData implements IAttachment {
             Codec.INT.fieldOf("available_slots").forGetter(CasterData::getAllowedSlots),
             Codec.INT.fieldOf("ability_points").forGetter(CasterData::getAbilityPoints),
             Codec.INT.fieldOf("refundable_skill_points").forGetter(CasterData::getRefundableSkillPoints),
-            Codec.INT.fieldOf("multi_kill").forGetter(CasterData::getRefundableSkillPoints),
+            Codec.INT.fieldOf("multi_kill").forGetter(CasterData::getMultiKill),
             Codec.INT.fieldOf("loadout_index").forGetter(CasterData::getLoadoutIndex),
             Codec.DOUBLE.fieldOf("mana_pool").forGetter(CasterData::getManaPool),
             Codec.STRING.fieldOf("selected_ability").forGetter(CasterData::getSelectedAbility),
@@ -810,7 +833,7 @@ public class CasterData implements IAttachment {
             Codec.list(Codec.STRING).fieldOf("unlocked_skills").forGetter(CasterData::getUnlockedSkills),
             Codec.list(Codec.STRING).fieldOf("active_skills").forGetter(CasterData::getActiveSkills),
             Codec.unboundedMap(Codec.STRING.xmap(Integer::parseInt, String::valueOf), LoadoutObj.CODEC).fieldOf("loadouts").forGetter(CasterData::getLoadouts)
-            ).apply(instance, CasterData::new)
+        ).apply(instance, CasterData::new)
     );
 
     @Override

@@ -6,8 +6,8 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 public class DamageAmplifierBoon extends AbstractPlayerBoons {
 
@@ -28,7 +28,7 @@ public class DamageAmplifierBoon extends AbstractPlayerBoons {
 
     @Override
     public int colour() {
-        return ColourStore.NEGATIVE_RED;
+        return ColourHelpers.getNegativeRed();
     }
 
     @Override

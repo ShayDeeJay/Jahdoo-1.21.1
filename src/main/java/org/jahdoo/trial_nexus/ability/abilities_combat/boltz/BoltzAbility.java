@@ -16,9 +16,8 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.GlobalStrings;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.sounds.SoundSource.NEUTRAL;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
@@ -41,7 +40,7 @@ public class BoltzAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return GlobalStrings.BLOCK_MINER_DESCRIPTION;
+        return "description.ability.jahdoo.test";
     }
 
     @Override
@@ -104,7 +103,7 @@ public class BoltzAbility extends Ability {
             sendParticles(player.level(), particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
         }
 
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ORB_CREATE.get(), NEUTRAL, 0.5f,1.5f);
+        SoundHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ORB_CREATE.get(), NEUTRAL, 0.5f,1.5f);
     }
 
     @Override

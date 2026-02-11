@@ -17,13 +17,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWandItemRenderer;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -33,18 +35,17 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static net.minecraft.world.InteractionHand.OFF_HAND;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
 import static org.jahdoo.common.registers.ComponentReg.*;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.durabilityDamageCount;
 
 
 public class CasterItemHelper {
 
     public static final String PREFIX = "wandHelper.jahdoo.";
-    public static Component defence = withStyleComponentTrans(PREFIX + "set_wizard_mode.defence", rgbToInt(102, 178, 255));
-    public static Component attack = withStyleComponentTrans(PREFIX + "set_wizard_mode.attack", rgbToInt(255, 102, 102));
+    public static Component defence = TextHelpers.withStyleComponentTrans(PREFIX + "set_wizard_mode.defence", rgbToInt(102, 178, 255));
+    public static Component attack = TextHelpers.withStyleComponentTrans(PREFIX + "set_wizard_mode.attack", rgbToInt(255, 102, 102));
 
 //    public static void appendPotentialComponent(List<Component> toolTips, ItemStack gearItem){
 //        var wandData = gearItem.get(JAHDOO_GEAR_DATA);
@@ -57,8 +58,8 @@ public class CasterItemHelper {
         var wandData = gearItem.get(JAHDOO_GEAR_DATA);
         if(wandData == null) return;
 
-        var slot = withStyleComponent(String.valueOf(wandData.refinementPotential()), DIAMOND_BOX);
-        var append = withStyleComponent("Potential: ", SUB_HEADER_COLOUR).copy().append(slot);
+        var slot = TextHelpers.withStyleComponent(String.valueOf(wandData.refinementPotential()), ColourHelpers.getDiamondBox());
+        var append = TextHelpers.withStyleComponent("Potential: ", ColourHelpers.getSubHeaderColour()).copy().append(slot);
         render.accept(append);
     }
 
@@ -66,10 +67,10 @@ public class CasterItemHelper {
         var maxDamage = wandItem.get(DataComponents.MAX_DAMAGE);
         var damageTaken = wandItem.get(DataComponents.DAMAGE);
         if(maxDamage != null && damageTaken != null){
-            var durabilityColourIndicator = colourByPercent(maxDamage, damageTaken, false);
-            var prefix = JahdooHelpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
-            var currentDurability = JahdooHelpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
-            var maxDurability = JahdooHelpers.withStyleComponent("/" + maxDamage, BORDER_COLOUR);
+            var durabilityColourIndicator = ColourHelpers.colourByPercent(maxDamage, damageTaken, false);
+            var prefix = TextHelpers.withStyleComponent("Durability: ", ColourHelpers.getSubHeaderColour());
+            var currentDurability = TextHelpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
+            var maxDurability = TextHelpers.withStyleComponent("/" + maxDamage, ColourHelpers.getBorderColour());
             return prefix.copy().append(currentDurability).copy().append(maxDurability);
         }
         return Component.empty();
@@ -82,12 +83,12 @@ public class CasterItemHelper {
 
         var repairSlots = wandData.repairSlots();
         if(!repairSlots.isEmpty()){
-            var comp = withStyleComponent("Repair Slots: ", SUB_HEADER_COLOUR);
+            var comp = TextHelpers.withStyleComponent("Repair Slots: ", ColourHelpers.getSubHeaderColour());
             for (var repairSlot : repairSlots) {
                 var empty = repairSlot == 1;
                 var text = empty ? "⭘" : "◎";
-                var colour = empty ? GOLD_COIN : NETHERITE_BOX;
-                comp = comp.copy().append(withStyleComponent(text, colour));
+                var colour = empty ? ColourHelpers.getGoldCoin() : ColourHelpers.getNetheriteBox();
+                comp = comp.copy().append(TextHelpers.withStyleComponent(text, colour));
                 comp =  comp.copy().append(" ");
             }
             render.accept(comp);
@@ -113,7 +114,7 @@ public class CasterItemHelper {
         var equipped = !getOffhand.isEmpty() && getDura == 0;
         var text = equipped ? "Gauntlet is broken." : "You unable to offhand this.";
         var colour = abstractElement.textColourA();
-        var sendMessage = withStyleComponent(text, colour);
+        var sendMessage = TextHelpers.withStyleComponent(text, colour);
         if (entity instanceof Player player) player.displayClientMessage(sendMessage, true);
     }
 
@@ -146,7 +147,7 @@ public class CasterItemHelper {
     public static Component getItemName(ItemStack wandType, Supplier<Component> originalName){
         var getElement = fromWand(wandType.getItem());
         return getElement.map(
-            element -> withStyleComponentTrans(
+            element -> TextHelpers.withStyleComponentTrans(
                 PREFIX + "type",
                 element.partColourB(),
                 element.name()
@@ -155,13 +156,12 @@ public class CasterItemHelper {
     }
 
     public static void attributeToolTips(ItemStack itemStack, List<Component> appendComponents, AbstractElement abstractElement) {
-        var type = withStyleComponent(abstractElement.name(), abstractElement.textColourA());
+        var type = TextHelpers.withStyleComponent(abstractElement.name(), abstractElement.textColourA());
         var colourPre = rgbToInt(198, 198, 198);
         var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
-;
         if(!attributes.isEmpty()){
             appendComponents.add(Component.literal(" "));
-            appendComponents.add(withStyleComponentTrans("Implicit Modifiers", colourPre, type));
+            appendComponents.add(TextHelpers.withStyleComponentTrans("Implicit Modifiers", colourPre, type));
             appendComponents.addAll(standAloneAttributes(itemStack, abstractElement));
         }
     }
@@ -263,7 +263,7 @@ public class CasterItemHelper {
             for (ItemAttributeModifiers.Entry entry : newAttributes) {
                 if(entry.modifier().id().getPath().contains("wand")){
                     var component = RuneHelpers.standAloneAttributes(entry);
-                    var x = withStyleComponent(component.getString(), element.textColourA());
+                    var x = TextHelpers.withStyleComponent(component.getString(), element.textColourA());
 
                     appendComponents.add(x);
                 }

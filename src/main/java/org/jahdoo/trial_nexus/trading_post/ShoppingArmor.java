@@ -12,6 +12,7 @@ import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,6 @@ import static org.jahdoo.trial_nexus.loot.RewardLootTables.enchantmentWithChance
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.listRandom;
 
 public class ShoppingArmor {
 
@@ -36,7 +36,7 @@ public class ShoppingArmor {
                 new ItemStack(ItemReg.MAGE_LEGGINGS),
                 new ItemStack(ItemReg.MAGE_BOOTS)
         );
-        return listRandom(mageArmor);
+        return Helpers.listRandom(mageArmor);
     }
 
     public static ItemStack getWizardArmorPiece() {
@@ -46,7 +46,7 @@ public class ShoppingArmor {
                 new ItemStack(ItemReg.WIZARD_LEGGINGS),
                 new ItemStack(ItemReg.WIZARD_BOOTS)
         );
-        return listRandom(mageArmor);
+        return Helpers.listRandom(mageArmor);
     }
 
     public static List<ItemStack> getMageArmorAll() {
@@ -156,8 +156,8 @@ public class ShoppingArmor {
         if(itemStack.getItem() instanceof ArmorItem armorItem){
             var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(PERK, RESILIENCE, INFINITY);
 
-            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
-            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
+            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, Helpers.listRandom(getAllAllowed));
+            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, Helpers.listRandom(getAllAllowed));
         }
 
         sharedArmorData(jahdooRarity, itemStack, 1, 0, -50);
@@ -170,7 +170,7 @@ public class ShoppingArmor {
                 var tier = getRarity(List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000)));
                 var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(PERK, RESILIENCE, INFINITY, COSMIC);
                 if(!getAllAllowed.isEmpty()){
-                    addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), tier, listRandom(getAllAllowed));
+                    addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), tier, Helpers.listRandom(getAllAllowed));
                 }
             }
         }
@@ -182,10 +182,10 @@ public class ShoppingArmor {
     private static void attachBattleMageData(JahdooRarity jahdooRarity, ItemStack itemStack) {
         if(itemStack.getItem() instanceof ArmorItem armorItem){
             var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(INFINITY, COSMIC);
-            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
+            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, Helpers.listRandom(getAllAllowed));
 
             if(org.shaydee.shaydeeapi.Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
-                addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
+                addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, Helpers.listRandom(getAllAllowed));
             }
         }
 

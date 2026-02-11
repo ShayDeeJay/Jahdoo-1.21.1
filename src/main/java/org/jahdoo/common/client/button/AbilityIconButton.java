@@ -11,7 +11,7 @@ public class AbilityIconButton extends ImageButton {
     private final int totalSize;
     private final OnPress pOnPress;
     private final Runnable runnable;
-    private boolean isSelected;
+    private final boolean isSelected;
 
     public AbilityIconButton(int pX, int pY, WidgetSprites sprites, int size, OnPress pOnPress, boolean isSelected, Runnable hover) {
         super(pX, pY, size, size, sprites, pOnPress);

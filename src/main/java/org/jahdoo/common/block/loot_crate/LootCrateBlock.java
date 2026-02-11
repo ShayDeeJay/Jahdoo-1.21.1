@@ -29,10 +29,10 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +145,7 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
             if(crateData == null) return FAIL;
 
             getLoot(pos, serverLevel, crateData);
-            Helpers.getSoundWithPosition(level, pos, SoundReg.CRATE_OPEN.get(), SoundSource.BLOCKS, 1.6F, 1F);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.CRATE_OPEN.get(), SoundSource.BLOCKS, 1.6F, 1F);
             handler.setStackInSlot(0, ItemStack.EMPTY);
             level.destroyBlock(pos, false);
             return SUCCESS;
@@ -163,7 +163,7 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
 
         for(int i = 0; i < calculateMultiplier; i++){
             var rewards = getCompletionLoot(serverLevel, pos.getCenter(), difficulty.getSerializedName(), chestRarity);
-            lootsplosian(pos.getCenter(), serverLevel, JahdooHelpers.getRgb(), rewards, true, 50, chestRarity);
+            lootsplosian(pos.getCenter(), serverLevel, ColourHelpers.getRgb(), rewards, true, 50, chestRarity);
         }
 
         additionalRewards(pos, serverLevel, playerLevel, difficulty, crateData, chestRarity);
@@ -179,7 +179,7 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
         var itemInHand = new ItemStack(ItemReg.TRIAL_TICKET);
         TicketData.initTicket(itemInHand, 1);
         individualAddons.add(itemInHand);
-        lootsplosian(pos.getCenter(), serverLevel, JahdooHelpers.getRgb(), individualAddons, true, 50, chestRarity);
+        lootsplosian(pos.getCenter(), serverLevel, ColourHelpers.getRgb(), individualAddons, true, 50, chestRarity);
     }
 }
 

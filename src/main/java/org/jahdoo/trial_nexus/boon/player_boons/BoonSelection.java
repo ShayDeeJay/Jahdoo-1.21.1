@@ -12,7 +12,10 @@ import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +25,7 @@ import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.getRarity;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class BoonSelection {
 
@@ -38,18 +39,18 @@ public class BoonSelection {
     }
 
     public static Boon effectBoon(Holder<MobEffect> effect, int value){
-        var colour = !effect.value().isBeneficial() ? NEGATIVE_RED : UNIQUE_A;
+        var colour = !effect.value().isBeneficial() ? ColourHelpers.getNegativeRed() : ColourHelpers.getUniqueA();
         var name = translatable(effect.value().getDescriptionId()).getString();
         var duration = Random.nextInt(1200, 3600);
         var instance = new JahdooMobEffect(effect, duration, value);
-        var durationComp = withStyleComponent("Duration: ", colour);
-        var amplifierComp = withStyleComponent("Amplifier: ", colour);
+        var durationComp = TextHelpers.withStyleComponent("Duration: ", colour);
+        var amplifierComp = TextHelpers.withStyleComponent("Amplifier: ", colour);
 
         var list = List.of(
-            withStyleComponent(name, OFF_WHITE),
+            TextHelpers.withStyleComponent(name, ColourHelpers.getOffWhite()),
             Component.empty(),
-            durationComp.copy().append(withStyleComponent(org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(duration)), colour)),
-            amplifierComp.copy().append(withStyleComponent(String.valueOf(value), colour))
+            durationComp.copy().append(TextHelpers.withStyleComponent(org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(duration)), colour)),
+            amplifierComp.copy().append(TextHelpers.withStyleComponent(String.valueOf(value), colour))
         );
 
         return new Boon(list, -1, () -> sendToServer(new EffectC2SP(instance)), iconFromEffect(effect));
@@ -70,7 +71,7 @@ public class BoonSelection {
             boonCollection.add(effectBoon(MobEffects.ABSORPTION, level));
         }
 
-        return JahdooHelpers.listRandom(boonCollection);
+        return Helpers.listRandom(boonCollection);
     }
 
     public static Boon getNegativeBoon(){
@@ -88,7 +89,7 @@ public class BoonSelection {
 
         for (int i = 0; i < 4; i++) boonCollection.add(Boon.EMPTY);
 
-        return JahdooHelpers.listRandom(boonCollection);
+        return Helpers.listRandom(boonCollection);
     }
 
     private static void sharedBoons(ArrayList<Boon> boonCollection, boolean isNegative) {
@@ -112,21 +113,21 @@ public class BoonSelection {
         var id = attribute.value().getDescriptionId();
         var split = translatable(id).getString();
         var string = stream(split.split(" ")).toList();
-        var getValue = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(value));
+        var getValue = Maths.roundNonWholeString(Maths.doubleFormattedDouble(value));
         var formattedString = (value < 0 ? "" : "+") + getValue + (isPercentage ? "% " : " ");
         var runeFromAttribute = RuneReg.getRuneFromAttribute(attribute);
-        var colourBy = runeFromAttribute == null ? org.shaydee.shaydeeapi.Colours.getCooldownGreen() : runeFromAttribute.runeColour();
+        var colourBy = runeFromAttribute == null ? ColourHelpers.getCooldownGreen() : runeFromAttribute.runeColour();
         var componentList = new ArrayList<Component>();
 
-        componentList.add(withStyleComponent(formattedString, value < 0 ? NEGATIVE_RED : UNIQUE_A));
+        componentList.add(TextHelpers.withStyleComponent(formattedString, value < 0 ? ColourHelpers.getNegativeRed() : ColourHelpers.getUniqueA()));
 
         if(split.length() > 22){
             for (var i = 0; i < string.size(); i += 2) {
                 var s = i + 1 < string.size() ? " " + string.get(i + 1) : "";
-                componentList.add(withStyleComponent(string.get(i) + s, colourBy));
+                componentList.add(TextHelpers.withStyleComponent(string.get(i) + s, colourBy));
             }
         } else {
-            componentList.add(withStyleComponent(split, colourBy));
+            componentList.add(TextHelpers.withStyleComponent(split, colourBy));
         }
 
         return new Boon(componentList, colourBy, () -> sendToServer(new AttributeC2SP(attribute, value)), icon);

@@ -7,12 +7,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 
 import static com.github.L_Ender.cataclysm.init.ModEntities.*;
-import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.*;
+import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.addAndPositionEntity;
+import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.generateMob;
 
 public class BossMobs {
 
@@ -22,7 +23,7 @@ public class BossMobs {
             scylla(serverLevel, instanceData),
             getIgnis(serverLevel, instanceData)
         );
-        return JahdooHelpers.listRandom(getBosses);
+        return Helpers.listRandom(getBosses);
     }
 
     public static LivingEntity maledictus(ServerLevel serverLevel, InstanceData instanceData){

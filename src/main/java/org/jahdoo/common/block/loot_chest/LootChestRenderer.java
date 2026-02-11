@@ -14,11 +14,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.common.items.KeyItem;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
@@ -46,7 +46,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         var blockState = chestEntity.getBlockState();
         var direction =  blockState.getValue(LootChestBlock.FACING);
         var jahdooRarity = KeyItem.getJahdooRarity(new CustomModelData(chestEntity.getRarity));
-        var displayName = JahdooHelpers.withStyleComponent(jahdooRarity.getSerializedName(), jahdooRarity.getColour());
+        var displayName = TextHelpers.withStyleComponent(jahdooRarity.getSerializedName(), jahdooRarity.getColour());
 
         if(chestEntity.canRender()) {
             renderName(chestEntity, displayName, poseStack, bufferSource, direction, partialTick);
@@ -57,8 +57,8 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
     }
 
     public static void roomData(SyncedBlockEntity entity, PoseStack pPoseStack, MultiBufferSource bufferSource, EntityRenderDispatcher dispatcher, float partialTicks) {
-        var offWhite = ColourStore.EXPERIENCE_GREEN;
-        var displayName = JahdooHelpers.withStyleComponent("" + (entity.getSaveInt() + 1), offWhite);
+        var offWhite = ColourHelpers.getExperienceGreen();
+        var displayName = TextHelpers.withStyleComponent("" + (entity.getSaveInt()), offWhite);
         pPoseStack.pushPose();
 
         var scale = Math.sin(((entity.getPrivateTicks() + partialTicks) / 10.0F)) * 0.2F + 5;
@@ -74,7 +74,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
 
-        var text = JahdooHelpers.withStyleComponent("Room", ColourStore.SUB_HEADER_COLOUR);
+        var text = TextHelpers.withStyleComponent("Room", ColourHelpers.getSubHeaderColour());
         var f2 = (float)(-font.width(text) / 2);
 
         font.drawInBatch(text, f2, -10, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
@@ -96,7 +96,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         Matrix4f matrix4f = pPoseStack.last().pose();
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
-        font.drawInBatch(displayName, f1, 0, ColourStore.OFF_WHITE, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        font.drawInBatch(displayName, f1, 0, ColourHelpers.getOffWhite(), true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
 
     }
@@ -113,7 +113,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         Matrix4f matrix4f = pPoseStack.last().pose();
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
-        font.drawInBatch(displayName, f1, 0, ColourStore.OFF_WHITE, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        font.drawInBatch(displayName, f1, 0, ColourHelpers.getOffWhite(), true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
 
     }

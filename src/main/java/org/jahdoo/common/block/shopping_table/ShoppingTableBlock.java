@@ -26,15 +26,16 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.EMPTY;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.checkAndPurchase;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -123,15 +124,15 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
             var stackInSlot = item.extractItem(0, item.getStackInSlot(0).getCount(), false);
             if (!stackInSlot.isEmpty()) {
                 player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
-                Helpers.throwOrAddItem(player, stackInSlot);
+                ItemHelpers.throwOrAddItem(player, stackInSlot);
                 item.setStackInSlot(1, ItemStack.EMPTY);
                 table.itemCosts = EMPTY;
-                Helpers.getSoundWithPosition(level, pos, SoundReg.COINBOX_OPEN.get(), SoundSource.BLOCKS, 1F, 2F);
+                SoundHelpers.getSoundWithPosition(level, pos, SoundReg.COINBOX_OPEN.get(), SoundSource.BLOCKS, 1F, 2F);
             }
 
         } else {
-            player.displayClientMessage(withStyleComponent("Insufficient Funds!", ColourStore.NEGATIVE_RED), true);
-            Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 0.3F, 2F);
+            player.displayClientMessage(TextHelpers.withStyleComponent("Insufficient Funds!", ColourHelpers.getNegativeRed()), true);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_REJECT_REWARDED_PLAYER, SoundSource.BLOCKS, 0.3F, 2F);
         }
 
         return SUCCESS;

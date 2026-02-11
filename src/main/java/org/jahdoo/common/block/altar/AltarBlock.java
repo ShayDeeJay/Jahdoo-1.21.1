@@ -23,7 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
@@ -83,7 +83,7 @@ public class AltarBlock extends BaseEntityBlock {
                     var glowing = MobEffects.GLOWING;
                     if(!livingEntity.hasEffect(glowing)){
                         livingEntity.addEffect(new JahdooMobEffect(glowing, 200, 1));
-                        Helpers.getSoundWithPosition(serverLevel, livingEntity.position(), SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2F, 0.8F);
+                        SoundHelpers.getSoundWithPosition(serverLevel, livingEntity.position(), SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2F, 0.8F);
                     }
                 }
             }

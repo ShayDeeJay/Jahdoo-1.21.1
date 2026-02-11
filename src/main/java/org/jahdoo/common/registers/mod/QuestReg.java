@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.quests.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +33,7 @@ public class QuestReg {
     }
 
     public static AbstractQuest getRandomQuest() {
-        return JahdooHelpers.listRandom(REGISTRY.stream().toList());
+        return Helpers.listRandom(REGISTRY.stream().toList());
     }
 
     public static List<AbstractQuest> getAllQuests() {

@@ -27,11 +27,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
-import org.shaydee.shaydeeapi.block.BlockInteractionHandler;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.common.block.wand_manager.WandManagerBlock.setOuterRingPulse;
@@ -90,7 +91,7 @@ public class DisassemblerBlock extends BaseEntityBlock {
         Player player,
         ItemStack slotItem
     ){
-        Helpers.throwOrAddItem(player, slotItem);
+        ItemHelpers.throwOrAddItem(player, slotItem);
         slotItem.shrink(slotItem.getCount());
     }
 
@@ -145,7 +146,7 @@ public class DisassemblerBlock extends BaseEntityBlock {
         double radius
     ) {
         if (stack.getItem() instanceof JahdooItem || stack.isEmpty() && player.isShiftKeyDown()) {
-            if(!stack.isEmpty()) Helpers.getSoundWithPosition(level, pos, soundEvent, SoundSource.BLOCKS, 1F, 1.2f);
+            if(!stack.isEmpty()) SoundHelpers.getSoundWithPosition(level, pos, soundEvent, SoundSource.BLOCKS, 1F, 1.2f);
             BlockInteractionHandler.swapItemsWithHand(augmentStation.getInputItemHandler(), 0, player, hand);
             var stackInSlot = augmentStation.getInputItemHandler().getStackInSlot(0);
             var type = stackInSlot.get(CUSTOM_MODEL_DATA);

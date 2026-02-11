@@ -11,6 +11,9 @@ import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.common.client.Icons;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +22,6 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getRuneData;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.trial_nexus.rarity.RarityAttributes.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 @IndexedEnum
@@ -30,7 +32,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     EPIC(2, "Epic", color(222, 136, 255), EPIC_ATTRIBUTES, Icons.EPIC_TAG),
     LEGENDARY(3, "Legendary", color(241, 194, 50), LEGENDARY_ATTRIBUTES, Icons.LEGENDARY_TAG),
     MYTHIC(4, "Mythic", color(225, 92, 112), MYTHIC_ATTRIBUTES, Icons.MYTHIC_TAG),
-    UNIQUE(5, "Unique", UNIQUE_B, MYTHIC_ATTRIBUTES, Icons.UNIQUE_TAG);
+    UNIQUE(5, "Unique", ColourHelpers.getUniqueB(), MYTHIC_ATTRIBUTES, Icons.UNIQUE_TAG);
 
     public static final List<Pair<JahdooRarity, Integer>> BASE_RARITY_CHANCES =
         List.of(
@@ -108,7 +110,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             .stream()
             .filter(rarity -> rarity.getSecond() >= getRandom())
             .toList();
-        return listRandom(filteredList).getFirst();
+        return Helpers.listRandom(filteredList).getFirst();
     }
 
     public static JahdooRarity getRarity() {
@@ -116,7 +118,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             .stream()
             .filter(rarity -> rarity.getSecond() <= getRandom())
             .toList();
-        return listRandom(filteredList).getFirst();
+        return Helpers.listRandom(filteredList).getFirst();
     }
 
     public static JahdooRarity getRarity(List<Pair<JahdooRarity, Integer>> rarities) {
@@ -124,27 +126,27 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             .stream()
             .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom())
             .toList();
-        return listRandom(filteredList).getFirst();
+        return Helpers.listRandom(filteredList).getFirst();
     }
 
     public static Component addRarityTooltip(JahdooRarity rarity, Level level){
         if(level == null) return Component.empty();
 
         var id = "rarity.jahdoo.current_rarity";
-        var colour = getColorTransition(UNIQUE_A, UNIQUE_B, (int) level.getGameTime(), 50);
+        var colour = getColorTransition(ColourHelpers.getUniqueA(), ColourHelpers.getUniqueB(), (int) level.getGameTime(), 50);
         var getCorrectColour = rarity.id == 5 ? colour : rarity.getColour();
-        var sibling = withStyleComponent(rarity.getSerializedName(), getCorrectColour);
+        var sibling = TextHelpers.withStyleComponent(rarity.getSerializedName(), getCorrectColour);
 
-        return withStyleComponentTrans(id, SUB_HEADER_COLOUR).copy().append(sibling);
+        return TextHelpers.withStyleComponentTrans(id, ColourHelpers.getSubHeaderColour()).copy().append(sibling);
     }
 
     public static Component attachRuneTierTooltip(ItemStack wandItem) {
         var data = getRuneData(wandItem);
         var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.tier(), 0, 5));
         var getTier = romanNumeralConverter(getRarity.id);
-        return withStyleComponent("Tier ", SUB_HEADER_COLOUR)
+        return TextHelpers.withStyleComponent("Tier ", ColourHelpers.getSubHeaderColour())
             .copy()
-            .append(withStyleComponent(getTier, getRarity.getColour()));
+            .append(TextHelpers.withStyleComponent(getTier, getRarity.getColour()));
     }
 
     public static @NotNull String romanNumeralConverter(int number) {

@@ -5,19 +5,19 @@ import net.minecraft.util.StringRepresentable;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public enum InstanceDifficulty implements StringRepresentable, IExtensibleEnum {
 
-    NOVICE(1, EASY, BRONZE_COIN, Icons.EASY, 1, 2, 10, 5),
-    EXPERT(2, MEDIUM, SILVER_COIN, Icons.MEDIUM, 3, 10, 20, 10),
-    MASTER(3, HARD, GOLD_COIN, Icons.HARD, 6, 20, 40, 20);
+    NOVICE(1, EASY, ColourHelpers.getBronzeCoin(), Icons.EASY, 1, 2, 10, 5),
+    EXPERT(2, MEDIUM, ColourHelpers.getSilverCoin(), Icons.MEDIUM, 3, 10, 20, 10),
+    MASTER(3, HARD, ColourHelpers.getGoldCoin(), Icons.HARD, 6, 20, 40, 20);
 
     private final String name;
     private final ResourceLocation icon;

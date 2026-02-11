@@ -162,6 +162,12 @@ public class Network {
         //S2C
 
         payloadRegistrar.playToClient(
+            CastingUnlocksSyncS2CP.TYPE,
+            CastingUnlocksSyncS2CP.STREAM_CODEC,
+            CastingUnlocksSyncS2CP::handle
+        );
+
+        payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,
             PlayerTrialDataS2CP.STREAM_CODEC,
             PlayerTrialDataS2CP::handle

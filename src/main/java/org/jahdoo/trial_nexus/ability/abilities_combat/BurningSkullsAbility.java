@@ -3,17 +3,17 @@ package org.jahdoo.trial_nexus.ability.abilities_combat;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.burning_skull.BurningSkull;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.GlobalStrings;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.burning_skull.BurningSkull;
-import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.common.registers.mod.ElementReg;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 
@@ -63,7 +63,7 @@ public class BurningSkullsAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return GlobalStrings.BLOCK_MINER_DESCRIPTION;
+        return "description.ability.jahdoo.test";
     }
 
     @Override
@@ -107,7 +107,7 @@ public class BurningSkullsAbility extends Ability {
 
             for (int i = 0; i < projectileCount; i++) {
                 var isValid = !getLocalEntities.isEmpty();
-                var randomTarget = isValid ? JahdooHelpers.listRandom(getLocalEntities) : null;
+                var randomTarget = isValid ? Helpers.listRandom(getLocalEntities) : null;
                 var skull = new BurningSkull(player, 0);
                 skull.setTarget(randomTarget);
                 if (isValid) getLocalEntities.remove(randomTarget);

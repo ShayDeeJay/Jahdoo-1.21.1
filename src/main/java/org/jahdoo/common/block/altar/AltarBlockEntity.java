@@ -69,9 +69,10 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     }
 
     public static @NotNull AABB roomBounding(BlockPos pos) {
+        var i = 24;
         return new AABB(
-            pos.getX() - 24, pos.getY() - 2, pos.getZ() - 24,
-            pos.getX() + 24, pos.getY() + 10, pos.getZ() + 24
+            pos.getX() - i, pos.getY() - 2, pos.getZ() - i,
+            pos.getX() + i, pos.getY() + 10, pos.getZ() + i
         );
     }
 

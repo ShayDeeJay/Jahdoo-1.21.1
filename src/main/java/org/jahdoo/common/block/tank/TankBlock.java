@@ -30,7 +30,7 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 import static net.minecraft.sounds.SoundEvents.SAND_PLACE;
@@ -108,9 +108,9 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     private static void getItemInteractionResult(ItemStack heldItem, TankBlockEntity tankBlock, Player player, Level level) {
         if (heldItem.getItem() == AUGMENT_CORE.get()) {
             if(player.isCreative()) {
-                Helpers.getSoundWithPosition(level, tankBlock.getBlockPos(), NOTE_BLOCK_BELL.value());
+                SoundHelpers.getSoundWithPosition(level, tankBlock.getBlockPos(), NOTE_BLOCK_BELL.value());
                 tankBlock.setData(BOOL, !tankBlock.getData(BOOL));
-            };
+            }
         }
     }
 

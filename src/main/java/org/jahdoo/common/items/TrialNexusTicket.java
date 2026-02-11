@@ -24,7 +24,8 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -38,8 +39,7 @@ import static org.jahdoo.common.registers.ComponentReg.STORE_INTEGER;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_MAX_TIME;
 import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getSoundWithPositionV;
 
 public class TrialNexusTicket extends Item implements JahdooItem {
 
@@ -64,9 +64,9 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     public Component getName(ItemStack stack) {
         var getType = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         var name = super.getName(stack).getString();
-        var colour = getType == null ? SUB_HEADER_COLOUR : colourWithRarity.get(getType.value()-1);
+        var colour = getType == null ? ColourHelpers.getSubHeaderColour() : colourWithRarity.get(getType.value()-1);
 
-        return withStyleComponent(name, colour);
+        return TextHelpers.withStyleComponent(name, colour);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
             var getTicketMods = stack.get(ComponentReg.TICKET_DATA);
             var getUses = stack.get(STORE_INTEGER).intValue();
 
-            tooltips.add(withStyleComponentTrans("info.jahdoo.ticket.teleport", org.shaydee.shaydeeapi.Colours.getSubHeaderColour()));
+            tooltips.add(TextHelpers.withStyleComponentTrans("info.jahdoo.ticket.teleport", ColourHelpers.getSubHeaderColour()));
             tooltips.add(Component.literal(" "));
             appendCapacity(tooltips, stack);
             usesTooltips(tooltips, getType.value(), getUses);
@@ -116,8 +116,8 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         if(stack.has(CORE_DATA) && !CoreData.isFull(stack)){
             var current = CoreData.getFilled(stack);
             var max = CoreData.getRequired(stack);
-            var capacity = withStyleComponentTrans("info.jahdoo.capacity", org.shaydee.shaydeeapi.Colours.getSubHeaderColour());
-            var capacity1 = withStyleComponent(current + "/" + max, JahdooHelpers.colourByPercent(max, current, true));
+            var capacity = TextHelpers.withStyleComponentTrans("info.jahdoo.capacity", ColourHelpers.getSubHeaderColour());
+            var capacity1 = TextHelpers.withStyleComponent(current + "/" + max, ColourHelpers.colourByPercent(max, current, true));
             var append = capacity.copy().append(capacity1);
             toolTips.add(append);
         }
@@ -139,9 +139,9 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     }
 
     private static void usesTooltips(List<Component> tooltips, int getTypeValue, int getUseValue) {
-        var prefix = withStyleComponent("Uses: ", org.shaydee.shaydeeapi.Colours.getHeaderColour());
-        var useRemainingColour = colourByPercent(getTypeValue, getUseValue, true);
-        var suffix = withStyleComponent(getUseValue + "/" + getTypeValue, useRemainingColour);
+        var prefix = TextHelpers.withStyleComponent("Uses: ", ColourHelpers.getHeaderColour());
+        var useRemainingColour = ColourHelpers.colourByPercent(getTypeValue, getUseValue, true);
+        var suffix = TextHelpers.withStyleComponent(getUseValue + "/" + getTypeValue, useRemainingColour);
         tooltips.add(prefix.copy().append(suffix));
     }
 
@@ -151,7 +151,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         if(getTicketMods != null && getTicketMods.get(key) > 0){
             var v = getTicketMods.get(key);
             var s = Objects.equals(key, KEY_MAX_TIME) ? org.shaydee.shaydeeapi.Maths.ticksToTime(v + "") : org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(v));
-            tooltipComponents.add(withStyleComponent("+" + s + (isPercent ? "% " : " ") + stringIdToName(key), colour));
+            tooltipComponents.add(TextHelpers.withStyleComponent("+" + s + (isPercent ? "% " : " ") + TextHelpers.stringIdToName(key), colour));
         }
     }
 
@@ -162,7 +162,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
                 hasPos += getFromReg(LevelBoonReg.positiveFromId(s), tooltips, getTicketMods, s, hasPos);
             }
             if(hasPos > 0) {
-                tooltips.add(tooltips.size() - hasPos, withStyleComponentTrans("info.jahdoo.ticket.positive_modifiers", SUB_HEADER_COLOUR));
+                tooltips.add(tooltips.size() - hasPos, TextHelpers.withStyleComponentTrans("info.jahdoo.ticket.positive_modifiers", ColourHelpers.getSubHeaderColour()));
             }
 
             var hasNeg = 0;
@@ -171,7 +171,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
             }
             if(hasNeg > 0) {
                 tooltips.add(tooltips.size() - hasNeg, Component.literal(" "));
-                tooltips.add(tooltips.size() - hasNeg, withStyleComponentTrans("info.jahdoo.ticket.negative_modifiers", org.shaydee.shaydeeapi.Colours.getHeaderColour()));
+                tooltips.add(tooltips.size() - hasNeg, TextHelpers.withStyleComponentTrans("info.jahdoo.ticket.negative_modifiers", ColourHelpers.getHeaderColour()));
             }
         }
     }
@@ -224,8 +224,8 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
             if(countdown != 0){
                 serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(5, 10, 5));
-                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(withStyleComponent("Loading" + dots, org.shaydee.shaydeeapi.Colours.getOffWhite())));
-                serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(withStyleComponent(String.valueOf(countdown), org.shaydee.shaydeeapi.Colours.getOffWhite())));
+                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(TextHelpers.withStyleComponent("Loading" + dots, ColourHelpers.getOffWhite())));
+                serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(TextHelpers.withStyleComponent(String.valueOf(countdown), ColourHelpers.getOffWhite())));
                 getSoundWithPositionV(player.level(), player.position(), SoundReg.TIMER.get(), 0.5F, 0.8F);
             }
         }

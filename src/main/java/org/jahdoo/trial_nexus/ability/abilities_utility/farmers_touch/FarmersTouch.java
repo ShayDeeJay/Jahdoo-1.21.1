@@ -23,7 +23,7 @@ import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,7 +165,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
                 if (!(bonemealableblock.isValidBonemealTarget(level, pos, blockstate))) return;
                 if(growthChance == 0 || Random.nextInt(0, (int) growthChance) == 0){
                     BoneMealItem.applyBonemeal(ItemStack.EMPTY, level, pos, null);
-                    Helpers.getSoundWithPosition(level, pos, SoundEvents.BONE_MEAL_USE);
+                    SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.BONE_MEAL_USE);
                 }
             }
             this.effectedPos.add(pos);
@@ -175,7 +175,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
     private void harvest(Level level, BlockPos pos, BlockState blockstate) {
         UtilityHelpers.harvestBreaker(level, pos, false);
         utilityParticleBurst(level, pos.getCenter().add(0, 0.4, 0), 8, 1, 3, 0.1f);
-        Helpers.getSoundWithPosition(generic.level(), pos, blockstate.getSoundType(level, pos, null).getBreakSound());
+        SoundHelpers.getSoundWithPosition(generic.level(), pos, blockstate.getSoundType(level, pos, null).getBreakSound());
     }
 
 }

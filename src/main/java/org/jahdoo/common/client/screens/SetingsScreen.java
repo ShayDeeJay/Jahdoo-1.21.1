@@ -10,7 +10,7 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,13 +28,13 @@ public class SetingsScreen extends AbstractPanableScreen {
     private boolean startAnim;
     private float fade;
 
-    public static final List<Integer> uiColours = List.of(
-        Colours.getNetheriteBox(),
-        Colours.getSympathiserOrange(),
+    public static final List<Integer> uiColourHelpers = List.of(
+        ColourHelpers.getNetheriteBox(),
+        ColourHelpers.getSympathiserOrange(),
         ElementReg.utility().textColourB(),
-        Colours.getCosmicPurple(),
-        Colours.getUniqueA(),
-        Colours.getUniqueB()
+        ColourHelpers.getCosmicPurple(),
+        ColourHelpers.getUniqueA(),
+        ColourHelpers.getUniqueB()
     );
 
     @Override
@@ -42,10 +42,10 @@ public class SetingsScreen extends AbstractPanableScreen {
         super.init();
         var spacer = 0;
         var sharedX = this.width/2 - 84;
-        for (var uiColour : uiColours) {
+        for (var uiColour : uiColourHelpers) {
             int finalSpacer = spacer;
             var comment = Arrays.stream(Objects.requireNonNull(UI_COLOUR.getSpec().getComment()).split("\\r?\\n")).findFirst().get();
-            var value = uiColours.indexOf(uiColour);
+            var value = uiColourHelpers.indexOf(uiColour);
             this.addRenderableWidget(
                 menuButton(sharedX + spacer, 100, (button) -> {
                     this.rebuildWidgets();
@@ -59,7 +59,7 @@ public class SetingsScreen extends AbstractPanableScreen {
                         guiGraphics.pose().translate(0, 0, 100);
                         SharedUI.boxMaker(guiGraphics, sharedX + 5 + finalSpacer, 100 + 5, 5, 5, uiColour, uiColour);
                         guiGraphics.pose().popPose();
-                        guiGraphics.drawCenteredString(Minecraft.getInstance().font, comment, sharedX + 84, 84, Colours.getOffWhite());
+                        guiGraphics.drawCenteredString(Minecraft.getInstance().font, comment, sharedX + 84, 84, ColourHelpers.getOffWhite());
                     }
                 }
             );
@@ -150,7 +150,7 @@ public class SetingsScreen extends AbstractPanableScreen {
     }
 
     private void additionalInformation(GuiGraphics graphics, int x, int y) {
-//        var text = withStyleComponentTrans(codex.description(), SUB_HEADER_COLOUR);
+//        var text = TextHelpers.withStyleComponentTrans(codex.description(), ColourHelpers.getSubHeaderColour());
 //        textWithWidthAdjust(font, x, y, text, graphics);
     }
 

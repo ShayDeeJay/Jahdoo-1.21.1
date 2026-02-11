@@ -63,6 +63,7 @@ public class CreativeTab {
                 outPut.accept(STONE_OF_REGRET.get());
                 outPut.accept(DICE.get());
                 outPut.accept(GEAR_SCRAP.get());
+                outPut.accept(CHALLENGER_SOUL.get());
 
                 outPut.accept(KEY_FRAGMENT.get());
                 outPut.accept(EXIT_KEY.get());

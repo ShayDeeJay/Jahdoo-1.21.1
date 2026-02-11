@@ -115,7 +115,7 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
                     if(!usedTank.contains(this)) usedTank.add(this);
                 } else {
                     usedTank.remove(this);
-                };
+                }
             }
             findTank(level, pos, craftingFuelCost);
         }

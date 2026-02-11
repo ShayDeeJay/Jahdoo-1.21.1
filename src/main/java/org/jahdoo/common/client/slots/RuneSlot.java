@@ -15,8 +15,8 @@ import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.RuneReg;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -88,8 +88,8 @@ public class RuneSlot extends SlotItemHandler {
     public void onTake(Player player, ItemStack stack) {
         var level = player.level();
         var pos = entity.getBlockPos();
-        Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, SoundSource.BLOCKS, 1F, 1.6F);
-        Helpers.getSoundWithPosition(level, pos, SoundReg.UNLOCK_NOTIFICATION.get(), SoundSource.BLOCKS, 1F, 1.4F);
+        SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, SoundSource.BLOCKS, 1F, 1.6F);
+        SoundHelpers.getSoundWithPosition(level, pos, SoundReg.UNLOCK_NOTIFICATION.get(), SoundSource.BLOCKS, 1F, 1.4F);
         super.onTake(player, stack);
     }
 
@@ -104,7 +104,7 @@ public class RuneSlot extends SlotItemHandler {
                 purchase(convertToCoins(removeCurrencyCost(getItem())), player);
                 return super.tryRemove(count, decrement, player);
             } else {
-                Helpers.getSoundWithPosition(player.level(), runeTable.getBlockPos(), SoundReg.REJECT.get(), SoundSource.BLOCKS, 0.4F, 1F);
+                SoundHelpers.getSoundWithPosition(player.level(), runeTable.getBlockPos(), SoundReg.REJECT.get(), SoundSource.BLOCKS, 0.4F, 1F);
             }
         }
         return Optional.empty();
@@ -138,14 +138,14 @@ public class RuneSlot extends SlotItemHandler {
             if (canPlace(itemStack, getEntity)) {
                 var cost = getCostFromRune(itemStack);
                 var potential = JahdooGearData.getItemPotential(getEntity.getInputItemHandler().getStackInSlot(0));
-                Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, SoundSource.BLOCKS, 0.4F, 1.2F);
-                Helpers.getSoundWithPosition(level, pos, SoundReg.UNLOCK_NOTIFICATION.get(), SoundSource.BLOCKS, 1F, 0.6F);
+                SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, SoundSource.BLOCKS, 0.4F, 1.2F);
+                SoundHelpers.getSoundWithPosition(level, pos, SoundReg.UNLOCK_NOTIFICATION.get(), SoundSource.BLOCKS, 1F, 0.6F);
                 JahdooGearData.updateRefinementPotential(getEntity.getInputItemHandler().getStackInSlot(0), potential - cost);
                 return true;
             }
         }
 
-        if(getItem().isEmpty()) Helpers.getSoundWithPosition(level, pos, SoundReg.REJECT.get(), SoundSource.BLOCKS, 0.4F, 1F);
+        if(getItem().isEmpty()) SoundHelpers.getSoundWithPosition(level, pos, SoundReg.REJECT.get(), SoundSource.BLOCKS, 0.4F, 1F);
         return false;
     }
 

@@ -16,6 +16,8 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +30,7 @@ import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackground;
-import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.ColourStore.BOX_COLOUR;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.colourByPercent;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
+
 
 public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
 
@@ -173,7 +172,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
                                     SharedUI.boxMaker(
                                         guiGraphics,
                                         sharedX + 106, sharedY - 80, 26, 34,
-                                        BORDER_COLOUR,
+                                        ColourHelpers.getBorderColour(),
                                         fadeBlack(0.5F)
                                     );
                                 }
@@ -265,7 +264,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
                 var current = tanks.getCount();
                 var max = tanks.getMaxSlotSizeInput();
                 var tracker = current + "/" + max;
-                var colour = colourByPercent(max, current, true);
+                var colour = ColourHelpers.colourByPercent(max, current, true);
                 var colourSet = ElementReg.utility().partColourB();
 
                 if(entity().getHolder() != null){
@@ -274,10 +273,10 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
                     if(abilityModifiers != null){
                         var operationCost = abilityModifiers.setValue();
                         var roundCost = org.shaydee.shaydeeapi.Maths.roundNonWholeString(operationCost);
-                        tooltipLines2.add(withStyleComponent("Cost: ", colourSet).copy().append(withStyleComponent(roundCost, org.shaydee.shaydeeapi.Colours.getSubHeaderColour())));
+                        tooltipLines2.add(TextHelpers.withStyleComponent("Cost: ", colourSet).copy().append(TextHelpers.withStyleComponent(roundCost, ColourHelpers.getSubHeaderColour())));
                     }
                 }
-                tooltipLines.add(withStyleComponent("Tank: ", colourSet).copy().append(withStyleComponent(tracker, colour)));
+                tooltipLines.add(TextHelpers.withStyleComponent("Tank: ", colourSet).copy().append(TextHelpers.withStyleComponent(tracker, colour)));
                 guiGraphics.renderTooltip(font, tooltipLines, Optional.empty(), mouseX, mouseY + 4);
                 guiGraphics.renderTooltip(font, tooltipLines2, Optional.empty(), mouseX, mouseY + 21);
             }
@@ -288,8 +287,8 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
                 startY,
                 barWidth,
                 barHeight,
-                BORDER_COLOUR,
-                BOX_COLOUR
+                ColourHelpers.getBorderColour(),
+                ColourHelpers.getBoxColour()
             );
 
             int heightOffset = (int) ((float) (barHeight - 2) / 64 * this.entity().getNexiteCount());

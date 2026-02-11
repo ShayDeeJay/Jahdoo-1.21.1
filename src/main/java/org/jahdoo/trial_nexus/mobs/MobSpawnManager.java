@@ -23,10 +23,10 @@ import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.mobs.mob_setup.BossMobs;
 import org.jahdoo.trial_nexus.mobs.mob_setup.HordeMobs;
-import org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs;
 import org.jahdoo.trial_nexus.mobs.mob_setup.SpecialMobs;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,9 @@ import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 import static org.jahdoo.common.entities.ancient_golem.AncientGolem.INFINITE_LIFE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.difficultyFromInstance;
-import static org.jahdoo.trial_nexus.level_manager.StructureManager.BOSS_CRUCIBLE;
-import static org.jahdoo.trial_nexus.level_manager.StructureManager.CHALLENGER_DOME;
+import static org.jahdoo.trial_nexus.level_manager.RoomData.BOSS_CRUCIBLE;
+import static org.jahdoo.trial_nexus.level_manager.RoomData.CHALLENGER_DOME;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getRgb;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
 public class MobSpawnManager {
@@ -54,8 +53,8 @@ public class MobSpawnManager {
 
     public static void addAndPositionEntity(ServerLevel serverLevel, BlockPos pos, LivingEntity entity){
         setOuterRingPulses(serverLevel, pos.getCenter(), entity.getBbWidth());
-        Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.ORB_CREATE.get(), SoundSource.MASTER, 0.4F, 1.8F);
-        Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.ALLAY_HURT, SoundSource.MASTER, 0.3F, 0.8F);
+        SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundReg.ORB_CREATE.get(), SoundSource.MASTER, 0.4F, 1.8F);
+        SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundEvents.ALLAY_HURT, SoundSource.MASTER, 0.3F, 0.8F);
         entity.moveTo(pos.getCenter());
         serverLevel.addFreshEntity(entity);
     }
@@ -79,7 +78,7 @@ public class MobSpawnManager {
     public static void setOuterRingPulses(Level level, Vec3 position, double radius){
         var lifetime = Random.nextInt(7, 10);
         var parType = ParticleStore.MAGIC_PARTICLE;
-        var particleOptions = ParticleHandlers.genericParticle(parType, getRgb(), getRgb(), lifetime, 0.1f, true, 1);
+        var particleOptions = ParticleHandlers.genericParticle(parType, ColourHelpers.getRgb(), ColourHelpers.getRgb(), lifetime, 0.1f, true, 1);
 
         getOuterRingOfRadiusRandom(position, radius, radius * 40,
             pos -> ParticleHandlers.sendParticles(level, particleOptions, pos, 0, 0, 1,0, Random.nextDouble(0.1, 0.4))
@@ -90,11 +89,17 @@ public class MobSpawnManager {
         if(!(entity.getLevel() instanceof ServerLevel serverLevel)) return;
         var data = entity.getData(INSTANCE_DATA);
 
-        switch (roomId){
-            case BOSS_CRUCIBLE -> BossMobs.getBoss(entity, serverLevel, data);
-            case CHALLENGER_DOME -> MiniBossMobs.getMiniBoss(entity, serverLevel, data);
-            default -> MobSpawnManager.buildMobs(entity, serverLevel, roomId);
+        if(BOSS_CRUCIBLE.isRoom(roomId)) {
+            BossMobs.getBoss(entity, serverLevel, data);
+            return;
         }
+
+        if(CHALLENGER_DOME.isRoom(roomId)) {
+            BossMobs.getBoss(entity, serverLevel, data);
+            return;
+        }
+
+        MobSpawnManager.buildMobs(entity, serverLevel, roomId);
     }
 
     private static void spawnMany(

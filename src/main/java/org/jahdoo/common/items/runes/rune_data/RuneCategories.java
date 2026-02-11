@@ -1,16 +1,17 @@
 package org.jahdoo.common.items.runes.rune_data;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 public enum RuneCategories {
 
     ELEMENTAL("elemental", 5, 1, -1),
-    PERK("perk", 10, 3, PERK_GREEN),
-    AETHER("aether", 15, 0, AETHER_BLUE),
-    RESILIENCE("protector", 20, 2, NEGATIVE_RED),
-    COSMIC("cosmic", 25, 4, COSMIC_PURPLE),
-    INFINITY("infinity", 30, 5, CHAMPION_GOLD),
-    EMPTY("blank", 500, -1, OFF_WHITE);
+    PERK("perk", 10, 3, ColourHelpers.getPerkGreen()),
+    AETHER("aether", 15, 0, ColourHelpers.getAetherBlue()),
+    RESILIENCE("protector", 20, 2, ColourHelpers.getNegativeRed()),
+    COSMIC("cosmic", 25, 4, ColourHelpers.getCosmicPurple()),
+    INFINITY("infinity", 30, 5, ColourHelpers.getChampionGold()),
+    EMPTY("blank", 500, -1, ColourHelpers.getOffWhite());
 
     private final String name;
     private final int cost;

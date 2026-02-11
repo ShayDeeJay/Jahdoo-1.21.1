@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
-import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.RUN_DATA;
 import static org.jahdoo.trial_nexus.attachments.CasterData.addExperience;
 
 public class RunData implements IAttachment {
@@ -41,10 +42,10 @@ public class RunData implements IAttachment {
     public static final String SAFE = "safe";
 
     public static final String TIME_IN_TRIAL = "time_in_trial";
-    public static final String BRONZE_COIN = "bronze_coin";
-    public static final String SILVER_COIN = "silver_coin";
-    public static final String GOLD_COIN = "gold_coin";
-    public static final String PLATINUM_COIN = "platinum_coin";
+    public static final String BRONZE_COIN = PlayerWallet.CoinProperties.BRONZE.getName();
+    public static final String SILVER_COIN = PlayerWallet.CoinProperties.SILVER.getName();
+    public static final String GOLD_COIN = PlayerWallet.CoinProperties.GOLD.getName();
+    public static final String PLATINUM_COIN = PlayerWallet.CoinProperties.PLATINUM.getName();
 
     private Map<String, Integer> stats = new HashMap<>();
     private String currentQuestId = "";
@@ -264,9 +265,9 @@ public class RunData implements IAttachment {
     public static void incrementCoin(ServerLevel level, LivingEntity player, int coinType, int coinValue) {
         var instanceData = level.getData(INSTANCE_DATA.get());
         var runData = player.getData(RUN_DATA.get());
-        var type = coinType == 1 ? SILVER_COIN : coinType == 2 ? GOLD_COIN : coinType == 3 ? PLATINUM_COIN : BRONZE_COIN;
+        var type = PlayerWallet.CoinProperties.getType(coinType);
 
-        runData.addStat(type, coinValue);
+        runData.addStat(type.getName(), coinValue);
         runData.setExperienceGained(instanceData.getDifficulty(), coinValue);
         if (player instanceof ServerPlayer serverPlayer) {
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));

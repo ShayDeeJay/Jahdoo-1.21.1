@@ -10,8 +10,6 @@ import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.mod.EntityDataReg;
-
-import static org.jahdoo.trial_nexus.utils.GlobalStrings.BLOCK_MINER_DESCRIPTION;
 import static org.jahdoo.common.registers.mod.ElementReg.frost;
 
 public class FrostboltsAbility extends Ability {
@@ -26,7 +24,7 @@ public class FrostboltsAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return BLOCK_MINER_DESCRIPTION;
+        return "dsd";
     }
 
     @Override

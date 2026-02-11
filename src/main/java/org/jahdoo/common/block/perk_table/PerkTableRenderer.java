@@ -15,8 +15,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
@@ -65,8 +65,8 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
         stack.popPose();
 
         if(state == 2){
-            var offWhite = ColourStore.EXPERIENCE_GREEN;
-            var displayName = JahdooHelpers.withStyleComponent("Quest", FastColor.ARGB32.color(232, 169, 0));
+            var offWhite = ColourHelpers.getExperienceGreen();
+            var displayName = TextHelpers.withStyleComponent("Quest", FastColor.ARGB32.color(232, 169, 0));
             var font = Minecraft.getInstance().font;
             var f1 = (float)(-font.width(displayName) / 2);
             var x = 0.020F;

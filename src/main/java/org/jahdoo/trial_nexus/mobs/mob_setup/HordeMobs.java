@@ -16,15 +16,15 @@ import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
 import org.jahdoo.common.entities.custom_entities.CustomZombie;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.mobs.MobItemHandler;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY;
-import static org.jahdoo.trial_nexus.level_manager.StructureManager.*;
-import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.listRandom;
+import static org.jahdoo.trial_nexus.level_manager.RoomData.RoomType.*;
+import static org.jahdoo.trial_nexus.level_manager.RoomData.isType;
+import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.generateMob;
 
 public class HordeMobs {
 
@@ -55,7 +55,7 @@ public class HordeMobs {
         var collection = equipWeapon(entity, serverLevel, data);
 
         if(!collection.isEmpty()){
-            entity.setItemSlot(MAINHAND, listRandom(collection));
+            entity.setItemSlot(MAINHAND, Helpers.listRandom(collection));
         }
         return entity;
     }
@@ -80,19 +80,14 @@ public class HordeMobs {
     public static LivingEntity getReadyZombie(ServerLevel serverLevel, String id, InstanceData data){
         Monster entity;
 
-        if(EASY_ROOMS.contains(id)){
-            entity = new CustomZombie(serverLevel, null);
-        } else if (HARD_ROOMS.contains(id)) {
-            entity = new ZombieVillager(EntityType.ZOMBIE_VILLAGER, serverLevel);
-        } else if (MEDIUM_ROOMS.contains(id)) {
-            entity = new Husk(EntityType.HUSK, serverLevel);
-        } else {
-            entity = new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
-        }
+        if(isType(id, EASY_ROOM)) entity = new CustomZombie(serverLevel, null); else
+        if(isType(id, MEDIUM_ROOM)) entity = new Husk(EntityType.HUSK, serverLevel); else
+        if(isType(id, HARD_ROOM)) entity = new ZombieVillager(EntityType.ZOMBIE_VILLAGER, serverLevel);
+        else entity = new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
 
         var collection = equipWeapon(entity, serverLevel, data);
         if(!collection.isEmpty()) {
-            var weapon = JahdooHelpers.listRandom(collection);
+            var weapon = Helpers.listRandom(collection);
             entity.setItemSlot(MAINHAND, weapon.is(Items.BOW) ? ItemStack.EMPTY : weapon);
         }
 

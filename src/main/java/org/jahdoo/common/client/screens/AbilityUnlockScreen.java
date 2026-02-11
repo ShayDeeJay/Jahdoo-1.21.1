@@ -27,16 +27,18 @@ import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.ability.skills.AbstractSkill;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ClientHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.mojang.blaze3d.platform.InputConstants.*;
+import static com.mojang.blaze3d.platform.InputConstants.KEY_LCONTROL;
+import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.client.Icons.*;
@@ -44,9 +46,7 @@ import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAllAbilityModifiers;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
     List<Component> components = new ArrayList<>();
@@ -174,28 +174,28 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var headerColour = color(100, 116, 245);
 
         if(AbilityComponentHelper.shiftForDetails(component, false)){
-            component.add(component.size()-1, withStyleComponent(JahdooHelpers.stringIdToName(skill.id()), headerColour));
+            component.add(component.size()-1, TextHelpers.withStyleComponent(TextHelpers.stringIdToName(skill.id()), headerColour));
         } else {
-            component.addAll(toComponent(skill.description(), JahdooHelpers.stringIdToName(skill.id()), headerColour, color(161, 171, 255)));
+            component.addAll(toComponent(skill.description(), TextHelpers.stringIdToName(skill.id()), headerColour, color(161, 171, 255)));
         }
 
         if(!haveSkill){
             component.addLast(Component.empty());
-            var prefix = withStyleComponent("Cost: ", SUB_HEADER_COLOUR);
-            var suffix = withStyleComponent("◆ " + skill.unlockCost() + " Skill Points", PERK_GREEN).copy();
+            var prefix = TextHelpers.withStyleComponent("Cost: ", ColourHelpers.getSubHeaderColour());
+            var suffix = TextHelpers.withStyleComponent("◆ " + skill.unlockCost() + " Skill Points", ColourHelpers.getPerkGreen()).copy();
             component.addLast(prefix.copy().append(suffix));
 
             if(!dependency){
-                var prefix1 = withStyleComponent("Requires Level: ", SUB_HEADER_COLOUR);
-                var suffix1 = withStyleComponent(skill.levelRequirement() + "", headerColour).copy();
+                var prefix1 = TextHelpers.withStyleComponent("Requires Level: ", ColourHelpers.getSubHeaderColour());
+                var suffix1 = TextHelpers.withStyleComponent(skill.levelRequirement() + "", headerColour).copy();
                 component.addLast(prefix1.copy().append(suffix1));
             }
         }
 
         if(haveSkill){
             var skillActive = CasterData.hasSkill(player, skill.id());
-            var prefix1 = withStyleComponent("Status: ", SUB_HEADER_COLOUR);
-            var suffix1 = withStyleComponent(skillActive ? "Active" : "Inactive", skillActive ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED).copy();
+            var prefix1 = TextHelpers.withStyleComponent("Status: ", ColourHelpers.getSubHeaderColour());
+            var suffix1 = TextHelpers.withStyleComponent(skillActive ? "Active" : "Inactive", skillActive ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed()).copy();
             component.addLast(Component.empty());
             component.addLast(prefix1.copy().append(suffix1));
         }
@@ -383,7 +383,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                     b1,
                     true,
                     !b1,
-                    b || Helpers.isKeyDown(KEY_LSHIFT),
+                    b || ClientHelpers.isKeyDown(KEY_LSHIFT),
                     data.getLoadouts().get(finalI) != null ? DATA : null,
                     (button) -> setLoadout(finalI, b),
                     () -> this.centerScreenHover(b && !b1)
@@ -401,8 +401,8 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
          if(player == null) return;
 
          var newLoadout = CasterData.isNewLoadout(player);
-         var shiftDown = Helpers.isKeyDown(KEY_LSHIFT);
-         var leftClick = Helpers.isKeyDown(KEY_LCONTROL);
+         var shiftDown = ClientHelpers.isKeyDown(KEY_LSHIFT);
+         var leftClick = ClientHelpers.isKeyDown(KEY_LCONTROL);
 
          var hasLoadout = CasterData.hasLoadout(player, index);
          if (!shiftDown && hasLoadout) sendToServer(new RegretAbilitiesC2SP(false));
@@ -463,9 +463,9 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var maxWidth = 200;
         var formattedText = new StringSplitter((a, b) -> 10).splitLines(body, maxWidth, Style.EMPTY);
 
-        list.add(withStyleComponent(name, colour1));
+        list.add(TextHelpers.withStyleComponent(name, colour1));
         for (var lines : formattedText) {
-            list.add(withStyleComponent(lines.getString(), colour2));
+            list.add(TextHelpers.withStyleComponent(lines.getString(), colour2));
         }
         return list;
     }
@@ -491,7 +491,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var player = mc.player;
         if(player == null) return;
         if(unlocked) {
-            if(isKeyDown(mc.getWindow().getWindow(), KEY_LSHIFT)){
+            if(ClientHelpers.isKeyDown(KEY_LSHIFT)){
                 var data = player.getData(AttachmentReg.CASTER_DATA);
                 var abilitySlots = data.getAbilitySlots();
                 var validSlots = abilitySlots.stream().filter(i -> !i.isEmpty()).toList();
@@ -570,7 +570,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 100);
-        guiGraphics.drawCenteredString(font, withStyleComponent(skillPoints + "", PERK_GREEN), i1 + 30, 27 + i2, -1);
+        guiGraphics.drawCenteredString(font, TextHelpers.withStyleComponent(skillPoints + "", ColourHelpers.getPerkGreen()), i1 + 30, 27 + i2, -1);
         guiGraphics.blit(SKILL_POINT, i1 - 1, 18 + i2, 0, 0, size, size, size, size);
         guiGraphics.pose().popPose();
     }
@@ -602,7 +602,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0,40,100);
-        boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, BORDER_COLOUR, fadeBlack(0.6f));
+        boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, ColourHelpers.getBorderColour(), fadeBlack(0.6f));
         drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
         guiGraphics.drawCenteredString(font, "Exp Cost", mouseX + offsetX, mouseY + 4 + offsetY, -1);
         guiGraphics.pose().popPose();

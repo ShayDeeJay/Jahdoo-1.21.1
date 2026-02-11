@@ -18,6 +18,7 @@ import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,18 +36,17 @@ import static org.jahdoo.trial_nexus.trading_post.ShoppingArmor.enchantArmorItem
 import static org.jahdoo.trial_nexus.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingWeapon.getElementalSword;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.listRandom;
 import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.attachLootBeamComponent;
 
 public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts){
 
     public static ShoppingItems shoppingArmorItem(ServerLevel serverLevel) {
-        var randomMage = new ShoppingItems(listRandom(ShoppingArmor.mageWithData(UNIQUE)), setGoldCost(150));
-        var randomBattleMage = new ShoppingItems(listRandom(ShoppingArmor.battleMageWithData(UNIQUE)), setGoldCost(300));
-        var randomWizard = new ShoppingItems(listRandom(ShoppingArmor.wizardWithData(UNIQUE)), setPlatinumCost(150));
-        var randomKnightKing = new ShoppingItems(listRandom(ShoppingArmor.knightKingWithData(UNIQUE)), setPlatinumCost(150));
-        var randomAncientGolem = new ShoppingItems(listRandom(ShoppingArmor.ancientGolemWithData(UNIQUE)), setPlatinumCost(300));
-        var getRandomArmor = listRandom(List.of(randomMage, randomBattleMage, randomWizard, randomKnightKing, randomAncientGolem));
+        var randomMage = new ShoppingItems(Helpers.listRandom(ShoppingArmor.mageWithData(UNIQUE)), setGoldCost(150));
+        var randomBattleMage = new ShoppingItems(Helpers.listRandom(ShoppingArmor.battleMageWithData(UNIQUE)), setGoldCost(300));
+        var randomWizard = new ShoppingItems(Helpers.listRandom(ShoppingArmor.wizardWithData(UNIQUE)), setPlatinumCost(150));
+        var randomKnightKing = new ShoppingItems(Helpers.listRandom(ShoppingArmor.knightKingWithData(UNIQUE)), setPlatinumCost(150));
+        var randomAncientGolem = new ShoppingItems(Helpers.listRandom(ShoppingArmor.ancientGolemWithData(UNIQUE)), setPlatinumCost(300));
+        var getRandomArmor = Helpers.listRandom(List.of(randomMage, randomBattleMage, randomWizard, randomKnightKing, randomAncientGolem));
 
         var stack = getRandomArmor.ShoppingItem;
         if (stack.getItem() instanceof ArmorItem armorItem) {
@@ -139,7 +139,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
             shoppingRuneItem()
         );
 
-        return listRandom(items);
+        return Helpers.listRandom(items);
     }
 
     public static void addAttribute(
@@ -181,7 +181,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var high = new ShoppingItems(RuneHelpers.generateRandomTypAttribute(MYTHIC, LEGENDARY), setPlatinumCost(150));
         var best = new ShoppingItems(RuneHelpers.generateRandomTypAttribute(MYTHIC, MYTHIC), setPlatinumCost((300)));
         var getAll = List.of(med, high, best);
-        return listRandom(getAll);
+        return Helpers.listRandom(getAll);
     }
 
     public static ShoppingItems shoppingGauntletItem(){

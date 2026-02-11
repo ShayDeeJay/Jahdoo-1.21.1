@@ -15,6 +15,8 @@ import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -23,8 +25,8 @@ import java.util.List;
 
 import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.hurtAndKeepItem;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.stackDurability;
 
 public class Magnet extends BaseItem implements ICurioItem {
     public Magnet() {
@@ -50,8 +52,8 @@ public class Magnet extends BaseItem implements ICurioItem {
     public void implicitModifiers(ItemStack stack, List<Component> toolTips) {
         super.implicitModifiers(stack, toolTips);
         var magnetData = MagnetData.getMagnetData(stack);
-        toolTips.add(JahdooHelpers.withStyleComponent("Range: " + magnetData.range(), MAGNET_RANGE_GREEN));
-        toolTips.add(JahdooHelpers.withStyleComponent("Strength: " + org.shaydee.shaydeeapi.Maths.roundNonWholeString(magnetData.strength()), MAGNET_STRENGTH_RED));
+        toolTips.add(TextHelpers.withStyleComponent("Range: " + magnetData.range(), ColourHelpers.getMagnetRangeGreen()));
+        toolTips.add(TextHelpers.withStyleComponent("Strength: " + org.shaydee.shaydeeapi.Maths.roundNonWholeString(magnetData.strength()), ColourHelpers.getMagnetStrengthRed()));
     }
 
     @Override
@@ -61,8 +63,8 @@ public class Magnet extends BaseItem implements ICurioItem {
 
         if(magnetData == null) return InteractionResultHolder.fail(switchActive);
         MagnetData.updateActive(switchActive, !magnetData.active());
-        var active = JahdooHelpers.withStyleComponent("Active", org.shaydee.shaydeeapi.Colours.getMagnetRangeGreen());
-        var deactivate = JahdooHelpers.withStyleComponent("Deactivated", org.shaydee.shaydeeapi.Colours.getMagnetStrengthRed());
+        var active = TextHelpers.withStyleComponent("Active", ColourHelpers.getMagnetRangeGreen());
+        var deactivate = TextHelpers.withStyleComponent("Deactivated", ColourHelpers.getMagnetStrengthRed());
         player.displayClientMessage(!magnetData.active() ? active : deactivate, true);
         player.playSound(SoundReg.SELECT.get());
         return super.use(level, player, usedHand);
@@ -72,7 +74,7 @@ public class Magnet extends BaseItem implements ICurioItem {
     public Component getName(ItemStack stack) {
         var type = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         var suffix = "Magnet";
-        if(type == null) return withStyleComponent("Lesser " + suffix, SUB_HEADER_COLOUR);
+        if(type == null) return TextHelpers.withStyleComponent("Lesser " + suffix, ColourHelpers.getSubHeaderColour());
         var id = type.value();
         var typeName = switch (id){
             case 1 -> "Simple ";
@@ -85,7 +87,7 @@ public class Magnet extends BaseItem implements ICurioItem {
 
         var rarityColour = JahdooRarity.getAllRarities(id);
 
-        return withStyleComponent(typeName + suffix, rarityColour.getColour());
+        return TextHelpers.withStyleComponent(typeName + suffix, rarityColour.getColour());
     }
 
     @Override

@@ -19,7 +19,6 @@ import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.items.Stamp;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
-import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -34,7 +33,8 @@ import org.jahdoo.trial_nexus.loot.RewardLootTables;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
 import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 
 import java.util.function.Function;
 
@@ -647,7 +647,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         CasterData.incrementAbilityPoints(player, skillPoints);
-        sendToPlayer(player, new CastingDataSyncS2CP(player.getData(AttachmentReg.CASTER_DATA)));
+        CasterData.sharedPackets(player, player.getData(AttachmentReg.CASTER_DATA));
         return 1;
     }
 
@@ -656,7 +656,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         CasterData.decrementAbilityPoints(player, skillPoints);
-        sendToPlayer(player, new CastingDataSyncS2CP(player.getData(AttachmentReg.CASTER_DATA)));
+        CasterData.sharedPackets(player, player.getData(AttachmentReg.CASTER_DATA));
         return 1;
     }
 
@@ -688,7 +688,7 @@ public class JahdooCommands {
         var player = source.getPlayer();
         if(player == null) return 0;
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.basicShieldWithRarity(null, rarity));
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.basicShieldWithRarity(null, rarity));
         }
         return 1;
     }
@@ -698,7 +698,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.soldWands(rarity).ShoppingItem());
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.soldWands(rarity).ShoppingItem());
         }
         return 1;
     }
@@ -708,7 +708,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.getGauntletWithRarity(null, rarity));
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.getGauntletWithRarity(null, rarity));
         }
         return 1;
     }
@@ -718,7 +718,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.createTomeAttributes(null, rarity == null ? JahdooRarity.getRarity() : rarity));
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.createTomeAttributes(null, rarity == null ? JahdooRarity.getRarity() : rarity));
         }
         return 1;
     }
@@ -736,9 +736,9 @@ public class JahdooCommands {
         var hCore = new ItemStack(ItemReg.AUGMENT_HYPER_CORE);
         CoreData.setFilled(hCore);
 
-        Helpers.throwOrAddItem(player, core.copyWithCount(64));
-        Helpers.throwOrAddItem(player, aCore.copyWithCount(64));
-        Helpers.throwOrAddItem(player, hCore.copyWithCount(64));
+        ItemHelpers.throwOrAddItem(player, core.copyWithCount(64));
+        ItemHelpers.throwOrAddItem(player, aCore.copyWithCount(64));
+        ItemHelpers.throwOrAddItem(player, hCore.copyWithCount(64));
 
         return 1;
     }
@@ -756,7 +756,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.magnetItem(null, rarity == null ? JahdooRarity.getRarity() : rarity));
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.magnetItem(null, rarity == null ? JahdooRarity.getRarity() : rarity));
         }
         return 1;
     }
@@ -766,7 +766,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.elementalSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.elementalSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
         }
         return 1;
     }
@@ -776,7 +776,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++)
-            Helpers.throwOrAddItem(player, ShoppingItems.glaive(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.glaive(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
 
         return 1;
     }
@@ -786,7 +786,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++)
-            Helpers.throwOrAddItem(player, ShoppingItems.ingmasSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.ingmasSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
 
         return 1;
     }
@@ -799,7 +799,7 @@ public class JahdooCommands {
             var runeRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
             var index = tier - 1;
             var rarity1 = index == 5 ? JahdooRarity.getRarity() : JahdooRarity.getAllRarities(index);
-            Helpers.throwOrAddItem(player, RuneHelpers.generateRandomTypAttribute(null, rarity1, runeRarity));
+            ItemHelpers.throwOrAddItem(player, RuneHelpers.generateRandomTypAttribute(null, rarity1, runeRarity));
         }
 
         return 1;
@@ -810,7 +810,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.knightKingWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            ItemHelpers.throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -820,7 +820,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.ancientGolemWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            ItemHelpers.throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -831,7 +831,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.mageWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            ItemHelpers.throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -841,7 +841,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.wizardWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            ItemHelpers.throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -851,7 +851,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.battleMageWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            ItemHelpers.throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -861,7 +861,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++)
-            Helpers.throwOrAddItem(player, ShoppingItems.shoppingArmorItem(source.getLevel()).ShoppingItem());
+            ItemHelpers.throwOrAddItem(player, ShoppingItems.shoppingArmorItem(source.getLevel()).ShoppingItem());
 
         return 1;
     }
@@ -871,7 +871,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for(int i = 0; i < 10; i++)
-            standAloneLoot(source.getLevel(), player.position(), difficulty, keyType, getRgb());
+            standAloneLoot(source.getLevel(), player.position(), difficulty, keyType, ColourHelpers.getRgb());
 
         return 1;
     }
@@ -901,7 +901,7 @@ public class JahdooCommands {
             for (int i = 1; i < 6; i++){
                 var newItem = new ItemStack(ItemReg.TRIAL_TICKET);
                 TicketData.initTicket(newItem, i);
-                Helpers.throwOrAddItem(player, newItem);
+                ItemHelpers.throwOrAddItem(player, newItem);
             }
         }
 
@@ -923,7 +923,7 @@ public class JahdooCommands {
             if (source.getLevel() instanceof ServerLevel) {
                 var stamps = new ItemStack(ItemReg.STAMP);
                 Stamp.addBoon(stamps, null);
-                Helpers.throwOrAddItem(player, stamps);
+                ItemHelpers.throwOrAddItem(player, stamps);
             }
         }
 
@@ -946,14 +946,14 @@ public class JahdooCommands {
             var itemStack2 = new ItemStack(Items.ENCHANTED_BOOK);
 
             RewardLootTables.bookGetter(serverLevel, itemStack, sharpness, 10);
-            Helpers.throwOrAddItem(player, itemStack);
+            ItemHelpers.throwOrAddItem(player, itemStack);
 
             RewardLootTables.bookGetter(serverLevel, itemStack1, efficiency, 6);
-            Helpers.throwOrAddItem(player, itemStack1);
-            Helpers.throwOrAddItem(player, itemStack1);
+            ItemHelpers.throwOrAddItem(player, itemStack1);
+            ItemHelpers.throwOrAddItem(player, itemStack1);
 
             RewardLootTables.bookGetter(serverLevel, itemStack2, unbreaking, 5);
-            Helpers.throwOrAddItem(player, itemStack2);
+            ItemHelpers.throwOrAddItem(player, itemStack2);
         }
 
         return 1;

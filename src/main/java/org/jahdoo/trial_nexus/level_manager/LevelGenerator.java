@@ -9,9 +9,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.portal.DimensionTransition;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -35,11 +37,15 @@ public class LevelGenerator {
     public static void debugLevels(ServerLevel serverLevel, Player player) {
         for (ServerLevel allLevel : serverLevel.getServer().getAllLevels()) {
             if (allLevel instanceof CustomLevel cLevel) {
-                var rgb = JahdooHelpers.getRgb();
-                player.sendSystemMessage(JahdooHelpers.withStyleComponent(cLevel.getDescription().getString(), rgb));
-                player.sendSystemMessage(JahdooHelpers.withStyleComponent(cLevel.getData(INSTANCE_DATA).toString(), rgb));
+                var rgb = ColourHelpers.getRgb();
+                player.sendSystemMessage(TextHelpers.withStyleComponent(cLevel.getDescription().getString(), rgb));
+                player.sendSystemMessage(TextHelpers.withStyleComponent(cLevel.getData(INSTANCE_DATA).toString(), rgb));
             }
         }
+    }
+
+    public static boolean isNexus(Level level){
+        return level.getDescription().getString().contains(LevelGenerator.LEVEL_PREFIX);
     }
 
     public static void removeCustomLevels(ServerLevel serverLevel) {
@@ -86,6 +92,7 @@ public class LevelGenerator {
                     gameRules.getRule(GameRules.RULE_NATURAL_REGENERATION).set(false, null);
                     gameRules.getRule(GameRules.RULE_MOBGRIEFING).set(false, null);
                     gameRules.getRule(GameRules.RULE_DOFIRETICK).set(false, null);
+                    gameRules.getRule(GameRules.RULE_DOENTITYDROPS).set(false, null);
                     return null;
                 }
             );

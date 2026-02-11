@@ -11,8 +11,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.common.items.caster_item.CastHelper;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -21,7 +22,6 @@ import static net.minecraft.world.item.ItemDisplayContext.FIXED;
 import static org.jahdoo.common.block.shopping_table.DisplayDirection.*;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
-import static org.jahdoo.trial_nexus.utils.ColourStore.OFF_WHITE;
 
 public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableEntity>{
 
@@ -54,7 +54,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         if(!entity.getItem().getStackInSlot(0).isEmpty()){
             poseStack.pushPose();
             var coin = CurrencyConverter.getCoin(entity.itemCosts);
-            renderCostText(JahdooHelpers.withStyleComponent(String.valueOf(coin.getSecond()), coin.getFirst().getTextColour()), poseStack, source, -1, direction);
+            renderCostText(TextHelpers.withStyleComponent(String.valueOf(coin.getSecond()), coin.getFirst().getTextColour()), poseStack, source, -1, direction);
             poseStack.translate(direction.x(), number, direction.z());
 
             var x = 0.6f;
@@ -118,7 +118,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
 
-        font.drawInBatch(isRandomTable ? Component.literal("?") : displayName, isRandomTable ? -3 : f1, 0, OFF_WHITE, false, matrix4f, source, NORMAL , 0, 255);
+        font.drawInBatch(isRandomTable ? Component.literal("?") : displayName, isRandomTable ? -3 : f1, 0, ColourHelpers.getOffWhite(), false, matrix4f, source, NORMAL , 0, 255);
         poseStack.popPose();
     }
 

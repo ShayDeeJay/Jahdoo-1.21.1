@@ -15,9 +15,9 @@ import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.core.BlockPos.containing;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
@@ -25,18 +25,17 @@ import static org.jahdoo.common.block.altar.AltarBlockEntity.roomBounding;
 import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.addAndPositionEntity;
 import static org.jahdoo.trial_nexus.mobs.MobSpawnManager.championSpawn;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.listRandom;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 public class ActiveAltar {
 
     public static void onActiveAltar(AltarBlockEntity aEntity, ServerLevel serverLevel) {
         if(!aEntity.started) return;
+        aEntity.incrementPrivateTicks();
 
         var blockPos = aEntity.getBlockPos();
         var validSpawnPositions = getValidSpawnPositions(blockPos, serverLevel);
 
-        aEntity.incrementPrivateTicks();
         reAssignTarget(serverLevel, blockPos);
         removeKilledMobs(aEntity, serverLevel);
         manageMobSpawns(aEntity, serverLevel, validSpawnPositions);
@@ -65,7 +64,7 @@ public class ActiveAltar {
             .filter(pos1 -> hitboxFits(serverLevel, pos1) && spawnNotFluid(serverLevel, pos1))
             .toList();
 
-        return randomPoses.isEmpty() ? pos.getCenter() : JahdooHelpers.listRandom(randomPoses);
+        return randomPoses.isEmpty() ? pos.getCenter() : Helpers.listRandom(randomPoses);
     }
 
     private static void removeKilledMobs(AltarBlockEntity aEntity, ServerLevel serverLevel) {
@@ -86,7 +85,7 @@ public class ActiveAltar {
         var maxNotReached = aEntity.onField.size() < maxMobsOnField;
 
         if(hasMobsToSpawn && maxNotReached){
-            var entity = listRandom(aEntity.spawnableMobs);
+            var entity = Helpers.listRandom(aEntity.spawnableMobs);
             addAndPositionEntity(serverLevel, containing(pos), entity);
 
             aEntity.spawnableMobs.remove(entity);
@@ -108,7 +107,7 @@ public class ActiveAltar {
                 getSafe.moveTo(pos);
                 getSafe.lookAt(EntityAnchorArgument.Anchor.EYES, aEntity.getBlockPos().getCenter());
                 serverLevel.addFreshEntity(getSafe);
-                Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.SWORD_THUD.value(), SoundSource.HOSTILE, 5F, 1.8F);
+                SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundReg.SWORD_THUD.value(), SoundSource.HOSTILE, 5F, 1.8F);
             }
 
             aEntity.spawnedSafe = true;
@@ -129,7 +128,7 @@ public class ActiveAltar {
         entities.stream()
             .filter(e -> e instanceof Mob mob && mob.getTarget() == null)
             .map(e -> (Mob) e)
-            .forEach(mob -> mob.setTarget(listRandom(validTargets)));
+            .forEach(mob -> mob.setTarget(Helpers.listRandom(validTargets)));
     }
 
     public static boolean isValidTarget(Entity e) {

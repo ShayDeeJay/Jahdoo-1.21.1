@@ -2,18 +2,17 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.ancient_golem;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.GlobalStrings;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
-import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.trial_nexus.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility.summonMinionSound;
 import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ANCIENT_GOLEM;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility.summonMinionSound;
 
 public class SummonAncientGolemAbility extends Ability {
 
@@ -31,7 +30,7 @@ public class SummonAncientGolemAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return GlobalStrings.BLOCK_MINER_DESCRIPTION;
+        return "description.ability.jahdoo.test";
     }
 
     @Override

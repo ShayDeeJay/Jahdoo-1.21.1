@@ -16,7 +16,7 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.attachments.AbstractHoldUseAttachment;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -41,13 +41,13 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     }
 
     private void unSuccessfulCast(Player player) {
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), SoundSource.PLAYERS, 0.8f, 1.2f);
+        SoundHelpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), SoundSource.PLAYERS, 0.8f, 1.2f);
         PositionFinders.getOuterRingOfRadius(player.position(), 0.3, 30, vec3 -> setCastingAnimation(vec3, player));
     }
 
     public static void successfulCastAnimation(LivingEntity player) {
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), SoundSource.PLAYERS, 1f,1.2f);
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.IMPACT.get(), SoundSource.PLAYERS, 1f,0.8f);
+        SoundHelpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), SoundSource.PLAYERS, 1f,1.2f);
+        SoundHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.IMPACT.get(), SoundSource.PLAYERS, 1f,0.8f);
         setRejuvenationSuccessEffect(player);
     }
 

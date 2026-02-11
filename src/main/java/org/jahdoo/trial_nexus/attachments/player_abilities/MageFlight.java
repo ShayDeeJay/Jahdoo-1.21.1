@@ -18,7 +18,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
@@ -109,10 +109,10 @@ public class MageFlight implements IAttachment {
         );
 
         if (player.tickCount % 6 == 0) {
-            Helpers.getSoundWithPosition(
+            SoundHelpers.getSoundWithPosition(
                 player.level(), player.position(), SoundReg.LEVITATE.get(), PLAYERS, 1f, Random.nextFloat(1, 1.5F)
             );
-            Helpers.getSoundWithPosition(
+            SoundHelpers.getSoundWithPosition(
                 player.level(), player.position(), SoundReg.HEAL.get(), PLAYERS, 0.5f, Random.nextFloat(1, 1.5F)
             );
         }

@@ -6,15 +6,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.Objects;
 
 import static java.lang.String.valueOf;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
-import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_RANGE_GREEN;
-import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_STRENGTH_RED;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public abstract class AbstractLevelBoon {
 
@@ -33,7 +33,7 @@ public abstract class AbstractLevelBoon {
     abstract public void execute(ServerLevel level, double value);
 
     public int getHeaderColour(){
-        return MAGNET_STRENGTH_RED;
+        return ColourHelpers.getMagnetStrengthRed();
     }
 
     public int getStampIndex(){
@@ -41,7 +41,7 @@ public abstract class AbstractLevelBoon {
     }
 
     public int textColour(){
-        return isPositive() ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED;
+        return isPositive() ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed();
     }
 
     public Component boonLabel(double value, String id){
@@ -49,7 +49,7 @@ public abstract class AbstractLevelBoon {
         var displayTime = org.shaydee.shaydeeapi.Maths.ticksToTime(valueOf(value));
         var getBy = Objects.equals(id, "max_time") ? displayTime : displayValue;
 
-        return withStyleComponent("+" + getBy + (isPercentageOf() ? "% " : " ") + stringIdToName(id), textColour());
+        return TextHelpers.withStyleComponent("+" + getBy + (isPercentageOf() ? "% " : " ") + TextHelpers.stringIdToName(id), textColour());
     }
 
     public record SyncableData(String id, ResourceLocation icon, double value, Component label){

@@ -17,7 +17,7 @@ import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.CreatorRecipeReg;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,7 +91,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     public static void successfulCraftVisual(Level level, BlockPos blockPos){
-        Helpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.5f, 0.8f);
+        SoundHelpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.5f, 0.8f);
     }
 
     public boolean isCompletedCraft(){
@@ -147,7 +147,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
     private void tableProcessingParticle(Level level){
         if(this.progress == 1 || this.progress % 25 == 0){
-            Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, SoundSource.BLOCKS, 0.1F, Random.nextFloat(1.5F, 2F));
+            SoundHelpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, SoundSource.BLOCKS, 0.1F, Random.nextFloat(1.5F, 2F));
         }
     }
 

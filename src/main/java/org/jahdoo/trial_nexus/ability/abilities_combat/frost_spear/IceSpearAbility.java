@@ -14,7 +14,6 @@ import org.jahdoo.common.entities.ice_spear.IceSpear;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SHOT_MULTIPLIER;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.VELOCITY;
-import static org.jahdoo.trial_nexus.utils.GlobalStrings.BLOCK_MINER_DESCRIPTION;
 import static org.jahdoo.common.registers.mod.ElementReg.frost;
 
 public class IceSpearAbility extends Ability {
@@ -28,7 +27,7 @@ public class IceSpearAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return BLOCK_MINER_DESCRIPTION;
+        return "dsd";
     }
 
     @Override

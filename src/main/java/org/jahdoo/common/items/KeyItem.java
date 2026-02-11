@@ -8,64 +8,20 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.level_manager.RoomData;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static org.jahdoo.trial_nexus.level_manager.StructureManager.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 
 public class KeyItem extends BaseJahdooItem {
 
-    public enum KeyTypes {
-        EXIT_KEY("exit_key", ABSORPTION_YELLOW, EXIT_ROOM_COMPONENT),
-        BAZAAR_KEY("bazaar_key", AETHER_BLUE, BAZAAR_COMPONENT),
-        CRYPT_KEY("crypt_key", UNIQUE_B, LOOT_CRYPT_COMPONENT),
-        KEY_PIECE("key_piece", SUB_HEADER_COLOUR, Component.empty()),
-        SANCTUARY_KEY("sanctuary_key", ElementReg.mystic().textColourA(), SANCTUARY_COMPONENT),
-        CHALLENGER_KEY("challenger_key", PERK_GREEN, CHALLENGER_DOME_COMPONENT);
-
-        private final String id;
-        private final int color;
-        private final Component roomId;
-
-        KeyTypes(
-            String id,
-            int color,
-            Component roomId
-        ) {
-            this.id = id;
-            this.color = color;
-            this.roomId = roomId;
-        }
-
-        public static KeyTypes getById(String id){
-            for (var value : KeyTypes.values()) {
-                if(id.contains(value.id)) return value;
-            }
-            return KEY_PIECE;
-        }
-
-        public Component getRoomId(){
-            return roomId;
-        }
-    }
-
     public KeyItem() {
         super(new Properties());
-    }
-
-    public static KeyTypes isLockKey(ItemStack stack){
-        for (var value : KeyTypes.values()) {
-            if (stack.getDescriptionId().contains(value.id)) return value;
-        }
-
-        return KeyTypes.KEY_PIECE;
     }
 
     @Override
@@ -83,8 +39,8 @@ public class KeyItem extends BaseJahdooItem {
 
         if(s != null && level != null){
             var equals = s.equals(level.getDescriptionKey());
-            var prefix = withStyleComponent("Usable Here: ", SUB_HEADER_COLOUR).copy();
-            var valid = withStyleComponent("" + equals, equals ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED);
+            var prefix = TextHelpers.withStyleComponent("Usable Here: ", ColourHelpers.getSubHeaderColour()).copy();
+            var valid = TextHelpers.withStyleComponent("" + equals, equals ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed());
             tooltipComponents.add(prefix.append(valid));
         }
 
@@ -93,9 +49,9 @@ public class KeyItem extends BaseJahdooItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        var type = KeyTypes.getById(stack.getDescriptionId());
-        var colour = type.color;
-        return withStyleComponentTrans(super.getName(stack).getString(), colour);
+        var type = RoomData.getByItem(stack);
+        var colour = type.getColor();
+        return TextHelpers.withStyleComponentTrans(super.getName(stack).getString(), colour);
     }
 
     @Override

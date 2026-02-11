@@ -4,11 +4,11 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.awt.*;
 
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
 public class LocalLootBeamData {
 
@@ -52,7 +52,7 @@ public class LocalLootBeamData {
         var beamRadius = 0.35F + ((float) rarity.getId() / 10);
         var shadowRadius = 0.4f + ((float) rarity.getId() / 10);
         var renderDistance = 250;
-        return new LootBeamComponent(UNIQUE_B, UNIQUE_A, beamHeight, 0.8F,  1F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
+        return new LootBeamComponent(ColourHelpers.getUniqueB(), ColourHelpers.getUniqueA(), beamHeight, 0.8F,  1F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
     }
 
     public static void attachCoinSackLootBeam(ItemStack stack){
@@ -60,7 +60,7 @@ public class LocalLootBeamData {
         var beamRadius = 0.35F;
         var shadowRadius = 0.4f;
         var renderDistance = 48;
-        var lootBeamComponent = new LootBeamComponent(GOLD_COIN, SILVER_COIN, beamHeight, 0.8F, 1F, true, beamRadius, 0.4F, shadowRadius, false, renderDistance, true, 5, 0.25, 1.5, true);
+        var lootBeamComponent = new LootBeamComponent(ColourHelpers.getGoldCoin(), ColourHelpers.getSilverCoin(), beamHeight, 0.8F, 1F, true, beamRadius, 0.4F, shadowRadius, false, renderDistance, true, 5, 0.25, 1.5, true);
         stack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), lootBeamComponent);
     }
 

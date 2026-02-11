@@ -31,7 +31,7 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.core.Direction.SOUTH;
 import static net.minecraft.sounds.SoundEvents.BOOK_PUT;
@@ -146,7 +146,7 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
             if (stamp.is(ItemReg.TRIAL_TICKET) || stamp.isEmpty()) {
                 BlockInteractionHandler.swapItemsWithHand(entity1.getInputItemHandler(), 0, player, hand);
-                Helpers.getSoundWithPosition(level,pos, BOOK_PUT, SoundSource.BLOCKS, 1, 1.6F);
+                SoundHelpers.getSoundWithPosition(level,pos, BOOK_PUT, SoundSource.BLOCKS, 1, 1.6F);
                 return SUCCESS;
             }
 
@@ -158,9 +158,9 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
     private static void acceptAnim(Level level, BlockPos pos, int partType, int colour) {
         acceptParticle(level, pos, partType, colour);
-        Helpers.getSoundWithPosition(level, pos, SoundReg.HEAL.get(), SoundSource.BLOCKS, 0.2F, 1.6F);
-        Helpers.getSoundWithPosition(level, pos, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.2F, 1.6F);
-        Helpers.getSoundWithPosition(level, pos, BOOK_PUT, SoundSource.BLOCKS, 3, 1F);
+        SoundHelpers.getSoundWithPosition(level, pos, SoundReg.HEAL.get(), SoundSource.BLOCKS, 0.2F, 1.6F);
+        SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.2F, 1.6F);
+        SoundHelpers.getSoundWithPosition(level, pos, BOOK_PUT, SoundSource.BLOCKS, 3, 1F);
     }
 
     private static void acceptParticle(Level level, BlockPos pos, int partType, int colour) {

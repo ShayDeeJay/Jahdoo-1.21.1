@@ -3,9 +3,9 @@ package org.jahdoo.trial_nexus.quests;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class KillHordeQuest extends AbstractQuest{
 
     @Override
     public int questColour() {
-        return ColourStore.NEGATIVE_RED;
+        return ColourHelpers.getNegativeRed();
     }
 
     @Override

@@ -17,9 +17,11 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
@@ -44,10 +46,10 @@ public class LootHelpers {
         var coinItems = getCoinItems(lootChestEntity.getData(INSTANCE_DATA));
         if(!coinItems.isEmpty()){
             lootChestEntity.setOpen(true);
-            lootsplosian(pos.getCenter(), serverLevel, org.shaydee.shaydeeapi.Colours.getAbsorptionYellow(), coinItems, false, 20, 0);
+            lootsplosian(pos.getCenter(), serverLevel, ColourHelpers.getAbsorptionYellow(), coinItems, false, 20, 0);
             openingSoundEffect(pos, serverLevel, false);
         } else {
-            player.displayClientMessage(withStyleComponent("Chest is empty!", org.shaydee.shaydeeapi.Colours.getNegativeRed()), true);
+            player.displayClientMessage(TextHelpers.withStyleComponent("Chest is empty!", ColourHelpers.getNegativeRed()), true);
         }
         return SUCCESS;
     }
@@ -100,7 +102,7 @@ public class LootHelpers {
 
     public static ItemStack potLoot(ServerLevel serverLevel, Vec3 pos, String difficulty, int keyValue){
         var rewards = getCompletionLoot(serverLevel, pos, difficulty, keyValue);
-        var getItem = JahdooHelpers.listRandom(rewards);
+        var getItem = Helpers.listRandom(rewards);
         attachItemData(serverLevel, getItem, null, keyValue);
         return getItem;
     }
@@ -125,7 +127,7 @@ public class LootHelpers {
         var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
         var offsetX = Math.cos(angle) * horizontalOffset;
         var offsetZ = Math.sin(angle) * horizontalOffset;
-        var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
+        var velocity = new Vec3(offsetX * (Math.random() - 0.5), Random.nextDouble(0.35, 0.6), offsetZ * (Math.random() - 0.5));
         var itemStackMain= itemEntity.getItem();
 
         itemEntity.setDeltaMovement(velocity);
@@ -153,14 +155,14 @@ public class LootHelpers {
     }
 
     private static void openingSoundEffect(BlockPos pos, ServerLevel serverLevel, boolean isLootChest) {
-        Helpers.getSoundWithPosition(serverLevel, pos, VAULT_EJECT_ITEM, SoundSource.BLOCKS, 2F, 0.8F);
-        Helpers.getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 2F, 1.4F);
-        Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_PLACE, SoundSource.BLOCKS, 2F, 0.4F);
+        SoundHelpers.getSoundWithPosition(serverLevel, pos, VAULT_EJECT_ITEM, SoundSource.BLOCKS, 2F, 0.8F);
+        SoundHelpers.getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 2F, 1.4F);
+        SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_PLACE, SoundSource.BLOCKS, 2F, 0.4F);
 
         if(isLootChest) {
-            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.LOOTBOX_OPEN.get(), SoundSource.BLOCKS, 2F, 1F);
+            SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundReg.LOOTBOX_OPEN.get(), SoundSource.BLOCKS, 2F, 1F);
         } else {
-            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.COINBOX_OPEN.get(), SoundSource.BLOCKS, 0.6F, 1F);
+            SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundReg.COINBOX_OPEN.get(), SoundSource.BLOCKS, 0.6F, 1F);
         }
     }
 

@@ -79,6 +79,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> GEAR_SCRAP =
         basicItem("gear_scrap");
 
+    public static final DeferredHolder<Item, Item> CHALLENGER_SOUL =
+        basicItem("challenger_soul");
+
     //Core Items
     public static final DeferredHolder<Item, Item> CHARGED_AUGMENT_CORE =
         chargedCoreItems("augment_core_filled");

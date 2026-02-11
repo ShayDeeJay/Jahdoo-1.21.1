@@ -25,16 +25,15 @@ import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
-import static org.jahdoo.trial_nexus.utils.ColourStore.COSMIC_PURPLE;
-import static org.jahdoo.trial_nexus.utils.ColourStore.PERK_GREEN;
 
 public class TrialPortalBlock extends NetherPortalBlock {
 
-    public static final IntegerProperty DIMENSION_KEY = BlockStateProperties.LEVEL;;
+    public static final IntegerProperty DIMENSION_KEY = BlockStateProperties.LEVEL;
     public static final int KEY_HOME = 0;
     public static final int KEY_TRADING_POST = 1;
     public static final int KEY_TRIAL = 2;
@@ -109,7 +108,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
                 d2 = (double)pos.getZ() + (double)0.5F + (double)0.25F * (double)j;
             }
 
-            var particleColour = state.getValue(DIMENSION_KEY) == 0 ? PERK_GREEN : COSMIC_PURPLE;
+            var particleColour = state.getValue(DIMENSION_KEY) == 0 ? ColourHelpers.getPerkGreen() : ColourHelpers.getCosmicPurple();
             var colourDarker = JahdooHelpers.getColourDarker(particleColour, 0.5F);
             var particleData = ParticleHandlers.genericParticle(MAGIC_PARTICLE, particleColour, colourDarker, 10, 1, false, 0);
             level.addParticle(particleData, d0, d1, d2, 0, d4, 0);

@@ -2,17 +2,17 @@ package org.jahdoo.trial_nexus.boon.level_boons.positive;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_BRONZE_COIN;
 
 public class BronzeCoins extends Coins {
     @Override
     public String id() {
-        return KEY_BRONZE_COIN;
+        return InstanceData.KEY_BRONZE_COIN;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class BronzeCoins extends Coins {
 
     @Override
     public int getHeaderColour() {
-        return ColourStore.BRONZE_COIN;
+        return ColourHelpers.getBronzeCoin();
     }
 
 }

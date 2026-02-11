@@ -23,6 +23,7 @@ import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.EntityHelpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimationController;
@@ -42,7 +43,6 @@ import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour.canDamageEntity;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.hasLineOfSight;
 import static software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
@@ -224,7 +224,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
             .stream()
             .filter(livingEntity -> !(livingEntity instanceof Player))
             .filter(livingEntity -> canDamageEntity(livingEntity, owner))
-            .filter(livingEntity -> hasLineOfSight(entity, livingEntity))
+            .filter(livingEntity -> EntityHelpers.hasLineOfSight(entity, livingEntity))
             .sorted(comparingDouble(livingEntity -> livingEntity.distanceToSqr(entity)))
             .toList();
     }
@@ -236,7 +236,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
 
             if(!nearbyEntities.isEmpty()){
                 var getClosest = nearbyEntities.getFirst();
-                var canSee = hasLineOfSight(this, getClosest);
+                var canSee = EntityHelpers.hasLineOfSight(this, getClosest);
                 if(canSee) this.target = getClosest;
             }
         }

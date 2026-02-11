@@ -22,7 +22,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
@@ -108,13 +108,13 @@ public class CreatorBlock extends BaseEntityBlock{
             return FAIL;
         } else {
             if(!outputIHandler.getStackInSlot(0).isEmpty()){
-                Helpers.throwOrAddItem(player, outputIHandler.getStackInSlot(0));
+                ItemHelpers.throwOrAddItem(player, outputIHandler.getStackInSlot(0));
                 return SUCCESS;
             } else {
                 for (int i = 0; i < inputIHandler.getSlots(); i++) {
                     int entry = inputIHandler.getSlots() - (i+1);
                     if(!inputIHandler.getStackInSlot(entry).isEmpty()){
-                        Helpers.throwOrAddItem(player, inputIHandler.getStackInSlot(entry));
+                        ItemHelpers.throwOrAddItem(player, inputIHandler.getStackInSlot(entry));
                         return SUCCESS;
                     }
                 }

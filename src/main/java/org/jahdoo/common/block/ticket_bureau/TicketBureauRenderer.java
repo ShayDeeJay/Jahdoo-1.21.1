@@ -10,10 +10,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import org.jahdoo.common.components.CoreData;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static net.minecraft.client.Minecraft.getInstance;
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
@@ -43,8 +43,8 @@ public class TicketBureauRenderer implements BlockEntityRenderer<TicketBureauBlo
         var current = CoreData.getFilled(render);
 
         if(!itemStack1.isEmpty()){
-            var displayName = JahdooHelpers.withStyleComponent(current + "/" + required, JahdooHelpers.colourByPercent(required, current, true));
-            var complete = JahdooHelpers.withStyleComponent("Complete", ColourStore.MAGNET_RANGE_GREEN);
+            var displayName = TextHelpers.withStyleComponent(current + "/" + required, ColourHelpers.colourByPercent(required, current, true));
+            var complete = TextHelpers.withStyleComponent("Complete", ColourHelpers.getMagnetRangeGreen());
             stack.pushPose();
             if(dispatcher.camera.getPosition().distanceTo(entity.getBlockPos().getCenter()) < 4){
                 renderName(dispatcher.camera.rotation(), CoreData.isFull(itemStack1) ? complete : displayName, stack, source, 1.4);
@@ -85,7 +85,7 @@ public class TicketBureauRenderer implements BlockEntityRenderer<TicketBureauBlo
         pPoseStack.mulPose(rotation);
         pPoseStack.scale(x, -x, x);
         Matrix4f matrix4f = pPoseStack.last().pose();
-        font.drawInBatch(displayName, f1, 0, ColourStore.OFF_WHITE, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        font.drawInBatch(displayName, f1, 0, ColourHelpers.getOffWhite(), true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
 
     }

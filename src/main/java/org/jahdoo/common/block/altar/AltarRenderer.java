@@ -8,11 +8,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 import static net.minecraft.client.renderer.blockentity.BeaconRenderer.renderBeaconBeam;
-import static org.jahdoo.trial_nexus.utils.ColourStore.PERK_GREEN;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getColourLight;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
@@ -33,7 +33,7 @@ public class AltarRenderer extends GeoBlockRenderer<AltarBlockEntity>{
     ) {
         var rad =  Math.min(0.1f, (float) level.getGameTime() / 300);
         var height = 500;
-        var colourLight = getColourLight(PERK_GREEN, 1.2);
+        var colourLight = getColourLight(ColourHelpers.getPerkGreen(), 1.2);
 
         renderBeaconBeam(poseStack, source, BEAM_LOCATION, partialTick, 0.2F, i, 2, height, colourLight, rad, 0);
         renderBeaconBeam(poseStack, source, BEAM_LOCATION, partialTick, 0.2F, i, 0, height, colourLight, 0, rad * 6);

@@ -27,10 +27,10 @@ public class InstanceData implements IAttachment {
     public static final String KEY_MAX_TIME = "max_time";
     public static final String KEY_ORE_MULTIPLIER = "ore_multiplier";
     public static final String KEY_LOOT_POT_MULTIPLIER = "loot_pot_multiplier";
-    public static final String KEY_BRONZE_COIN = "bronze_coin";
-    public static final String KEY_SILVER_COIN = "silver_coin";
-    public static final String KEY_GOLD_COIN = "gold_coin";
-    public static final String KEY_PLATINUM_COIN = "platinum_coin";
+    public static final String KEY_BRONZE_COIN = PlayerWallet.CoinProperties.BRONZE.getName();
+    public static final String KEY_SILVER_COIN = PlayerWallet.CoinProperties.SILVER.getName();
+    public static final String KEY_GOLD_COIN = PlayerWallet.CoinProperties.GOLD.getName();
+    public static final String KEY_PLATINUM_COIN = PlayerWallet.CoinProperties.PLATINUM.getName();
     public static final String KEY_HEALTH = "mob_health";
     public static final String KEY_KNOCKBACK = "mob_knockback";
     public static final String KEY_SPEED = "mob_speed";
@@ -43,6 +43,7 @@ public class InstanceData implements IAttachment {
     public static final String KEY_LEGENDARY_LOOT_MULTIPLIER = "legendary_loot_multiplier";
     public static final String KEY_MYTHIC_LOOT_MULTIPLIER = "mythic_loot_multiplier";
     public static final String KEY_EXPERIENCE = "experience";
+    public static final String KEY_DIRECTION = "direction";
 
 
     private final Map<String, Double> values = new HashMap<>();
@@ -200,6 +201,10 @@ public class InstanceData implements IAttachment {
 
     public void incrementSafeLootMultiplier(int lootMultiplier) {
         increment(KEY_SAFE_LOOT_MULTIPLIER, lootMultiplier);
+    }
+
+    public void setKeyDirection(double mobs) {
+        increment(KEY_DIRECTION, mobs);
     }
 
     public void incrementSkeleton(double mobs) {

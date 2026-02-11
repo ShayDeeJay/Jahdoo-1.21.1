@@ -20,7 +20,7 @@ import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
@@ -77,7 +77,7 @@ public class BlockBomb extends AbstractUtilityProjectile {
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(level(), generic.blockPosition(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(level(), generic.blockPosition(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
     @Override

@@ -8,6 +8,8 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE;
@@ -20,8 +22,6 @@ import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.overlay.WalletOverlay.renderWallet;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 public class StatScreen extends AbstractPanableScreen {
 
     public static int fadeBackground = fadeBlack(0.6F);
@@ -57,7 +57,7 @@ public class StatScreen extends AbstractPanableScreen {
         otherMagicStats(graphics, centerX, centerY - 28 + shiftY, player, mc);
         elementalStats(graphics, player, centerX - 280, centerY + shiftY, mc);
         renderPlayer(graphics, mouseX, mouseY, (int) withPanX, (int) withPanY + shiftY, player);
-        renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 200 + shiftY, false, null);
+        renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 200 + shiftY, false, false, true, null);
         SharedUI.renderMiniXPBar(graphics, (int) withPanX - 41, (int) withPanY + 118, Minecraft.getInstance());
     }
 
@@ -73,7 +73,7 @@ public class StatScreen extends AbstractPanableScreen {
             guiGraphics, mc, xSpacing, ySpacing - 264,
             "Protections",
             iconFromEffect(DAMAGE_RESISTANCE),
-            NEGATIVE_RED,
+            ColourHelpers.getNegativeRed(),
             player.getAttribute(RESILIENCE)
         );
 
@@ -124,17 +124,17 @@ public class StatScreen extends AbstractPanableScreen {
     private void playerLevelData(GuiGraphics guiGraphics, LocalPlayer player, int xSpacing, int ySpacing, CasterData data) {
         var x = xSpacing - 210;
         var y = ySpacing - 220;
-        var colour = COSMIC_PURPLE;
+        var colour = ColourHelpers.getCosmicPurple();
 
         var adjustY = -5;
         var adjustX = -16;
         SharedUI.boxMaker(guiGraphics, x - 20, y - 2, 70, 11, 0, fadeBackground, fadeBackground);
-        var showLevel = withStyleComponent("Level: ", SUB_HEADER_COLOUR).copy().append(withStyleComponent("" + data.getLevel(), colour));
+        var showLevel = TextHelpers.withStyleComponent("Level: ", ColourHelpers.getSubHeaderColour()).copy().append(TextHelpers.withStyleComponent("" + data.getLevel(), colour));
         guiGraphics.drawString(font, showLevel, x + adjustX, y + 5 + adjustY, -1);
 
         var nextLevel = CasterData.getXpNeededForNextLevel(CasterData.getLevel(player));
         var progressToNextLevel = CasterData.getXpRemainingToNextLevel(player);
-        var showNextLevel = withStyleComponent("Next Level: ", SUB_HEADER_COLOUR).copy().append(withStyleComponent((nextLevel - progressToNextLevel) + "/" + nextLevel, colour));
+        var showNextLevel = TextHelpers.withStyleComponent("Next Level: ", ColourHelpers.getSubHeaderColour()).copy().append(TextHelpers.withStyleComponent((nextLevel - progressToNextLevel) + "/" + nextLevel, colour));
         guiGraphics.drawString(font, showNextLevel, x + adjustX, y + 15 + adjustY, -1);
     }
 

@@ -20,7 +20,7 @@ import org.jahdoo.common.block.loot_chest.LootChestRenderer;
 import org.jahdoo.common.block.perk_table.PerkTableRenderer;
 import org.jahdoo.common.block.power_up_station.PowerUpStationRenderer;
 import org.jahdoo.common.block.divine_forge.DivineForgeRenderer;
-import org.jahdoo.common.block.divine_forge.helpers.RuneTableScreen;
+import org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreen;
 import org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterRenderer;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
 import org.jahdoo.common.block.tank.TankRenderer;
@@ -83,7 +83,7 @@ public class ClientBusEvents {
     public static void onClientSetup(RegisterMenuScreensEvent event) {
         event.register(MODULAR_CHAOS_CUBE_MENU.get(), ChaosCubeScreen::new);
         event.register(WAND_MANAGER_MENU.get(), WandManagerScreen::new);
-        event.register(RUNE_TABLE_MENU.get(), RuneTableScreen::new);
+        event.register(RUNE_TABLE_MENU.get(), DivineForgeScreen::new);
     }
 
     @SubscribeEvent

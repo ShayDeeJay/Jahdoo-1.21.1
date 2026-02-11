@@ -8,8 +8,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public abstract class BaseItem extends BaseJahdooItem implements JahdooItem {
 
     public void implicitModifiers(ItemStack stack, List<Component> tooltipComponents){
         tooltipComponents.add(Component.literal(" "));
-        tooltipComponents.add(JahdooHelpers.withStyleComponentTrans("info.jahdoo.implicit_modifiers", ColourStore.SUB_HEADER_COLOUR));
+        tooltipComponents.add(TextHelpers.withStyleComponentTrans("info.jahdoo.implicit_modifiers", ColourHelpers.getSubHeaderColour()));
     }
 
     @Override

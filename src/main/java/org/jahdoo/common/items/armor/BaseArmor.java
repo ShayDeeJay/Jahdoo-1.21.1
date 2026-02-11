@@ -13,8 +13,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
@@ -85,15 +85,15 @@ public abstract class BaseArmor extends ArmorItem implements JahdooItem {
     }
 
     private static void baseArmorTooltip(ItemStack stack, List<Component> tooltipComponents) {
-        tooltipComponents.add(JahdooHelpers.withStyleComponent("When Equipped", ColourStore.SUB_HEADER_COLOUR));
+        tooltipComponents.add(TextHelpers.withStyleComponent("When Equipped", ColourHelpers.getSubHeaderColour()));
         for (var modifier : stack.getAttributeModifiers().modifiers()) {
             var value = org.shaydee.shaydeeapi.Maths.roundNonWholeString(modifier.modifier().amount());
 
             if(modifier.attribute() == Attributes.ARMOR){
-                tooltipComponents.add(JahdooHelpers.withStyleComponent("+"+value+" Armor", ColourStore.MAGNET_STRENGTH_RED));
+                tooltipComponents.add(TextHelpers.withStyleComponent("+"+value+" Armor", ColourHelpers.getMagnetStrengthRed()));
             }
             if(modifier.attribute() == Attributes.ARMOR_TOUGHNESS){
-                tooltipComponents.add(JahdooHelpers.withStyleComponent("+"+value+" Armor Toughness", ColourStore.MAGNET_STRENGTH_RED));
+                tooltipComponents.add(TextHelpers.withStyleComponent("+"+value+" Armor Toughness", ColourHelpers.getMagnetStrengthRed()));
             }
         }
     }

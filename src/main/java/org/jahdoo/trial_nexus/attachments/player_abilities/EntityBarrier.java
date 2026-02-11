@@ -62,7 +62,7 @@ public class EntityBarrier {
                     entity.setDeltaMovement(deltaX * 1, 0, deltaZ * 1);
                 }
 
-//                Helpers.getSoundWithPosition(level, entity.blockPosition(), SoundEvents.BEACON_POWER_SELECT, 0.1f, 1.5f);
+//                SoundHelpers.getSoundWithPosition(level, entity.blockPosition(), SoundEvents.BEACON_POWER_SELECT, 0.1f, 1.5f);
                 damageWithJahdoo(entity, 1, ElementReg.mystic().damageTypeResourceKey());
                 particleBurst(serverLevel, entity.position().add(0, entity.getBbHeight() / 2, 0), 5, getType.getParticleGroup().bakedSlow(), 0, 0, 0, 0.2f);
             }

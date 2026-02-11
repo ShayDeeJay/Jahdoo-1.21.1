@@ -14,11 +14,11 @@ import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.block.divine_forge.DivineForge.setOuterRingPulse;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
-import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class TicketBureauBlockEntity extends AbstractTankUser {
@@ -68,18 +68,18 @@ public class TicketBureauBlockEntity extends AbstractTankUser {
             if(level instanceof ServerLevel serverLevel){
                 if (Random.nextInt(10) == 0) {
                     var success = Random.nextInt(2) == 0;
-                    setOuterRingPulse(serverLevel, pos, 0.5, success ? 10 : 2, 1.5, 0.3, success ? utility().textColourB() : NEGATIVE_RED, 40);
+                    setOuterRingPulse(serverLevel, pos, 0.5, success ? 10 : 2, 1.5, 0.3, success ? utility().textColourB() : ColourHelpers.getNegativeRed(), 40);
                     if(success){
-                        Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.LEVEL_UP.get(), SoundSource.BLOCKS, 1, 1.8F);
+                        SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundReg.LEVEL_UP.get(), SoundSource.BLOCKS, 1, 1.8F);
                         var copy = item.copy();
                         CoreData.increment(copy, 10);
                         if(CoreData.isFull(copy)){
-                            Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1, 1.8F);
+                            SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1, 1.8F);
                             TicketData.initTicket(copy, 1);
                         }
                         this.getInputItemHandler().setStackInSlot(0, copy);
                     } else {
-                        Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.REJECT.get(), SoundSource.BLOCKS, 1, 0.5F);
+                        SoundHelpers.getSoundWithPosition(serverLevel, pos, SoundReg.REJECT.get(), SoundSource.BLOCKS, 1, 0.5F);
                     }
                     chargeTankFuel(this.setCraftingCost());
                 }

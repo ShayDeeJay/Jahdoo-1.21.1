@@ -23,8 +23,11 @@ import org.jahdoo.trial_nexus.boon.player_boons.Boon;
 import org.jahdoo.trial_nexus.level_manager.BlockSetupManager;
 import org.jahdoo.trial_nexus.level_manager.StructureManager;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
+import org.shaydee.shaydeeapi.helpers.BlockHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +100,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
         tag.put("interacted", tags);
 
         if(this.returnLocation != null){
-            Helpers.saveBlockPosNBT(tag, this.returnLocation);
+            BlockHelpers.saveBlockPosNBT(tag, this.returnLocation);
         }
 
         super.saveAdditional(tag, registries);
@@ -111,7 +114,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
         var getUsed = tag.getCompound("interacted");
         for (var allKey : getUsed.getAllKeys()) this.usedBy.add(getUsed.getUUID(allKey));
 
-        this.returnLocation = Helpers.loadBlockPosNBT(tag);
+        this.returnLocation = BlockHelpers.loadBlockPosNBT(tag);
 
         super.loadAdditional(tag, registries);
     }
@@ -128,7 +131,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
         }
     }
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(level, this.getBlockPos(), sEvent, SoundSource.BLOCKS, volume, pitch);
+        SoundHelpers.getSoundWithPosition(level, this.getBlockPos(), sEvent, SoundSource.BLOCKS, volume, pitch);
     }
     public void setUsed(BlockState state, Player player){
         if(level == null) return;
@@ -142,7 +145,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
                     this.usedBy.add(player.getUUID());
                     this.updateBlock();
                 } else {
-                    usedMessage(player, org.shaydee.shaydeeapi.Colours.getNegativeRed());
+                    usedMessage(player, ColourHelpers.getNegativeRed());
                 }
             }
             case 1 -> {
@@ -152,7 +155,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
                     sharedSound(BREWING_STAND_BREW, 1F, 0.8F);
                     this.usedBy.add(player.getUUID());
                 } else {
-                    usedMessage(player, org.shaydee.shaydeeapi.Colours.getAetherBlue());
+                    usedMessage(player, ColourHelpers.getAetherBlue());
                 }
             }
             case 2 -> {
@@ -161,7 +164,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
                         Minecraft.getInstance().setScreen(new QuestSelectionScreen(this.worldPosition));
                     }
                 } else {
-                    usedMessage(player, org.shaydee.shaydeeapi.Colours.getAbsorptionYellow());
+                    usedMessage(player, ColourHelpers.getAbsorptionYellow());
                 }
             }
             case 3 -> {
@@ -171,7 +174,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
                         sharedSound(PLAYER_LEVELUP, 1F, 0.8F);
                     }
                 } else {
-                    usedMessage(player, org.shaydee.shaydeeapi.Colours.getPerkGreen());
+                    usedMessage(player, ColourHelpers.getPerkGreen());
                 }
             }
             case 4 ->{
@@ -208,7 +211,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
 
     private static void usedMessage(Player player, int colour) {
         if(player.level().isClientSide){
-            player.displayClientMessage(JahdooHelpers.withStyleComponent("You've Already Used This", colour), false);
+            player.displayClientMessage(TextHelpers.withStyleComponent("You've Already Used This", colour), false);
             player.playSound(SoundReg.REJECT.get(), 0.25f, 1.4F);
         }
     }

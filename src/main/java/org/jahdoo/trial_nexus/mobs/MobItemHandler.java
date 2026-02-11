@@ -19,10 +19,11 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
-import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.common.registers.ItemReg;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,8 +137,8 @@ public class MobItemHandler {
         };
 
         return buildArmor(
-            new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
-            new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
+            new ArmorTrim(regLookup1.get(material).orElseThrow(), Helpers.listRandom(list)),
+            new ArmorTrim(regLookup1.get(material).orElseThrow(), Helpers.listRandom(list)),
             regLookup2,
             100,
             InstanceDifficulty.MASTER.getSerializedName(),
@@ -246,7 +247,7 @@ public class MobItemHandler {
         if (round >= (difficulty.equals(EASY) ? 30 : difficulty.equals(MEDIUM) ? 10 : 0)) {
             if(!acceptableArrows.isEmpty()){
                 normalArrow = new ItemStack(Items.TIPPED_ARROW);
-                var getPotion = listRandom(acceptableArrows);
+                var getPotion = Helpers.listRandom(acceptableArrows);
                 normalArrow.set(POTION_CONTENTS, new PotionContents(getPotion));
                 return normalArrow;
             }

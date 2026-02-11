@@ -13,8 +13,9 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -25,7 +26,7 @@ import static org.jahdoo.common.items.runes.rune_data.RuneData.DEFAULT;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.DEFAULT_NAME;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_DATA;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getColourLight;
 import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.attachLootBeamComponent;
 
 public class RuneHelpers {
@@ -40,9 +41,9 @@ public class RuneHelpers {
         var name = getRuneData(stack);
         if(!name.name().contains("blank")){
             var fromCategory = RuneReg.getRuneFromId(name.name());
-            return withStyleComponent(stringIdToName(fromCategory.runeCategory().getName()) + " " + RuneData.SUFFIX, getColourLight(fromCategory.runeColour(), 1.6));
+            return TextHelpers.withStyleComponent(TextHelpers.stringIdToName(fromCategory.runeCategory().getName()) + " " + RuneData.SUFFIX, getColourLight(fromCategory.runeColour(), 1.6));
         }
-        return JahdooHelpers.withStyleComponent("Blank Rune", -1);
+        return TextHelpers.withStyleComponent("Blank Rune", -1);
     }
 
     public static RuneData getRuneData(ItemStack stack){
@@ -63,7 +64,7 @@ public class RuneHelpers {
 
     public static String getName(ItemStack itemStack){
         var data = getRuneData(itemStack);
-        if(!Objects.equals(data.name(), DEFAULT_NAME)) return JahdooHelpers.stringIdToName(data.name());
+        if(!Objects.equals(data.name(), DEFAULT_NAME)) return TextHelpers.stringIdToName(data.name());
         return DEFAULT_NAME;
     }
 
@@ -105,15 +106,15 @@ public class RuneHelpers {
 
         if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth || descriptionId.contains("armor") || descriptionId.contains("attack_damage")) {
             var text = "+" + value + " ";
-            return withStyleComponent(text, colourPre).copy().append(compName);
+            return TextHelpers.withStyleComponent(text, colourPre).copy().append(compName);
         }
 
         if(descriptionId.contains("skills")){
-            return withStyleComponent("", colourPre).copy().append(compName);
+            return TextHelpers.withStyleComponent("", colourPre).copy().append(compName);
         }
 
         var prefix = number < 0 ? "" : descriptionId.contains("reduction") ? "-" : "+";
-        return withStyleComponent(prefix + value + "%" + " ", colourPre).copy().append(compName);
+        return TextHelpers.withStyleComponent(prefix + value + "%" + " ", colourPre).copy().append(compName);
     }
 
     public static Component standAloneAttributes(ItemAttributeModifiers.Entry entry) {
@@ -137,7 +138,7 @@ public class RuneHelpers {
     private static @NotNull MutableComponent sharedAttributes(ItemAttributeModifiers.Entry entry, int colour) {
         var descriptionId = entry.attribute().value().getDescriptionId();
         var amount = entry.modifier().amount();
-        var compName = withStyleComponentTrans(descriptionId, colour);
+        var compName = TextHelpers.withStyleComponentTrans(descriptionId, colour);
         var isAbsorption = descriptionId.contains("absorption");
         var isMaxHealth = descriptionId.contains("health");
         var isSpeed = descriptionId.contains("speed");
@@ -176,7 +177,7 @@ public class RuneHelpers {
     ) {
         var stack = new ItemStack(ItemReg.RUNE);
         if(stack.getAttributeModifiers().modifiers().isEmpty()){
-            var rune = JahdooHelpers.listRandom(RuneReg.getAllRuneWithRarity(jahdooRarities));
+            var rune = Helpers.listRandom(RuneReg.getAllRuneWithRarity(jahdooRarities));
 
             attachLootBeamComponent(stack, tierRarity);
             generateFullRune(stack, tierRarity , rune);

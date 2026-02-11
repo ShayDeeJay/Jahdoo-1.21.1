@@ -13,6 +13,7 @@ import org.jahdoo.trial_nexus.boon.level_boons.negative.*;
 import org.jahdoo.trial_nexus.boon.level_boons.positive.*;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,11 +36,11 @@ public class LevelBoonReg {
     }
 
     public static AbstractLevelBoon randomPositive() {
-        return JahdooHelpers.listRandom(getAllPositive());
+        return Helpers.listRandom(getAllPositive());
     }
 
     public static AbstractLevelBoon randomNegative() {
-        return JahdooHelpers.listRandom(getAllNegative());
+        return Helpers.listRandom(getAllNegative());
     }
 
     public static List<AbstractLevelBoon> getAllPositive() {
@@ -62,7 +63,7 @@ public class LevelBoonReg {
             .filter(a -> a.getStampIndex() != -1)
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return JahdooHelpers.listRandom(element);
+        return Helpers.listRandom(element);
     }
 
     public static AbstractLevelBoon withRarityNegative(JahdooRarity rarity) {
@@ -71,7 +72,7 @@ public class LevelBoonReg {
             .filter(a -> !a.isPositive())
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return JahdooHelpers.listRandom(element);
+        return Helpers.listRandom(element);
     }
 
     public static AbstractLevelBoon withRarityPositive(JahdooRarity rarity) {
@@ -80,7 +81,7 @@ public class LevelBoonReg {
             .filter(AbstractLevelBoon::isPositive)
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return JahdooHelpers.listRandom(element);
+        return Helpers.listRandom(element);
     }
 
     public static Optional<AbstractLevelBoon> fromId(String typeId) {
@@ -112,7 +113,7 @@ public class LevelBoonReg {
 
     public static AbstractLevelBoon random() {
         var list = REGISTRY.stream().toList();
-        return JahdooHelpers.listRandom(list);
+        return Helpers.listRandom(list);
     }
 
     //Negative

@@ -3,6 +3,7 @@ package org.jahdoo.trial_nexus.level_manager;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.npc.Villager;
@@ -30,13 +31,17 @@ import org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.Maths;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.mojang.datafixers.util.Pair.of;
-import static net.minecraft.core.BlockPos.*;
+import static net.minecraft.core.BlockPos.betweenClosed;
+import static net.minecraft.core.BlockPos.withinManhattan;
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.level.block.Blocks.*;
 import static org.jahdoo.common.block.altar.AltarBlockEntity.getAllBlockPos;
@@ -46,46 +51,19 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.*;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setLocks;
-import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.*;
+import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.NOVICE;
+import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getDifficulties;
+import static org.jahdoo.trial_nexus.level_manager.RoomData.*;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 public class StructureManager {
 
-    public static final String BAZAAR = "bazaar";
-    public static final Component BAZAAR_COMPONENT = withStyleComponent(stringIdToName(BAZAAR), AETHER_BLUE);
-
-    public static final String SANCTUARY = "sanctuary";
-    public static final Component SANCTUARY_COMPONENT = withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE);
-
-    public static final String LOOT_CRYPT = "loot_crypt";
-    public static final Component LOOT_CRYPT_COMPONENT = withStyleComponent(stringIdToName(LOOT_CRYPT), COOLDOWN_GREEN);
-
-    public static final String BOSS_CRUCIBLE = "boss_crucible";
-    public static final Component BOSS_COMPONENT = withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED);
-
-    public static final String CHALLENGER_DOME = "challenger_dome";
-    public static final Component CHALLENGER_DOME_COMPONENT = withStyleComponent(stringIdToName(CHALLENGER_DOME), Colours.getPerkGreen());
-
-    public static final String EASY_EXIT = "exit";
-    public static final Component EXIT_ROOM_COMPONENT = withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN);
-
-    public static final List<String> EASY_ROOMS = List.of("oakvale", "logyard", "rotgrove", "pasture");
-    public static final List<String> MEDIUM_ROOMS = List.of("sundown", "deadwood", "oasis", "dustcamp");
-    public static final List<String> HARD_ROOMS = List.of("blackstone", "frosthold", "mines", "ruins");
-    public static final List<String> EXTREME_ROOMS = List.of("hellgate", "pyrewalk", "ashhaven", "sporefire");
-    public static final Map<Integer, Component> getRestRooms = Map.of(0, BAZAAR_COMPONENT, 1, LOOT_CRYPT_COMPONENT, 2, SANCTUARY_COMPONENT, 3, EXIT_ROOM_COMPONENT);
-
-    public static final String STARTING_ROOM = "starting_room";
-    public static final String BRIDGE = "bridge";
     public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
-    public static final BlockState BLOCKER_BLOCK = TINTED_GLASS.defaultBlockState();
-
-    public static final List<String> REST_ROOMS = List.of(BAZAAR, SANCTUARY, LOOT_CRYPT, EASY_EXIT);
-    public static final List<String> VALID_ROOMS;
+    public static final BlockState EXIT_BARRIER = TINTED_GLASS.defaultBlockState();
+    public static final Block DOOR_FILLER = Blocks.NETHERITE_BLOCK;
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(JahdooHelpers.res(roomId));
@@ -94,13 +72,6 @@ public class StructureManager {
 
         settings.setKnownShape(true).addProcessor(BlockIgnoreProcessor.AIR);
         templates.ifPresent(template -> template.placeInWorld(level, pos, pos1, settings, level.random, flag));
-    }
-
-    public static Component getBattleRoom(){
-        var randomValidRooms = listRandom(VALID_ROOMS);
-        var namedRoom = stringIdToName(randomValidRooms);
-
-        return withStyleComponent(namedRoom, SYMPATHISER_ORANGE);
     }
 
     public static Iterable<BlockPos> roomBoundingFromCenter(BlockPos pos) {
@@ -120,7 +91,7 @@ public class StructureManager {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
-        placeStructure(level, pos, settings, STARTING_ROOM);
+        placeStructure(level, pos, settings, STARTER_ROOM.getRoomId());
         placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(10,0,0)), true, false);
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
@@ -139,7 +110,7 @@ public class StructureManager {
 
         for (var allEntity : level.getAllEntities()) if(allEntity instanceof Villager villager) villager.kill();
 
-        placeStructure(level, pos, settings, BRIDGE);
+        placeStructure(level, pos, settings, RoomData.BRIDGE.getRoomId());
         placeLocksWithData(level, new BlockPos(23, 105, 27), false, true);
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
@@ -149,21 +120,23 @@ public class StructureManager {
     public static Map<Integer, Component> getRandomRoomId(InstanceData data, boolean isRestRoom){
         var roomGen = new HashMap<Integer, Component>();
 
-        if(isRestRoom) return getRestRooms;
+        if(isRestRoom) {
+            var list = getRestRooms();
+            for(int i = 0; i < list.size(); i++){
+                roomGen.put(i, list.get(i).getComponent());
+            }
+            return roomGen;
+        }
 
-        var difficulty = data.getDifficulty();
-        var isNovice = NOVICE.getSerializedName().equals(difficulty);
-        var isExpert = EXPERT.getSerializedName().equals(difficulty);
-        var forBoss = isNovice ? 10 : isExpert ? 20 : 30 ;
-        roomGen.put(0, getBattleRoom());
+        roomGen.put(0, getRandomBattleRoom());
 
         if(!data.getDifficulty().isEmpty()){
             JahdooMod.LOGGER.log(org.apache.logging.log4j.Level.INFO, "Error, boss room generated as starting room");
-            if(Maths.percentageChance(forBoss)) roomGen.put(roomGen.size(), BOSS_COMPONENT);
-            if(Maths.percentageChance(forBoss * 2)) roomGen.put(roomGen.size(), CHALLENGER_DOME_COMPONENT);
+            var forBoss = InstanceDifficulty.getFromName(data.getDifficulty()).getId() * 10;
+            if(Maths.percentageChance(forBoss)) roomGen.put(roomGen.size(), CHALLENGER_DOME.getComponent());
         }
 
-        while (roomGen.size() < 4) roomGen.put(roomGen.size(), getBattleRoom());
+        while (roomGen.size() < 4) roomGen.put(roomGen.size(), getRandomBattleRoom());
         return roomGen;
     }
 
@@ -182,7 +155,7 @@ public class StructureManager {
             BlockSetupManager.generateExit(level, blockPos, EAST);
             setLocks(level, blockPos, false);
 
-            if(level.getBlockState(blockPos).equals(BLOCKER_BLOCK)){
+            if(level.getBlockState(blockPos).equals(EXIT_BARRIER)){
                 level.destroyBlock(blockPos, false);
             }
 
@@ -197,10 +170,11 @@ public class StructureManager {
 
                 lock.setRoomData(getRooms.get(counter));
                 counter++;
+
                 var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0, 1, 0), 2.3, 350);
 
                 for (var vec3 : getPositions) {
-                    var colour = lock.roomId.getStyle().getColor().getValue();
+                    var colour = RoomData.getById(lock.roomId.getString()).getColor();
                     var particle = ParticleHandlers.getNonBakedParticles(colour, colour, 16, Random.nextInt(2, 4));
                     sendParticles(level, particle, vec3, 0, 0, 0.5, 0, Random.nextDouble(0.3, 1.2));
                 }
@@ -210,7 +184,7 @@ public class StructureManager {
                 }
             }
 
-            if(level.getBlockState(blockPos).is(NETHERITE_BLOCK)){
+            if(level.getBlockState(blockPos).is(DOOR_FILLER)){
                 level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
             }
         }
@@ -226,8 +200,8 @@ public class StructureManager {
             var settings = new StructurePlaceSettings();
             var newPos = new BlockPos(0, 0, 0);
 
-            var globalY1 = GLOBAL_Y + (REST_ROOMS.contains(roomId) && !usedKey ? 44 : 0);
-            final var globalY = roomId.equals(LOOT_CRYPT) ? globalY1 - 6 : globalY1 + (roomId.equals(BRIDGE) ? 104 : 0);
+            var globalY1 = GLOBAL_Y + (getById(roomId).getRoomType() == RoomType.REST_ROOM && !usedKey ? 44 : 0);
+            final var globalY = CRYPT.isRoom(roomId) ? globalY1 - 6 : globalY1 + (RoomData.BRIDGE.isRoom(roomId) ? 104 : 0);
             var distance = 25;
             switch (direction) {
                 case SOUTH -> newPos = new BlockPos(pos.getX() - distance, globalY, pos.getZ());
@@ -270,31 +244,31 @@ public class StructureManager {
             var instanceData = serverLevel.getData(INSTANCE_DATA);
             for (var blockPos : findBlock) {
                 var placerState = level.getBlockState(blockPos);
-                if(VALID_ROOMS.contains(roomId)){
+                if(isCombatRoom(roomId)){
                     placeAltar(level, direction, roomId, blockPos, placerState);
                     alreadyPlaced = placePowerUpStation(level, blockPos, placerState, alreadyPlaced);
                     placeLootPots(level, blockPos, placerState, instanceData);
                     placeOres(level, blockPos, placerState, instanceData);
                 }
 
-                if(roomId.equals(CHALLENGER_DOME)){
+                if(CHALLENGER_DOME.isRoom(roomId)){
                     if (placerState.is(Blocks.DIAMOND_BLOCK)) {
                         level.setBlockAndUpdate(blockPos, AIR.defaultBlockState());
-//                        if (level.getBlockEntity(blockPos) instanceof AltarBlockEntity e) {
-//                            e.roomId = roomId;
-//                            e.direction = direction;
-//                        }
+
                         var direction1 = direction.getOpposite();
                         var miniBoss = MiniBossMobs.getMiniBoss(direction1, serverLevel, instanceData);
                         miniBoss.moveTo(blockPos.getCenter().subtract(0, 0.5, 0));
                         miniBoss.setYBodyRot(direction1.toYRot());
                         miniBoss.setYHeadRot(direction1.toYRot());
+                        miniBoss.getPersistentData().put("block_pos", NbtUtils.writeBlockPos(miniBoss.blockPosition()));
+                        miniBoss.getPersistentData().putBoolean("boss", true);
+                        miniBoss.getPersistentData().putString("direction", direction.name());
                         serverLevel.addFreshEntity(miniBoss);
                     }
                 }
 
                 if(placerState.is(Blocks.OBSERVER)) setLocks(serverLevel, blockPos, true);
-                if(placerState.is(NETHERITE_BLOCK)) level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
+                if(placerState.is(DOOR_FILLER)) level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
             }
         }
     }
@@ -304,7 +278,7 @@ public class StructureManager {
         if (placerState.is(Blocks.PINK_STAINED_GLASS)) {
             if(level instanceof ServerLevel sLevel){
                 var aStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
-                var aItems = JahdooHelpers.listRandom(aStates);
+                var aItems = Helpers.listRandom(aStates);
                 var aBase = Block.byItem(aItems.getItem()).defaultBlockState();
                 placer(blockPos, sLevel, org.shaydee.shaydeeapi.Maths.percentageChance(10), aBase);
 
@@ -313,7 +287,7 @@ public class StructureManager {
                 for (int i = 0; i < multiplier; i++) {
                     if(org.shaydee.shaydeeapi.Maths.percentageChance(20)){
                         var bStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
-                        var bItems = JahdooHelpers.listRandom(bStates);
+                        var bItems = Helpers.listRandom(bStates);
                         var bBase = Block.byItem(bItems.getItem()).defaultBlockState();
                         var poss = new ArrayList<BlockPos>();
                         for (var direction1 : stream().toList()) {
@@ -323,7 +297,7 @@ public class StructureManager {
                                 poss.add(relativeA);
                             }
                         }
-                        if (!poss.isEmpty()) bPos = JahdooHelpers.listRandom(poss);
+                        if (!poss.isEmpty()) bPos = Helpers.listRandom(poss);
                     }
                 }
             }
@@ -348,7 +322,7 @@ public class StructureManager {
                                 poss.add(relativeA);
                             }
                         }
-                        if (!poss.isEmpty()) bPos = JahdooHelpers.listRandom(poss);
+                        if (!poss.isEmpty()) bPos = Helpers.listRandom(poss);
                     }
                 }
             }
@@ -398,16 +372,6 @@ public class StructureManager {
         } else if (!sLevel.getBlockState(blockPos).isAir()) {
             sLevel.setBlock(blockPos, air, FLAGS);
         }
-    }
-
-    static {
-        List<String> list = new ArrayList<>();
-        list.addAll(EASY_ROOMS);
-        list.addAll(HARD_ROOMS);
-        list.addAll(MEDIUM_ROOMS);
-        list.addAll(EXTREME_ROOMS);
-        list.add(BOSS_CRUCIBLE);
-        VALID_ROOMS = Collections.unmodifiableList(list);
     }
 
 }

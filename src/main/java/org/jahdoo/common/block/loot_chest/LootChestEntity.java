@@ -6,15 +6,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -26,6 +28,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import static org.jahdoo.common.entities.EntityAnimations.OPEN_LOOT;
 import static org.jahdoo.common.entities.EntityAnimations.SPAWN_CHEST;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
+import static org.jahdoo.trial_nexus.loot.LootHelpers.coinChestGetter;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getColourDarker;
 
@@ -95,9 +98,15 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         incrementPrivateTicks();
         var id = getRarity;
 
+        if(!isOpen && isCoinChest() && level instanceof ServerLevel serverLevel) {
+            for (var nearbyPlayer : serverLevel.getNearbyPlayers(TargetingConditions.DEFAULT, null, new AABB(pos).inflate(4))) {
+                coinChestGetter(pos, serverLevel, this, nearbyPlayer);
+            }
+        }
+
         if(canRender()){
             if(Random.nextInt(5) == 0){
-                Helpers.getSoundWithPosition(level, pos, SoundReg.LOOTBOX_IDLE.get(), SoundSource.BLOCKS, 0.4F, 1F);
+                SoundHelpers.getSoundWithPosition(level, pos, SoundReg.LOOTBOX_IDLE.get(), SoundSource.BLOCKS, 0.4F, 1F);
             }
             if(this.getPrivateTicks() % (6 - getRarity) == 0){
                 for (var vec3 : PositionFinders.innerRadiusRandom(pos.getCenter().subtract(0, 0.35, 0), 0.55, Math.max(3, 5 * id))) {
@@ -114,15 +123,15 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         }
 
         if(getPrivateTicks() == 1){
-            Helpers.getSoundWithPosition(level, pos, SoundReg.TELEPORT.get(), SoundSource.BLOCKS, 1f, 2f);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.TELEPORT.get(), SoundSource.BLOCKS, 1f, 2f);
         }
 
         if(getPrivateTicks() == 7){
             var volume = 2;
             var pitch = 0.4f;
             var pitch2 = 0.2f;
-            Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_PLACE, SoundSource.BLOCKS, volume, pitch);
-            Helpers.getSoundWithPosition(level, pos, SoundEvents.IRON_GOLEM_STEP, SoundSource.BLOCKS, volume, pitch2);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_PLACE, SoundSource.BLOCKS, volume, pitch);
+            SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.IRON_GOLEM_STEP, SoundSource.BLOCKS, volume, pitch2);
         }
 
         if(level instanceof ServerLevel serverLevel){

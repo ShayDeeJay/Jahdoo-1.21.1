@@ -26,8 +26,9 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.shaydee.shaydeeapi.Colours;
 import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -44,8 +45,6 @@ import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
 import static org.jahdoo.common.registers.mod.ElementReg.*;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextSingle;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class AbilityModificationScreen extends Screen {
 
@@ -183,7 +182,7 @@ public class AbilityModificationScreen extends Screen {
         var rebuild = Component.empty();
         if (component.getString().contains("|")) {
             for (Component component1 : component.toFlatList().subList(0, 2)) rebuild.append(component1);
-            rebuild.append(JahdooHelpers.withStyleComponent(component.toFlatList().getLast().getString(), -1129857));
+            rebuild.append(TextHelpers.withStyleComponent(component.toFlatList().getLast().getString(), -1129857));
             this.addRenderableOnly(textRenderable(width - 139, selectedY1, rebuild, this.getMinecraft()));
         } else {
             this.addRenderableOnly(textRenderable(width - 139, selectedY1, component, this.getMinecraft()));
@@ -223,10 +222,10 @@ public class AbilityModificationScreen extends Screen {
     private void onHover(Component component, int ySpacer, boolean active, double getHighest, int adjusted) {
         if(!active){
             var original = getModifierContextSingle(extractName(component.getString()), valueOf(Maths.doubleFormattedDouble(getHighest)), 1);
-            var prefixTier = withStyleComponent("Next Tier: ", Colours.getHeaderColour());
-            var upgradeTier = prefixTier.copy().append(withStyleComponent("↑ " + original.getString(), ABSORPTION_YELLOW));
-            var prefixCost = withStyleComponent("Skill Points: ", Colours.getHeaderColour());
-            var upgradeCost = prefixCost.copy().append(withStyleComponent(adjusted + "", PERK_GREEN));
+            var prefixTier = TextHelpers.withStyleComponent("Next Tier: ", ColourHelpers.getHeaderColour());
+            var upgradeTier = prefixTier.copy().append(TextHelpers.withStyleComponent("↑ " + original.getString(), ColourHelpers.getAbsorptionYellow()));
+            var prefixCost = TextHelpers.withStyleComponent("Skill Points: ", ColourHelpers.getHeaderColour());
+            var upgradeCost = prefixCost.copy().append(TextHelpers.withStyleComponent(adjusted + "", ColourHelpers.getPerkGreen()));
 
             compValues.add(upgradeTier);
             compValues.add(upgradeCost);
@@ -398,8 +397,8 @@ public class AbilityModificationScreen extends Screen {
         var length = valueOf(skillPoints).length();
         var i1 = this.width / 2 + 99;
         var i2 = this.height / 2 - 120;
-        boxMaker(guiGraphics, i1, 20 + i2, 15 + (length * length), 10, BORDER_COLOUR, fade1, fade1);
-        guiGraphics.drawString(font, withStyleComponent(skillPoints + "", PERK_GREEN), i1 + 22, 26 + i2, -1);
+        boxMaker(guiGraphics, i1, 20 + i2, 15 + (length * length), 10, ColourHelpers.getBorderColour(), fade1, fade1);
+        guiGraphics.drawString(font, TextHelpers.withStyleComponent(skillPoints + "", ColourHelpers.getPerkGreen()), i1 + 22, 26 + i2, -1);
         guiGraphics.blit(SKILL_POINT, i1 - 2, 18 + i2, 0, 0, size, size, size, size);
     }
 

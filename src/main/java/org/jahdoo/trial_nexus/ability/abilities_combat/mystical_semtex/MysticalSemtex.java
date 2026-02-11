@@ -26,7 +26,7 @@ import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     private LivingEntity target;
     private Vec3 localOffset;
     private UUID targetId;
-    private List<UUID> damagedTargets = new ArrayList<>();
+    private final List<UUID> damagedTargets = new ArrayList<>();
 
     private double additionalProjectiles;
     //    private double additionalProjectileChance;
@@ -137,8 +137,8 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         explosionDelay = 30;
         target = hitTarget;
         element.setAnimation(6);
-        Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.SLIME_BLOCK_BREAK);
-        Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound());
+        SoundHelpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.SLIME_BLOCK_BREAK);
+        SoundHelpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound());
     }
 
     private void novaDamageBehaviour(){
@@ -238,7 +238,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                 this.element.moveTo(newPosition.x, newPosition.y, newPosition.z);
                 if(this.element.tickCount % 4 != 0) return;
 
-                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundReg.TIMER.get());
+                SoundHelpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundReg.TIMER.get());
                 var partColour = this.getElementType().partColourA();
                 var partColour2 = this.getElementType().partColourB();
                 var particle = new GenericParticleOptions(GENERIC_PARTICLE, partColour, partColour2, 10, 3, false, 1.4);
@@ -276,7 +276,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         }
     }
     public void sharedSound(Vec3 pos, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(this.element.level(), pos, getElementType().sound(), SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(this.element.level(), pos, getElementType().sound(), SoundSource.NEUTRAL, volume, pitch);
     }
 
 

@@ -84,7 +84,7 @@ public class UtilityHelpers {
 
             var drops = blockstate.getDrops(lootBuilder);
             for (ItemStack itemStack : drops) {
-                ItemEntity item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);;
+                ItemEntity item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
 
                 if (item.getItem().getItem() instanceof BlockItem blockItem) {
                     if (blockItem.getBlock() instanceof CropBlock cropBlock) {

@@ -11,9 +11,8 @@ import net.minecraft.util.FastColor;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import static org.jahdoo.common.client.Icons.ABILITY_BACKGROUND;
 import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
 
 public class AbilitySlotButton extends ImageButton {
 
@@ -96,7 +94,7 @@ public class AbilitySlotButton extends ImageButton {
     }
 
     private void renderNameAndBackground(GuiGraphics graphics, Minecraft mc, int i1, int colourFaded, int easedValue) {
-        graphics.drawCenteredString(mc.font, label, this.getX() + i1 + 3, this.getY() + totalSize + 3, isSelected ? colourFaded : ColourStore.SUB_HEADER_COLOUR);
+        graphics.drawCenteredString(mc.font, label, this.getX() + i1 + 3, this.getY() + totalSize + 3, isSelected ? colourFaded : ColourHelpers.getSubHeaderColour());
         graphics.blit(this.sprites.enabled(), this.getX(), this.getY(), 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
     }
 
@@ -123,7 +121,7 @@ public class AbilitySlotButton extends ImageButton {
             var text = validSlot ? slotIndex + 1 + "" : "⧈";
             var x = this.getX() + i1 + 3;
             var y = this.getY() + i1 - 1;
-            var color = validSlot ? SUB_HEADER_COLOUR : Colours.getHeaderColour();
+            var color = validSlot ? ColourHelpers.getSubHeaderColour() : ColourHelpers.getHeaderColour();
             graphics.drawCenteredString(mc.font, text, x, y, color);
         }
     }
@@ -141,9 +139,9 @@ public class AbilitySlotButton extends ImageButton {
 
     private void showLevelUnlock(GuiGraphics graphics, int mouseX, int mouseY, Minecraft mc) {
         if(!validSlot && !canPress){
-            var prefix = JahdooHelpers.withStyleComponentTrans("info.jahdoo.requires_level", Colours.getHeaderColour());
+            var prefix = TextHelpers.withStyleComponentTrans("info.jahdoo.requires_level", ColourHelpers.getHeaderColour());
             var getUnlockLevel = String.valueOf((slotIndex - 1) * CasterData.UNLOCKED_AT);
-            var level = JahdooHelpers.withStyleComponent(getUnlockLevel, ColourStore.SUB_HEADER_COLOUR);
+            var level = TextHelpers.withStyleComponent(getUnlockLevel, ColourHelpers.getSubHeaderColour());
             graphics.renderTooltip(mc.font, List.of(prefix.copy().append(level)), Optional.empty(), mouseX, mouseY);
         }
     }

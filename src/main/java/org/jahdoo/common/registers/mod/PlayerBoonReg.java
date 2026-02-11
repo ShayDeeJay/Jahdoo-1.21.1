@@ -11,6 +11,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
 import org.jahdoo.trial_nexus.boon.player_boons.boons.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.function.Supplier;
 
@@ -33,7 +34,7 @@ public class PlayerBoonReg {
         var element = REGISTRY
             .stream()
             .toList();
-        return JahdooHelpers.listRandom(element);
+        return Helpers.listRandom(element);
     }
 
     public static AbstractPlayerBoons getFromId(String id) {
@@ -41,7 +42,7 @@ public class PlayerBoonReg {
             .stream()
             .filter(a -> a.id().equals(id))
             .toList();
-        return JahdooHelpers.listRandom(element);
+        return Helpers.listRandom(element);
     }
 
     //Negative

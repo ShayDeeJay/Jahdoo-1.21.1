@@ -14,6 +14,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,6 @@ import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
 import static org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonAbility.HEAL_VALUE;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.listRandom;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public class LifeSiphonNova extends DefaultEntityBehaviour {
@@ -108,7 +108,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
             pos, aoe * 2.8, aoe * 5, positions -> {
                 if (this.cloud.level() instanceof ServerLevel serverLevel) {
                     var directions = pos.subtract(positions).normalize();
-                    var randomElement = listRandom(particleOptionsList);
+                    var randomElement = Helpers.listRandom(particleOptionsList);
                     sendParticles(serverLevel, randomElement, positions, 0, directions.x, directions.y, directions.z, 1);
                 }
             }

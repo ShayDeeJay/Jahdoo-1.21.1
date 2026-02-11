@@ -17,15 +17,13 @@ import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.entities.custom_entities.CustomVillager;
 import org.jahdoo.common.items.perk_soda.PerkaSoda;
-import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
@@ -36,7 +34,9 @@ import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
-import static org.jahdoo.trial_nexus.level_manager.StructureManager.*;
+import static org.jahdoo.trial_nexus.level_manager.RoomData.*;
+import static org.jahdoo.trial_nexus.level_manager.StructureManager.EXIT_BARRIER;
+import static org.jahdoo.trial_nexus.level_manager.StructureManager.roomBoundingFromCenter;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.getEliteShoppingItem;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
@@ -114,14 +114,14 @@ public class BlockSetupManager {
     public static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {
         var counter = new AtomicInteger();
         for (var blockPos : pos) {
-            if(Objects.equals(id, EASY_EXIT)) generateExit(level, blockPos, direction.getOpposite());
-            if(Objects.equals(id, SANCTUARY)) placePerkTables(level, blockPos);
-            if(id.contains("the") || id.contains("boss")) setLocks(level, blockPos, true);
-            if(Objects.equals(id, LOOT_CRYPT)){
+            if(CHALLENGER_DOME.isRoom(id)) setLocks(level, blockPos, true);
+            if(EXIT.isRoom(id)) generateExit(level, blockPos, direction.getOpposite());
+            if(SANCTUARY.isRoom(id)) placePerkTables(level, blockPos);
+            if(CRYPT.isRoom(id)){
                 setLootChests(level, blockPos, direction, Random.nextInt(4), false);
                 setCryptCoinChest(level, blockPos, direction, -1, false);
             }
-            if(Objects.equals(id, BAZAAR)){
+            if(BAZAAR.isRoom(id)){
                 var table = SHOPPING_TABLE.get().defaultBlockState();
                 uniqueItems(level, table, blockPos, direction);
                 otherShopping(level, table, blockPos, direction);
@@ -135,10 +135,11 @@ public class BlockSetupManager {
     public static void setLocks(ServerLevel level, BlockPos blockPos, boolean ignoreCheck) {
         var blockState = level.getBlockState(blockPos);
         if(blockState.is(OBSERVER)){
-            level.setBlockAndUpdate(blockPos, BlockReg.LOCK.get().defaultBlockState().setValue(FACING, blockState.getValue(FACING)));
+            var getState = LOCK.get().defaultBlockState().setValue(FACING, blockState.getValue(FACING));
+            level.setBlockAndUpdate(blockPos, getState);
 
-            if(ignoreCheck && level.getBlockEntity(blockPos) instanceof LockBlockEntity lockBlockEntity){
-                if(!lockBlockEntity.canPlace()){
+            if(ignoreCheck && level.getBlockEntity(blockPos) instanceof LockBlockEntity lEntity){
+                if(!lEntity.canPlace()){
                     level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
                     var relative = blockPos.relative(blockState.getValue(FACING), 1);
                     if(level.getBlockEntity(relative) instanceof LockBlockEntity lockBlockEntity1) {
@@ -149,7 +150,6 @@ public class BlockSetupManager {
                 }
             }
         }
-
     }
 
     //Don't delete as useful for generating exit in entry room
@@ -314,13 +314,13 @@ public class BlockSetupManager {
                             var newPos = startPlace.below(i);
                             var relative = newPos.relative(direction);
 
-                            level.setBlockAndUpdate(newPos, BLOCKER_BLOCK);
+                            level.setBlockAndUpdate(newPos, EXIT_BARRIER);
 
                             for (var direction1 : list) {
                                 var adjacentBlocks = relative.relative(direction1);
                                 var adjacentNotAir = level.getBlockState(adjacentBlocks).is(LOCK_SUPPORT);
                                 if(adjacentNotAir){
-                                    level.setBlockAndUpdate(relative, BLOCKER_BLOCK);
+                                    level.setBlockAndUpdate(relative, EXIT_BARRIER);
                                 }
                             }
                         }
@@ -330,8 +330,8 @@ public class BlockSetupManager {
             }
         }
 
-        Helpers.getSoundWithPosition(level, startPlace, BLOCKER_BLOCK.getSoundType(level, pos, null).getBreakSound());
-        Helpers.getSoundWithPosition(level, startPlace, SoundReg.UNLOCK.get(), SoundSource.BLOCKS, 1F, 1.8F);
+        SoundHelpers.getSoundWithPosition(level, startPlace, EXIT_BARRIER.getSoundType(level, pos, null).getBreakSound());
+        SoundHelpers.getSoundWithPosition(level, startPlace, SoundReg.UNLOCK.get(), SoundSource.BLOCKS, 1F, 1.8F);
     }
 
 }

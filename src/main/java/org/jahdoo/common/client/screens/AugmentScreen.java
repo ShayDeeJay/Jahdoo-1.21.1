@@ -18,8 +18,8 @@ import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -134,7 +134,7 @@ public class AugmentScreen extends Screen  {
     public void buildCarouselComponent(int posX, int posY, String label, Runnable onLeft, Runnable onRight, String value){
         var widget = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
         var adjustX = 2;
-        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll),  JahdooHelpers.withStyleComponent(value, ElementReg.utility().textColourB()), this.getMinecraft(), Component.literal(label), 10, true));
+        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll),  TextHelpers.withStyleComponent(value, ElementReg.utility().textColourB()), this.getMinecraft(), Component.literal(label), 10, true));
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 10 + adjustX, (int) (posY + yScroll), (press) -> onLeft.run(), DIRECTION_ARROW_BACK, 22, false,0, widget, true));
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 104 + adjustX, (int) (posY+ yScroll), (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  22,  false, 0, widget, true));
     }

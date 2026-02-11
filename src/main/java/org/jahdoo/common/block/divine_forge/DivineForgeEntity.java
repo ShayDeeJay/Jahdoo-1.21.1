@@ -73,7 +73,7 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
 
     public ItemStack getModificationSlot(){
         return getInputItemHandler().getStackInSlot(MODIFICATION_SLOT);
-    };
+    }
 
     @Override
     public int setInputSlots() {

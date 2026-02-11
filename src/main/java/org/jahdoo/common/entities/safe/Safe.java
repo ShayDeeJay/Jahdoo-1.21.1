@@ -18,7 +18,8 @@ import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -152,7 +153,7 @@ public class Safe extends LivingEntity implements GeoEntity {
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
     @Override
@@ -284,7 +285,7 @@ public class Safe extends LivingEntity implements GeoEntity {
                             var rewards = getCompletionLoot(serverLevel, this.position(), difficulty.getSerializedName(), difficulty.getId());
                             for (var reward : rewards) {
                                 attachItemData(serverLevel, reward, null, difficulty.getId());
-                                Helpers.throwItem(this, reward);
+                                ItemHelpers.throwItem(this, reward);
                             }
                         }
                     }

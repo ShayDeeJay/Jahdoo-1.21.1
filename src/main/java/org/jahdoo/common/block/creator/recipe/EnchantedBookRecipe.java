@@ -35,7 +35,7 @@ public class EnchantedBookRecipe implements CreatorRecipes {
                 getBook = allCraftable;
             } else {
                 secondaryItem = allCraftable;
-            };
+            }
 
         }
 

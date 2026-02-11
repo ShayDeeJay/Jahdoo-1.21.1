@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_ORE_MULTIPLIER;
@@ -56,6 +56,6 @@ public class OreMultiplier extends AbstractLevelBoon {
 
     @Override
     public int getHeaderColour() {
-        return ColourStore.NETHERITE_BOX;
+        return ColourHelpers.getNetheriteBox();
     }
 }

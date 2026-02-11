@@ -11,12 +11,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.getStoredBlock;
 
@@ -50,7 +50,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         var state = replaceBlock.defaultBlockState();
         level.setBlockAndUpdate(blockPos.relative(side), state);
         if(playSound){
-            Helpers.getSoundWithPosition(level, blockPos, state.getSoundType().getBreakSound());
+            SoundHelpers.getSoundWithPosition(level, blockPos, state.getSoundType().getBreakSound());
         }
     }
 

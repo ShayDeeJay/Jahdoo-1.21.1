@@ -238,7 +238,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
                     if(!slotStack.isEmpty()) {
                         itemStack.set(slotStack);
                         return;
-                    };
+                    }
                 }
             }
         );

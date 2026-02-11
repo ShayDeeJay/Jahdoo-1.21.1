@@ -3,13 +3,6 @@ package org.jahdoo.trial_nexus.ability.abilities_combat.armageddon;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
-import org.jahdoo.trial_nexus.ability.AbilityBuilder;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.ability.abilities_combat.fireball.FireballAbility;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -18,10 +11,17 @@ import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
-import org.shaydee.shaydeeapi.Helpers;
+import org.jahdoo.trial_nexus.ability.AbilityBuilder;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.ability.abilities_combat.fireball.FireballAbility;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
 
 public class ArmageddonModule extends DefaultEntityBehaviour {
 
@@ -118,7 +118,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
             fireProjectile.shoot(0, cloud.getY(), 0, cloud.getY() > 0 ? -setRandomYHeight : setRandomYHeight, 0);
             fireProjectile.setOwner(this.cloud.getOwner());
             this.cloud.getOwner().level().addFreshEntity(fireProjectile);
-            Helpers.getSoundWithPosition(cloud.level(), cloud.blockPosition(), SoundReg.SUSPEND.get(), SoundSource.NEUTRAL, 2f, 0.8f);
+            SoundHelpers.getSoundWithPosition(cloud.level(), cloud.blockPosition(), SoundReg.SUSPEND.get(), SoundSource.NEUTRAL, 2f, 0.8f);
 
             var colour1 = rgbToInt(160,160,160);
             var colour2 = rgbToInt(61,61,61);

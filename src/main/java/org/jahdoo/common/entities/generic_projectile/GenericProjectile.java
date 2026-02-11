@@ -28,10 +28,10 @@ import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.ProjectileProperties;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
@@ -179,7 +179,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
     @Override
@@ -216,7 +216,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     }
 
     private void particleSetter(Vec3 positions) {
-        var primary = ColourStore.RATING_4_YELLOW;
+        var primary = ColourHelpers.getRating4Yellow();
         sendParticles(
             level(), getNonBakedParticles(primary, primary, 20, 2F), positions.offsetRandom(RandomSource.create(), 0.2f),
             0, 0, Random.nextDouble(0.02,0.2),0,1
@@ -231,7 +231,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
             this.getProjectile.discardCondition();
         } else {
             if(this.tickCount > 1){
-                var primary = ColourStore.RATING_4_YELLOW;
+                var primary = ColourHelpers.getRating4Yellow();
                 playParticles3(genericParticle(SOFT_PARTICLE, 2, 1F, primary, primary), this, 10, 0);
             }
         }

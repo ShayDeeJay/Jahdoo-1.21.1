@@ -27,7 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.sounds.SoundEvents.LODESTONE_COMPASS_LOCK;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
@@ -113,7 +113,7 @@ public class LootChestBlock extends BaseEntityBlock {
                 if (success != null) return success;
             }
 
-            Helpers.getSoundWithPosition(level, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 1F,1.8F);
+            SoundHelpers.getSoundWithPosition(level, pos, LODESTONE_COMPASS_LOCK, SoundSource.BLOCKS, 1F,1.8F);
         }
 
         return SUCCESS;

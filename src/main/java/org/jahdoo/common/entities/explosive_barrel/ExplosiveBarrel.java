@@ -26,8 +26,8 @@ import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -141,8 +141,8 @@ public class ExplosiveBarrel extends LivingEntity implements GeoEntity {
 
     @Override
     public void kill() {
-        Helpers.getSoundWithPosition(level(), this.position(), SoundReg.REJECT.get(), SoundSource.NEUTRAL);
-        Helpers.getSoundWithPosition(level(), this.position(), SoundReg.ORB_CREATE.get(), SoundSource.NEUTRAL, 1F, 2F);
+        SoundHelpers.getSoundWithPosition(level(), this.position(), SoundReg.REJECT.get(), SoundSource.NEUTRAL);
+        SoundHelpers.getSoundWithPosition(level(), this.position(), SoundReg.ORB_CREATE.get(), SoundSource.NEUTRAL, 1F, 2F);
         this.remove(RemovalReason.KILLED);
     }
 
@@ -219,7 +219,7 @@ public class ExplosiveBarrel extends LivingEntity implements GeoEntity {
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.HOSTILE, volume, pitch);
+        SoundHelpers.getSoundWithPosition(level(), this.position(), sEvent, SoundSource.HOSTILE, volume, pitch);
     }
 
     @Override
@@ -240,7 +240,7 @@ public class ExplosiveBarrel extends LivingEntity implements GeoEntity {
                     if (level() instanceof ServerLevel) {
                         novaExplosion(this, getElementType(), 10, 100, 0, 3, 30, this.position());
                         this.discard();
-                    };
+                    }
                 }
             }
         }

@@ -16,15 +16,14 @@ import org.jahdoo.common.registers.mod.TaskReg;
 import org.jahdoo.trial_nexus.attachments.QuestTracker;
 import org.jahdoo.trial_nexus.tasks.AbstractTask;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.overlay.InstanceDataOverlay.progressBar;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.colourByPercent;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponentTrans;
 
 public class QuestLogScreen extends AbstractPanableScreen {
     public static int frameTicks;
@@ -85,11 +84,11 @@ public class QuestLogScreen extends AbstractPanableScreen {
             graphics.pose().pushPose();
             graphics.pose().translate(0, 0, 100);
             boxMaker(graphics, startX, startY + 185, rewards.size() * 16, 19,  uiColour(),  fadeBlack(0.8F),  fadeBlack(0.8F));
-            graphics.drawString(font, withStyleComponentTrans("Rewards", uiColour()), startX + 4, startY + 190, -1);
+            graphics.drawString(font, TextHelpers.withStyleComponentTrans("Rewards", uiColour()), startX + 4, startY + 190, -1);
             for (var reward : rewards) {
                 var x = startX + spacer + 14;
                 var y = 204;
-                graphics.drawString(font, withStyleComponentTrans(reward.getCount() + "x ", SUB_HEADER_COLOUR), x - 10, startY + y + 4, -1);
+                graphics.drawString(font, TextHelpers.withStyleComponentTrans(reward.getCount() + "x ", ColourHelpers.getSubHeaderColour()), x - 10, startY + y + 4, -1);
                 var y1 = startY + y;
                 var x1 = x + 2;
                 graphics.renderItem(reward, x1, y1);
@@ -185,7 +184,7 @@ public class QuestLogScreen extends AbstractPanableScreen {
             pose.pushPose();
             pose.scale(scale, scale, scale);
             graphics.blit(task.taskIcon(), 90, y - 6, 0, 0, size, size, size, size);
-            graphics.drawString(font, withStyleComponentTrans(task.taskName(), uiColour()), 112, y-2, -1);
+            graphics.drawString(font, TextHelpers.withStyleComponentTrans(task.taskName(), uiColour()), 112, y-2, -1);
             pose.popPose();
 
             var player = mc.player;
@@ -195,10 +194,10 @@ public class QuestLogScreen extends AbstractPanableScreen {
             var tracker = Math.min(currentValue, requiredValue) + "/" + requiredValue;
             var complete = "Complete";
             var startX = 192;
-            var text = withStyleComponentTrans(isComplete ? complete : tracker, isComplete ? 0 : SUB_HEADER_COLOUR);
+            var text = TextHelpers.withStyleComponentTrans(isComplete ? complete : tracker, isComplete ? 0 : ColourHelpers.getSubHeaderColour());
 
-            progressBar(graphics, startX, 110, 100, 8, currentValue, requiredValue, 3, colourByPercent(requiredValue, currentValue, true), SUB_HEADER_COLOUR, uiFade());
-            graphics.drawString(font, withStyleComponentTrans(task.taskDescription(), SUB_HEADER_COLOUR), startX + 32, 96, -1);
+            progressBar(graphics, startX, 110, 100, 8, currentValue, requiredValue, 3, ColourHelpers.colourByPercent(requiredValue, currentValue, true), ColourHelpers.getSubHeaderColour(), uiFade());
+            graphics.drawString(font, TextHelpers.withStyleComponentTrans(task.taskDescription(), ColourHelpers.getSubHeaderColour()), startX + 32, 96, -1);
             centeredStringNoShadow(graphics, font, text,  startX + 98, 114, -1, false);
             renderRewards(graphics);
         }

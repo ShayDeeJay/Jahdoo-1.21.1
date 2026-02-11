@@ -13,12 +13,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jahdoo.trial_nexus.mobs.MobItemHandler;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
 public class StarterPack extends Item {
 
@@ -31,11 +31,11 @@ public class StarterPack extends Item {
     @Override
     public Component getName(ItemStack stack) {
         var data = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        var getType = data == null ? Pair.of("Iron ", SILVER_COIN) :
-                 data.value() == 1 ? Pair.of("Diamond ", DIAMOND_BOX) :
-                                     Pair.of("Netherite ", NETHERITE_BOX) ;
+        var getType = data == null ? Pair.of("Iron ", ColourHelpers.getSilverCoin()) :
+                 data.value() == 1 ? Pair.of("Diamond ", ColourHelpers.getDiamondBox()) :
+                                     Pair.of("Netherite ", ColourHelpers.getNetheriteBox()) ;
 
-        return JahdooHelpers.withStyleComponent(getType.getFirst() + "Starter Pack", getType.getSecond());
+        return TextHelpers.withStyleComponent(getType.getFirst() + "Starter Pack", getType.getSecond());
     }
 
     @Override
@@ -57,7 +57,7 @@ public class StarterPack extends Item {
                 getType.get(4)
             );
 
-            for (var item : items) Helpers.throwOrAddItem(player, item);
+            for (var item : items) ItemHelpers.throwOrAddItem(player, item);
             itemInHand.shrink(1);
         }
         return InteractionResultHolder.fail(itemInHand);

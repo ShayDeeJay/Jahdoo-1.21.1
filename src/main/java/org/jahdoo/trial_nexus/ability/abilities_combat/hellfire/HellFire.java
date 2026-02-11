@@ -21,7 +21,7 @@ import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.List;
 
@@ -123,7 +123,7 @@ public class HellFire extends DefaultEntityBehaviour {
     }
 
     public void sharedSound(BlockPos pos, SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(cloud.level(), pos, sEvent, SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(cloud.level(), pos, sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
 

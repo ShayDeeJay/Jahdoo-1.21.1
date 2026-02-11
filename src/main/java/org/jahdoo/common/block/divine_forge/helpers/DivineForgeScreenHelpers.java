@@ -13,37 +13,34 @@ import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.CoinSack;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
-import org.shaydee.shaydeeapi.Colours;
+import org.shaydee.shaydeeapi.helpers.ClientHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.common.block.divine_forge.helpers.RuneTableScreen.groupFade;
+import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreen.groupFade;
 import static org.jahdoo.common.client.Icons.GUI_GENERAL_SLOT;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
 import static org.jahdoo.common.client.slots.RuneSlot.removeCurrencyCost;
 import static org.jahdoo.common.client.slots.RuneSlot.removeRuneCost;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.getGearData;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
-public class RuneManager {
+public class DivineForgeScreenHelpers {
 
-    public static boolean isShiftDown(Minecraft getMinecraft) {
-        return InputConstants.isKeyDown(getMinecraft.getWindow().getWindow(), getMinecraft.options.keyShift.getKey().getValue());
+    public static boolean isShiftDown() {
+        return ClientHelpers.isKeyDown(InputConstants.KEY_LSHIFT);
     }
 
     public static void runeSlotTexture(
         GuiGraphics guiGraphics,
-        int mouseX,
-        int mouseY,
         int width,
         int height,
         boolean showInventory,
-        Slot slot,
         Minecraft minecraft,
-        int coinCost,
         int borderColour,
         RuneTableMenu runeTableMenu
     ) {
@@ -53,8 +50,6 @@ public class RuneManager {
         var entity = runeTableMenu.tableEntity();
         var item = entity.getInputItemHandler().getStackInSlot(0);
         var font = minecraft.font;
-
-//        remainingPotential(guiGraphics, shiftX, spacer, shiftY, mouseX, mouseY, width, height, showInventory, slot, minecraft, runeTableMenu, coinCost, borderColour);
         var getRunes = getGearData(item);
 
         handleSlotsInGridLayout(
@@ -82,14 +77,12 @@ public class RuneManager {
         var startX11 = width/2 + shiftX - 38;
         var startY11 = height/2 + shiftY - 89;
         var heightOffset = 86 - 36;
+
         boxMaker(guiGraphics, startX11, startY11, Math.max(10, 74), heightOffset, borderColour, groupFade());
-
         if(getRunes.runeSlots().isEmpty() && showInventory){
-            guiGraphics.drawCenteredString(font, "No Slots Available", startX11 + 74, startY11 + 46, Colours.getSubHeaderColour());
+            guiGraphics.drawCenteredString(font, "No Slots Available", startX11 + 74, startY11 + 46, ColourHelpers.getSubHeaderColour());
         }
-
     }
-
 
     public static void runeToolTip(
         GuiGraphics guiGraphics,
@@ -111,23 +104,27 @@ public class RuneManager {
 
             var prefix = "Extraction Cost: ";
             var text = cost.getHoverName().getString();
-            var quantityCost = withStyleComponent("1", borderColour);
+            var quantityCost = TextHelpers.withStyleComponent("1", borderColour);
             var list = new ArrayList<Component>();
 
-            list.add(withStyleComponent(prefix, borderColour));
-            var coreAvailableColour = entity.checkAndChargeCores(coreItemType, false) ? Colours.getSubHeaderColour() : Colours.getNegativeRed();
+            list.add(TextHelpers.withStyleComponent(prefix, borderColour));
+            var coreAvailableColour = entity.checkAndChargeCores(coreItemType, false) ? ColourHelpers.getSubHeaderColour() : ColourHelpers.getNegativeRed();
 
-            list.add(withStyleComponent(text + ": ", coreAvailableColour).copy().append(quantityCost));
+            list.add(TextHelpers.withStyleComponent(text + ": ", coreAvailableColour).copy().append(quantityCost));
             CoinSack.coinToolTip(list, coinCost);
 
-            if(!isShiftDown(minecraft)){
-                list.add(withStyleComponent("Hold", Colours.getHeaderColour()).copy().append(withStyleComponent(" [Shift] ", Colours.getOffWhite())));
+            if(!isShiftDown()){
+                list.add(TextHelpers.withStyleComponent("Hold", ColourHelpers.getHeaderColour()).copy().append(TextHelpers.withStyleComponent(" [Shift] ", ColourHelpers.getOffWhite())));
             }
 
-            var toolTipSpacer = isShiftDown(minecraft) ? ((list.size() * 10) + 10) : 0;
+            var toolTipSpacer = isShiftDown() ? ((list.size() * 10) + 10) : 0;
             guiGraphics.renderTooltip(minecraft.font, list, Optional.empty(), mouseX, mouseY - toolTipSpacer);
         }
-        WalletOverlay.renderWallet(guiGraphics, minecraft, 1, 10, -20, true, coinCost > 0 ? PlayerWallet.CurrencyConverter.convertToCoins(coinCost) : null);
+
+        var converter = coinCost > 0 ? PlayerWallet.CurrencyConverter.convertToCoins(coinCost) : null;
+        var adjustX = (double) guiGraphics.guiWidth() / 2 - 128;
+        var adjustY = (double) guiGraphics.guiHeight() / 2 - 11;
+        WalletOverlay.renderWallet(guiGraphics, minecraft, 1, adjustX, adjustY + 14, false, false, false, converter);
     }
 
 
@@ -135,7 +132,7 @@ public class RuneManager {
         var carried = hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? runeTableMenu.getCarried() : hoveredSlot.getItem();
         var isRuneSlot = hoveredSlot instanceof RuneSlot;
         var isNonRuneSlot = !carried.isEmpty() && !isRuneSlot;
-        var isRuneWithShift = isRuneSlot && isShiftDown(minecraft);
+        var isRuneWithShift = isRuneSlot && isShiftDown();
 
         if (isNonRuneSlot || isRuneWithShift) {
             guiGraphics.renderTooltip(minecraft.font, carried, x, y);

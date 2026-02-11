@@ -12,12 +12,13 @@ import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
 public class PlayerWallet implements IAttachment {
 
@@ -27,18 +28,23 @@ public class PlayerWallet implements IAttachment {
     public void addBronze(int multi) {
         wallet += multi;
     }
+
     public void addSilver(int multi) {
         wallet += (100 * multi);
     }
+
     public void addGold(int multi) {
         wallet += (10000 * multi);
     }
+
     public void addPlatinum(int multi) {
         wallet += (1000000 * multi);
     }
+
     public void setWallet(int newWallet) {
         wallet = newWallet;
     }
+
     public int getWallet() {
         return wallet;
     }
@@ -189,10 +195,10 @@ public class PlayerWallet implements IAttachment {
     }
 
     public enum CoinProperties implements StringRepresentable, IExtensibleEnum {
-        BRONZE(Icons.BRONZE_COIN, "Bronze", BRONZE_COIN),
-        SILVER(Icons.SILVER_COIN, "Silver", SILVER_COIN),
-        GOLD(Icons.GOLD_COIN, "Gold", CHAMPION_GOLD),
-        PLATINUM(Icons.PLATINUM_COIN, "Platinum", PLATINUM_COIN);
+        BRONZE(Icons.BRONZE_COIN, "bronze_coin", ColourHelpers.getBronzeCoin()),
+        SILVER(Icons.SILVER_COIN, "silver_coin", ColourHelpers.getSilverCoin()),
+        GOLD(Icons.GOLD_COIN, "gold_coin", ColourHelpers.getChampionGold()),
+        PLATINUM(Icons.PLATINUM_COIN, "platinum_coin", ColourHelpers.getPlatinumCoin());
 
         private final ResourceLocation location;
         private final String name;
@@ -212,9 +218,17 @@ public class PlayerWallet implements IAttachment {
             return location;
         }
 
+        public String getName() {
+            return name;
+        }
+
         @Override
         public String getSerializedName() {
-            return this.name;
+            return TextHelpers.stringIdToName(name.replace("_coin", ""));
+        }
+
+        public static CoinProperties getType (int value) {
+            return Arrays.stream(CoinProperties.values()).toList().get(value);
         }
     }
 }

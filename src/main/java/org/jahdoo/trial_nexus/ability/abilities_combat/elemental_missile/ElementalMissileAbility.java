@@ -11,8 +11,7 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.GlobalStrings;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.registers.mod.EntityDataReg.ELEMENTAL_SHOOTER;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SET_ELEMENT_TYPE;
@@ -27,7 +26,7 @@ abstract public class ElementalMissileAbility extends Ability {
 
     @Override
     public String getDescription() {
-        return GlobalStrings.BLOCK_PLACER;
+        return "description.ability.jahdoo.test";
     }
 
     @Override
@@ -73,7 +72,7 @@ abstract public class ElementalMissileAbility extends Ability {
         var isAlt = ElementalMissile.altOnHitCheck(player);
 
         fireMultiShotProjectile((int) projectileCount, 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, name), isAlt ? 15 : 0);
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ELEMENTAL_BULLET.get(), SoundSource.NEUTRAL, 0.8F, 1.2F);
+        SoundHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ELEMENTAL_BULLET.get(), SoundSource.NEUTRAL, 0.8F, 1.2F);
     }
 
     protected AbilityHolder getWithElement(int id, String name){

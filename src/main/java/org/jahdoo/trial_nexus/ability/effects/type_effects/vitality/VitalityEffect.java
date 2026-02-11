@@ -13,7 +13,7 @@ import org.jahdoo.trial_nexus.ability.effects.EffectHelpers;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffectCategory.HARMFUL;
@@ -42,7 +42,7 @@ public class VitalityEffect extends MobEffect {
 
     public static void throwHeartContainer(LivingEntity targetEntity, float healAmount) {
         var heartContainer = createHearContainer(healAmount);
-        Helpers.throwNewItem(targetEntity, heartContainer);
+        ItemHelpers.throwNewItem(targetEntity, heartContainer);
     }
 
     private static @NotNull ItemStack createHearContainer(float amplifier) {

@@ -5,13 +5,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.armor.BaseArmor;
 import org.jahdoo.common.registers.ArmorMaterialReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -35,7 +35,7 @@ public class AncientGolemArmor extends BaseArmor implements GeoItem, JahdooItem 
 
     @Override
     public Component getName(ItemStack stack) {
-        return JahdooHelpers.withStyleComponent(super.getName(stack).getString(), ElementReg.vitality().textColourB());
+        return TextHelpers.withStyleComponent(super.getName(stack).getString(), ElementReg.vitality().textColourB());
     }
 
     @Override

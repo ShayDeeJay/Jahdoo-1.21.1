@@ -13,7 +13,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.items.KeyItem;
+import org.jahdoo.trial_nexus.level_manager.RoomData;
+import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +29,6 @@ import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.stringIdToName;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.withStyleComponent;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
 
@@ -56,7 +56,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
     private void difficultyPick(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, Direction facing, Font font, float adjustY, DisplayDirection direction) {
         if(entity.getDifficulty.isEmpty()) return;
         var getDifficulty = getFromName(entity.getDifficulty);
-        var formattedName = stringIdToName(getDifficulty.getSerializedName());
+        var formattedName = TextHelpers.stringIdToName(getDifficulty.getSerializedName());
         var directionA = DisplayDirection.fromMCDirection(facing.getOpposite());
         var isLook = facing == EAST || facing == WEST;
 
@@ -69,7 +69,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var isInit = entity.hasDifficulty();
 
         if(isInit){
-            renderName(withStyleComponent("Start with", getDifficulty.getColor()), pose, source, -1, font, 0.025F, 3.5F - adjustY, true, facing, direction, false);
+            renderName(TextHelpers.withStyleComponent("Start with", getDifficulty.getColor()), pose, source, -1, font, 0.025F, 3.5F - adjustY, true, facing, direction, false);
             switch (getDifficulty.getSerializedName()) {
                 case "novice" -> noviceRun(pose, source, facing, font, direction, getDifficulty.getColor());
                 case "expert" -> expertRun(pose, source, facing, font, direction, getDifficulty.getColor());
@@ -77,7 +77,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
             }
         }
 
-        renderName(withStyleComponent(isInit ? formattedName : "", getDifficulty.getColor()), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
+        renderName(TextHelpers.withStyleComponent(isInit ? formattedName : "", getDifficulty.getColor()), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
     }
 
     private void noviceRun(PoseStack pose, MultiBufferSource source, Direction facing, Font font, DisplayDirection direction, int colour) {
@@ -85,8 +85,8 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var z = 0.6F;
         pose.scale(z, z, z);
         pose.translate(0.1, 0.9, -0.15);
-        renderNewLine(font, pose, source, withStyleComponent("+5 Horde", colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("20 Minute Timer", colour), Icons.CLOCK, 0.1F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+5 Horde", colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("20 Minute Timer", colour), Icons.CLOCK, 0.1F, facing, direction, 0.2F, 255);
         pose.popPose();
     }
 
@@ -95,10 +95,10 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var z = 0.6F;
         pose.scale(z, z, z);
         pose.translate(0.75, 1.3, 0.1);
-        renderNewLine(font, pose, source, withStyleComponent("+10 Horde", colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("15 Minute Timer", colour), Icons.CLOCK, 0.1F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("+10% Mob Health", colour), iconFromEffect(REGENERATION), -0.3F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("+15% Mob Damage", colour),  iconFromEffect(DAMAGE_BOOST), -0.7F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+10 Horde", colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("15 Minute Timer", colour), Icons.CLOCK, 0.1F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+10% Mob Health", colour), iconFromEffect(REGENERATION), -0.3F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+15% Mob Damage", colour),  iconFromEffect(DAMAGE_BOOST), -0.7F, facing, direction, 0.2F, 255);
         pose.popPose();
     }
 
@@ -107,12 +107,12 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var z = 0.6F;
         pose.scale(z, z, z);
         pose.translate(0.5, 1.7, 0.75);
-        renderNewLine(font, pose, source, withStyleComponent("+10 Horde",colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("+10 Skeleton", colour), Icons.SKELETON, 0.1F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("10 Minute Timer", colour), Icons.CLOCK, -0.3F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("+100% Mob Health", colour), iconFromEffect(REGENERATION), -0.7F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("+100% Mob Damage", colour), iconFromEffect(DAMAGE_BOOST), -1.1F, facing, direction, 0.2F, 255);
-        renderNewLine(font, pose, source, withStyleComponent("+15% Mob Speed", colour), iconFromEffect(MOVEMENT_SPEED), -1.5F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+10 Horde",colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+10 Skeleton", colour), Icons.SKELETON, 0.1F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("10 Minute Timer", colour), Icons.CLOCK, -0.3F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+100% Mob Health", colour), iconFromEffect(REGENERATION), -0.7F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+100% Mob Damage", colour), iconFromEffect(DAMAGE_BOOST), -1.1F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, TextHelpers.withStyleComponent("+15% Mob Speed", colour), iconFromEffect(MOVEMENT_SPEED), -1.5F, facing, direction, 0.2F, 255);
         pose.popPose();
     }
 
@@ -120,17 +120,14 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         if (entity.isInitialized() && player != null) {
             var distance = player.distanceToSqr(entity.getBlockPos().getCenter());
             if (distance < 2500) {
-                var lockKey = KeyItem.isLockKey(player.getMainHandItem());
-                var id1 = lockKey.equals(KeyItem.KeyTypes.KEY_PIECE) ? entity.roomId : lockKey.getRoomId();
-                var id = id1.getString();
-                var boss = id.contains("Boss");
-                var sanctuary = id.contains("Sanctuary");
-                var exit = id.contains("Exit");
-                var bazaar = id.contains("Bazaar");
-                var getIcon = boss ? "☠" : sanctuary ? "\uD83E\uDDEA" : exit ? "⚠" : bazaar ? "⇵" : "⚔";
+                var mainHandItem = player.getMainHandItem();
+                var lockKey = RoomData.isLockKey(mainHandItem);
+
+                var id1 = lockKey ? RoomData.getByItem(mainHandItem).getComponent() : entity.roomId ;
+                var getIcon = RoomData.roomIcon(id1.getString());
                 var textColour = id1.getStyle().getColor().getValue();
 
-                renderName(withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
+                renderName(TextHelpers.withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
                 renderName(id1, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction, false);
                 var hasNegative = !Objects.equals(entity.negativeBoon, EMPTY);
                 if (hasNegative) {

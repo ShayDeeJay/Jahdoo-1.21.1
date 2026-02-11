@@ -14,21 +14,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.ability.SharedFireProperties;
-import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.ArmageddonModule;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.shaydee.shaydeeapi.Colours;
-import org.shaydee.shaydeeapi.Helpers;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.ability.SharedFireProperties;
+import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.ArmageddonModule;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +35,16 @@ import java.util.UUID;
 
 import static net.minecraft.sounds.SoundEvents.FIRE_AMBIENT;
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
+import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
+import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.*;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 
 public class FireBall extends DefaultEntityBehaviour {
 
@@ -121,7 +121,7 @@ public class FireBall extends DefaultEntityBehaviour {
     }
 
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){
-        Helpers.getSoundWithPosition(this.element.level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
+        SoundHelpers.getSoundWithPosition(this.element.level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
     private void fireballTrailingSound(){
@@ -152,8 +152,8 @@ public class FireBall extends DefaultEntityBehaviour {
     private void setShockwaveNova(Vec3 worldPosition){
         var directions = worldPosition.subtract(this.element.position()).normalize();
         var lifetime = Random.nextInt(4, 6);
-        var col1 = ColourStore.SUB_HEADER_COLOUR;
-        var col2 = Colours.getHeaderColour();
+        var col1 = ColourHelpers.getSubHeaderColour();
+        var col2 = ColourHelpers.getHeaderColour();
         var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, 0.2f, col1, col2, true);
 
         ParticleHandlers.sendParticles(

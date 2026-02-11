@@ -3,12 +3,12 @@ package org.jahdoo.common.event.event_helpers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.common.client.screens.AbilityWheelScreen;
 import org.jahdoo.common.client.screens.AugmentScreen;
 import org.jahdoo.common.networking.client2server.MagnetActiveC2SP;
+import org.jahdoo.trial_nexus.utils.Configuration;
+import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 
-import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static org.jahdoo.common.client.KeyBinding.MAGNET;
 import static org.jahdoo.common.client.KeyBinding.QUICK_SELECT;
 
@@ -33,9 +33,8 @@ public class KeyBindHelper {
         if(Configuration.QUICK_SELECT.get()){
             if(QUICK_SELECT.isDown()) setAbilityWheel(instance);
         } else {
-            var window = instance.getWindow().getWindow();
             var quickSelect = QUICK_SELECT.getKey().getValue();
-            var keyDown = isKeyDown(window, quickSelect);
+            var keyDown = ClientHelpers.isKeyDown(quickSelect);
             var isAbilityWheel = instance.screen instanceof AbilityWheelScreen;
 
             if(keyDown) setAbilityWheel(instance); else if(isAbilityWheel) instance.popGuiLayer();

@@ -10,11 +10,11 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
+import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 
 import javax.annotation.Nullable;
 
 import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
-import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
 
 public class AbilityScreenButton extends ImageButton {
@@ -101,7 +101,7 @@ public class AbilityScreenButton extends ImageButton {
         graphics.blit(this.sprites.enabled(), this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
 
         if (this.isMouseOver(mouseX, mouseY)) {
-            var shift = isKeyDown(Minecraft.getInstance().getWindow().getWindow(), KEY_LSHIFT);
+            var shift = ClientHelpers.isKeyDown(KEY_LSHIFT);
 
             if(!isDummy){
                 RenderSystem.enableBlend();

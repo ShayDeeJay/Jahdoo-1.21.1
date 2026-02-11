@@ -6,8 +6,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 public class MaxAbsorptionBoon extends AbstractPlayerBoons {
 
@@ -28,7 +28,7 @@ public class MaxAbsorptionBoon extends AbstractPlayerBoons {
 
     @Override
     public int colour() {
-        return ColourStore.ABSORPTION_TEXT_YELLOW;
+        return ColourHelpers.getAbsorptionTextYellow();
     }
 
     @Override
