@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.creator.CreatorEntity;
@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import static net.minecraft.client.gui.screens.Screen.getTooltipFromItem;
 import static net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Post;
+import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.HALF;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
 
 
@@ -33,24 +34,22 @@ public class  OverlayBlockTooltip {
     public static void overlayEvent(Post event) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
-        if (player == null) return;
+        var level = instance.level;
+        if (player == null || level == null) return;
 
         var partialTicks = event.getPartialTick().getGameTimeDeltaTicks();
         var pick = player.pick(player.blockInteractionRange(), partialTicks, false);
 
         if(pick instanceof BlockHitResult result){
             var pos = result.getBlockPos();
-            var lookingAt = player.level().getBlockEntity(pos);
-            if (lookingAt instanceof AbstractBEInventory tableEntity){
-                renderShoppingTableTooltip(event, player, tableEntity);
-                return;
-            }
+            var state = level.getBlockState(pos);
+            if(!(state.getBlock() instanceof ShoppingTableBlock)) return;
 
-            var lookingAtBelow = player.level().getBlockEntity(pos.below());
-            if(lookingAt instanceof BarrelBlockEntity){
-                if (lookingAtBelow instanceof AbstractBEInventory tableEntity) {
-                    renderShoppingTableTooltip(event, player, tableEntity);
-                }
+            var isUpper = state.getValue(HALF).equals(DoubleBlockHalf.UPPER);
+            var getBottomHalf = level.getBlockEntity(isUpper ? pos.below() : pos);
+
+            if (getBottomHalf instanceof AbstractBEInventory tableEntity){
+                renderShoppingTableTooltip(event, player, tableEntity);
             }
         }
     }
@@ -61,8 +60,6 @@ public class  OverlayBlockTooltip {
         AbstractBEInventory tableEntity
     ) {
         var instance = Minecraft.getInstance();
-//        if(instance.screen != null) return;
-
         var graphics = event.getGuiGraphics();
         var width = graphics.guiWidth() / 2;
         var height = graphics.guiHeight() / 2;

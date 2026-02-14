@@ -1,5 +1,6 @@
 package org.jahdoo.common.items;
 
+import kotlin.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -13,8 +14,11 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.common.event.event_helpers.EventHelpers.getOverEnchantColour;
@@ -24,7 +28,14 @@ import static org.jahdoo.trial_nexus.utils.JahdooHelpers.highlightTextComponent;
 
 public interface JahdooItem {
 
+    Pair<String, List<ItemStack>> EMPTY = new Pair<>("", List.of());
+
     default String descriptionId(){
+        return null;
+    }
+
+    @Nullable
+    default Pair<String, List<ItemStack>> getAdditional(){
         return null;
     }
 
@@ -34,6 +45,12 @@ public interface JahdooItem {
 
     default int customRecycleChance(ItemStack itemStack){
         return -1;
+    }
+
+    static void addItems(int i1, ItemStack itemStack, ArrayList<ItemStack> getItems) {
+        for (int i = 0; i < i1; i++){
+            getItems.add(itemStack);
+        }
     }
 
     default void appendItemToolTips(ItemStack stack, Item.TooltipContext context, List<Component> toolTips, boolean addSpacer){
@@ -72,7 +89,7 @@ public interface JahdooItem {
         toolTips.add(Component.literal(" "));
         toolTips.add(TextHelpers.withStyleComponent("When Equipped", ColourHelpers.getSubHeaderColour()));
         for (var modifier : stack.getAttributeModifiers().modifiers()) {
-            var value = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.singleFormattedDouble(modifier.modifier().amount()));
+            var value = MathHelpers.roundNonWholeString(MathHelpers.singleFormattedDouble(modifier.modifier().amount()));
             var getColour = ColourHelpers.getAbsorptionTextYellow();
 
             if(modifier.attribute() == Attributes.ENTITY_INTERACTION_RANGE){
@@ -86,7 +103,7 @@ public interface JahdooItem {
             if(modifier.attribute() == Attributes.ATTACK_SPEED){
                 var value1 = modifier.attribute().value().getDefaultValue();
                 var amount = modifier.modifier().amount();
-                var v = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.singleFormattedDouble(value1 + amount));
+                var v = MathHelpers.roundNonWholeString(MathHelpers.singleFormattedDouble(value1 + amount));
                 toolTips.add(TextHelpers.withStyleComponent(v+" Attack Speed", getColour));
             }
         }

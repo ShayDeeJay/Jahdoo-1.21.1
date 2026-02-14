@@ -20,7 +20,7 @@ import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
@@ -144,7 +144,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
         if(this.generic != null){
             var element = generic.getElementType();
             var isVital = element.equals(ElementReg.vitality());
-            var canLeech = Maths.percentageChance(this.lifeLeechChance);
+            var canLeech = MathHelpers.percentageChance(this.lifeLeechChance);
 
             if (isVital && canLeech && generic.getOwner() instanceof EternalWizard eternalWizard) {
                 eternalWizard.heal(2);

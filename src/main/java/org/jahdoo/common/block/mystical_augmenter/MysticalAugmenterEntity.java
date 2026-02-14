@@ -48,7 +48,7 @@ public class MysticalAugmenterEntity extends AbstractTankUser implements GeoBloc
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("infuser.progress", progress);
         AbilityHolder.writeTag(holder == null ? AbilityHolder.DEFAULT : holder, tag);
@@ -56,7 +56,7 @@ public class MysticalAugmenterEntity extends AbstractTankUser implements GeoBloc
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         progress = tag.getInt("infuser.progress");
         this.holder = AbilityHolder.readTag(tag);

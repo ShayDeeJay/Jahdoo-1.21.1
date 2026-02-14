@@ -6,6 +6,7 @@ import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_MAX_TIME;
@@ -41,7 +42,7 @@ public class Time extends AbstractLevelBoon {
     @Override
     public double value(JahdooRarity rarity) {
         var getRarity = rarity.getAttributes();
-        return org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(getRarity.getRandomTime());
+        return MathHelpers.doubleFormattedDouble(getRarity.getRandomTime());
     }
 
     @Override

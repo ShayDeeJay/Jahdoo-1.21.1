@@ -17,6 +17,7 @@ import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
@@ -272,7 +273,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
 
                     if(abilityModifiers != null){
                         var operationCost = abilityModifiers.setValue();
-                        var roundCost = org.shaydee.shaydeeapi.Maths.roundNonWholeString(operationCost);
+                        var roundCost = MathHelpers.roundNonWholeString(operationCost);
                         tooltipLines2.add(TextHelpers.withStyleComponent("Cost: ", colourSet).copy().append(TextHelpers.withStyleComponent(roundCost, ColourHelpers.getSubHeaderColour())));
                     }
                 }

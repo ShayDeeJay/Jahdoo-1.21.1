@@ -19,6 +19,7 @@ import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -234,7 +235,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var addRune = new ArrayList<ItemStack>();
         var getRuneHolderSize = JahdooGearData.getGearData(itemStack).runeSlots().size();
         for(int i = 0; i < getRuneHolderSize; i++){
-            if(org.shaydee.shaydeeapi.Maths.percentageChance(10)){
+            if(MathHelpers.percentageChance(10)){
                 var getRandomRun = RuneHelpers.generateRandomTypAttribute(null, null, null);
                 addRune.add(getRandomRun);
             } else {
@@ -247,8 +248,8 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     public static ItemStack createTomeAttributes(@Nullable ItemStack itemStack, @Nullable JahdooRarity withRarity){
         var rarity = withRarity == null ? getRarity() : withRarity;
         var stack = itemStack == null ? new ItemStack(ItemReg.TOME_OF_UNITY) : itemStack;
-        var randomRegenValue = org.shaydee.shaydeeapi.Maths.singleFormattedDouble(rarity.getAttributes().getRandomManaRegen());
-        var randomManaPool = org.shaydee.shaydeeapi.Maths.singleFormattedDouble(rarity.getAttributes().getRandomManaPool());
+        var randomRegenValue = MathHelpers.singleFormattedDouble(rarity.getAttributes().getRandomManaRegen());
+        var randomManaPool = MathHelpers.singleFormattedDouble(rarity.getAttributes().getRandomManaPool());
         var manaRegen = MANA_REGEN;
         var manaPool = MANA_POOL;
         var isUnique = rarity == UNIQUE;
@@ -278,21 +279,21 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     private static void addCooldownImplicit(JahdooRarity rarity, ItemStack itemStack, AbstractElement element, boolean isUnique) {
         var cooldownReductionType = element.cooldownReduction();
         var cooldownReductionName = cooldownReductionType.getRegisteredName();
-        var cooldownReductionValue = org.shaydee.shaydeeapi.Maths.getPercentageTotal(isUnique ? 20 : 0, rarity.getAttributes().getRandomCooldown());
+        var cooldownReductionValue = MathHelpers.getPercentageTotal(isUnique ? 20 : 0, rarity.getAttributes().getRandomCooldown());
         replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, MAINHAND, true, "wand");
     }
 
     private static void addManaImplicit(JahdooRarity rarity, ItemStack itemStack, AbstractElement element, boolean isUnique) {
         var manaReductionType = element.manaReduction();
         var manaReductionName = manaReductionType.getRegisteredName();
-        var manaReductionValue = org.shaydee.shaydeeapi.Maths.getPercentageTotal(isUnique ? 20 : 0, rarity.getAttributes().getRandomManaReduction());
+        var manaReductionValue = MathHelpers.getPercentageTotal(isUnique ? 20 : 0, rarity.getAttributes().getRandomManaReduction());
         replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, MAINHAND, true, "wand");
     }
 
     private static void addDamageImplicit(JahdooRarity rarity, ItemStack itemStack, AbstractElement element, boolean isUnique) {
         var damageAmplifierType = element.damageAmplifier();
         var damageAmplifierName = damageAmplifierType.getRegisteredName();
-        var damageAmplifierValue = org.shaydee.shaydeeapi.Maths.getPercentageTotal(isUnique ? 20 : 0, rarity.getAttributes().getRandomDamage());
+        var damageAmplifierValue = MathHelpers.getPercentageTotal(isUnique ? 20 : 0, rarity.getAttributes().getRandomDamage());
         replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, MAINHAND, true, "wand");
     }
 
@@ -331,10 +332,10 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         itemStack.set(JAHDOO_RARITY, rarity.getId());
 
         var potential = rarity.getAttributes().getRandomPotential();
-        JahdooGearData.createNewRuneSlots(itemStack, runeSlots,  repairSlots == -1 ? JahdooRarity.getRarity().getId() + 1 : repairSlots, (int) org.shaydee.shaydeeapi.Maths.getPercentageTotal(adjustPotential, potential));
+        JahdooGearData.createNewRuneSlots(itemStack, runeSlots,  repairSlots == -1 ? JahdooRarity.getRarity().getId() + 1 : repairSlots, (int) MathHelpers.getPercentageTotal(adjustPotential, potential));
 
         var durability = rarity.getAttributes().getRandomTime();
-        attachDurability(itemStack, (int) org.shaydee.shaydeeapi.Maths.getPercentageTotal(adjustDurability, durability));
+        attachDurability(itemStack, (int) MathHelpers.getPercentageTotal(adjustDurability, durability));
     }
 
     public static ItemStack basicShieldWithRarity(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){

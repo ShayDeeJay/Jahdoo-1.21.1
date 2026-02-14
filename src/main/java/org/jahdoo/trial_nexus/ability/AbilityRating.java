@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextRange;
 
@@ -29,8 +30,8 @@ public class AbilityRating {
     public static Component hoverTextHelper(AbilityHolder holder, String keys, boolean isHigherBetter) {
         if (holder != null) {
             var modifiers = getModifier(holder, keys);
-            var max = org.shaydee.shaydeeapi.Maths.getFORMAT().format(modifiers.highestValue());
-            var min = org.shaydee.shaydeeapi.Maths.getFORMAT().format(modifiers.lowestValue());
+            var max = MathHelpers.getFORMAT().format(modifiers.highestValue());
+            var min = MathHelpers.getFORMAT().format(modifiers.lowestValue());
             var getLowest = isHigherBetter ? min : max;
             var getHighest = isHigherBetter ? max : min;
 

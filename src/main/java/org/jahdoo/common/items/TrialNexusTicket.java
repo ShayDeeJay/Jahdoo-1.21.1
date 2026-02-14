@@ -25,6 +25,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import javax.annotation.Nullable;
@@ -150,7 +151,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         var colour = getBoon.getHeaderColour();
         if(getTicketMods != null && getTicketMods.get(key) > 0){
             var v = getTicketMods.get(key);
-            var s = Objects.equals(key, KEY_MAX_TIME) ? org.shaydee.shaydeeapi.Maths.ticksToTime(v + "") : org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(v));
+            var s = Objects.equals(key, KEY_MAX_TIME) ? MathHelpers.ticksToTime(v + "") : MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(v));
             tooltipComponents.add(TextHelpers.withStyleComponent("+" + s + (isPercent ? "% " : " ") + TextHelpers.stringIdToName(key), colour));
         }
     }

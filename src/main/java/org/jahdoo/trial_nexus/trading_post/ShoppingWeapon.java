@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.common.registers.ItemReg;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import javax.annotation.Nullable;
 
@@ -21,17 +22,17 @@ public class ShoppingWeapon {
     }
 
     public static void enchantSword(ServerLevel serverLevel, ItemStack itemStack, boolean isSpecial) {
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(20)) attachEnchantment(itemStack, serverLevel, SWEEPING_EDGE, 1, 4);
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(30)) attachEnchantment(itemStack, serverLevel, SHARPNESS, 1, 6);
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(30)) attachEnchantment(itemStack, serverLevel, UNBREAKING, 1, 4);
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(40)) attachEnchantment(itemStack, serverLevel, LOOTING, 1, 4);
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(40)) attachEnchantment(itemStack, serverLevel, MENDING, 0, 1);
+        if(MathHelpers.percentageChance(20)) attachEnchantment(itemStack, serverLevel, SWEEPING_EDGE, 1, 4);
+        if(MathHelpers.percentageChance(30)) attachEnchantment(itemStack, serverLevel, SHARPNESS, 1, 6);
+        if(MathHelpers.percentageChance(30)) attachEnchantment(itemStack, serverLevel, UNBREAKING, 1, 4);
+        if(MathHelpers.percentageChance(40)) attachEnchantment(itemStack, serverLevel, LOOTING, 1, 4);
+        if(MathHelpers.percentageChance(40)) attachEnchantment(itemStack, serverLevel, MENDING, 0, 1);
 
         if(!isSpecial) return;
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(20)) attachEnchantment(itemStack, serverLevel, SHARPNESS, 6, 11);
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(30)) attachEnchantment(itemStack, serverLevel, SWEEPING_EDGE, 4, 8);
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(30)) attachEnchantment(itemStack, serverLevel, LOOTING, 4, 8);
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(40)) attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 8);
+        if(MathHelpers.percentageChance(20)) attachEnchantment(itemStack, serverLevel, SHARPNESS, 6, 11);
+        if(MathHelpers.percentageChance(30)) attachEnchantment(itemStack, serverLevel, SWEEPING_EDGE, 4, 8);
+        if(MathHelpers.percentageChance(30)) attachEnchantment(itemStack, serverLevel, LOOTING, 4, 8);
+        if(MathHelpers.percentageChance(40)) attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 8);
     }
 
 }

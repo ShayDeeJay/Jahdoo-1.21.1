@@ -17,6 +17,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
@@ -181,7 +182,7 @@ public class AbilityComponentHelper {
         if(abilityModifier == null) return Component.empty();
 
         // CHECK THIS IF ISSUE
-        var format = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(abilityModifier.setValue()));
+        var format = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(abilityModifier.setValue()));
 
         if (itemStack1 != null) {
             int comparisonResult;
@@ -223,11 +224,11 @@ public class AbilityComponentHelper {
         var toggle = List.of("Toggle");
 
         if (time.stream().anyMatch(keys::contains)) {
-            displayValue = isRange ? rangeString(org.shaydee.shaydeeapi.Maths.ticksToTime(min, true), org.shaydee.shaydeeapi.Maths.ticksToTime(max, true)) : org.shaydee.shaydeeapi.Maths.ticksToTime(current, true);
+            displayValue = isRange ? rangeString(MathHelpers.ticksToTime(min, true), MathHelpers.ticksToTime(max, true)) : MathHelpers.ticksToTime(current, true);
         }  else if (leech.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(min + "%", max + "%") : current + "%";
         } else if (probability.stream().anyMatch(keys::contains)) {
-            displayValue = isRange ? rangeString(org.shaydee.shaydeeapi.Maths.toPercent(Double.parseDouble(min)), org.shaydee.shaydeeapi.Maths.toPercent(Double.parseDouble(max))) + "%" : org.shaydee.shaydeeapi.Maths.toPercent(Double.parseDouble(current)) + "%";
+            displayValue = isRange ? rangeString(MathHelpers.toPercent(Double.parseDouble(min)), MathHelpers.toPercent(Double.parseDouble(max))) + "%" : MathHelpers.toPercent(Double.parseDouble(current)) + "%";
         } else if (distance.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(min, max) + " Blocks" : current + " Blocks";
         } else if (multiplier.stream().anyMatch(keys::contains)) {
@@ -246,7 +247,7 @@ public class AbilityComponentHelper {
         var colour = isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat;
 
         return Component
-          .literal(org.shaydee.shaydeeapi.Maths.roundNonWholeString(displayValue))
+          .literal(MathHelpers.roundNonWholeString(displayValue))
           .withStyle(style -> style.withColor(colour));
     }
 

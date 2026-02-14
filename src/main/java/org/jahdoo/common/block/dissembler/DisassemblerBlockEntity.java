@@ -21,6 +21,7 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -116,7 +117,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     private static List<ItemStack> getRecycleWithChance(JahdooItem jahdooItem, ItemStack originalItem) {
 
         var rarity = originalItem.get(ComponentReg.JAHDOO_RARITY);
-        int custom =  jahdooItem.customRecycleChance(originalItem);
+        var custom =  jahdooItem.customRecycleChance(originalItem);
         var scrap = new ItemStack(ItemReg.GEAR_SCRAP);
 
         if(rarity == null && custom == -1) return List.of(EMPTY, EMPTY);
@@ -124,42 +125,22 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         // If no rarity OR custom chance is provided
         if (rarity == null || custom != -1) {
             int safe = clampChance(custom);
-            var recycleItem = List.of(org.shaydee.shaydeeapi.Maths.percentageChance(safe) ? jahdooItem.getRecycleItem() : EMPTY, scrap.copyWithCount(2));
+            var recycleItem = List.of(MathHelpers.percentageChance(safe) ? jahdooItem.getRecycleItem() : EMPTY, scrap.copyWithCount(2));
             var empty = List.of(EMPTY, scrap.copyWithCount(2));
-            return org.shaydee.shaydeeapi.Maths.percentageChance(safe) ? recycleItem : empty;
+            return MathHelpers.percentageChance(safe) ? recycleItem : empty;
         }
 
         var durabilityInfo = CustomHudOverlay.getDurabilityWithColor(originalItem);
         var hasDurability = originalItem.has(DataComponents.MAX_DAMAGE);
-
         var i = rarity + 5;
-        int baseChance = i * 10;
-
-        System.out.println("Base Chance");
-        System.out.println(baseChance);
-
-        System.out.println("Durability");
-        System.out.println(durabilityInfo.getFirst());
-        double missing = 100 - durabilityInfo.getFirst();
-
-        System.out.println("Missing");
-        System.out.println(missing);
-        double reduction = hasDurability ? (baseChance / 100.0) * missing : 0;
-
-        System.out.println("Reduction");
-        System.out.println(reduction);
-        double actualChance = baseChance - reduction;
-
-        System.out.println("Actual Chance");
-        System.out.println(actualChance);
-        int safeChance = clampChance(actualChance);
-
-        System.out.println("Safe Chance");
-        System.out.println(safeChance);
-
-        boolean success = org.shaydee.shaydeeapi.Maths.percentageChance(safeChance);
-
+        var baseChance = i * 10;
+        var missing = 100 - durabilityInfo.getFirst();
+        var reduction = hasDurability ? (baseChance / 100.0) * missing : 0;
+        var actualChance = baseChance - reduction;
+        var safeChance = clampChance(actualChance);
+        var success = MathHelpers.percentageChance(safeChance);
         var getNew = scrap.copyWithCount(i);
+
         return List.of(success ? jahdooItem.getRecycleItem() : EMPTY, getNew);
     }
 
@@ -234,13 +215,13 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("infuser.progress", progress);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         progress = tag.getInt("infuser.progress");
 

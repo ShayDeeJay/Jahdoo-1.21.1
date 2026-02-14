@@ -1,5 +1,6 @@
 {
   "drop_rule": "ALWAYS_DROP",
+  "icon": "jahdoo:slot/relic",
   "replace": true,
   "size": 1
 }

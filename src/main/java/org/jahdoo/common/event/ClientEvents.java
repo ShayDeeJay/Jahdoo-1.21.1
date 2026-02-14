@@ -44,6 +44,7 @@ public class ClientEvents {
 
         crosshairManager(event);
         simpleGui(event, player);
+
     }
 
     @SubscribeEvent
@@ -63,6 +64,7 @@ public class ClientEvents {
         renderOverEnchantedToolTip(itemStack, instance, current);
         renderRuneSockets(itemStack, current);
     }
+
 
     @SubscribeEvent
     public static void playerRenderer(RenderLevelStageEvent event) {

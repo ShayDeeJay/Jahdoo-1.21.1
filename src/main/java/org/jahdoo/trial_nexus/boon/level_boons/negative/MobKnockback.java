@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_KNOCKBACK;
@@ -41,7 +41,7 @@ public class MobKnockback extends AbstractLevelBoon {
     @Override
     public double value(JahdooRarity rarity) {
         var getRarity = rarity.getAttributes();
-        return Maths.doubleFormattedDouble(getRarity.getRandomManaReduction());
+        return MathHelpers.doubleFormattedDouble(getRarity.getRandomManaReduction());
     }
 
     @Override

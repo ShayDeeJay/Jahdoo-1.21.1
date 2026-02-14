@@ -84,6 +84,16 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(GOLD_BLOCK)
             .add(GILDED_BLACKSTONE);
 
+        this.tag(CHEAP_BLOCK)
+            .add(NEXITE_ORE.get())
+            .add(LISITE_ORE.get());
+
+        this.tag(MID_RANGE_BLOCK)
+            .add(ROSE_QUARTZ_ORE.get());
+
+        this.tag(VALUABLE_BLOCK)
+            .add(ENCHANTED_DIAMOND_BLOCK.get());
+
         this.tag(MINEABLE_NEXUS)
             .add(NEXITE_ORE.get())
             .add(ENCHANTED_DIAMOND_ORE.get())

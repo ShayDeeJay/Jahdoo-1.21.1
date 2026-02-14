@@ -13,7 +13,7 @@ import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
-public abstract class BaseItem extends BaseJahdooItem implements JahdooItem {
+public abstract class BaseItem extends BaseJahdooItem {
 
     public BaseItem(Properties properties) {
         super(properties);

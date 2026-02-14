@@ -50,7 +50,7 @@ public class EnchantedBlockEntity extends SyncedBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("counter", this.counter);
         tag.putInt("stage", this.stage);
         tag.putInt("chance", this.growthChance);
@@ -60,7 +60,7 @@ public class EnchantedBlockEntity extends SyncedBlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         this.counter = tag.getInt("counter");
         this.stage = tag.getInt("stage");
         this.growthChance = tag.getInt("chance");

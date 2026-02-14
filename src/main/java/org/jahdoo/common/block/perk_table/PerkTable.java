@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -19,10 +18,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.shaydee.shaydeeapi.helpers.BlockHelpers;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
@@ -32,6 +34,7 @@ public class PerkTable extends BaseEntityBlock {
 
     public static final VoxelShape SHAPE_BASE = Block.box(0, 0, 0, 16, 16, 16);
     public static final IntegerProperty TEXTURE = BlockStateProperties.LEVEL;
+    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     public PerkTable() {
         super(
@@ -43,6 +46,7 @@ public class PerkTable extends BaseEntityBlock {
         this.registerDefaultState(
             this.defaultBlockState()
                 .setValue(TEXTURE, 1)
+                .setValue(HALF, DoubleBlockHalf.LOWER)
         );
     }
 
@@ -57,9 +61,8 @@ public class PerkTable extends BaseEntityBlock {
     }
 
     @Override
-    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-//        level.destroyBlock(pos, false);
-        super.stepOn(level, pos, state, entity);
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        BlockHelpers.placeDoubleTallBlock(state, level, pos);
     }
 
     @Override
@@ -69,7 +72,7 @@ public class PerkTable extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(TEXTURE);
+        builder.add(TEXTURE).add(HALF);
     }
 
     @Override
@@ -95,8 +98,9 @@ public class PerkTable extends BaseEntityBlock {
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-//        if (!(level instanceof ServerLevel)) return FAIL;
-        if(!(level.getBlockEntity(pos) instanceof PerkTableEntity entity)) return FAIL;
+        var isUpper = state.getValue(HALF).equals(DoubleBlockHalf.UPPER);
+        var getBottomHalf = level.getBlockEntity(isUpper ? pos.below() : pos);
+        if(!(getBottomHalf instanceof PerkTableEntity entity)) return FAIL;
 
         entity.setUsed(state, player);
         return SUCCESS;

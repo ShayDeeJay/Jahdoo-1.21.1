@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import org.jahdoo.common.client.Icons;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -31,14 +32,7 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
     }
 
     @Override
-    public void render(Safe entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
-
-    @Override
-    protected void renderNameTag(Safe entity, Component displayName, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick) {
-//        super.renderNameTag(entity, displayName, poseStack, bufferSource, packedLight, partialTick);
-    }
+    protected void renderNameTag(Safe entity, Component displayName, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick) {}
 
     @Override
     public void actuallyRender(PoseStack poseStack, Safe animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
@@ -64,7 +58,7 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
 
     public static void roomData(Safe entity, PoseStack pPoseStack, MultiBufferSource bufferSource, EntityRenderDispatcher dispatcher, float partialTicks) {
         var offWhite = ColourHelpers.getNegativeRed();
-        var displayName = TextHelpers.withStyleComponent(org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(entity.getTimer())), offWhite);
+        var displayName = TextHelpers.withStyleComponent(MathHelpers.ticksToTime(String.valueOf(entity.getTimer())), offWhite);
         pPoseStack.pushPose();
         pPoseStack.translate(0, entity.getBbHeight() - 2, 0);
 

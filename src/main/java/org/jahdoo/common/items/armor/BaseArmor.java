@@ -14,6 +14,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jahdoo.common.items.JahdooItem;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
@@ -87,7 +88,7 @@ public abstract class BaseArmor extends ArmorItem implements JahdooItem {
     private static void baseArmorTooltip(ItemStack stack, List<Component> tooltipComponents) {
         tooltipComponents.add(TextHelpers.withStyleComponent("When Equipped", ColourHelpers.getSubHeaderColour()));
         for (var modifier : stack.getAttributeModifiers().modifiers()) {
-            var value = org.shaydee.shaydeeapi.Maths.roundNonWholeString(modifier.modifier().amount());
+            var value = MathHelpers.roundNonWholeString(modifier.modifier().amount());
 
             if(modifier.attribute() == Attributes.ARMOR){
                 tooltipComponents.add(TextHelpers.withStyleComponent("+"+value+" Armor", ColourHelpers.getMagnetStrengthRed()));

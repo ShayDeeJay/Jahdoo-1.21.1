@@ -15,23 +15,13 @@ import java.util.stream.Stream;
 
 public class EnchantmentHelpers {
 
+    public static void randomApplicableEnchantment(ItemStack itemStack) {
+        EnchantmentHelper.selectEnchantment(RandomSource.create(), itemStack, JahdooHelpers.Random.nextInt(0, 5), Stream.<Holder<Enchantment>>builder().build());
+    }
+
     public static void enchant(ItemStack stack, RegistryAccess access, ResourceKey<Enchantment> enchantmentKey, int level) {
         var enchantment = enchantmentFromKey(access, enchantmentKey);
         if (enchantment != null) stack.enchant(enchantment, level);
-    }
-
-//    public static EnchantRandomlyFunction.Builder randomApplicableEnchantment(HolderLookup.Provider registries) {
-//        return EnchantRandomlyFunction.randomEnchantment()
-//            .withOneOf(
-//                registries
-//                .lookupOrThrow(Registries.ENCHANTMENT)
-//                .getOrThrow(EnchantmentTags.ON_RANDOM_LOOT)
-//            );
-//    }
-
-    public static ItemStack randomApplicableEnchantment(ItemStack itemStack) {
-        EnchantmentHelper.selectEnchantment(RandomSource.create(), itemStack, JahdooHelpers.Random.nextInt(0, 5), Stream.<Holder<Enchantment>>builder().build());
-        return itemStack;
     }
 
     @Nullable

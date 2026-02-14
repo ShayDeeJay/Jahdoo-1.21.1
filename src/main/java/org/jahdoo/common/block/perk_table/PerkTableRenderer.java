@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static net.minecraft.client.Minecraft.getInstance;
 import static org.jahdoo.common.block.loot_chest.LootChestRenderer.roomData;
+import static org.jahdoo.common.block.perk_table.PerkTable.HALF;
 import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
 import static org.jahdoo.common.registers.ItemReg.*;
 
@@ -38,6 +40,7 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
 
     @Override
     public void render(PerkTableEntity entity, float partialTick, PoseStack stack, MultiBufferSource source, int packedLight, int packed) {
+        if(entity.getBlockState().getValue(HALF).equals(DoubleBlockHalf.UPPER)) return;
         var mc = getInstance();
         var itemRenderer = mc.getItemRenderer();
         int state = entity.getBlockState().getValue(TEXTURE);

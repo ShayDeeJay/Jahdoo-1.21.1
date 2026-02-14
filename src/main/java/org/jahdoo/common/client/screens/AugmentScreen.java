@@ -19,6 +19,7 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.*;
@@ -115,7 +116,7 @@ public class AugmentScreen extends Screen  {
     private void displayButtons(LinkedHashMap<String, AbilityData.AbilityModifiers> copy1, AtomicInteger verticalSpacing) {
         copy1.forEach(
             (e, v) -> {
-                var value = getModifierContextSingle(e, org.shaydee.shaydeeapi.Maths.roundNonWholeString(v.setValue()), 1).getString();
+                var value = getModifierContextSingle(e, MathHelpers.roundNonWholeString(v.setValue()), 1).getString();
                 if(e.contains("Toggle")){
 //                    System.out.println(e);
 //                    System.out.println(v.);

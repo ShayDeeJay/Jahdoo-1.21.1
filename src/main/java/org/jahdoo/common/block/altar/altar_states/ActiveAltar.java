@@ -16,7 +16,7 @@ import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.registers.SoundReg;
 import org.shaydee.shaydeeapi.Helpers;
-import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.core.BlockPos.containing;
@@ -100,7 +100,7 @@ public class ActiveAltar {
             var id = difficulty.getId();
             var percentageChance = (2 + id) * 10;
 
-            if (Maths.percentageChance(percentageChance)) {
+            if (MathHelpers.percentageChance(percentageChance)) {
                 var origin = id * 100;
                 var getSafe = new Safe(serverLevel, Random.nextInt(origin, origin * 2), 20);
 

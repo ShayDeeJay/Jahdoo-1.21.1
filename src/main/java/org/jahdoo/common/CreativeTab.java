@@ -60,10 +60,11 @@ public class CreativeTab {
                 outPut.accept(CREATOR_BLOCK.get());
                 outPut.accept(DISASSEMBLER_ITEM.get());
                 outPut.accept(TRIAL_TICKET.get());
-                outPut.accept(STONE_OF_REGRET.get());
+                outPut.accept(SALAMANS_EYE.get());
                 outPut.accept(DICE.get());
                 outPut.accept(GEAR_SCRAP.get());
                 outPut.accept(CHALLENGER_SOUL.get());
+                outPut.accept(DEED.get());
 
                 outPut.accept(KEY_FRAGMENT.get());
                 outPut.accept(EXIT_KEY.get());

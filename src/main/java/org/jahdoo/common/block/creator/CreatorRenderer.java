@@ -55,6 +55,17 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         }
     }
 
+    public static final float[][] POSITIONS_ON_SCREEN = {
+        {0.5f, 0.04f},
+        {0.14f, 0.40f},
+        {0.86f, 0.40f},
+        {0.5f, 0.76f},
+        {0.23f, 0.13f},
+        {0.77f, 0.13f},
+        {0.23f, 0.67f},
+        {0.77f, 0.68f}
+    };
+
     private void rotateAllItems(PoseStack pPoseStack, CreatorEntity pBlockEntity, Runnable stuff, int index, int totalItems, float partialTicks) {
         pPoseStack.pushPose();
 
@@ -66,20 +77,9 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
             var frameTime = Minecraft.getInstance().level.getGameTime();
             pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + ((-frameTime) - partialTicks)));
         } else {
-            float[][] positions = {
-                {0.5f, 0.04f},
-                {0.14f, 0.40f},
-                {0.86f, 0.40f},
-                {0.5f, 0.76f},
-                {0.23f, 0.13f},
-                {0.77f, 0.13f},
-                {0.23f, 0.67f},
-                {0.77f, 0.68f}
-            };
-
-            if (index < positions.length) {
+            if (index < POSITIONS_ON_SCREEN.length) {
                 var dir = getPlayerRelativeDirection(pBlockEntity).getOpposite();
-                var rotated = rotateAroundCenter(positions[index][0], positions[index][1], dir);
+                var rotated = rotateAroundCenter(POSITIONS_ON_SCREEN[index][0], POSITIONS_ON_SCREEN[index][1], dir);
                 pPoseStack.translate(rotated[0], index < 4 ? -0.11 : -0.17, rotated[1]);
             }
         }
@@ -122,7 +122,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         if(level == null) return;
 
         var itemStack = new ItemStack(ItemReg.CREATOR_TOP.get());
-        var scaleItem = 1.2f;
+        var scaleItem = 3.2F;
 
         var scale = Math.sin(((level.getGameTime() + partialTicks) / 14.0F)) * 0.03F + 1;
         stack.translate(0.5, scale, 0.5);
@@ -132,7 +132,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
 
         iRenderer.renderStatic(
             itemStack,
-            ItemDisplayContext.FIXED,
+            ItemDisplayContext.GROUND,
             packedLight,
             OverlayTexture.NO_OVERLAY,
             stack,

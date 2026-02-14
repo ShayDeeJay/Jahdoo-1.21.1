@@ -24,8 +24,8 @@ import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.mobs.mob_setup.BossMobs;
 import org.jahdoo.trial_nexus.mobs.mob_setup.HordeMobs;
 import org.jahdoo.trial_nexus.mobs.mob_setup.SpecialMobs;
-import org.shaydee.shaydeeapi.Maths;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class MobSpawnManager {
         if(getEntity.getAttributes().hasAttribute(attributes)){
             var attributeInstance = getEntity.getAttributes().getInstance(attributes);
             if (attributeInstance == null) return;
-            attributeInstance.setBaseValue(Maths.getPercentageTotal(multiplier, attributeInstance.getValue()));
+            attributeInstance.setBaseValue(MathHelpers.getPercentageTotal(multiplier, attributeInstance.getValue()));
         }
     }
 
@@ -141,7 +141,7 @@ public class MobSpawnManager {
             var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
             var instanceDiff = difficultyFromInstance(data);
 
-            if (instanceDiff.isPresent() && Maths.percentageChance(instanceDiff.get().getSpecialSpawnChance())) {
+            if (instanceDiff.isPresent() && MathHelpers.percentageChance(instanceDiff.get().getSpecialSpawnChance())) {
                 var ob = instanceDiff.get();
                 var id = ob.getId() * 3;
 

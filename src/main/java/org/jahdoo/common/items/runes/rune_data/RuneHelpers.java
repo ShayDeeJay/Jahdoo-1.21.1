@@ -1,5 +1,6 @@
 package org.jahdoo.common.items.runes.rune_data;
 
+
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -15,6 +16,7 @@ import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import javax.annotation.Nullable;
@@ -101,8 +103,8 @@ public class RuneHelpers {
     }
 
     private static @NotNull MutableComponent getComponents(double amount, String descriptionId, boolean isAbsorption, boolean isMaxHealth, int colourPre, Component compName) {
-        var number = org.shaydee.shaydeeapi.Maths.singleFormattedDouble(amount);
-        var value = org.shaydee.shaydeeapi.Maths.roundNonWholeString(number);
+        var number = MathHelpers.singleFormattedDouble(amount);
+        var value = MathHelpers.roundNonWholeString(number);
 
         if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth || descriptionId.contains("armor") || descriptionId.contains("attack_damage")) {
             var text = "+" + value + " ";

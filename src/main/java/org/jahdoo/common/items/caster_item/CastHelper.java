@@ -19,6 +19,7 @@ import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static org.jahdoo.common.items.caster_item.ItemAnimations.*;
@@ -214,8 +215,8 @@ public class CastHelper {
             }
 
             if (!sufficientMana) {
-                var formattedCost = org.shaydee.shaydeeapi.Maths.getFormattedFloat(adjustedMana);
-                var formattedAvailable = org.shaydee.shaydeeapi.Maths.getFormattedFloat((float) manaAvailable);
+                var formattedCost = MathHelpers.getFormattedFloat(adjustedMana);
+                var formattedAvailable = MathHelpers.getFormattedFloat((float) manaAvailable);
                 var costComp = TextHelpers.withStyleComponent(String.valueOf(formattedCost), element.partColourA());
                 var availComp = TextHelpers.withStyleComponent(String.valueOf(formattedAvailable), element.partColourB());
                 var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);

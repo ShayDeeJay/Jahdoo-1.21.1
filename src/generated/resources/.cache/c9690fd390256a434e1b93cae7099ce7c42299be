@@ -1,5 +1,6 @@
-// 1.21.1	2025-04-22T23:50:27.0794072	Curios for jahdoo
-a2934b801dbb231c382a25f4cf332c44834937c5 data/jahdoo/curios/entities/player.json
-922a4fc09875f8a58cd32b2b6c3dc5dfdb93a276 data/jahdoo/curios/slots/magnet.json
-922a4fc09875f8a58cd32b2b6c3dc5dfdb93a276 data/jahdoo/curios/slots/relic.json
-922a4fc09875f8a58cd32b2b6c3dc5dfdb93a276 data/jahdoo/curios/slots/shield.json
+// 1.21.1	2026-02-13T18:27:11.8168861	Curios for jahdoo
+a1b400f86ad8023ce5869d0831867f9b8c4a6c8a data/jahdoo/curios/entities/player.json
+f3d3cce2a3cc82b2aa78383bbe2ecf1da8b4afd0 data/jahdoo/curios/slots/magnet.json
+af206397c26befe3b647a4a90b68fdb02a2d5b08 data/jahdoo/curios/slots/protector.json
+acb8bb56803d682df82285f7a999391ffc240513 data/jahdoo/curios/slots/relic.json
+e9ddfe77f051b8938087467bc2b0e54a51065f51 data/jahdoo/curios/slots/shield.json

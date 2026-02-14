@@ -16,6 +16,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -53,7 +54,7 @@ public class Magnet extends BaseItem implements ICurioItem {
         super.implicitModifiers(stack, toolTips);
         var magnetData = MagnetData.getMagnetData(stack);
         toolTips.add(TextHelpers.withStyleComponent("Range: " + magnetData.range(), ColourHelpers.getMagnetRangeGreen()));
-        toolTips.add(TextHelpers.withStyleComponent("Strength: " + org.shaydee.shaydeeapi.Maths.roundNonWholeString(magnetData.strength()), ColourHelpers.getMagnetStrengthRed()));
+        toolTips.add(TextHelpers.withStyleComponent("Strength: " + MathHelpers.roundNonWholeString(magnetData.strength()), ColourHelpers.getMagnetStrengthRed()));
     }
 
     @Override

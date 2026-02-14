@@ -4,6 +4,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.ComponentReg;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
@@ -253,10 +254,10 @@ public class AbilityBuilder {
 
     public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step, double baseCost) {
         var getValue = isHigherBetter ? low : high;
-        var chosenR = org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(getValue);
-        var highR = org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(high);
-        var lowR = org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(low);
-        var stepR = org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(step);
+        var chosenR = MathHelpers.doubleFormattedDouble(getValue);
+        var highR = MathHelpers.doubleFormattedDouble(high);
+        var lowR = MathHelpers.doubleFormattedDouble(low);
+        var stepR = MathHelpers.doubleFormattedDouble(step);
         var abilityModifiers = new AbilityData.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, baseCost, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;

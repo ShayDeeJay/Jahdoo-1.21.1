@@ -219,7 +219,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     private static void entityTickEvent(EntityTickEvent.Pre event){
-        tickDeathLootSpolsion(event);
+        tickDeathLootsplotion(event);
     }
 
 

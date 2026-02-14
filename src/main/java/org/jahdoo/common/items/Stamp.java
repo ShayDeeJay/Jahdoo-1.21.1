@@ -9,6 +9,7 @@ import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
@@ -61,7 +62,7 @@ public class Stamp extends BaseJahdooItem implements JahdooItem{
 
 
         var rarityPercent = (newRarity.getId()) * 10;
-        if(org.shaydee.shaydeeapi.Maths.percentageChance(100 - rarityPercent)){
+        if(MathHelpers.percentageChance(100 - rarityPercent)){
             var negBoon = LevelBoonReg.randomNegative();
             addNewEntry(itemStack, negBoon.id(), negBoon.value(newRarity));
         }

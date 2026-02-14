@@ -48,14 +48,7 @@ import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 public class MiniBossMobs {
 
-    public static LivingEntity getRandomMiniBoss(ServerLevel serverLevel, InstanceData instanceData) {
-        var getBosses = List.of(
-            getClawdian(serverLevel, instanceData),
-            getAptrgangr(serverLevel, instanceData),
-            getKobolediator(serverLevel, instanceData)
-        );
-        return Helpers.listRandom(getBosses);
-    }
+    public static String CHALLENGER_BOSS = "jahdoo.challenger.id";
 
     public static LivingEntity getClawdian(ServerLevel serverLevel, InstanceData instanceData) {
         var livingEntity = new Clawdian_Entity(ModEntities.CLAWDIAN.get(), serverLevel);
@@ -72,15 +65,13 @@ public class MiniBossMobs {
         return generateMob(livingEntity,  instanceData);
     }
 
-    public static void tickDeathLootSpolsion(EntityTickEvent.Pre event) {
-        if(event.getEntity().level() instanceof CustomLevel){
-            var x = event.getEntity();
-            if (x instanceof Animation_Monsters animationMonsters) {
-                if (animationMonsters.deathTime > 0) {
-                    MiniBossMobs.onDeathTick(animationMonsters);
-                }
-            }
-        }
+    public static LivingEntity getRandomMiniBoss(ServerLevel serverLevel, InstanceData instanceData) {
+        var getBosses = List.of(
+            getClawdian(serverLevel, instanceData),
+            getAptrgangr(serverLevel, instanceData),
+            getKobolediator(serverLevel, instanceData)
+        );
+        return Helpers.listRandom(getBosses);
     }
 
     public static void rightClickInteract(PlayerInteractEvent.EntityInteractSpecific event) {
@@ -93,10 +84,29 @@ public class MiniBossMobs {
         }
     }
 
+    public static void tickDeathLootsplotion(EntityTickEvent.Pre event) {
+        if(event.getEntity().level() instanceof CustomLevel){
+            var entity = event.getEntity();
+            if (entity instanceof Animation_Monsters animationMonsters) {
+                if (animationMonsters.deathTime > 0) {
+                    MiniBossMobs.onDeathTick(animationMonsters);
+                }
+            }
+        }
+    }
+
+    public static LivingEntity getMiniBoss(Direction direction, ServerLevel serverLevel, InstanceData data){
+        var miniBoss = getRandomMiniBoss(serverLevel, data);
+        if(miniBoss instanceof Mob mob) mob.setNoAi(true);
+
+        miniBoss.setYBodyRot(direction.toYRot());
+        return miniBoss;
+    }
+
     public static void blockNoAIDamage(LivingShieldBlockEvent event, LivingEntity entity) {
         if(entity.level() instanceof CustomLevel){
             if(entity instanceof Internal_Animation_Monster monster){
-                if(entity.getPersistentData().getBoolean("boss")){
+                if(entity.getPersistentData().getBoolean(CHALLENGER_BOSS)){
                     if(monster.isNoAi()){
                         event.setBlocked(true);
                         monster.removeAllEffects();
@@ -171,7 +181,7 @@ public class MiniBossMobs {
     }
 
     public static void onDeath(LivingEntity entity){
-        if(!entity.getPersistentData().getBoolean("boss")) return;
+        if(!entity.getPersistentData().getBoolean(CHALLENGER_BOSS)) return;
         if(entity.level() instanceof CustomLevel serverLevel){
             var pos = NbtUtils.readBlockPos(entity.getPersistentData(), "block_pos");
             var direction = entity.getPersistentData().getString("direction");
@@ -194,16 +204,5 @@ public class MiniBossMobs {
                 }
             }
         }
-    }
-
-    public static LivingEntity getMiniBoss(Direction direction, ServerLevel serverLevel, InstanceData data){
-        var miniBoss = getRandomMiniBoss(serverLevel, data);
-
-        if(miniBoss instanceof Mob mob) {
-            mob.setNoAi(true);
-        }
-
-        miniBoss.setYBodyRot(direction.toYRot());
-        return miniBoss;
     }
 }

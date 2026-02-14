@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.client.Icons;
 import top.theillusivec4.curios.api.CuriosDataProvider;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 
@@ -27,23 +28,33 @@ public class JahdooCuriosProvider extends CuriosDataProvider {
         this.createSlot("relic")
             .size(1)
             .dropRule(ICurio.DropRule.ALWAYS_DROP)
+            .icon(Icons.CURIO_RELIC)
+            .replace(true);
+
+        this.createSlot("protector")
+            .size(1)
+            .dropRule(ICurio.DropRule.ALWAYS_DROP)
+            .icon(Icons.CURIO_PROTECTOR)
             .replace(true);
 
         this.createSlot("magnet")
             .size(1)
             .dropRule(ICurio.DropRule.ALWAYS_DROP)
+            .icon(Icons.CURIO_MAGNET)
             .replace(true);
 
         this.createSlot("shield")
             .size(1)
             .dropRule(ICurio.DropRule.ALWAYS_DROP)
+            .icon(Icons.CURIO_SHIELD)
             .replace(true);
 
         this.createEntities("player")
             .addPlayer()
             .addSlots("relic")
             .addSlots("magnet")
-            .addSlots("shield");
+            .addSlots("shield")
+            .addSlots("protector");
     }
 
 }

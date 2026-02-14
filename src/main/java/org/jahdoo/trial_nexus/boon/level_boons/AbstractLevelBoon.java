@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.Objects;
@@ -45,8 +46,8 @@ public abstract class AbstractLevelBoon {
     }
 
     public Component boonLabel(double value, String id){
-        var displayValue = org.shaydee.shaydeeapi.Maths.roundNonWholeString(value);
-        var displayTime = org.shaydee.shaydeeapi.Maths.ticksToTime(valueOf(value));
+        var displayValue = MathHelpers.roundNonWholeString(value);
+        var displayTime = MathHelpers.ticksToTime(valueOf(value));
         var getBy = Objects.equals(id, "max_time") ? displayTime : displayValue;
 
         return TextHelpers.withStyleComponent("+" + getBy + (isPercentageOf() ? "% " : " ") + TextHelpers.stringIdToName(id), textColour());

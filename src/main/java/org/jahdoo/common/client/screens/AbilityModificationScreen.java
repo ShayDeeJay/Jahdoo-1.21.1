@@ -26,8 +26,8 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.shaydee.shaydeeapi.Maths;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
@@ -221,7 +221,7 @@ public class AbilityModificationScreen extends Screen {
 
     private void onHover(Component component, int ySpacer, boolean active, double getHighest, int adjusted) {
         if(!active){
-            var original = getModifierContextSingle(extractName(component.getString()), valueOf(Maths.doubleFormattedDouble(getHighest)), 1);
+            var original = getModifierContextSingle(extractName(component.getString()), valueOf(MathHelpers.doubleFormattedDouble(getHighest)), 1);
             var prefixTier = TextHelpers.withStyleComponent("Next Tier: ", ColourHelpers.getHeaderColour());
             var upgradeTier = prefixTier.copy().append(TextHelpers.withStyleComponent("↑ " + original.getString(), ColourHelpers.getAbsorptionYellow()));
             var prefixCost = TextHelpers.withStyleComponent("Skill Points: ", ColourHelpers.getHeaderColour());
@@ -251,11 +251,11 @@ public class AbilityModificationScreen extends Screen {
         var properties = new LinkedHashMap<>(data.getHolder(abilityName).data().abilityProperties());
         var mod = properties.get(name);
         var higherBetter = mod.isHigherBetter();
-        var actualValue = Maths.doubleFormattedDouble(mod.actualValue());
-        var step = Maths.doubleFormattedDouble(mod.step());
-        var highestValue = Maths.doubleFormattedDouble(mod.highestValue());
-        var lowestValue = Maths.doubleFormattedDouble(mod.lowestValue());
-        var baseCost = Maths.doubleFormattedDouble(mod.baseCost());
+        var actualValue = MathHelpers.doubleFormattedDouble(mod.actualValue());
+        var step = MathHelpers.doubleFormattedDouble(mod.step());
+        var highestValue = MathHelpers.doubleFormattedDouble(mod.highestValue());
+        var lowestValue = MathHelpers.doubleFormattedDouble(mod.lowestValue());
+        var baseCost = MathHelpers.doubleFormattedDouble(mod.baseCost());
         var correctAdjustment = higherBetter ? actualValue + step : actualValue - step;
         var valueWithinRange = higherBetter && actualValue < highestValue ? correctAdjustment : !higherBetter && actualValue > lowestValue ? correctAdjustment : actualValue;
         var abilityModifier = new AbilityData.AbilityModifiers(valueWithinRange, highestValue, lowestValue, step, valueWithinRange, baseCost, higherBetter);

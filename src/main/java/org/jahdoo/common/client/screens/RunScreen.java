@@ -16,6 +16,7 @@ import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
@@ -244,7 +245,7 @@ public class RunScreen extends AbstractPanableScreen {
             allComponents.add(new StatEntry(componentTemplate("Quest Status", (completed ? "Completed" : "Failed"), statusColour), null));
         }
 
-        allComponents.add(new StatEntry(componentTemplate("Run Time", org.shaydee.shaydeeapi.Maths.ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), ColourHelpers.getPerkGreen()), CLOCK));
+        allComponents.add(new StatEntry(componentTemplate("Run Time", MathHelpers.ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), ColourHelpers.getPerkGreen()), CLOCK));
         allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", ColourHelpers.getCosmicPurple()), TRIAL_EXPERIENCE));
         allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(RunData.ROOMS_CLEARED) + "", ColourHelpers.getAetherBlue()), Icons.ROOMS_CLEARED));
         allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", ColourHelpers.getMagnetStrengthRed()), Icons.HORDE));
@@ -267,10 +268,10 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(spacer);
 
         // Mob multipliers
-        allComponents.add(new StatEntry(componentTemplate("Mob Health","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Armor","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Damage","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Speed","+" + org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Health","+" + MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Armor","+" + MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Damage","+" + MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Speed","+" + MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
 
         // Mob counts / composition
         allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", ColourHelpers.getAetherBlue()), Icons.HORDE));

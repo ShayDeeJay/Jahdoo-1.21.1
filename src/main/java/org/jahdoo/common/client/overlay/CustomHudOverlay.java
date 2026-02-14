@@ -30,6 +30,7 @@ import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -220,7 +221,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             var getCorrectY = graphics.guiHeight() * 2 - (CUSTOM_UI.get() ? 40 : 20) ;
 
             graphics.pose().translate(getCorrectX, getCorrectY, 10D);
-            centeredStringNoShadow(graphics, minecraft.font, literal(org.shaydee.shaydeeapi.Maths.ticksToTime(valueOf(cooldownStatus))), 0, 0, -1, false);
+            centeredStringNoShadow(graphics, minecraft.font, literal(MathHelpers.ticksToTime(valueOf(cooldownStatus))), 0, 0, -1, false);
             graphics.pose().popPose();
         }
     }

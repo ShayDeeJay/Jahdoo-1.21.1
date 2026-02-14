@@ -194,7 +194,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(tag, pRegistries);
         this.progress = tag.getInt("progress");
         if(this.holder != null) AbilityHolder.writeTag(holder, tag);
@@ -205,7 +205,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
         super.saveAdditional(tag, pRegistries);
         tag.putInt("progress", this.progress);
         if(tag.contains("abilities")){

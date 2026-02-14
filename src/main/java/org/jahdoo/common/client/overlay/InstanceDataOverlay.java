@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
@@ -36,7 +38,8 @@ import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
 import static org.jahdoo.common.client.screens.RunScreen.componentTemplate;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.common.registers.mod.LevelBoonReg.*;
+import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllNegative;
+import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllPositive;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
 
 public class InstanceDataOverlay implements LayeredDraw.Layer {
@@ -69,7 +72,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var screen = mc.screen;
         var font = mc.font;
 
-        if(player == null || mc.options.hideGui || level == null || screen != null) return;
+        if(player == null || mc.options.hideGui || level == null || screen instanceof AbstractContainerScreen) return;
         slideGuiStats();
 
         var runData = RunData.getRunData(player);
@@ -105,6 +108,9 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         if(instanceData.getMaxTime() > 0){
             progressBar(graphics, 8, startY, 38, 4, remainingTime, instanceData.getMaxTime(), 2, barColour, borderColour, uiFade());
             alwaysOnEntry(graphics, time.icon(), x - 2, startY - 18, size, -1, font, time.value());
+            var xp = new HudEntry(Icons.TRIAL_EXPERIENCE, HudEntry.getComp(runData.getStat(RunData.EXPERIENCE)));
+
+            alwaysOnEntry(graphics, xp.icon(), x + 53, 2, size, ColourHelpers.getCosmicPurple(), font, TextHelpers.withStyleComponent(xp.value().getString(), ColourHelpers.getCosmicPurple()));
 
             if(!ClientHelpers.isKeyDown(InputConstants.KEY_TAB)){
                 var scale = 0.5F;
@@ -137,7 +143,6 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
             HudEntry.chestMystic(runData),
             new HudEntry(Icons.SAFE, HudEntry.getComp(runData.getStat(RunData.SAFE))),
             new HudEntry(Icons.CHAMPIONS_CROWN, HudEntry.getComp(runData.getStat(RunData.CHAMPIONS_KILLED))),
-            new HudEntry(Icons.TRIAL_EXPERIENCE, HudEntry.getComp(runData.getStat(RunData.EXPERIENCE))),
             new HudEntry(Icons.HORDE, HudEntry.getComp(runData.getStat(RunData.MOBS_KILLED))),
             HudEntry.bronze(runData),
             HudEntry.silver(runData),
@@ -159,7 +164,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         public static HudEntry getTime(InstanceData instanceData){
             var remainingTime = instanceData.getMaxTime() - instanceData.getTicks();
             var colour = remainingTime > 400 ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getNegativeRed();
-            var time = appendStat("", org.shaydee.shaydeeapi.Maths.ticksToTime(valueOf(remainingTime)), colour);
+            var time = appendStat("", MathHelpers.ticksToTime(valueOf(remainingTime)), colour);
             return new HudEntry(Icons.CLOCK, time);
         }
 
@@ -170,7 +175,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         }
 
         public static Component getComp(Object info){
-            return TextHelpers.withStyleComponent(String.valueOf(info), -1);
+            return TextHelpers.withStyleComponent(String.valueOf(info), ColourHelpers.getOffWhite());
         }
 
         public static HudEntry chestCommon(RunData runData){
@@ -329,9 +334,9 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
             String displayValue;
 
             if (positive) {
-                displayValue = boon.id().equals(InstanceData.KEY_MAX_TIME) ? org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(rawValue)) : org.shaydee.shaydeeapi.Maths.roundNonWholeString(rawValue);
+                displayValue = boon.id().equals(InstanceData.KEY_MAX_TIME) ? MathHelpers.ticksToTime(String.valueOf(rawValue)) : MathHelpers.roundNonWholeString(rawValue);
             } else {
-                var v = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.singleFormattedDouble(rawValue));
+                var v = MathHelpers.roundNonWholeString(MathHelpers.singleFormattedDouble(rawValue));
                 displayValue = v + (boon.isPercentageOf() ? "%" : "");
             }
 

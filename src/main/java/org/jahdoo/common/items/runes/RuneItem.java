@@ -36,11 +36,6 @@ public class RuneItem extends BaseItem {
     }
 
     @Override
-    public ItemStack getRecycleItem() {
-        return super.getRecycleItem();
-    }
-
-    @Override
     public Component getName(ItemStack stack) {
         return getNameWithStyle(stack);
     }

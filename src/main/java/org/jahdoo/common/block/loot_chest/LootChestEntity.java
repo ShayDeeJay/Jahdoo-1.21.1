@@ -77,7 +77,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         tag.putInt("loot_chest.private", getPrivateTicks());
         tag.putBoolean("isOpen", isOpen);
@@ -86,7 +86,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         setPrivateTicks(tag.getInt("loot_chest.private"));
         isOpen = tag.getBoolean("isOpen");

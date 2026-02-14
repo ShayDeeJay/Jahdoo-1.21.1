@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 public class BouncyFootS2CP implements CustomPacketPayload {
     public static final Type<BouncyFootS2CP> TYPE = new Type<>(JahdooHelpers.res("sync_bouncy_foot"));
@@ -55,7 +56,7 @@ public class BouncyFootS2CP implements CustomPacketPayload {
                             if(maxFall > 0.5D){
                                 var reducedDelta = Math.abs(previousDelta / 2.5);
                                 localPlayer.playSound(SoundEvents.FROG_TONGUE, (float) reducedDelta + 0.2f, 1.8f);
-                                localPlayer.setDeltaMovement(localPlayer.getDeltaMovement().add(0, org.shaydee.shaydeeapi.Maths.singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
+                                localPlayer.setDeltaMovement(localPlayer.getDeltaMovement().add(0, MathHelpers.singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
                             }
                         }
                     }

@@ -42,7 +42,7 @@ public class LootPotBlockEntity extends SyncedBlockEntity implements Randomizabl
         this.decorations = PotDecorations.EMPTY;
     }
 
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         this.decorations.save(tag);
         if (!this.trySaveLootTable(tag) && !this.item.isEmpty()) {
@@ -50,7 +50,7 @@ public class LootPotBlockEntity extends SyncedBlockEntity implements Randomizabl
         }
     }
 
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.decorations = PotDecorations.load(tag);
         if (!this.tryLoadLootTable(tag)) {

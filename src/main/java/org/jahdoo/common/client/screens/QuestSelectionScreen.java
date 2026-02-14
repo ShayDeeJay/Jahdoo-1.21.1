@@ -210,7 +210,7 @@ public class QuestSelectionScreen extends Screen  {
         fadeEntryBack = Math.min(0.9F, fadeEntryBack + 0.03F);
 
         renderBlurredBackground(partialTick);
-        WalletOverlay.renderWallet(guiGraphics, getMinecraft(), 1, 10, 0, false, true, false, this.converter);
+        WalletOverlay.renderWallet(guiGraphics, getMinecraft(), 0,  this.width/2 - 100, this.height/2 - 120, false, false, false, this.converter);
         sectionHighlight(mouseX);
         boxMaker(guiGraphics, getPositions(), -1, getSize(), this.height, fadeBlack(0.1f), uiFade());
         selectionBox(guiGraphics, getSize());

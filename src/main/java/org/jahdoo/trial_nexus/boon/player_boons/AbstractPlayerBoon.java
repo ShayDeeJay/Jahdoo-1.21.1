@@ -6,6 +6,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jahdoo.common.networking.client2server.AttributeC2SP;
 import org.jahdoo.common.registers.mod.RuneReg;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public abstract class AbstractPlayerBoon {
         var id = attribute().value().getDescriptionId();
         var split = translatable(id).getString();
         var string = stream(split.split(" ")).toList();
-        var getValue = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(value()));
+        var getValue = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(value()));
         var formattedString = (value() < 0 ? "" : "+") + getValue + (isPercentage() ? "% " : " ");
         var colourBy = RuneReg.getRuneFromAttribute(attribute()).runeColour();
         var componentList = new ArrayList<net.minecraft.network.chat.Component>();

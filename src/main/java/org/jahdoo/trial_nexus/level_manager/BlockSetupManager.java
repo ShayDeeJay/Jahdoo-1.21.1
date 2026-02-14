@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
@@ -30,6 +31,7 @@ import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.world.level.block.Blocks.*;
 import static org.jahdoo.common.block.TrialPortalBlock.*;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
+import static org.jahdoo.common.block.perk_table.PerkTable.HALF;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.*;
@@ -100,8 +102,10 @@ public class BlockSetupManager {
     }
 
     public static void setPerkTable(ServerLevel level, BlockPos blockPos, int state) {
-        level.setBlockAndUpdate(blockPos, PERK_TABLE.get().defaultBlockState().setValue(TEXTURE, state));
-        level.setBlockAndUpdate(blockPos.above(1), BARRIER.defaultBlockState());
+        level.setBlockAndUpdate(blockPos, PERK_TABLE.get().defaultBlockState().setValue(TEXTURE, state).setValue(HALF, DoubleBlockHalf.LOWER));
+//        level.setBlockAndUpdate(blockPos.above(), PERK_TABLE.get().defaultBlockState().setValue(TEXTURE, state).setValue(HALF, DoubleBlockHalf.LOWER));
+
+        //        level.setBlockAndUpdate(blockPos.above(1), BARRIER.defaultBlockState());
     }
 
     public static void placePerkTables(ServerLevel level, BlockPos blockPos) {
@@ -167,7 +171,6 @@ public class BlockSetupManager {
         var eliteState = shoppingTableState.setValue(FACING, orange ? direction.getCounterClockWise() : direction.getClockWise()).setValue(TEXTURE, 2);
 
         if(orange){
-            level.setBlockAndUpdate(pos.above(), BARRIER.defaultBlockState());
             level.setBlockAndUpdate(pos, eliteState);
 
             var blockEntity = level.getBlockEntity(pos);

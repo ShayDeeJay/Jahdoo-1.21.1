@@ -174,13 +174,13 @@ public class ModItemModelProvider extends ItemModelProvider {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.ESSENCE_FRAGMENT, ItemReg.INFERNO_AUGMENT,
             ItemReg.FROST_AUGMENT, ItemReg.MYSTIC_AUGMENT, ItemReg.VITALITY_AUGMENT,
-            ItemReg.SKILL_POINT, ItemReg.COIN_SACK, ItemReg.STONE_OF_REGRET,
+            ItemReg.SKILL_POINT, ItemReg.COIN_SACK, ItemReg.SALAMANS_EYE,
             ItemReg.ROSE_QUARTZ, ItemReg.ENCHANTED_DIAMOND, ItemReg.LISITE_SHARD,
             ItemReg.DICE, ItemReg.NETHERITE_NUGGET, ItemReg.DIAMOND_NUGGET, ItemReg.GEAR_SCRAP,
             ItemReg.CHALLENGER_SOUL, ItemReg.ASTRINIUM_INGOT, ItemReg.KEY_FRAGMENT,
             ItemReg.BAZAAR_KEY, ItemReg.CRYPT_KEY,ItemReg.CHALLENGER_KEY, ItemReg.SANCTUARY_KEY,
             ItemReg.EXIT_KEY, ItemReg.CHARGED_AUGMENT_CORE, ItemReg.CHARGED_ADVANCED_AUGMENT_CORE,
-            ItemReg.CHARGED_AUGMENT_HYPER_CORE
+            ItemReg.CHARGED_AUGMENT_HYPER_CORE, ItemReg.DEED
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

@@ -7,8 +7,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
@@ -82,6 +84,7 @@ public class ItemCodexScreen extends Screen {
             renderItem(graphics, x, y);
             renderHeader(graphics, -y, 0);
             description(graphics, x, (int) (100 - v));
+            additionalInformation(graphics, mouseX, mouseY);
             SharedUI.bezelMaker(graphics, -12, -12, this.width - 36, this.height - 36, 60, null);
         }
     }
@@ -131,9 +134,61 @@ public class ItemCodexScreen extends Screen {
         );
     }
 
-    private void additionalInformation(GuiGraphics graphics, int x, int y) {
-//        var text = TextHelpers.withStyleComponentTrans(codex.description(), ColourHelpers.getSubHeaderColour());
-//        textWithWidthAdjust(font, x, y, text, graphics);
+    public static final float[][] POSITIONS_ON_SCREEN = {
+        {0.5f, 0.04f},
+        {0.14f, 0.40f},
+        {0.87f, 0.40f},
+        {0.51f, 0.77f},
+        {0.17f, 0.07f},
+        {0.84f, 0.07f},
+        {0.17f, 0.74f},
+        {0.84f, 0.74f}
+    };
+
+    private void additionalInformation(GuiGraphics graphics, int mouseX, int mouseY) {
+        if (this.codec.getItem() instanceof JahdooItem jItem) {
+            var others = jItem.getAdditional();
+            if(others == null) return;
+
+            var sharedY = 20;
+            var sharedX = 2;
+
+            var text = TextHelpers.withStyleComponentTrans(others.component1(), ColourHelpers.getSubHeaderColour());
+            graphics.pose().pushPose();
+            graphics.pose().scale(2, 2, 2);
+            graphics.drawCenteredString(minecraft.font, "Recipe", 35 + sharedX/2, 68 + sharedY/2, ElementReg.utility().partColourB());
+            graphics.pose().popPose();
+
+            var i1 = 80;
+            var width1 = 80;
+            graphics.blit(Icons.CREATOR_TOP, 30 + sharedX, 160 + sharedY, 0, 0, width1, width1, width1, width1);
+            graphics.pose().pushPose();
+            var z = 2F;
+            graphics.pose().scale(z, z, z);
+            graphics.renderFakeItem(codec.getItem().getDefaultInstance(), 27 + sharedX/2, 92 + sharedY/2);
+            graphics.pose().popPose();
+
+//            textWithWidthAdjust(font, x, y - 50, text, graphics);
+//            textWithWidthAdjust(font, x, y - 16, text, graphics);
+
+            var stacks = others.component2();
+            for (int i = 0; i < stacks.size() && i < POSITIONS_ON_SCREEN.length; i++) {
+                var stack = stacks.get(i);
+                var px = POSITIONS_ON_SCREEN[i][0];
+                var py = POSITIONS_ON_SCREEN[i][1];
+                var renderX = 30 + (int)(px * i1) - 8;
+                var renderY = 168 + (int)(py * i1) - 8;
+                var x = renderX + sharedX;
+                var y = renderY + sharedY;
+                var i2 = 16;
+
+                if (mouseX >= x && mouseX < x + i2 && mouseY >= y && mouseY < y + i2) {
+                    graphics.renderTooltip(minecraft.font, stack, mouseX, mouseY);
+                }
+
+                graphics.renderFakeItem(stack, x, y);
+            }
+        }
     }
 
     private void description(GuiGraphics graphics, int x, int y) {

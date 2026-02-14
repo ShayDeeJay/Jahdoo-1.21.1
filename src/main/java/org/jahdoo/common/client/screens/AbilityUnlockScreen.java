@@ -46,7 +46,7 @@ import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAllAbilityModifiers;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.texture;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
     List<Component> components = new ArrayList<>();
@@ -235,7 +235,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 //        }
 
         for (var ability : withElement) {
-            var res = res(ABILITY_PREFIX + ability.setAbilityId() + ".png");
+            var res = texture(ABILITY_PREFIX + ability.setAbilityId());
             var buttonX = centerX - ((double) size /2) + radius * Math.cos(currentAngle);
             var buttonY = centerY - ((double) size /2)  + radius * Math.sin(currentAngle);
 

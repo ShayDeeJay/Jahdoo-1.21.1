@@ -3,382 +3,400 @@ package org.jahdoo.common.client;
 import net.minecraft.resources.ResourceLocation;
 
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.texture;
 
-public class    Icons {
+public class Icons {
 
-    private static final String PREFIX = "textures/gui/";
+    private static final String PREFIX = "gui/";
+    private static final String CURIO = "slot/";
     private static final String BUTTON_PREFIX = PREFIX + "gui_buttons/";
     private static final String SLOTS_PREFIX = PREFIX + "slots/";
     private static final String RARITY_TAG_PREFIX = PREFIX + "rarity_tags/";
-    private static final String ITEMS_PREFIX = "textures/item/";
-    public static final String ABILITY_PREFIX = "textures/ability_icons/";
-    private static final String SKILLS = "textures/skill/";
+    private static final String ITEMS_PREFIX = "item/";
+    public static final String ABILITY_PREFIX = "ability_icons/";
+    private static final String SKILLS = "skill/";
+
+
+    public static final ResourceLocation CREATOR_TOP =
+        texture(PREFIX + "creator_top");
+
+    public static final ResourceLocation CURIO_MAGNET =
+        res(CURIO + "magnet");
+
+    public static final ResourceLocation CURIO_PROTECTOR  =
+        res(CURIO + "protector");
+
+    public static final ResourceLocation CURIO_SHIELD =
+        res(CURIO + "shield");
+
+    public static final ResourceLocation CURIO_RELIC =
+        res(CURIO + "relic");
 
     public static final ResourceLocation ORE_MULTIPLIER =
-        res(PREFIX + "ore_icon.png");
+        texture(PREFIX + "ore_icon");
 
     public static final ResourceLocation CODEX =
-        res(PREFIX + "codex.png");
+        texture(PREFIX + "codex");
 
     public static final ResourceLocation LOOT_POT_ICON =
-        res(PREFIX + "loot_pot_icon.png");
+        texture(PREFIX + "loot_pot_icon");
 
     public static final ResourceLocation HISTORY =
-        res(PREFIX + "history.png");
+        texture(PREFIX + "history");
 
     public static final ResourceLocation COMMON_TAG =
-        res(RARITY_TAG_PREFIX + "common.png");
+        texture(RARITY_TAG_PREFIX + "common");
 
     public static final ResourceLocation RARE_TAG =
-        res(RARITY_TAG_PREFIX + "rare.png");
+        texture(RARITY_TAG_PREFIX + "rare");
 
     public static final ResourceLocation EPIC_TAG =
-        res(RARITY_TAG_PREFIX + "epic.png");
+        texture(RARITY_TAG_PREFIX + "epic");
 
     public static final ResourceLocation LEGENDARY_TAG =
-        res(RARITY_TAG_PREFIX + "legendary.png");
+        texture(RARITY_TAG_PREFIX + "legendary");
 
     public static final ResourceLocation MYTHIC_TAG =
-        res(RARITY_TAG_PREFIX + "mythic.png");
+        texture(RARITY_TAG_PREFIX + "mythic");
 
     public static final ResourceLocation UNIQUE_TAG =
-        res(RARITY_TAG_PREFIX + "unique.png");
+        texture(RARITY_TAG_PREFIX + "unique");
 
     public static final ResourceLocation HEALTH_HOLDER =
-        res(PREFIX + "health/health_holder.png");
+        texture(PREFIX + "health/health_holder");
 
     public static final ResourceLocation HEALTH_HOLDER_ALLIED =
-        res(PREFIX + "health/health_holder_allied.png");
+        texture(PREFIX + "health/health_holder_allied");
 
     public static final ResourceLocation HEALTH_BAR =
-        res(PREFIX + "health/health_bar.png");
+        texture(PREFIX + "health/health_bar");
 
     public static final ResourceLocation CENTER =
-        res(PREFIX + "center_view.png");
+        texture(PREFIX + "center_view");
 
     public static final ResourceLocation NUMERIC =
-        res(PREFIX + "numeric.png");
+        texture(PREFIX + "numeric");
 
     public static final ResourceLocation FROST_BOLTZ =
-        res(ABILITY_PREFIX + "frostbolts.png");
+        texture(ABILITY_PREFIX + "frostbolts");
 
     public static final ResourceLocation PERMAFROST =
-        res(ABILITY_PREFIX + "permafrost.png");
+        texture(ABILITY_PREFIX + "permafrost");
 
     public static final ResourceLocation ICE_BOMB =
-        res(ABILITY_PREFIX + "ice_bomb.png");
+        texture(ABILITY_PREFIX + "ice_bomb");
 
     public static final ResourceLocation STORM_RUSH =
-        res(ABILITY_PREFIX + "storm_rush.png");
+        texture(ABILITY_PREFIX + "storm_rush");
 
     public static final ResourceLocation FROST_ICON =
-        res("textures/element_icons/frost_icon.png");
+        texture("element_icons/frost_icon");
 
     public static final ResourceLocation INFERNO_ICON =
-        res("textures/element_icons/inferno_icon.png");
+        texture("element_icons/inferno_icon");
 
     public static final ResourceLocation MYSTIC_ICON =
-        res("textures/element_icons/mystic_icon.png");
+        texture("element_icons/mystic_icon");
 
     public static final ResourceLocation VITALITY_ICON =
-        res("textures/element_icons/vitality_icon.png");
+        texture("element_icons/vitality_icon");
 
     public static final ResourceLocation UTILITY_ICON =
-        res("textures/element_icons/utility_icon.png");
+        texture("element_icons/utility_icon");
 
     public static final ResourceLocation MANA =
-        res("textures/mob_effect/mana_pool.png");
+        texture("mob_effect/mana_pool");
 
     public static final ResourceLocation MANA_REGEN =
-        res("textures/mob_effect/mana_regen.png");
+        texture("mob_effect/mana_regen");
 
     public static final ResourceLocation REPAIR =
-        res(PREFIX + "repair.png");
+        texture(PREFIX + "repair");
 
     public static final ResourceLocation DATA =
-        res(PREFIX + "data.png");
+        texture(PREFIX + "data");
 
     public static final ResourceLocation SAFE =
-        res(PREFIX + "safe.png");
+        texture(PREFIX + "safe");
 
     public static final ResourceLocation CHEST_COMMON =
-        res(PREFIX + "chest_common.png");
+        texture(PREFIX + "chest_common");
 
     public static final ResourceLocation QUEST_CRATE =
-        res(PREFIX + "quest_crate_icon.png");
+        texture(PREFIX + "quest_crate_icon");
 
     public static final ResourceLocation CHEST_RARE =
-        res(PREFIX + "chest_rare.png");
+        texture(PREFIX + "chest_rare");
 
     public static final ResourceLocation CHEST_LEGENDARY =
-        res(PREFIX + "chest_legendary.png");
+        texture(PREFIX + "chest_legendary");
 
     public static final ResourceLocation CHEST_MYTHIC =
-        res(PREFIX + "chest_mythic.png");
+        texture(PREFIX + "chest_mythic");
 
     public static final ResourceLocation XP_BAR =
-        res(PREFIX + "xp_bar.png");
+        texture(PREFIX + "xp_bar");
 
     public static final ResourceLocation XP_BAR_CONTAINER =
-        res(PREFIX + "xp_bar_container.png");
+        texture(PREFIX + "xp_bar_container");
 
     public static final ResourceLocation EASY =
-        res(PREFIX + "easy.png");
+        texture(PREFIX + "easy");
 
     public static final ResourceLocation MEDIUM =
-        res(PREFIX + "medium.png");
+        texture(PREFIX + "medium");
 
     public static final ResourceLocation HARD =
-        res(PREFIX + "hard.png");
+        texture(PREFIX + "hard");
 
     public static final ResourceLocation LOCK =
-        res(PREFIX + "lock.png");
+        texture(PREFIX + "lock");
 
     public static final ResourceLocation STAT =
-        res(PREFIX + "stat.png");
+        texture(PREFIX + "stat");
 
     public static final ResourceLocation ABILITY =
-        res(PREFIX + "ability.png");
+        texture(PREFIX + "ability");
 
     public static final ResourceLocation ROOMS_CLEARED =
-        res(PREFIX + "room.png");
+        texture(PREFIX + "room");
 
     public static final ResourceLocation ABILITY_BACKGROUND =
-        res(PREFIX + "ability_background.png");
+        texture(PREFIX + "ability_background");
 
     public static final ResourceLocation SKILL_POINT =
-        res(ITEMS_PREFIX + "skill_point.png");
+        texture(ITEMS_PREFIX + "skill_point");
 
     public static final ResourceLocation BLANK_RUNE =
-        res(ITEMS_PREFIX + "runes/rune.png");
+        texture(ITEMS_PREFIX + "runes/rune");
 
     public static final ResourceLocation ATTACK_SPEED =
-        res(ABILITY_PREFIX + "attack_speed.png");
+        texture(ABILITY_PREFIX + "attack_speed");
 
     public static final ResourceLocation CLOCK =
-        res(ABILITY_PREFIX + "clock.png");
+        texture(ABILITY_PREFIX + "clock");
 
     public static final ResourceLocation TRIAL_EXPERIENCE =
-        res(ABILITY_PREFIX + "experience.png");
+        texture(ABILITY_PREFIX + "experience");
 
     public static final ResourceLocation ETERNAL_WIZARD =
-        res(ABILITY_PREFIX + "eternal_wizard.png");
+        texture(ABILITY_PREFIX + "eternal_wizard");
 
     public static final ResourceLocation SKELETON =
-        res(ABILITY_PREFIX + "skeleton.png");
+        texture(ABILITY_PREFIX + "skeleton");
 
     public static final ResourceLocation HORDE =
-        res(ABILITY_PREFIX + "zombie.png");
+        texture(ABILITY_PREFIX + "zombie");
 
     public static final ResourceLocation VOID_SPIDER =
-        res(ABILITY_PREFIX + "void_spider.png");
+        texture(ABILITY_PREFIX + "void_spider");
 
     public static final ResourceLocation INFERNO_CREEPER =
-        res(ABILITY_PREFIX + "inferno_creeper.png");
+        texture(ABILITY_PREFIX + "inferno_creeper");
 
     public static final ResourceLocation KNOCKBACK_RESISTANCE =
-        res(ABILITY_PREFIX + "knockback_resist.png");
+        texture(ABILITY_PREFIX + "knockback_resist");
 
     public static final ResourceLocation GUI_BUTTON =
-        res(BUTTON_PREFIX + "gui_button.png");
+        texture(BUTTON_PREFIX + "gui_button");
 
     public static final ResourceLocation GUI_BUTTON_VITALITY =
-        res(BUTTON_PREFIX + "gui_button_vitality.png");
+        texture(BUTTON_PREFIX + "gui_button_vitality");
 
     public static final ResourceLocation GUI_BUTTON_INFERNO =
-        res(BUTTON_PREFIX + "gui_button_inferno.png");
+        texture(BUTTON_PREFIX + "gui_button_inferno");
 
     public static final ResourceLocation GUI_BUTTON_FROST =
-        res(BUTTON_PREFIX + "gui_button_frost.png");
+        texture(BUTTON_PREFIX + "gui_button_frost");
 
     public static final ResourceLocation GUI_BUTTON_SKILL =
-        res(BUTTON_PREFIX + "gui_button_skill.png");
+        texture(BUTTON_PREFIX + "gui_button_skill");
 
     public static final ResourceLocation TICK =
-        res(BUTTON_PREFIX + "gui_button_tick.png");
+        texture(BUTTON_PREFIX + "gui_button_tick");
 
     public static final ResourceLocation MAGE_FLIGHT =
-        res(SKILLS + "mage_flight.png");
+        texture(SKILLS + "mage_flight");
 
     public static final ResourceLocation CLIMBER =
-        res(SKILLS + "climber.png");
+        texture(SKILLS + "climber");
 
     public static final ResourceLocation DRIP_WALK =
-        res(SKILLS + "drip_walk.png");
+        texture(SKILLS + "drip_walk");
 
     public static final ResourceLocation REBOUND =
-        res(SKILLS + "rebound.png");
+        texture(SKILLS + "rebound");
 
     public static final ResourceLocation TRIPLE_JUMP =
-        res(SKILLS + "triple_jump.png");
+        texture(SKILLS + "triple_jump");
 
     public static final ResourceLocation GUI_BUTTON_MYSTIC =
-        res(BUTTON_PREFIX + "gui_button_mystic.png");
+        texture(BUTTON_PREFIX + "gui_button_mystic");
 
     public static final ResourceLocation GUI_BUTTON_UTILITY =
-        res(BUTTON_PREFIX + "gui_button_utility.png");
+        texture(BUTTON_PREFIX + "gui_button_utility");
 
     public static final ResourceLocation GUI_BUTTON_VITALITY_SQUARE =
-        res(BUTTON_PREFIX + "gui_button_vitality_square.png");
+        texture(BUTTON_PREFIX + "gui_button_vitality_square");
 
     public static final ResourceLocation GUI_BUTTON_INFERNO_SQUARE =
-        res(BUTTON_PREFIX + "gui_button_inferno_square.png");
+        texture(BUTTON_PREFIX + "gui_button_inferno_square");
 
     public static final ResourceLocation GUI_BUTTON_FROST_SQUARE =
-        res(BUTTON_PREFIX + "gui_button_frost_square.png");
+        texture(BUTTON_PREFIX + "gui_button_frost_square");
 
     public static final ResourceLocation GUI_BUTTON_MYSTIC_SQUARE =
-        res(BUTTON_PREFIX + "gui_button_mystic_square.png");
+        texture(BUTTON_PREFIX + "gui_button_mystic_square");
 
     public static final ResourceLocation GUI_BUTTON_UTILITY_SQUARE =
-        res(BUTTON_PREFIX + "gui_button_utility_square.png");
+        texture(BUTTON_PREFIX + "gui_button_utility_square");
 
     public static final ResourceLocation LOCKED_ABILITY =
-        res(BUTTON_PREFIX + "locked_ability.png");
+        texture(BUTTON_PREFIX + "locked_ability");
 
     public static final ResourceLocation LOCKED_SKILL_CENTER =
-        res(BUTTON_PREFIX + "locked_skill_center.png");
+        texture(BUTTON_PREFIX + "locked_skill_center");
 
     public static final ResourceLocation LOCKED_ABILITY_CENTER =
-        res(BUTTON_PREFIX + "locked_ability_center.png");
+        texture(BUTTON_PREFIX + "locked_ability_center");
 
     public static final ResourceLocation GUI_BUTTON_SELECTED =
-        res(BUTTON_PREFIX + "gui_button_select.png");
+        texture(BUTTON_PREFIX + "gui_button_select");
 
     public static final ResourceLocation TEXT_BACKGROUND =
-        res(BUTTON_PREFIX + "gui_text_background.png");
+        texture(BUTTON_PREFIX + "gui_text_background");
 
     public static final ResourceLocation SELECTED_GUI_BUTTON_OVERLAY =
-        res(BUTTON_PREFIX + "gui_button_selected_overlay.png");
+        texture(BUTTON_PREFIX + "gui_button_selected_overlay");
 
     public static final ResourceLocation DIRECTION_ARROW_BACK =
-        res(BUTTON_PREFIX + "gui_button_back_dark.png");
+        texture(BUTTON_PREFIX + "gui_button_back_dark");
 
     public static final ResourceLocation DIRECTION_ARROW_FORWARD =
-        res(BUTTON_PREFIX + "gui_button_forward_dark.png");
+        texture(BUTTON_PREFIX + "gui_button_forward_dark");
 
     public static final ResourceLocation NORTH =
-        res(PREFIX + "direction/north.png");
+        texture(PREFIX + "direction/north");
 
     public static final ResourceLocation SOUTH =
-        res(PREFIX + "direction/south.png");
+        texture(PREFIX + "direction/south");
 
     public static final ResourceLocation EAST =
-        res(PREFIX + "direction/east.png");
+        texture(PREFIX + "direction/east");
 
     public static final ResourceLocation WEST =
-        res(PREFIX + "direction/west.png");
+        texture(PREFIX + "direction/west");
 
     public static final ResourceLocation UP =
-        res(BUTTON_PREFIX + "gui_button_up_green.png");
+        texture(BUTTON_PREFIX + "gui_button_up_green");
 
     public static final ResourceLocation DOWN =
-        res(BUTTON_PREFIX + "gui_button_down_red.png");
+        texture(BUTTON_PREFIX + "gui_button_down_red");
 
     public static final ResourceLocation COG =
-        res(BUTTON_PREFIX + "gui_button_cog_dark.png");
+        texture(BUTTON_PREFIX + "gui_button_cog_dark");
 
     public static final ResourceLocation POWER_ON =
-        res(BUTTON_PREFIX + "gui_button_power_on.png");
+        texture(BUTTON_PREFIX + "gui_button_power_on");
 
     public static final ResourceLocation POWER_OFF =
-        res(BUTTON_PREFIX + "gui_button_power_off.png");
+        texture(BUTTON_PREFIX + "gui_button_power_off");
 
     public static final ResourceLocation GUI_GENERAL_SLOT =
-        res(BUTTON_PREFIX + "gui_general_slot.png");
+        texture(BUTTON_PREFIX + "gui_general_slot");
 
     public static final ResourceLocation GUI_AUGMENT_SLOT =
-        res(SLOTS_PREFIX + "slot_v2.png");
+        texture(SLOTS_PREFIX + "slot_v2");
 
     public static final ResourceLocation HOVERED_SLOT_OVERLAY =
-        res(PREFIX + "hovered_slot_overlay.png");
+        texture(PREFIX + "hovered_slot_overlay");
 
     public static final ResourceLocation GUI_INVENTORY_OVERLAY =
-        res(BUTTON_PREFIX + "gui_inventory_overlay.png");
+        texture(BUTTON_PREFIX + "gui_inventory_overlay");
 
     public static final ResourceLocation BLANK =
-        res(BUTTON_PREFIX + "blank.png");
+        texture(BUTTON_PREFIX + "blank");
 
     public static final ResourceLocation CHAINED =
-        res(BUTTON_PREFIX + "chained.png");
+        texture(BUTTON_PREFIX + "chained");
 
     public static final ResourceLocation UNCHAINED =
-        res(BUTTON_PREFIX + "un-chained.png");
+        texture(BUTTON_PREFIX + "un-chained");
 
     public static final ResourceLocation UPGRADE =
-        res(BUTTON_PREFIX + "gui_button_upgrade.png");
+        texture(BUTTON_PREFIX + "gui_button_upgrade");
 
     public static final ResourceLocation UPGRADE_DISABLED =
-        res(BUTTON_PREFIX + "gui_button_upgrade_disabled.png");
+        texture(BUTTON_PREFIX + "gui_button_upgrade_disabled");
 
     public static final ResourceLocation GUI_ITEM_SLOT =
-        res(SLOTS_PREFIX + "gui_item_slot.png");
+        texture(SLOTS_PREFIX + "gui_item_slot");
 
     public static final ResourceLocation AUGMENT_CORE =
-        res(SLOTS_PREFIX + "augment_core_slot.png");
+        texture(SLOTS_PREFIX + "augment_core_slot");
 
     public static final ResourceLocation ADVANCED_AUGMENT_CORE =
-        res(SLOTS_PREFIX + "advanced_augment_core_slot.png");
+        texture(SLOTS_PREFIX + "advanced_augment_core_slot");
 
     public static final ResourceLocation AUGMENT_HYPER_CORE =
-        res(SLOTS_PREFIX + "augment_hyper_core_slot.png");
+        texture(SLOTS_PREFIX + "augment_hyper_core_slot");
 
     public static final ResourceLocation INFORMATION =
-        res(BUTTON_PREFIX + "gui_button_information.png");
+        texture(BUTTON_PREFIX + "gui_button_information");
 
     public static final ResourceLocation INVENTORY =
-        res(BUTTON_PREFIX + "gui_button_inventory.png");
+        texture(BUTTON_PREFIX + "gui_button_inventory");
 
     public static final ResourceLocation REFRESH =
-        res(BUTTON_PREFIX + "gui_button_refresh.png");
+        texture(BUTTON_PREFIX + "gui_button_refresh");
 
     public static final ResourceLocation CLOSE =
-        res(BUTTON_PREFIX + "gui_button_close_dark.png");
+        texture(BUTTON_PREFIX + "gui_button_close_dark");
 
     public static final ResourceLocation BEZEL_1 =
-        res(PREFIX + "bezels/bezel_1.png");
+        texture(PREFIX + "bezels/bezel_1");
 
     public static final ResourceLocation BEZEL_2 =
-        res(PREFIX + "bezels/bezel_2.png");
+        texture(PREFIX + "bezels/bezel_2");
 
     public static final ResourceLocation BEZEL_3 =
-        res(PREFIX + "bezels/bezel_3.png");
+        texture(PREFIX + "bezels/bezel_3");
 
     public static final ResourceLocation BEZEL_4 =
-        res(PREFIX + "bezels/bezel_4.png");
+        texture(PREFIX + "bezels/bezel_4");
 
     public static final ResourceLocation TYPE_OVERLAY =
-        res(PREFIX + "type_overlay.png");
+        texture(PREFIX + "type_overlay");
 
     public static final ResourceLocation MANA_CONTAINER =
-        res(PREFIX + "mana_bar_overlay.png");
+        texture(PREFIX + "mana_bar_overlay");
 
     public static final ResourceLocation MANA_LEVEL_BAR =
-        res(PREFIX + "mana_bar_type.png");
+        texture(PREFIX + "mana_bar_type");
 
     public static final ResourceLocation IN_WAND =
-        res(PREFIX + "in_wand.png");
+        texture(PREFIX + "in_wand");
 
     public static final ResourceLocation WAND_GUI =
-        res(PREFIX + "wand_gui.png");
+        texture(PREFIX + "wand_gui");
 
     public static final ResourceLocation IN_INVENTORY =
-        res(PREFIX + "in_inventory.png");
+        texture(PREFIX + "in_inventory");
 
     public static final ResourceLocation CHAMPIONS_CROWN =
-        res(PREFIX + "champions_crown.png");
+        texture(PREFIX + "champions_crown");
 
     public static final ResourceLocation BRONZE_COIN =
-        res(ITEMS_PREFIX + "coins/coin.png");
+        texture(ITEMS_PREFIX + "coins/coin");
 
     public static final ResourceLocation SILVER_COIN =
-        res(ITEMS_PREFIX + "coins/coin1.png");
+        texture(ITEMS_PREFIX + "coins/coin1");
 
     public static final ResourceLocation GOLD_COIN =
-        res(ITEMS_PREFIX + "coins/coin2.png");
+        texture(ITEMS_PREFIX + "coins/coin2");
 
     public static final ResourceLocation PLATINUM_COIN =
-        res(ITEMS_PREFIX + "coins/coin3.png");
+        texture(ITEMS_PREFIX + "coins/coin3");
 
 
 

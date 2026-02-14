@@ -5,6 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.ComponentReg;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -31,7 +32,7 @@ public class JahdooShieldItem extends BaseItem implements ICurioItem {
         super.implicitModifiers(stack, tooltipComponents);
         var blockChance = stack.get(ComponentReg.SHIELD_BLOCK_CHANCE);
         if(blockChance != null){
-            var newValue = org.shaydee.shaydeeapi.Maths.roundNonWholeDouble(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(blockChance)) + "%";
+            var newValue = MathHelpers.roundNonWholeDouble(MathHelpers.doubleFormattedDouble(blockChance)) + "%";
             var value = TextHelpers.withStyleComponent(newValue + " Block Chance", ColourHelpers.getGoldCoin());
             tooltipComponents.add(value);
         }

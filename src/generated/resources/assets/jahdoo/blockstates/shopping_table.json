@@ -11,6 +11,9 @@
     },
     "level=3": {
       "model": "jahdoo:block/shopping_table_3"
+    },
+    "level=4": {
+      "model": "jahdoo:block/lighting"
     }
   }
 }

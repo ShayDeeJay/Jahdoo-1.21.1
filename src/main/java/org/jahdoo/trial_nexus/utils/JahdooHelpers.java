@@ -50,6 +50,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.QuestTracker;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.*;
@@ -57,59 +58,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 import static com.github.L_Ender.cataclysm.init.ModEntities.*;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ABYSS_BLAST_PORTAL;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ABYSS_MINE;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ABYSS_PORTAL;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ACCRETION;
-import static com.github.L_Ender.cataclysm.init.ModEntities.AMETHYST_CRAB;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ANCIENT_ANCIENT_REMNANT;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ANCIENT_DESERT_STELE;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ANCIENT_REMNANT;
-import static com.github.L_Ender.cataclysm.init.ModEntities.APTRGANGR;
-import static com.github.L_Ender.cataclysm.init.ModEntities.CINDARIA;
-import static com.github.L_Ender.cataclysm.init.ModEntities.CLAWDIAN;
-import static com.github.L_Ender.cataclysm.init.ModEntities.CM_FALLING_BLOCK;
-import static com.github.L_Ender.cataclysm.init.ModEntities.CORALSSUS;
-import static com.github.L_Ender.cataclysm.init.ModEntities.CORAL_GOLEM;
-import static com.github.L_Ender.cataclysm.init.ModEntities.CURSED_SANDSTORM;
-import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING;
-import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING_ANGLER;
-import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING_BRUTE;
-import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING_PRIEST;
-import static com.github.L_Ender.cataclysm.init.ModEntities.DEEPLING_WARLOCK;
-import static com.github.L_Ender.cataclysm.init.ModEntities.DIMENSIONAL_RIFT;
-import static com.github.L_Ender.cataclysm.init.ModEntities.DRAUGR;
-import static com.github.L_Ender.cataclysm.init.ModEntities.DROWNED_HOST;
-import static com.github.L_Ender.cataclysm.init.ModEntities.EARTHQUAKE;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ELITE_DRAUGR;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ENDERMAPTERA;
-import static com.github.L_Ender.cataclysm.init.ModEntities.EYE_OF_DUNGEON;
-import static com.github.L_Ender.cataclysm.init.ModEntities.FLAME_STRIKE;
-import static com.github.L_Ender.cataclysm.init.ModEntities.HIPPOCAMTUS;
-import static com.github.L_Ender.cataclysm.init.ModEntities.IGNIS;
-import static com.github.L_Ender.cataclysm.init.ModEntities.IGNITED_BERSERKER;
-import static com.github.L_Ender.cataclysm.init.ModEntities.IGNITED_REVENANT;
-import static com.github.L_Ender.cataclysm.init.ModEntities.KOBOLEDIATOR;
-import static com.github.L_Ender.cataclysm.init.ModEntities.KOBOLETON;
-import static com.github.L_Ender.cataclysm.init.ModEntities.LIGHTNING_AREA_EFFECT;
-import static com.github.L_Ender.cataclysm.init.ModEntities.LIONFISH;
-import static com.github.L_Ender.cataclysm.init.ModEntities.MALEDICTUS;
-import static com.github.L_Ender.cataclysm.init.ModEntities.MODERN_REMNANT;
-import static com.github.L_Ender.cataclysm.init.ModEntities.NETHERITE_MINISTROSITY;
-import static com.github.L_Ender.cataclysm.init.ModEntities.ROYAL_DRAUGR;
-import static com.github.L_Ender.cataclysm.init.ModEntities.SANDSTORM;
-import static com.github.L_Ender.cataclysm.init.ModEntities.SCYLLA;
-import static com.github.L_Ender.cataclysm.init.ModEntities.SYMBIOCTO;
-import static com.github.L_Ender.cataclysm.init.ModEntities.THE_BABY_LEVIATHAN;
-import static com.github.L_Ender.cataclysm.init.ModEntities.THE_HARBINGER;
-import static com.github.L_Ender.cataclysm.init.ModEntities.THE_LEVIATHAN;
-import static com.github.L_Ender.cataclysm.init.ModEntities.THE_PROWLER;
-import static com.github.L_Ender.cataclysm.init.ModEntities.THE_WATCHER;
-import static com.github.L_Ender.cataclysm.init.ModEntities.URCHINKIN;
-import static com.github.L_Ender.cataclysm.init.ModEntities.VOID_RUNE;
-import static com.github.L_Ender.cataclysm.init.ModEntities.VOID_VORTEX;
-import static com.github.L_Ender.cataclysm.init.ModEntities.WADJET;
-import static com.github.L_Ender.cataclysm.init.ModEntities.WITHER_SMOKE_EFFECT;
 import static java.util.Collections.emptyMap;
 import static net.minecraft.advancements.CriteriaTriggers.ITEM_DURABILITY_CHANGED;
 import static net.minecraft.sounds.SoundEvents.ITEM_BREAK;
@@ -233,6 +181,10 @@ public class JahdooHelpers {
 
     public static ResourceLocation res(String location) {
         return ResourceLocation.fromNamespaceAndPath(JahdooMod.MOD_ID, location);
+    }
+
+    public static ResourceLocation texture(String location) {
+        return ResourceLocation.fromNamespaceAndPath(JahdooMod.MOD_ID, "textures/" + location + ".png");
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
@@ -475,7 +427,7 @@ public class JahdooHelpers {
             }
         }
 
-        float getPercentageDamage = (float) org.shaydee.shaydeeapi.Maths.getPercentage(initialValue, getAttribute);
+        float getPercentageDamage = (float) MathHelpers.getPercentage(initialValue, getAttribute);
 
         if(isAddition){
             reCalculatedDamage = reCalculatedDamage + getPercentageDamage;

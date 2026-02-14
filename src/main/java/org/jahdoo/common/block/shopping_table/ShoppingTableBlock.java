@@ -17,9 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -27,10 +25,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.shaydeeapi.helpers.ColourHelpers;
-import org.shaydee.shaydeeapi.helpers.ItemHelpers;
-import org.shaydee.shaydeeapi.helpers.SoundHelpers;
-import org.shaydee.shaydeeapi.helpers.TextHelpers;
+import org.shaydee.shaydeeapi.helpers.*;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
@@ -39,6 +34,7 @@ import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.
 
 public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
+    public static final VoxelShape UPPER_SHAPE = Block.box(0, -2, 0, 16, 16, 16);
     public static VoxelShape SHAPE_COMBINED = Shapes.or(
         Block.box(2, 0, 2, 14, 10, 14),
         Block.box(0, 10, 0, 16, 14, 16),
@@ -50,6 +46,7 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
 
     public static final IntegerProperty TEXTURE = BlockStateProperties.LEVEL;
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
+    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
 
     public ShoppingTableBlock() {
@@ -58,6 +55,7 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
             this.defaultBlockState()
                 .setValue(TEXTURE, 0)
                 .setValue(FACING, Direction.SOUTH)
+                .setValue(HALF, DoubleBlockHalf.LOWER)
         );
     }
 
@@ -68,7 +66,7 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE_COMBINED;
+        return state.getValue(HALF).equals(DoubleBlockHalf.UPPER) ?  UPPER_SHAPE : SHAPE_COMBINED;
     }
 
     @Override
@@ -84,8 +82,13 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(TEXTURE);
-        builder.add(FACING);
+        builder.add(TEXTURE).add(FACING).add(HALF);
+    }
+
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        var adjustState = state.setValue(TEXTURE, 4);
+        BlockHelpers.placeDoubleTallBlock(adjustState, level, pos);
     }
 
     @Nullable
@@ -111,8 +114,9 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
         InteractionHand hand,
         BlockHitResult result
     ) {
-        var entity = level.getBlockEntity(pos);
-        if(!(entity instanceof ShoppingTableEntity table)) return FAIL;
+        var isUpper = state.getValue(HALF).equals(DoubleBlockHalf.UPPER);
+        var getBottomHalf = level.getBlockEntity(isUpper ? pos.below() : pos);
+        if(!(getBottomHalf instanceof ShoppingTableEntity table)) return FAIL;
         if(!table.canPurchase()) return FAIL;
         var enoughToBuy = checkAndPurchase(table.itemCosts, player);
 

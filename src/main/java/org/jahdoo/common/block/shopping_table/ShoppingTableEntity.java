@@ -61,14 +61,14 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         saveData(tag, itemCosts);
         tag.putInt("ticks", ticks);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.itemCosts = loadData(tag);
         this.ticks = tag.getInt("ticks");

@@ -17,6 +17,7 @@ import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.level_manager.RoomData;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
@@ -113,25 +114,25 @@ public class LockBlockEntity extends SyncedBlockEntity {
             switch (data1.getDifficulty()){
                 case JahdooHelpers.EASY -> {
                     var rarityForNeg = List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000));
-                    if (org.shaydee.shaydeeapi.Maths.percentageChance(30)) this.negativeBoon = toSyncable(withRarityNegative(getRarity(rarityForNeg)), getRarity(rarityForNeg));
+                    if (MathHelpers.percentageChance(30)) this.negativeBoon = toSyncable(withRarityNegative(getRarity(rarityForNeg)), getRarity(rarityForNeg));
                     this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
                 }
                 case JahdooHelpers.MEDIUM -> {
                     this.negativeBoon = toSyncable(randomNegative(), getRarity());
-                    if (org.shaydee.shaydeeapi.Maths.percentageChance(70)) this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
+                    if (MathHelpers.percentageChance(70)) this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
                 }
                 case JahdooHelpers.HARD -> {
                     var rarityForNeg = List.of(Pair.of(EPIC, 1), Pair.of(LEGENDARY, 5500), Pair.of(MYTHIC, 6000));
                     var rarityForPos = List.of(Pair.of(RARE, 1), Pair.of(LEGENDARY, 5000), Pair.of(MYTHIC, 6000));
                     this.negativeBoon = toSyncable(withRarityNegative(getRarity()), getRarity(rarityForNeg));
-                    if (org.shaydee.shaydeeapi.Maths.percentageChance(50)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(rarityForPos)), getRarity(rarityForNeg));
+                    if (MathHelpers.percentageChance(50)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(rarityForPos)), getRarity(rarityForNeg));
                 }
             }
         }
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putBoolean("starting", this.isStarting);
         tag.putString("difficulty", this.getDifficulty);
@@ -143,7 +144,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.isStarting = tag.getBoolean("starting");
         this.getDifficulty = tag.getString("difficulty");

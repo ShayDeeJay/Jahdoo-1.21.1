@@ -94,7 +94,6 @@ import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.Helpers;
-import org.shaydee.shaydeeapi.Maths;
 import org.shaydee.shaydeeapi.helpers.*;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
@@ -119,6 +118,7 @@ import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentMo
 import static org.jahdoo.trial_nexus.attachments.RunData.*;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.itemBehaviour;
 import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
+import static org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs.CHALLENGER_BOSS;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 import static org.jahdoo.trial_nexus.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 
@@ -311,7 +311,7 @@ public class EventHelpers {
             var shieldDurability = durabilityDamageCount(getTome);
             var blockPercentage = getTome.get(ComponentReg.SHIELD_BLOCK_CHANCE);
             if(blockPercentage == null) return;
-            var blockChance = Maths.percentageChance(blockPercentage);
+            var blockChance = MathHelpers.percentageChance(blockPercentage);
 
             if (blockChance && shieldDurability > 0) {
                 event.setBlocked(true);
@@ -460,7 +460,7 @@ public class EventHelpers {
         var attribute = entity.getAttribute(AttributeReg.RESILIENCE);
         if(attribute != null){
             var resilience = attribute.getValue();
-            var damageReduction = org.shaydee.shaydeeapi.Maths.getPercentage(resilience, event.getNewDamage());
+            var damageReduction = MathHelpers.getPercentage(resilience, event.getNewDamage());
             var damageWithResilience = event.getNewDamage() - damageReduction;
             event.setNewDamage((float) damageWithResilience);
         }
@@ -617,7 +617,7 @@ public class EventHelpers {
                 onKillExpAndCoin(entity, level, stack, getKiller, 10, Random.nextInt(10) == 0 ? 2 : 1);
             }
 
-            if(entity.getPersistentData().getBoolean("boss")){
+            if(entity.getPersistentData().getBoolean(CHALLENGER_BOSS)){
                 var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus)).copyWithCount(10);
                 onKillExpAndCoin(entity, level, stack, getKiller, 200, 2);
             }

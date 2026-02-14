@@ -13,8 +13,8 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.shaydee.shaydeeapi.Helpers;
-import org.shaydee.shaydeeapi.Maths;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class BoonSelection {
         var list = List.of(
             TextHelpers.withStyleComponent(name, ColourHelpers.getOffWhite()),
             Component.empty(),
-            durationComp.copy().append(TextHelpers.withStyleComponent(org.shaydee.shaydeeapi.Maths.ticksToTime(String.valueOf(duration)), colour)),
+            durationComp.copy().append(TextHelpers.withStyleComponent(MathHelpers.ticksToTime(String.valueOf(duration)), colour)),
             amplifierComp.copy().append(TextHelpers.withStyleComponent(String.valueOf(value), colour))
         );
 
@@ -113,7 +113,7 @@ public class BoonSelection {
         var id = attribute.value().getDescriptionId();
         var split = translatable(id).getString();
         var string = stream(split.split(" ")).toList();
-        var getValue = Maths.roundNonWholeString(Maths.doubleFormattedDouble(value));
+        var getValue = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(value));
         var formattedString = (value < 0 ? "" : "+") + getValue + (isPercentage ? "% " : " ");
         var runeFromAttribute = RuneReg.getRuneFromAttribute(attribute);
         var colourBy = runeFromAttribute == null ? ColourHelpers.getCooldownGreen() : runeFromAttribute.runeColour();

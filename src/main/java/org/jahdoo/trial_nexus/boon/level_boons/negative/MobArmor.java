@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import static net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
@@ -41,7 +42,7 @@ public class MobArmor extends AbstractLevelBoon {
     @Override
     public double value(JahdooRarity rarity) {
         var getRarity = rarity.getAttributes();
-        return org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(getRarity.getRandomManaRegen());
+        return MathHelpers.doubleFormattedDouble(getRarity.getRandomManaRegen());
     }
 
     @Override

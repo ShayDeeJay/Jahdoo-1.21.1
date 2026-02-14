@@ -88,7 +88,7 @@ public class TicketBureauBlockEntity extends AbstractTankUser {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         if(this.lastItem != null && !this.lastItem.isEmpty()){
             tag.put("stack", lastItem.save(registries));
         }
@@ -96,7 +96,7 @@ public class TicketBureauBlockEntity extends AbstractTankUser {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         if(tag.contains("stack")){
             this.lastItem = ItemStack.parse(registries, tag.getCompound("stack")).orElse(ItemStack.EMPTY);
         }

@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,7 +60,7 @@ public class OverlayHelpers {
                     var withoutType = prefix.getString().replace(filterType + " ", "");
                     var prefix2 = TextHelpers.withStyleComponentTrans(withoutType, ColourHelpers.getSubHeaderColour());
                     var value = syncableAttribute.getValue();
-                    var readableValues = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.singleFormattedDouble(value));
+                    var readableValues = MathHelpers.roundNonWholeString(MathHelpers.singleFormattedDouble(value));
                     var suffix = TextHelpers.withStyleComponent(" " + readableValues, value > 0 ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed());
                     var string = prefix2.copy().append(Component.literal(":")).append(suffix);
 
@@ -92,7 +93,7 @@ public class OverlayHelpers {
         int maxLength = 0;
 
         for (var attribute : attributes) {
-            var s = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(attribute.getValue()));
+            var s = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(attribute.getValue()));
             var length = Component.translatable(attribute.getAttribute().value().getDescriptionId()).getString().length() + s.length();
             if(length > maxLength) maxLength = length;
         }
@@ -105,7 +106,7 @@ public class OverlayHelpers {
             var text = syncableAttribute.getAttribute().value().getDescriptionId();
             var prefix = TextHelpers.withStyleComponentTrans(text, ColourHelpers.getSubHeaderColour());
             var value = syncableAttribute.getValue();
-            var readableValues = org.shaydee.shaydeeapi.Maths.roundNonWholeString(org.shaydee.shaydeeapi.Maths.doubleFormattedDouble(value));
+            var readableValues = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(value));
 
             var suffix = TextHelpers.withStyleComponent(" " + readableValues, value > 0 ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed());
             var string = prefix.copy().append(Component.literal(":")).append(suffix);

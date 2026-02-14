@@ -13,6 +13,7 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,7 +167,7 @@ public class ShoppingArmor {
     private static void attachMageData(JahdooRarity jahdooRarity, ItemStack itemStack) {
         var i = jahdooRarity.getId() + 1;
         if(itemStack.getItem() instanceof ArmorItem armorItem){
-            if(org.shaydee.shaydeeapi.Maths.percentageChance(10 * i)){
+            if(MathHelpers.percentageChance(10 * i)){
                 var tier = getRarity(List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000)));
                 var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(PERK, RESILIENCE, INFINITY, COSMIC);
                 if(!getAllAllowed.isEmpty()){
@@ -175,7 +176,7 @@ public class ShoppingArmor {
             }
         }
 
-        var attachRuneSlots = org.shaydee.shaydeeapi.Maths.percentageChance(10 * i) ? 1 : 0;
+        var attachRuneSlots = MathHelpers.percentageChance(10 * i) ? 1 : 0;
         sharedArmorData(jahdooRarity, itemStack, attachRuneSlots, -15, -50);
     }
 
@@ -184,7 +185,7 @@ public class ShoppingArmor {
             var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(INFINITY, COSMIC);
             addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, Helpers.listRandom(getAllAllowed));
 
-            if(org.shaydee.shaydeeapi.Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
+            if(MathHelpers.percentageChance(5 * (jahdooRarity.getId()+1))){
                 addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, Helpers.listRandom(getAllAllowed));
             }
         }
@@ -194,7 +195,7 @@ public class ShoppingArmor {
 
     private static void attachKnightKingData(JahdooRarity jahdooRarity, ItemStack itemStack) {
         if(itemStack.getItem() instanceof ArmorItem armorItem){
-            if(org.shaydee.shaydeeapi.Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
+            if(MathHelpers.percentageChance(5 * (jahdooRarity.getId()+1))){
                 addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, RuneReg.RESILIENCE.get());
             }
         }
@@ -236,7 +237,7 @@ public class ShoppingArmor {
         var slot = armorItem.getEquipmentSlot();
         var isSpecial = jahdooRarity == UNIQUE;
 
-        if (org.shaydee.shaydeeapi.Maths.percentageChance(isSpecial ? 60 : 10)) return;
+        if (MathHelpers.percentageChance(isSpecial ? 60 : 10)) return;
 
         enchantmentWithChance(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isSpecial);
         enchantmentWithChance(itemStack, serverLevel, PROJECTILE_PROTECTION, 5, 10, isSpecial);

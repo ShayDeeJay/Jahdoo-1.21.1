@@ -53,8 +53,6 @@ public class CasterItem extends BaseJahdooItem {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
-
-
     }
 
     @Override
@@ -93,7 +91,18 @@ public class CasterItem extends BaseJahdooItem {
         var item = player.getItemInHand(interactionHand);
         var pic = player.pick(player.blockInteractionRange(), 1, false);
 
-        if(level instanceof ServerLevel){
+        //testing roll mod
+//        if(player.onGround()){
+//            var lookAngle = player.getDeltaMovement();
+//            var i = 1;
+//            player.setDeltaMovement(lookAngle.x + i, 0.1, lookAngle.z + i);
+//            SoundHelpers.getSoundWithPosition(level, player.position(), SoundReg.LEVITATE.get(), SoundSource.PLAYERS,  1, 1);
+//            SoundHelpers.getSoundWithPosition(level, player.position(), SoundReg.UPGRADE_MODIFIER.get(), SoundSource.PLAYERS,  0.2f, 2);
+//        }
+
+
+        if(level instanceof ServerLevel serverLevel){
+
 
             if(pic instanceof BlockHitResult result){
                 var bPos = result.getBlockPos();

@@ -105,6 +105,13 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return null;
     }
 
+    public static JahdooRarity getRarityFromItem(ItemStack wandItem) {
+        var integer = wandItem.get(JAHDOO_RARITY);
+        if(integer == null) return JahdooRarity.COMMON;
+
+        return getAllRarities(integer);
+    }
+
     public static JahdooRarity getReverseRarity() {
         var filteredList = BASE_RARITY_CHANCES
             .stream()
@@ -154,7 +161,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     }
 
     public static final List<String> NUMERALS = List.of(
-        "I",   // index 0, default or number 0
+        "I",   // index 0
         "II",  // index 1
         "III", // index 2
         "IV",  // index 3

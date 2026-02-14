@@ -8,6 +8,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.BOUNCY_FOOT;
 
@@ -50,7 +51,7 @@ public class Rebound implements IAttachment {
                     var volume = (float) reducedDelta - 0.2f;
                     player.playSound(SoundEvents.FROG_TONGUE, volume, 1.2f);
                     player.playSound(SoundReg.SUSPEND.get(), volume, 2f);
-                    player.setDeltaMovement(player.getDeltaMovement().add(0, org.shaydee.shaydeeapi.Maths.singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
+                    player.setDeltaMovement(player.getDeltaMovement().add(0, MathHelpers.singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
                 }
             }
             

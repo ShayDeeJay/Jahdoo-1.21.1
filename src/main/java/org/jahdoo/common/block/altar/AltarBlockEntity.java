@@ -102,7 +102,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         tag.putBoolean("started", started);
         tag.putInt("spawned", mobsSpawned);
@@ -126,7 +126,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         started = tag.getBoolean("started");
         mobsSpawned = tag.getInt("spawned");

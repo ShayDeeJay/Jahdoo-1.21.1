@@ -83,6 +83,9 @@ public class ItemReg {
         basicItem("challenger_soul");
 
     //Core Items
+    public static final DeferredHolder<Item, Item> DEED =
+        complexItem("deed", Deed::new);
+
     public static final DeferredHolder<Item, Item> CHARGED_AUGMENT_CORE =
         chargedCoreItems("augment_core_filled");
 
@@ -185,8 +188,8 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> COIN_SACK =
         complexItem("coin_sack", CoinSack::new);
 
-    public static final DeferredHolder<Item, Item> STONE_OF_REGRET =
-        complexItem("stone_of_regret", StoneOfRegret::new);
+    public static final DeferredHolder<Item, Item> SALAMANS_EYE =
+        complexItem("salamans_eye", SalamansEye::new);
 
     //Block Items
     public static final DeferredHolder<Item, Item> DISASSEMBLER_ITEM =

@@ -26,7 +26,7 @@ import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -281,7 +281,7 @@ public class ExplosiveBarrel extends LivingEntity implements GeoEntity {
             livingEntity.getBoundingBox().inflate(radius, 1, radius)
         ).forEach(
             lEntity -> {
-                if(Maths.percentageChance(effectChance) && lEntity != livingEntity){
+                if(MathHelpers.percentageChance(effectChance) && lEntity != livingEntity){
                     lEntity.addEffect(new JahdooMobEffect(element.effect(), (int) effectDuration, (int) effectStrength));
                 }
                 DamageUtils.damageWithJahdoo(lEntity, lEntity, damage, element.damageTypeResourceKey());

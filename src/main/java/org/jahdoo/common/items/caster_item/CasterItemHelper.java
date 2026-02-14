@@ -47,13 +47,6 @@ public class CasterItemHelper {
     public static Component defence = TextHelpers.withStyleComponentTrans(PREFIX + "set_wizard_mode.defence", rgbToInt(102, 178, 255));
     public static Component attack = TextHelpers.withStyleComponentTrans(PREFIX + "set_wizard_mode.attack", rgbToInt(255, 102, 102));
 
-//    public static void appendPotentialComponent(List<Component> toolTips, ItemStack gearItem){
-//        var wandData = gearItem.get(JAHDOO_GEAR_DATA);
-//        if(wandData == null) return;
-//
-//        getPotentialComponent(gearItem, (s) -> toolTips.add(toolTips.size(), s));
-//    }
-
     public static void getPotentialComponent(ItemStack gearItem, Consumer<Component> render){
         var wandData = gearItem.get(JAHDOO_GEAR_DATA);
         if(wandData == null) return;
@@ -76,7 +69,6 @@ public class CasterItemHelper {
         return Component.empty();
     }
 
-
     public static void getRepairSlotsComponent(ItemStack gearItem, Consumer<Component> render) {
         var wandData = gearItem.get(JAHDOO_GEAR_DATA);
         if(wandData == null) return;
@@ -94,7 +86,6 @@ public class CasterItemHelper {
             render.accept(comp);
         }
     }
-
 
     public static JahdooRarity getRarity(Item item){
         var wandData = item.components().get(JAHDOO_RARITY.get());

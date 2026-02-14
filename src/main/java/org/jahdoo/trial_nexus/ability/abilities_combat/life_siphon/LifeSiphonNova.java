@@ -15,6 +15,7 @@ import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.Helpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +125,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
             if(canDamage && !beenTargeted){
                 targetedEntities.add(livingEntity);
                 DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), getValue(DAMAGE), getElementType().damageTypeResourceKey());
-                if(org.shaydee.shaydeeapi.Maths.percentageChance(50)){
+                if(MathHelpers.percentageChance(50)){
                     VitalityEffect.throwHeartContainer(livingEntity, getValue(HEAL_VALUE));
                 }
             }

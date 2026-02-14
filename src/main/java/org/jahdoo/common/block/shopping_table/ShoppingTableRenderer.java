@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.joml.Matrix4f;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
@@ -20,15 +21,19 @@ import static net.minecraft.client.renderer.blockentity.BlockEntityRendererProvi
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.world.item.ItemDisplayContext.FIXED;
 import static org.jahdoo.common.block.shopping_table.DisplayDirection.*;
+import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.HALF;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 
 public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableEntity>{
 
-    public ShoppingTableRenderer(Context context) {}
+    public ShoppingTableRenderer(Context context) {
+
+    }
 
     @Override
     public void render(ShoppingTableEntity entity, float partial, PoseStack poseStack, MultiBufferSource source, int packedLight, int packedOverlay) {
+        if(entity.getBlockState().getValue(HALF).equals(DoubleBlockHalf.UPPER)) return;
         var mc = Minecraft.getInstance();
         var itemRenderer = mc.getItemRenderer();
         var direction = DisplayDirection.fromMCDirection(entity.getBlockState().getValue(ShoppingTableBlock.FACING));

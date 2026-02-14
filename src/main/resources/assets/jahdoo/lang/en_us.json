@@ -35,7 +35,7 @@
   "item.jahdoo.wand_inferno": "Inferno Wand",
   "item.jahdoo.wand_vitality": "Vitality Wand",
 
-  "item.jahdoo.stone_of_regret": "Stone Of Regret",
+  "item.jahdoo.salamans_eye": "Salamans Eye",
   "item.jahdoo.skill_point": "Skill Point",
   "item.jahdoo.elemental_staff": "Elemental Staff",
   "item.jahdoo.perka_soda": "Perk-A-Soda",
@@ -55,6 +55,7 @@
   "item.jahdoo.challenger_soul": "Challenger Soul",
   "item.jahdoo.rune": "Rune",
   "item.jahdoo.ancient_glaive": "Ancient Glaive",
+  "item.jahdoo.deed": "Base Deed",
 
   "item.jahdoo.mage_helmet": "Mage Hood",
   "item.jahdoo.mage_chestplate": "Mage Chest Piece",
@@ -221,6 +222,7 @@
   "info.jahdoo.challenge_accepted": "Challenge Accepted",
   "info.jahdoo.altar_complete": "Altar Complete",
 
+  "description.item.jahdoo.deed": "The Base Deed is an item that spawns a personal island for players to claim and enjoy — a place of calm for those seeking space away from the madness.\n(Coming soon: block render overlay previews, tooltip examples, and additional base variants.)",
   "description.item.jahdoo.challenger_soul": "The Challenger Soul is a rare crafting item with a chance to drop from Challengers within the Nexus.",
   "description.item.jahdoo.stamp": "Stamps can be applied to Trial Tickets at the Ticket Bureau. Each stamp adds a positive modifier, increasing the amount the ticket must be filled before use. Most tickets naturally come with a high chance of having a negative modifier.",
   "description.item.jahdoo.battlemage_gauntlet": "The Battlemage Gauntlet is an arcane relic that allows wands to be wielded in the offhand, freeing the main hand for another weapon or tool while maintaining magical control.",
@@ -232,13 +234,13 @@
   "description.item.jahdoo.dice": "Modifier Re-Roll Dice can be right-clicked on a locked door in the Nexus dimension. Using it on the lock rerolls the door’s modifiers, giving you a chance for different effects.",
   "description.item.jahdoo.ticket": "Trial Tickets are the entry point to the Trial Nexus. Tickets must be filled at a Ticket Bureau before use. Once filled, they can be used to transport you by holding right-click until the timer completes. Tickets come in multiple tiers, allowing them to be reused a limited number of times, while standard tickets can only be used once. Reusable tickets become especially valuable when combined with modifiers. Rare tickets cannot be crafted and are only found in loot chests.",
   "description.item.jahdoo.cores": "Cores come in two variants: Charged and Hollow. Charged Cores are powerful items used for tasks ranging from repairing gear to serving as crafting ingredients. Hollow Cores are inert until charged. They can be powered in the Nexus by placing them in altars, where nearby slain mobs provide the energy needed to fill them. Higher-tier cores require more kills to fully charge.",
+  "description.item.jahdoo.salamans_eye": "Salman’s Eye is a powerful relic once held by the Protectors of the Nexus. When placed in your Protector Curio slot, it increases your available Relic slots.",
   "description.block.jahdoo.tank": "A storage tank for Nexite Powder that acts as a central power source for nearby machinery. It can be automated, does not require binding, and supplies all compatible blocks within a 5×5 area.",
   "description.block.jahdoo.ticket_bureau": "The Ticket Bureau is a specialized station used to fill tickets, enabling transport to the Nexus. It also allows stamp modifiers to be applied, altering how tickets behave. Hold Shift while looking at the block to view detailed ticket information.",
   "description.block.jahdoo.modular_chaos_cube": "The Modular Chaos Cube is a powerful automation block capable of casting utility spells on behalf of the player. It harnesses Nexite Powder through a Nexite Tank instead of using mana. The block features a GUI that allows control over spell direction, inputs and outputs, and casting intervals. It can also cast spells in response to a redstone signal rather than relying on its internal timing.",
   "description.block.jahdoo.disassembler": "The Disassembler acts as a recycling station for unwanted or discarded gear. Recycling items requires power from a Nexite Tank, but in return it can yield useful materials. Higher-rarity gear can yield better materials.",
   "description.block.jahdoo.rune_table": "The Divine Forge serves as a modification station for gear and weapons. It allows you to repair equipment, add or remove runes from slots, and perform additional upgrades.",
   "description.block.jahdoo.mystical_augmenter": "The Mystical Augmenter is an incredibly powerful block with many unique properties. When attached to other blocks, it enhances their functionality, including converting a composter’s output from bonemeal into Nexite Powder.",
-  "description.block.jahdoo.creator": "The Creator Pedestal enables the creation of mystical items and operations not usually possible. This includes enchanting Over-Enchanted books onto compatible items.",
+  "description.block.jahdoo.creator": "The Creator Pedestal enables the creation of mystical items and operations not usually possible. This includes fusing Over-Enchanted books onto compatible items.",
   "description.ability.jahdoo.test": "This is just a test for testing"
-
 }

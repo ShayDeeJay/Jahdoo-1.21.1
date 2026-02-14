@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.client.screens.BoonSelectionScreen;
 import org.jahdoo.common.client.screens.QuestSelectionScreen;
@@ -37,6 +38,7 @@ import java.util.UUID;
 import static net.minecraft.sounds.SoundEvents.BREWING_STAND_BREW;
 import static net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP;
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.common.block.perk_table.PerkTable.HALF;
 import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.PLUS_PARTICLE;
@@ -86,12 +88,12 @@ public class PerkTableEntity extends SyncedBlockEntity {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        idleEffect(level, pos.getCenter(), state);
+        if(state.getValue(HALF).equals(DoubleBlockHalf.LOWER)) idleEffect(level, pos.getCenter(), state);
         incrementPrivateTicks();
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("counter", this.getPrivateTicks());
         tag.putString("quest_id", this.getQuestId);
 
@@ -107,7 +109,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         this.setPrivateTicks(tag.getInt("counter"));
         this.getQuestId = tag.getString("quest_id");
 
@@ -121,13 +123,13 @@ public class PerkTableEntity extends SyncedBlockEntity {
 
     private void idleEffect(Level level, Vec3 pos, BlockState state) {
         if(!level.isClientSide || getPrivateTicks() % 4 != 0) return;
-        var getPositions = innerRadiusRandom(pos.subtract(0, 0.45, 0), 0.38, 3);
+        var getPositions = innerRadiusRandom(pos.add(0, 0.5, 0), 0.38, 3);
 
         for (var vec3 : getPositions) {
             int bState = state.getValue(TEXTURE);
             var byState = bState == 0 ? color(207, 62, 62) : bState == 1 ? color(43, 193, 252) : bState == 2 ? color(252, 215, 3) : color(59, 173, 80) ;
             var genericParticle = ParticleHandlers.genericParticle(PLUS_PARTICLE, 16, 3, byState, byState, false);
-            sendParticles(level, genericParticle, vec3, 0, 0, 0.5, 0, 12);
+            sendParticles(level, genericParticle, vec3, 0, 0, 0.5, 0, -19);
         }
     }
     public void sharedSound(SoundEvent sEvent, Float volume, Float pitch){

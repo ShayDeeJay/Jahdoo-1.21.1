@@ -32,7 +32,7 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
 import org.shaydee.shaydeeapi.Helpers;
-import org.shaydee.shaydeeapi.Maths;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +54,7 @@ import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setLocks;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.NOVICE;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getDifficulties;
 import static org.jahdoo.trial_nexus.level_manager.RoomData.*;
+import static org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs.CHALLENGER_BOSS;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
@@ -66,12 +67,15 @@ public class StructureManager {
     public static final Block DOOR_FILLER = Blocks.NETHERITE_BLOCK;
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
-        var templates = level.getStructureManager().get(JahdooHelpers.res(roomId));
-        var flag = Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS;
         var pos1 = new BlockPos(-22, 0, -22);
 
-        settings.setKnownShape(true).addProcessor(BlockIgnoreProcessor.AIR);
-        templates.ifPresent(template -> template.placeInWorld(level, pos, pos1, settings, level.random, flag));
+        placeStructureWithPos(level, pos, settings, roomId, pos1);
+    }
+
+    public static void placeStructureWithPos(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId, BlockPos pos1) {
+        var templates = level.getStructureManager().get(JahdooHelpers.res(roomId));
+        settings.setKnownShape(true).addProcessor(BlockIgnoreProcessor.STRUCTURE_AND_AIR);
+        templates.ifPresent(template -> template.placeInWorld(level, pos, pos1, settings, level.random, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS));
     }
 
     public static Iterable<BlockPos> roomBoundingFromCenter(BlockPos pos) {
@@ -133,7 +137,7 @@ public class StructureManager {
         if(!data.getDifficulty().isEmpty()){
             JahdooMod.LOGGER.log(org.apache.logging.log4j.Level.INFO, "Error, boss room generated as starting room");
             var forBoss = InstanceDifficulty.getFromName(data.getDifficulty()).getId() * 10;
-            if(Maths.percentageChance(forBoss)) roomGen.put(roomGen.size(), CHALLENGER_DOME.getComponent());
+            if(MathHelpers.percentageChance(forBoss)) roomGen.put(roomGen.size(), CHALLENGER_DOME.getComponent());
         }
 
         while (roomGen.size() < 4) roomGen.put(roomGen.size(), getRandomBattleRoom());
@@ -261,7 +265,7 @@ public class StructureManager {
                         miniBoss.setYBodyRot(direction1.toYRot());
                         miniBoss.setYHeadRot(direction1.toYRot());
                         miniBoss.getPersistentData().put("block_pos", NbtUtils.writeBlockPos(miniBoss.blockPosition()));
-                        miniBoss.getPersistentData().putBoolean("boss", true);
+                        miniBoss.getPersistentData().putBoolean(CHALLENGER_BOSS, true);
                         miniBoss.getPersistentData().putString("direction", direction.name());
                         serverLevel.addFreshEntity(miniBoss);
                     }
@@ -280,12 +284,12 @@ public class StructureManager {
                 var aStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
                 var aItems = Helpers.listRandom(aStates);
                 var aBase = Block.byItem(aItems.getItem()).defaultBlockState();
-                placer(blockPos, sLevel, org.shaydee.shaydeeapi.Maths.percentageChance(10), aBase);
+                placer(blockPos, sLevel, MathHelpers.percentageChance(10), aBase);
 
                 var bPos = blockPos;
                 var multiplier = instanceData.getOreMultiplier();
                 for (int i = 0; i < multiplier; i++) {
-                    if(org.shaydee.shaydeeapi.Maths.percentageChance(20)){
+                    if(MathHelpers.percentageChance(20)){
                         var bStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
                         var bItems = Helpers.listRandom(bStates);
                         var bBase = Block.byItem(bItems.getItem()).defaultBlockState();
@@ -308,12 +312,12 @@ public class StructureManager {
         if (placerState.is(Blocks.ORANGE_STAINED_GLASS)) {
             if(level instanceof ServerLevel sLevel){
                 var bPos = blockPos;
-                var spawnChance = org.shaydee.shaydeeapi.Maths.percentageChance(20);
+                var spawnChance = MathHelpers.percentageChance(20);
                 placePot(level, sLevel, blockPos, spawnChance);
 
                 var multiplier = instanceData.getLootPotMultiplier();
                 for (int i = 0; i < multiplier; i++) {
-                    if(org.shaydee.shaydeeapi.Maths.percentageChance(20)){
+                    if(MathHelpers.percentageChance(20)){
                         var poss = new ArrayList<BlockPos>();
                         for (var direction1 : NO_Y) {
                             var relativeA = bPos.relative(direction1);
@@ -331,7 +335,7 @@ public class StructureManager {
 
     private static boolean placePowerUpStation(Level level, BlockPos blockPos, BlockState placerState, boolean alreadyPlaced) {
         if (placerState.is(Blocks.MAGENTA_STAINED_GLASS)) {
-            var spawnChance = org.shaydee.shaydeeapi.Maths.percentageChance(20) && !alreadyPlaced;
+            var spawnChance = MathHelpers.percentageChance(20) && !alreadyPlaced;
             var station = POWER_UP_STATION.get().defaultBlockState();
             var air = Blocks.AIR.defaultBlockState();
             if (spawnChance) alreadyPlaced = true;

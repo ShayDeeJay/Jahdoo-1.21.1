@@ -79,14 +79,14 @@ public class TankBlockEntity extends AbstractBEInventory {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("counter", this.counter);
         tag.putInt("tankSize", maxTankSize);
         super.saveAdditional(tag, registries);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         this.counter = tag.getInt("counter");
         this.maxTankSize = tag.getInt("tankSize");
         super.loadAdditional(tag, registries);
