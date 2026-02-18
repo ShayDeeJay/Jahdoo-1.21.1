@@ -72,7 +72,7 @@ public class ModItemModelProvider extends ItemModelProvider {
             createOverride(i, ItemReg.LOOT_KEY, "item/key");
         }
     }
-//
+
 //    private void registerXpOrbModels() {
 //        for (int i = 1; i < 3; i++) {
 //            createModel("xp_orb" + i, "item/xp_orbs/xp_orb" + i);
@@ -181,7 +181,7 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.BAZAAR_KEY, ItemReg.CRYPT_KEY,ItemReg.CHALLENGER_KEY, ItemReg.SANCTUARY_KEY,
             ItemReg.EXIT_KEY, ItemReg.CHARGED_AUGMENT_CORE, ItemReg.CHARGED_ADVANCED_AUGMENT_CORE,
             ItemReg.CHARGED_AUGMENT_HYPER_CORE, ItemReg.DEED, ItemReg.DIM_EXPERIENCE_ORB, ItemReg.GLOWING_EXPERIENCE_ORB,
-            ItemReg.RADIANT_EXPERIENCE_ORB
+            ItemReg.RADIANT_EXPERIENCE_ORB, ItemReg.OVERENCHANTED_BOOK
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

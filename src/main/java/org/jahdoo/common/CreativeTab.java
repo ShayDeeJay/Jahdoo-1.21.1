@@ -65,6 +65,7 @@ public class CreativeTab {
                 outPut.accept(GEAR_SCRAP.get());
                 outPut.accept(CHALLENGER_SOUL.get());
                 outPut.accept(DEED.get());
+                outPut.accept(OVERENCHANTED_BOOK.get());
 
                 outPut.accept(KEY_FRAGMENT.get());
                 outPut.accept(EXIT_KEY.get());

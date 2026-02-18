@@ -185,6 +185,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> MAGNET =
         complexItem("magnet", Magnet::new);
 
+    public static final DeferredHolder<Item, Item> OVERENCHANTED_BOOK =
+        complexItem("overenchanted_book", OverenchantedBook::new);
+
     public static final DeferredHolder<Item, Item> BASIC_SHIELD =
         complexItem("basic_shield", JahdooShieldItem::new);
 

@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.event.event_helpers.EventHelpers;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
@@ -112,19 +113,27 @@ public interface JahdooItem {
 
     default void enchantmentTooltip(ItemStack stack, List<Component> tooltipComponents, boolean addSpacer, Level level) {
         var itemEnchantments = stack.get(DataComponents.ENCHANTMENTS);
+        tooltipWithoutType(tooltipComponents, addSpacer, true, level, itemEnchantments);
+    }
+
+    static void tooltipWithoutType(List<Component> tooltipComponents, boolean addSpacer, boolean showHeader, Level level, ItemEnchantments itemEnchantments) {
         if(itemEnchantments != null && !itemEnchantments.entrySet().isEmpty()){
+
             if(addSpacer) tooltipComponents.add(Component.literal(" "));
-            tooltipComponents.add(TextHelpers.withStyleComponent("Enchantments", ColourHelpers.getSubHeaderColour()));
+            if(showHeader) tooltipComponents.add(TextHelpers.withStyleComponentTrans("info.jahdoo.enchantments", ColourHelpers.getSubHeaderColour()));
+
             for (var holderEntry : itemEnchantments.entrySet()) {
                 var value = holderEntry.getKey().value();
                 var string = value.description().getString();
-                var s = JahdooRarity.romanNumeralConverter(holderEntry.getIntValue() - 1);
+                var numeric = JahdooRarity.romanNumeralConverter(holderEntry.getIntValue() - 1);
+
                 if(!EventHelpers.isOverEnchanted(holderEntry.getKey(), holderEntry.getIntValue())){
-                    tooltipComponents.add(TextHelpers.withStyleComponent(string + " " + s, ColourHelpers.getNetheriteBox()));
+                    tooltipComponents.add(TextHelpers.withStyleComponent(string + " " + numeric, ColourHelpers.getNetheriteBox()));
                 } else {
-                    var recoloured = TextHelpers.withStyleComponent(string + " " + s, getOverEnchantColour(level));
+                    var recoloured = TextHelpers.withStyleComponent(string + " " + numeric, getOverEnchantColour(level));
                     tooltipComponents.add(recoloured);
                 }
+
             }
         }
     }

@@ -9,6 +9,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.Stream;
@@ -21,7 +23,15 @@ public class EnchantmentHelpers {
 
     public static void enchant(ItemStack stack, RegistryAccess access, ResourceKey<Enchantment> enchantmentKey, int level) {
         var enchantment = enchantmentFromKey(access, enchantmentKey);
-        if (enchantment != null) stack.enchant(enchantment, level);
+        if (enchantment != null) {
+            if(stack.is(ItemReg.OVERENCHANTED_BOOK)){
+                var iEnchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+                iEnchantments.set(enchantment, level);
+                stack.set(DataComponents.STORED_ENCHANTMENTS, iEnchantments.toImmutable());
+            } else {
+                stack.enchant(enchantment, level);
+            }
+        }
     }
 
     @Nullable

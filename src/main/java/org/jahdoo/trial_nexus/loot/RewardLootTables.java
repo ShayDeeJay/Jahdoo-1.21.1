@@ -53,7 +53,10 @@ import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class RewardLootTables {
 
-    public static final LootPoolSingletonContainer.Builder<?> BOOK_BUILDER =
+    public static final LootPoolSingletonContainer.Builder<?> OVERENCHANTED_BUILDER =
+        lootTableItem(ItemReg.OVERENCHANTED_BOOK.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> ENCHANTED_BUILDER =
         lootTableItem(Items.ENCHANTED_BOOK);
 
     public static final LootPoolSingletonContainer.Builder<?> GOLD_BUILDER =
@@ -308,7 +311,7 @@ public class RewardLootTables {
     }
 
 
-    private static void enchantedBook(ServerLevel serverLevel, ItemStack itemStack){
+    public static void enchantedBook(ServerLevel serverLevel, ItemStack itemStack){
         serverLevel
             .registryAccess()
             .registryOrThrow(ENCHANTMENT)
@@ -324,7 +327,11 @@ public class RewardLootTables {
         var minLevel = value.getMinLevel();
 
         var level = maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1;
-        enchant(itemStack, serverLevel.registryAccess(), key.getKey(), enchantmentValue == -1 ? level : enchantmentValue);
+        var oEnchantLevel = Math.min( maxLevel + (JahdooRarity.getRarity().getId() + 1), 10);
+        var isOverEnchant = itemStack.is(ItemReg.OVERENCHANTED_BOOK) ? oEnchantLevel : level;
+        var correctValue = enchantmentValue == -1 ? isOverEnchant : enchantmentValue;
+
+        enchant(itemStack, serverLevel.registryAccess(), key.getKey(), correctValue);
         attachLootBeam(itemStack, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
     }
 
@@ -392,7 +399,7 @@ public class RewardLootTables {
         if(newRarity >= 2){
             //Rare
             builder.add(RAW_NEXITE_BLOCK_BUILDER.setWeight(20));
-            builder.add(BOOK_BUILDER.setWeight(15));
+            builder.add(ENCHANTED_BUILDER.setWeight(15));
             builder.add(STAMP.setWeight(10));
             builder.add(XP.setWeight(8));
             builder.add(KEY.setWeight(2));
@@ -448,6 +455,10 @@ public class RewardLootTables {
             }
             if(MathHelpers.percentageChance(calculateChance(1, difficulty, newRarity))){
                 builder.add(ASTRINIUM_INGOT.setWeight((int) calculateChance(1, difficulty, newRarity)));
+            }
+
+            if(MathHelpers.percentageChance(calculateChance(5, difficulty, newRarity))){
+                builder.add(OVERENCHANTED_BUILDER.setWeight((int) calculateChance(5, difficulty, newRarity)));
             }
         }
 

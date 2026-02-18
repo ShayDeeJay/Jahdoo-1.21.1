@@ -1,7 +1,6 @@
 package org.jahdoo.common.block.creator.recipe;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.utils.EnchantmentHelpers;
@@ -17,7 +16,7 @@ public class EnchantedBookRecipe implements CreatorRecipes {
         var xp = ItemStack.EMPTY;
 
         for (var inputItem : inputItems) {
-            if(inputItem.is(Items.ENCHANTED_BOOK)){
+            if(inputItem.is(ItemReg.OVERENCHANTED_BOOK)){
                 enchantedBook = inputItem;
             } else if(inputItem.is(ItemReg.RADIANT_EXPERIENCE_ORB)){
                 xp = new ItemStack(ItemReg.RADIANT_EXPERIENCE_ORB);
@@ -36,7 +35,7 @@ public class EnchantedBookRecipe implements CreatorRecipes {
 
         for (var allCraftable : creator.getAllCraftables()) {
             if(!allCraftable.is(ItemReg.RADIANT_EXPERIENCE_ORB)){
-                if (allCraftable.is(Items.ENCHANTED_BOOK)) {
+                if (allCraftable.is(ItemReg.OVERENCHANTED_BOOK)) {
                     getBook = allCraftable;
                 } else {
                     secondaryItem = allCraftable;

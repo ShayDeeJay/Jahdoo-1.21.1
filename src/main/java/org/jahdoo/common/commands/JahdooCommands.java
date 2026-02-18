@@ -10,7 +10,6 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jahdoo.common.block.loot_crate.LootCrateBlock;
 import org.jahdoo.common.components.CoreData;
@@ -941,18 +940,21 @@ public class JahdooCommands {
             var unbreaking = enchantments.getHolderOrThrow(Enchantments.UNBREAKING);
 
 
-            var itemStack = new ItemStack(Items.ENCHANTED_BOOK);
-            var itemStack1 = new ItemStack(Items.ENCHANTED_BOOK);
-            var itemStack2 = new ItemStack(Items.ENCHANTED_BOOK);
+            var itemStack = new ItemStack(ItemReg.OVERENCHANTED_BOOK);
+            var itemStack1 = new ItemStack(ItemReg.OVERENCHANTED_BOOK);
+            var itemStack2 = new ItemStack(ItemReg.OVERENCHANTED_BOOK);
 
-            RewardLootTables.bookGetter(serverLevel, itemStack, sharpness, 10);
+//            var itemStack = new ItemStack(Items.ENCHANTED_BOOK);
+//            var itemStack1 = new ItemStack(Items.ENCHANTED_BOOK);
+//            var itemStack2 = new ItemStack(Items.ENCHANTED_BOOK);
+
+            RewardLootTables.bookGetter(serverLevel, itemStack, sharpness, -1);
             ItemHelpers.throwOrAddItem(player, itemStack);
 
-            RewardLootTables.bookGetter(serverLevel, itemStack1, efficiency, 6);
-            ItemHelpers.throwOrAddItem(player, itemStack1);
+            RewardLootTables.bookGetter(serverLevel, itemStack1, efficiency, -1);
             ItemHelpers.throwOrAddItem(player, itemStack1);
 
-            RewardLootTables.bookGetter(serverLevel, itemStack2, unbreaking, 5);
+            RewardLootTables.bookGetter(serverLevel, itemStack2, unbreaking, -1);
             ItemHelpers.throwOrAddItem(player, itemStack2);
         }
 
