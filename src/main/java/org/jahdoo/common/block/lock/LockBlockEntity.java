@@ -51,7 +51,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
     public boolean hasDifficulty(){
         var level = getLevel();
         if(level == null) return false;
-        return level.getData(INSTANCE_DATA).getDifficulty().isEmpty();
+        return InstanceData.hasInstanceStarted(level);
     }
 
     public boolean isStartingRoom(){

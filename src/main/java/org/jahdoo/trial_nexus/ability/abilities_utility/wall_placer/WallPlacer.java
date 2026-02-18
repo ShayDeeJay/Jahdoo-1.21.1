@@ -1,6 +1,5 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.wall_placer;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +15,7 @@ import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
@@ -58,7 +58,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(level instanceof CustomLevel) return;
+        if(LevelGenerator.isNexus(level)) return;
 
         if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var owner = (LivingEntity) generic.getOwner();

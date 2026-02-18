@@ -1,22 +1,40 @@
 package org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall;
 
+import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.api.menu.BalmMenuProvider;
+import net.blay09.mods.waystones.api.Waystone;
+import net.blay09.mods.waystones.core.PlayerWaystoneManager;
+import net.blay09.mods.waystones.menu.ModMenus;
+import net.blay09.mods.waystones.menu.WaystoneSelectionMenu;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jahdoo.common.block.ticket_bureau.TicketBureauBlock;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.attachments.AbstractHoldUseAttachment;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jahdoo.common.items.caster_item.CastHelper.validManaAndCooldown;
@@ -44,28 +62,54 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     }
 
     public void onSuccessfulCast(ServerPlayer serverPlayer, AbilityHolder abilityHolder, int ticksUsing){
-        var pos = serverPlayer.getRespawnPosition();
-        var dimension = serverPlayer.getRespawnDimension();
         var abilityName = abilityId.getPath().intern();
         var getCasterData = serverPlayer.getData(CASTER_DATA);
-        var getTeleportSound = SoundEvents.CHORUS_FRUIT_TELEPORT;
-        var getSuccessSound = SoundEvents.ILLUSIONER_CAST_SPELL;
         var getManaCost = CasterData.getSpecificValue(abilityHolder, MANA_COST);
-        var getLevelDimension = serverPlayer.getServer().getLevel(dimension);
+        var itemStack = serverPlayer.getItemInHand(serverPlayer.getUsedItemHand());
 
-        if(getLevelDimension != null){
-            if (serverPlayer.getTicksUsingItem() >= ticksUsing && getCasterData.getManaPool() >= getManaCost) {
-                this.startedUsing = false;
-                serverPlayer.stopUsingItem();
-                serverPlayer.teleportTo(getLevelDimension, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yya, serverPlayer.rotA);
-                CastHelper.chargeMana(abilityName, serverPlayer);
-                CastHelper.chargeCooldown(abilityName, serverPlayer);
+        if (serverPlayer.getTicksUsingItem() >= ticksUsing && getCasterData.getManaPool() >= getManaCost) {
+            this.startedUsing = false;
+            serverPlayer.stopUsingItem();
 
-                var level = serverPlayer.level();
-                var position = serverPlayer.position();
-                SoundHelpers.getSoundWithPosition(level, position, getTeleportSound, SoundSource.PLAYERS, 1, 0.8f);
-                SoundHelpers.getSoundWithPosition(level, position, getSuccessSound, SoundSource.PLAYERS, 1, 1.2f);
+            if (!serverPlayer.level().isClientSide) {
+                final InteractionHand hand = serverPlayer.getUsedItemHand();
+
+                final Collection<Waystone> waystones = PlayerWaystoneManager.getTargetsForItem(serverPlayer, itemStack);
+                PlayerWaystoneManager.ensureSortingIndex(serverPlayer, waystones);
+                Balm.getNetworking().openMenu(serverPlayer,
+                    new BalmMenuProvider<ModMenus.ItemInitiatedWaystoneMenuData>() {
+                        public Component getDisplayName() {
+                            return Component.translatable("container.waystones.waystone_selection");
+                        }
+
+                        public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player player) {
+                            return (new WaystoneSelectionMenu(ModMenus.warpStoneSelection.get(), null, windowId, waystones, Collections.emptySet()))
+                                .withWarpItem(itemStack)
+                                .setPostTeleportHandler(
+                                    (context) -> {
+                                        itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                                        CastHelper.chargeMana(abilityName, serverPlayer);
+                                        CastHelper.chargeCooldown(abilityName, serverPlayer);
+                                        SoundHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.position(), SoundReg.TELEPORT.get(), SoundSource.PLAYERS, 1.4F, 0.8f);
+
+                                    }
+                                );
+                        }
+
+                        public ModMenus.ItemInitiatedWaystoneMenuData getScreenOpeningData(ServerPlayer serverPlayer) {
+                            return new ModMenus.ItemInitiatedWaystoneMenuData(waystones, itemStack);
+                        }
+
+                        public StreamCodec<RegistryFriendlyByteBuf, ModMenus.ItemInitiatedWaystoneMenuData> getScreenStreamCodec() {
+                            return ModMenus.ItemInitiatedWaystoneMenuData.STREAM_CODEC;
+                        }
+                    }
+                );
             }
+
+            var level = serverPlayer.level();
+            var position = serverPlayer.position();
+            SoundHelpers.getSoundWithPosition(level, position, SoundReg.REJECT.get(), SoundSource.PLAYERS, 1.4F, 0.8f);
         }
     }
 
@@ -74,10 +118,10 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
         super.onTickMethod(player);
         var getHolder = CasterData.entityHolderWithSelected(player);
         var getCastTime = CasterData.getSpecificValue(getHolder, CASTING_TIME);
-        if (!(player instanceof ServerPlayer serverPlayer)) return;
-        var pos = serverPlayer.getRespawnPosition();
 
         if(startedUsing && validManaAndCooldown(player)){
+            if (!(player instanceof ServerPlayer serverPlayer)) return;
+            var pos = serverPlayer.getRespawnPosition();
             if (pos != null) {
                 pullParticlesToCenter(player, this.getElement());
                 var setVolume = Math.min(2, player.getTicksUsingItem() / 5);
@@ -89,8 +133,9 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
                 }
 
                 if (player.getTicksUsingItem() % 40 == 0) {
-                    var setAudio = SoundEvents.ILLUSIONER_CAST_SPELL;
-                    getSoundWithPositionV(player.level(), player.position(), setAudio, Math.max(setVolume, 0.2f), Math.max(setPitch, 0.6f));
+                    var setAudio = SoundReg.LEVITATE.value();
+                    TicketBureauBlock.acceptParticle(player.level(), player.position().add(0, 3, 0), ParticleStore.MAGIC_MOVE_PARTICLE, ColourHelpers.getCosmicPurple());
+                    getSoundWithPositionV(player.level(), player.position(), setAudio, Math.max(setVolume, 1.5f), Math.max(setPitch, 1f));
                 }
 
                 this.onSuccessfulCast(serverPlayer, getHolder, (int) (getCastTime == 0 ? 200 : getCastTime));

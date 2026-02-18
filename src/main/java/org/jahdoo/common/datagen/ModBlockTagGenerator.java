@@ -65,16 +65,10 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(LOOT_CRATE.value())
             .add(TANK.get())
             .add(CHALLENGE_ALTAR.get())
-            .add(NEXITE_ORE.get())
-            .add(ROSE_QUARTZ_ORE.get())
-            .add(ENCHANTED_DIAMOND_ORE.get())
-            .add(LISITE_ORE.get())
-            .add(NEXITE_DEEPSLATE_ORE.get())
-            .add(NEXITE_BLOCK.get())
             .add(ENCHANTED_DIAMOND_BLOCK.get())
-            .add(ROSE_QUARTZ_BLOCK.get())
             .add(PACKED_MUD_CLAY.get())
-            .add(RAW_NEXITE_BLOCK.get());
+            .add(RAW_NEXITE_BLOCK.get())
+            .addTag(MINEABLE_NEXUS);
 
         this.tag(RARE_BLOCKS)
             .add(EMERALD_BLOCK)
@@ -85,21 +79,21 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(GILDED_BLACKSTONE);
 
         this.tag(CHEAP_BLOCK)
+            .add(NEXITE_DEEPSLATE_ORE.get())
             .add(NEXITE_ORE.get())
-            .add(LISITE_ORE.get());
+            .add(LISITE_ORE.get())
+            .add(LOOT_POT.get());
 
         this.tag(MID_RANGE_BLOCK)
             .add(ROSE_QUARTZ_ORE.get());
 
         this.tag(VALUABLE_BLOCK)
-            .add(ENCHANTED_DIAMOND_BLOCK.get());
+            .add(ENCHANTED_DIAMOND_ORE.get());
 
         this.tag(MINEABLE_NEXUS)
-            .add(NEXITE_ORE.get())
-            .add(ENCHANTED_DIAMOND_ORE.get())
-            .add(ROSE_QUARTZ_ORE.get())
-            .add(LOOT_POT.get())
-            .add(LISITE_ORE.get());
+            .addTag(CHEAP_BLOCK)
+            .addTag(MID_RANGE_BLOCK)
+            .addTag(VALUABLE_BLOCK);
 
         this.tag(OPULENT_BLOCKS)
             .add(BEACON)

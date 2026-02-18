@@ -30,6 +30,7 @@ public abstract class ItemRenderMixin {
         JahdooHelpers.itemOverlay(itemStack, displayContext,poseStack,
             (itemStack1) -> this.renderStatic(itemStack1, displayContext, combinedLight, combinedOverlay, poseStack, bufferSource, Minecraft.getInstance().level, 0)
         );
+
     }
 
 }

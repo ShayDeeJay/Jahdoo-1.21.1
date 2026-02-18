@@ -134,13 +134,11 @@ public class LootHelpers {
         itemEntity.setPickUpDelay(pickupDelay);
 
         if(shouldDropExperience && Random.nextInt(10) == 0) {
-            var exp = ItemReg.EXPERIENCE_ORB.get();
-            var itemStack = new ItemStack(exp);
+            var itemStack = ItemReg.DIM_EXPERIENCE_ORB.get().getDefaultInstance();
 
             switch (JahdooRarity.getRarity()) {
-                case COMMON, RARE -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(1));
-                case EPIC -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(2));
-                case LEGENDARY, MYTHIC -> { /*No Data*/ }
+                case RARE, EPIC -> itemStack = ItemReg.GLOWING_EXPERIENCE_ORB.get().getDefaultInstance();
+                case LEGENDARY -> itemStack = ItemReg.RADIANT_EXPERIENCE_ORB.get().getDefaultInstance();
             }
 
             var itemEntity1 = new ItemEntity(serverLevel, pos.x, pos.y, pos.z, itemStack);

@@ -172,13 +172,6 @@ public class BlockReg {
         return toReturn;
     }
 
-    private static <T extends Block> DeferredHolder<Block, T> testReg(String name, Supplier<T> block) {
-        DeferredHolder<Block, T> toReturn = BLOCKS.register(name, block);
-        ItemReg.ITEMS.register(name, () -> new BaseJahdooBlockItem(block.get(), new Item.Properties()));
-        return toReturn;
-    }
-
-
     private static <T extends Block> void registerBlockItem(String name, DeferredHolder<Block, T> block) {
         ItemReg.ITEMS.register(name, () -> new BaseJahdooBlockItem(block.get(), new Item.Properties()));
     }

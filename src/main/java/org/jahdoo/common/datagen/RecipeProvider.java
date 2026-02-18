@@ -46,6 +46,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         creator(recipeOutput, CREATOR_BLOCK.get().asItem());
         ticket(recipeOutput, TRIAL_TICKET.get());
         enchantedDiamond(recipeOutput);
+        xpOrbs(recipeOutput);
         roseQuartz(recipeOutput);
     }
 
@@ -152,12 +153,24 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         nineBlockStorageRecipes(output, MISC, ROSE_QUARTZ.get(), BUILDING_BLOCKS, ROSE_QUARTZ_BLOCK.get());
     }
 
+    protected void xpOrbs(RecipeOutput output) {
+        var a = DIM_EXPERIENCE_ORB.get();
+        var b = GLOWING_EXPERIENCE_ORB.get();
+        var c = RADIANT_EXPERIENCE_ORB.get();
+        var item = "experience_orb";
+        nineBlockStorageRecipesRecipesWithCustomUnpacking(
+            output, RecipeCategory.MISC, b, RecipeCategory.BUILDING_BLOCKS, c, item + "_from_diamond_block", item
+        );
+        nineBlockStorageRecipesWithCustomPacking(
+            output, RecipeCategory.MISC, a, RecipeCategory.MISC, b, item + "_from_nuggets", item
+        );
+    }
+
     protected void diamond(RecipeOutput output, Item result) {
         compressedBlocks(output, DIAMOND_NUGGET.get(), DIAMOND, DIAMOND_BLOCK, "diamond");
         List<ItemLike> ingredients = List.of(DIAMOND_SWORD, DIAMOND_AXE, DIAMOND_HOE, DIAMOND_PICKAXE, DIAMOND_SHOVEL, DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS);
         oreSmelting(output, ingredients, MISC, result, 2.0F, 200, "diamond");
     }
-
 
     protected void netheriteIngot(RecipeOutput output, Item result) {
         compressedBlocks(output, NETHERITE_NUGGET.get(), NETHERITE_INGOT, NETHERITE_BLOCK, "netherite_ingot");

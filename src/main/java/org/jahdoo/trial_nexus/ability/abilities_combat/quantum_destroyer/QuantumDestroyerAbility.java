@@ -61,7 +61,7 @@ public class QuantumDestroyerAbility extends Ability {
         var name = QUANTUM_DESTROYER.get().setAbilityId();
         var elementProjectile = new ElementProjectile(MYSTIC_ELEMENT_PROJECTILE.get(), player, name, 0, abilityId.getPath().intern());
 
-        elementProjectile.moveTo(position.x, position.y + 0.3, position.z);
+        elementProjectile.moveTo(position.x, position.y, position.z);
         fireProjectileNoSound(elementProjectile, player, 0.0f);
         player.playSound(SoundReg.ORB_FIRE.get(), 0.8f, 1.2f);
         player.playSound(SoundReg.MAGIC_EXPLOSION.get(), 0.2f, 1.4f);
@@ -77,9 +77,9 @@ public class QuantumDestroyerAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(160)
             .setStaticCooldown(6000)
+            .setImplosions(10, 4, 2, 2)
             .setDamage(80, 40, 10, 3)
             .setCastingDistance(30, 10, 10, 3)
-            .setLifetime(300, 150, 50, 2)
             .setGravitationalPull(2, 1, 0.2, 2)
             .setAbilityTagModifiersRandom(ENERGY_RADIUS, 6, 3, true, 1, 3)
             .buildAndReturn();

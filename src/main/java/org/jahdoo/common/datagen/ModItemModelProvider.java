@@ -26,7 +26,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         registerRuneModels();
         registerKeyModels();
-        registerXpOrbModels();
+//        registerXpOrbModels();
         registerSimpleItems();
         registerArmorModels();
         registerMagnets();
@@ -72,13 +72,13 @@ public class ModItemModelProvider extends ItemModelProvider {
             createOverride(i, ItemReg.LOOT_KEY, "item/key");
         }
     }
-
-    private void registerXpOrbModels() {
-        for (int i = 1; i < 3; i++) {
-            createModel("xp_orb" + i, "item/xp_orbs/xp_orb" + i);
-            createOverride(i, ItemReg.EXPERIENCE_ORB, "item/xp_orb");
-        }
-    }
+//
+//    private void registerXpOrbModels() {
+//        for (int i = 1; i < 3; i++) {
+//            createModel("xp_orb" + i, "item/xp_orbs/xp_orb" + i);
+//            createOverride(i, ItemReg.EXPERIENCE_ORB, "item/xp_orb");
+//        }
+//    }
 
     private void registerMagnets() {
         for (int i = 1; i < 5; i++) {
@@ -180,7 +180,8 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.CHALLENGER_SOUL, ItemReg.ASTRINIUM_INGOT, ItemReg.KEY_FRAGMENT,
             ItemReg.BAZAAR_KEY, ItemReg.CRYPT_KEY,ItemReg.CHALLENGER_KEY, ItemReg.SANCTUARY_KEY,
             ItemReg.EXIT_KEY, ItemReg.CHARGED_AUGMENT_CORE, ItemReg.CHARGED_ADVANCED_AUGMENT_CORE,
-            ItemReg.CHARGED_AUGMENT_HYPER_CORE, ItemReg.DEED
+            ItemReg.CHARGED_AUGMENT_HYPER_CORE, ItemReg.DEED, ItemReg.DIM_EXPERIENCE_ORB, ItemReg.GLOWING_EXPERIENCE_ORB,
+            ItemReg.RADIANT_EXPERIENCE_ORB
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

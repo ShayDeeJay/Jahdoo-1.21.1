@@ -107,7 +107,9 @@ public class HellFire extends DefaultEntityBehaviour {
     private void setNovaDamage(Vec3 positionsA){
         var livingEntity = this.getEntityInRange(positionsA);
         if (livingEntity == null) return;
+
         if(!canDamageEntity(livingEntity, this.cloud.getOwner())) return;
+
         livingEntity.addEffect(new JahdooMobEffect(EffectReg.INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
         DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), damage, getElementType().damageTypeResourceKey());
     }
@@ -126,16 +128,51 @@ public class HellFire extends DefaultEntityBehaviour {
         SoundHelpers.getSoundWithPosition(cloud.level(), pos, sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
-
     private void novaSoundManager(List<Vec3> positions){
         var posOf = containing(positions.get(positions.size() / 2));
-        var level = cloud.level();
         var tick = cloud.tickCount;
 
         if (tick % 3 == 0) {
-            sharedSound(posOf, FIRE_ABILITY.get(), 1F, 1.0F);
-            sharedSound(posOf,  SUSPEND.get(), 1F, 1.6F);
+            sharedSound(posOf, FIRE_ABILITY.get(), 1.2F, Random.nextFloat(0.8F, 1.2F));
+            sharedSound(posOf, SUSPEND.get(), 1F, 1.6F);
         }
+    }
+
+    private void novaBehaviour(){
+        var radius = cloud.getRadius() * 2;
+        var positions = PositionFinders.getSemicircle(cloud.position(), radius, 5, yaw, 30);
+        this.novaSoundManager(positions);
+
+        positions.forEach(
+            positionsA -> {
+                var newPos = positionsA.add(0,Random.nextDouble(0.1, 0.8),0);
+                var blockPos = containing(positionsA);
+                fireTrailVegetationRemover(this.cloud.level().getBlockState(blockPos), blockPos, this.cloud);
+
+                this.setParticleNova(newPos);
+                this.setNovaDamage(positionsA);
+                if (this.playerOriginalPosition.distanceTo(positionsA) >= this.range) cloud.discard();
+            }
+        );
+    }
+
+    private void setParticleNova(Vec3 worldPosition){
+        var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 3f);
+        var directions = positionScrambler.subtract(this.cloud.position()).normalize();
+        var lifetime = (int) (this.range/4);
+        var col1 = this.getElementType().partColourA();
+        var col2 = this.getElementType().partColourFade();
+        var lifeExt = Math.max(lifetime, 8);
+        var bakedParticle = bakedParticle(this.getElementType().id(), lifeExt, (float) 5, false);
+        var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifeExt, (float) 5, col1, col2, false);
+        var getRandomParticle = List.of(bakedParticle, genericParticle);
+        var level = this.cloud.level();
+        var speed = Math.min(this.cloud.getRadius() * 2, 1.5);
+        var randomY = Random.nextDouble(0, 0.6);
+
+        ParticleHandlers.sendParticles(
+            level, getRandomParticle.get(Random.nextInt(2)), worldPosition, 0, directions.x, directions.y + randomY, directions.z, speed
+        );
     }
 
     @Override
@@ -159,41 +196,5 @@ public class HellFire extends DefaultEntityBehaviour {
         this.range = compoundTag.getDouble(RANGE);
         this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
         this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
-    }
-
-    private void novaBehaviour(){
-        var radius = cloud.getRadius() * 2;
-        var positions = PositionFinders.getSemicircle(cloud.position(), radius, 5, yaw, 30);
-        this.novaSoundManager(positions);
-
-        positions.forEach(
-            positionsA -> {
-                var newPos = positionsA.add(0,Random.nextDouble(0.1, 0.8),0);
-                var blockPos = containing(positionsA);
-                fireTrailVegetationRemover(this.cloud.level().getBlockState(blockPos), blockPos, this.cloud);
-                this.setParticleNova(newPos);
-                this.setNovaDamage(positionsA);
-                if (this.playerOriginalPosition.distanceTo(positionsA) >= this.range) cloud.discard();
-            }
-        );
-    }
-
-    private void setParticleNova(Vec3 worldPosition){
-        var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 3f);
-        var directions = positionScrambler.subtract(this.cloud.position()).normalize();
-        var lifetime = (int) (this.range/4);
-        var col1 = this.getElementType().partColourA();
-        var col2 = this.getElementType().partColourFade();
-        var lifeExt = Math.max(lifetime, 5);
-        var bakedParticle = bakedParticle(this.getElementType().id(), lifeExt, (float) 5, false);
-        var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifeExt, (float) 5, col1, col2, false);
-        var getRandomParticle = List.of(bakedParticle, genericParticle);
-        var level = this.cloud.level();
-        var speed = Math.min(this.cloud.getRadius() * 2, 1.5);
-        var randomY = Random.nextDouble(0, 0.4);
-
-        ParticleHandlers.sendParticles(
-            level, getRandomParticle.get(Random.nextInt(2)), worldPosition, 0, directions.x, directions.y + randomY, directions.z, speed
-        );
     }
 }

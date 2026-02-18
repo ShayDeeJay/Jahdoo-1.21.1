@@ -12,14 +12,14 @@ public class StarterWandRecipe implements CreatorRecipes {
     @Override
     public boolean canCraft(List<ItemStack> inputItems, CreatorEntity creator) {
        var totalStick = 0;
-       var totalLapis = 0;
+       var totalGlowStone = 0;
 
         for (var inputItem : inputItems) {
             if(inputItem.is(Items.STICK)) totalStick++;
-            if(inputItem.is(Items.GLOWSTONE_DUST)) totalLapis++;
+            if(inputItem.is(Items.GLOWSTONE_DUST)) totalGlowStone++;
         }
 
-        return totalStick == 3 && totalLapis == 1;
+        return totalStick == 3 && totalGlowStone == 1;
     }
 
     @Override

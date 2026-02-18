@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static net.minecraft.sounds.SoundEvents.FIRE_AMBIENT;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
@@ -60,6 +59,7 @@ public class FireBall extends DefaultEntityBehaviour {
     private double effectDuration;
     private double novaMaxSize;
     private boolean isBuddy;
+    public static final ResourceLocation FIREBALL_PROPERTY = JahdooHelpers.res("fireball_property");
 
     @Override
     public void getElementProjectile(ElementProjectile elementProjectile) {
@@ -108,11 +108,9 @@ public class FireBall extends DefaultEntityBehaviour {
         return ElementReg.inferno();
     }
 
-    ResourceLocation abilityId = JahdooHelpers.res("fireball_property");
-
     @Override
     public ResourceLocation getAbilityResource() {
-        return abilityId;
+        return FIREBALL_PROPERTY;
     }
 
     @Override
@@ -125,10 +123,8 @@ public class FireBall extends DefaultEntityBehaviour {
     }
 
     private void fireballTrailingSound(){
-        var projectile = this.element;
-
-        if (projectile.tickCount % 7 == 0) {
-            sharedSound(FIRE_AMBIENT, 1F, 1.5f);
+        if (Random.nextInt(3) == 0) {
+            sharedSound(SoundReg.FIRE_ABILITY.get(), 0.5F, Random.nextFloat(0.5F, 1.4f));
         }
     }
 
@@ -308,7 +304,7 @@ public class FireBall extends DefaultEntityBehaviour {
                     level(),
                     pType,
                     newPosition.add(0,0.2,0),
-                    0, getPositions2.x,getPositions2.y,getPositions2.z,0);
+                    0, getPositions2.x, getPositions2.y, getPositions2.z,0);
             }
         );
 

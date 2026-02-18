@@ -1,12 +1,16 @@
 package org.jahdoo.common.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.registers.BlockReg;
+import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
+import org.shaydee.shaydeeapi.helpers.BlockHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,9 +106,7 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
 
     protected void assignTankBlockInRange(Level level, BlockPos pos, int craftingFuelCost){
         var tank = tankPosition;
-
         if(tank == null || !(level.getBlockEntity(tank) instanceof TankBlockEntity)){
-//            System.out.println(this.tankPosition);
             findTank(level, pos, craftingFuelCost);
         }
 
@@ -156,6 +158,17 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         this.tankPosition = blockPos.getLast();
     }
 
+    @Override
+    public void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        if(this.tankPosition != null) BlockHelpers.saveBlockPosNBT(tag, this.tankPosition);
+        tag.putInt("progress", progress);
+    }
 
-
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.tankPosition = BlockHelpers.loadBlockPosNBT(tag);
+        this.progress = tag.getInt("progress");
+    }
 }

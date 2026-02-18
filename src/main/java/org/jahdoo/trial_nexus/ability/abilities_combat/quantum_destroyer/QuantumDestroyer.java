@@ -35,21 +35,22 @@ import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class QuantumDestroyer extends DefaultEntityBehaviour {
 
-    private double counter = 1;
+    private double counter;
     private int privateTicks;
     private boolean isFullForm;
 
     private double radius;
     private double damage;
-    private double lifetime;
+    private double implosions;
     private double gravitationalPull;
+    public static final ResourceLocation abilityId = JahdooHelpers.res("quantum_destroyer_property");
 
     @Override
     public void getElementProjectile(ElementProjectile elementProjectile) {
         super.getElementProjectile(elementProjectile);
         this.radius = this.getTag(QuantumDestroyerAbility.ENERGY_RADIUS);
         this.gravitationalPull = this.getTag(GRAVITATIONAL_PULL);
-        this.lifetime = this.getTag(LIFETIME);
+        this.implosions = this.getTag(IMPLOSIONS);
         if(this.element.getOwner() != null){
             var player = this.element.getOwner();
             var damage = this.getTag(DAMAGE);
@@ -87,8 +88,6 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         return ElementReg.mystic();
     }
 
-    ResourceLocation abilityId = JahdooHelpers.res("quantum_destroyer_property");
-
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
@@ -103,75 +102,44 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         SoundHelpers.getSoundWithPosition( this.element.level(), this.element.position(), sEvent, SoundSource.NEUTRAL, volume, pitch);
     }
 
-    private void ambientSound() {
-        sharedSound(SoundEvents.ELDER_GUARDIAN_AMBIENT, 1.5f, 0.6f);
+    private void novaShared(double radius1, int points, int lifetime1, double speed, float size) {
+        PositionFinders.getOuterRingOfRadius(this.element.position(), radius1, points, (pos) -> pullParticlesIn(pos, lifetime1, speed, size));
     }
 
     @Override
     public void discardCondition() {
-        if (privateTicks > lifetime) {
-            if (this.element.tickCount == lifetime + 1) {
-                element.setAnimation(5);
-                sharedSound(getElementType().sound(), 2.5F, 0.6F);
-            }
-
-            if(privateTicks > lifetime + 6) this.element.discard();
+        if(counter == implosions){
+            element.setAnimation(5);
+            sharedSound(getElementType().sound(), 2.5F, 0.6F);
+            this.element.discard();
         }
     }
 
-    private void pullParticlesIn(Vec3 worldPosition){
+    private void pullParticlesIn(Vec3 worldPosition, int lifetime, double speed, float size) {
         var directions = worldPosition.subtract(this.element.position()).normalize();
-        var lifetime = 2;
         var col1 = this.getElementType().partColourA();
         var col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticle(SOFT_PARTICLE, lifetime, 0.2f, col1, col2, true);
+        var genericParticle = genericParticle(SOFT_PARTICLE, lifetime, size, col1, col2, false);
 
-        sendParticles(
-            this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
-        );
+        sendParticles(this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, speed);
     }
 
-    private void pushParticlesOut(Vec3 worldPosition){
-        var directions = worldPosition.subtract(this.element.position()).normalize();
-        var lifetime = 6;
-        var col1 = this.getElementType().partColourA();
-        var col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticle(SOFT_PARTICLE, lifetime, 3f, col1, col2, false);
-
-        sendParticles(
-            this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
-        );
-    }
-
-    @Override
-    public void addAdditionalDetails(CompoundTag compoundTag) {
-        compoundTag.putDouble("counter", this.counter);
-        compoundTag.putInt("private_ticks", this.privateTicks);
-        compoundTag.putBoolean("full_form", this.isFullForm);
-        compoundTag.putDouble(DAMAGE, this.damage);
-        compoundTag.putDouble(LIFETIME, this.lifetime);
-        compoundTag.putDouble(QuantumDestroyerAbility.ENERGY_RADIUS, this.radius);
-        compoundTag.putDouble(GRAVITATIONAL_PULL, this.gravitationalPull);
-    }
-
-    @Override
-    public void readCompoundTag(CompoundTag compoundTag) {
-        this.counter = compoundTag.getDouble("counter");
-        this.privateTicks = compoundTag.getInt("private_ticks");
-        this.isFullForm = compoundTag.getBoolean("full_form");
-        this.damage = compoundTag.getDouble(DAMAGE);
-        this.lifetime = compoundTag.getDouble(LIFETIME);
-        this.radius = compoundTag.getDouble(QuantumDestroyerAbility.ENERGY_RADIUS);
-        this.gravitationalPull = compoundTag.getDouble(GRAVITATIONAL_PULL);
-    }
-
-    private void playAmbientSound(){
-        if (privateTicks == 21) ambientSound();
-        if(privateTicks < this.lifetime - 30){
-            if(this.element.tickCount % 40 == 0) ambientSound();
+    private void onPulse(){
+        if(this.element.tickCount % 30 == 0) {
+            particleBurst(
+                element.level(), this.element.position(), 10,
+                genericParticle(MAGIC_PARTICLE, this.getElementType(), 5, 5),
+                0,0,0,1f
+            );
+            counter++;
+            novaShared(0.1, 100, Random.nextInt(30, 50), radius/4, 5F);
+            damageCalculator();
+            sharedSound(SoundReg.QUANTUM.get(), 2f, Random.nextFloat(0.6F, 1.2F));
+            sharedSound(SoundReg.LEVITATE.get(), 3f, 1.2F);
         }
+
         if(Random.nextInt(0, 20) == 0){
-            sharedSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 1.5f, 0.1f);
+            sharedSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 1.5f, Random.nextFloat(0.5f, 0.7F));
         }
     }
 
@@ -181,11 +149,12 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
             LivingEntity.class,
             TargetingConditions.DEFAULT,
             (LivingEntity) this.element.getOwner(),
-            this.element.getBoundingBox().inflate(0.8)
+            this.element.getBoundingBox().inflate(0.8).inflate(radius, 0, radius)
         ).forEach(
             livingEntity -> {
                 if (this.isImmune(livingEntity)) {
                     DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), (float) this.damage, getElementType().damageTypeResourceKey());
+                    if(!livingEntity.isAlive()) sharedSound(SoundReg.MYSTIC_ABILITY.get(), 1f, 1.5F);
                 }
             }
         );
@@ -226,20 +195,17 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
 
     private void particle(){
         var level = this.element.level();
-        var explode = privateTicks > lifetime;
         var rando = List.of(
             genericParticle(GENERIC_PARTICLE, this.getElementType(), 5, Random.nextInt(6,8)),
-            bakedParticle(this.getElementType().id(), 5, Random.nextInt(5,8), false)
+            bakedParticle(this.getElementType().id(), 15, Random.nextInt(5,8), false)
         );
 
-        PositionFinders.getRandomSphericalPositions(this.element, counter, Math.min(radius * 6, 20),
+        PositionFinders.getRandomSphericalPositions(this.element, radius + 1, Math.min(radius * 6, 20),
             position -> {
                 var directions = this.element.position().subtract(position).normalize();
                 sendParticles(
-                    level,
-                    rando.get(Random.nextInt(2)),
-                    position, Random.nextInt(0,2),
-                    directions.x, directions.y, directions.z, explode ? 1.2 : Random.nextDouble(0.4, 0.6)
+                    level, rando.get(Random.nextInt(2)), position, Random.nextInt(0,2),
+                    directions.x, directions.y, directions.z, Random.nextDouble(0.2, 0.4)
                 );
             }
         );
@@ -248,39 +214,76 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
     @Override
     public void onTickMethod() {
         privateTicks++;
-        if (privateTicks < 20) {
+
+        if(privateTicks == 14){
+            isFullForm = true;
+            sharedSound(getElementType().sound(), 2f, 1f);
+            particleBurst(
+                element.level(), this.element.position(), 20,
+                genericParticle(MAGIC_PARTICLE, this.getElementType(), 15,4),
+                0,0,0,1f
+            );
+        }
+
+        if(isFullForm) {
+            this.element.setDeltaMovement(0, 0, 0);
+            element.setAnimation(4);
+            gravityEffect();
+            onPulse();
+
+            if(privateTicks > 20) particle();
+        }
+
+        if (!isFullForm) {
             element.setShowTrailParticles(true);
-            if(privateTicks == 1) this.entitySpawnParticles(element.level());
-            if(this.element.tickCount % 2 == 0) {
-                PositionFinders.getOuterRingOfRadius(this.element.position(), 0.05, 100, this::pullParticlesIn);
-                sharedSound(SoundReg.TIMER.get(), 1.5f, 1.5f);
+            var size = 2.5F;
+            var speed = 0.6;
+            var lifetime1 = Random.nextInt(2, 6);
+            var lifetime2 = Random.nextInt(10, 20);
+            var points = 50;
+            var radius1 = 0.05;
+
+            if(privateTicks == 1) {
+                shared(radius1, points, lifetime1, speed, size);
                 this.entitySpawnParticles(element.level());
-            }
-            this.element.setDeltaMovement(0, 0.5, 0);
-
-        } else {
-            if(!isFullForm){
-                isFullForm = true;
-                sharedSound(getElementType().sound(), 2f, 1f);
-                particleBurst(
-                    element.level(), this.element.position(), 20,
-                    genericParticle(MAGIC_PARTICLE, this.getElementType(), 15,4),
-                    0,0,0,1f
-                );
-                this.element.setDeltaMovement(0, 0, 0);
+                sharedSound(SoundReg.MYSTIC_ABILITY.get(), 2f, 0.4f);
             }
 
-            if(privateTicks <= lifetime){
-                if(counter < radius) counter *= 1.6;
-                element.setAnimation(4);
-                playAmbientSound();
-                gravityEffect();
+            if(privateTicks % 6 == 0) {
+                shared(radius1, points, lifetime2, speed, size);
+                sharedSound(SoundReg.THUD_B.get(), 1.5f, 1f);
+                sharedSound(SoundReg.QUANTUM.get(), 1f, 2f);
             }
-            if(this.element.tickCount % 2 == 0){
-                damageCalculator();
-                PositionFinders.getRandomSphericalPositions(this.element.position(), radius / 2 - 0.5, 25, this::pushParticlesOut);
-            }
-            particle();
+
+            this.element.setDeltaMovement(0, speed, 0);
         }
     }
+
+    private void shared(double radius1, int points, int lifetime2, double speed, float size) {
+        novaShared(radius1, points, lifetime2, speed, size);
+        this.entitySpawnParticles(element.level());
+    }
+
+    @Override
+    public void addAdditionalDetails(CompoundTag compoundTag) {
+        compoundTag.putDouble("counter", this.counter);
+        compoundTag.putInt("private_ticks", this.privateTicks);
+        compoundTag.putBoolean("full_form", this.isFullForm);
+        compoundTag.putDouble(DAMAGE, this.damage);
+        compoundTag.putDouble(LIFETIME, this.implosions);
+        compoundTag.putDouble(QuantumDestroyerAbility.ENERGY_RADIUS, this.radius);
+        compoundTag.putDouble(GRAVITATIONAL_PULL, this.gravitationalPull);
+    }
+
+    @Override
+    public void readCompoundTag(CompoundTag compoundTag) {
+        this.counter = compoundTag.getDouble("counter");
+        this.privateTicks = compoundTag.getInt("private_ticks");
+        this.isFullForm = compoundTag.getBoolean("full_form");
+        this.damage = compoundTag.getDouble(DAMAGE);
+        this.implosions = compoundTag.getDouble(LIFETIME);
+        this.radius = compoundTag.getDouble(QuantumDestroyerAbility.ENERGY_RADIUS);
+        this.gravitationalPull = compoundTag.getDouble(GRAVITATIONAL_PULL);
+    }
+
 }

@@ -1,6 +1,5 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.enchanted_fusion;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.BlockHitResult;
@@ -11,6 +10,7 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
@@ -41,7 +41,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
         var level = getLevel();
-        if(level instanceof CustomLevel) return;
+        if(LevelGenerator.isNexus(level)) return;
 
         if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var pos = blockHitResult.getBlockPos();

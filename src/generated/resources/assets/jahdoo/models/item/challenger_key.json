@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "jahdoo:item/xp_orbs/xp_orb2"
+    "layer0": "jahdoo:item/challenger_key"
   }
 }

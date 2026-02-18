@@ -55,13 +55,21 @@ public class LocalLootBeamData {
         return new LootBeamComponent(ColourHelpers.getUniqueB(), ColourHelpers.getUniqueA(), beamHeight, 0.8F,  1F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
     }
 
+    public static LootBeamComponent soulItemBeam(){
+        var rarity = UNIQUE;
+        var beamHeight = 0.6F + ((float) rarity.getId() / 4);
+        var beamRadius = 0.5F + ((float) rarity.getId() / 10);
+        var renderDistance = 250;
+        return new LootBeamComponent(ColourHelpers.getUniqueA(), ColourHelpers.getPerkGreen(), beamHeight, 0.8F,  1F, true, beamRadius, 0.4F, 0, true, renderDistance,  true, 5, 0.25, 1.5, true);
+    }
+
     public static void attachCoinSackLootBeam(ItemStack stack){
         var beamHeight = 0.5F;
         var beamRadius = 0.35F;
         var shadowRadius = 0.4f;
         var renderDistance = 48;
         var lootBeamComponent = new LootBeamComponent(ColourHelpers.getGoldCoin(), ColourHelpers.getSilverCoin(), beamHeight, 0.8F, 1F, true, beamRadius, 0.4F, shadowRadius, false, renderDistance, true, 5, 0.25, 1.5, true);
-        stack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), lootBeamComponent);
+        LootBeamComponent.toLootBeamComponent(lootBeamComponent, stack);
     }
 
     public static void attachLootBeamComponent(ItemStack itemStack, JahdooRarity rarity) {
@@ -73,7 +81,7 @@ public class LocalLootBeamData {
             case 5 -> UNIQUE_ITEM;
             default -> COMMON_ITEM;
         };
-        itemStack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), component);
+        itemStack.set(DataComponentsReg.getLOOT_BEAM_DATA(), component);
     }
 
 }

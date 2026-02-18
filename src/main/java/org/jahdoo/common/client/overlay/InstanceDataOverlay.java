@@ -6,7 +6,6 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -42,30 +41,13 @@ import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllNegative;
 import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllPositive;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
 
-public class InstanceDataOverlay implements LayeredDraw.Layer {
+public class InstanceDataOverlay extends AbstractTimedOverlay {
 
     private InstanceData instanceData;
-    private int timer;
-    private float fade;
-
-    private void slideGuiStats() {
-        var maxFadeIn = 10.0F;
-        var minFadeIn = -240.0F;
-        var easeFactor = 0.15F;
-
-        if (timer > 0) {
-            var distanceToMax = maxFadeIn - this.fade;
-            var fadeAmount = distanceToMax * easeFactor;
-            this.fade = Math.min(this.fade + fadeAmount, maxFadeIn);
-        } else {
-            var distanceFromMin = this.fade - minFadeIn;
-            var fadeAmount = distanceFromMin * easeFactor;
-            this.fade = Math.max(this.fade - fadeAmount, minFadeIn);
-        }
-    }
 
     @Override
     public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+        super.render(graphics, deltaTracker);
         var mc = Minecraft.getInstance();
         var level = mc.level;
         var player = mc.player;
@@ -73,7 +55,6 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var font = mc.font;
 
         if(player == null || mc.options.hideGui || level == null || screen instanceof AbstractContainerScreen) return;
-        slideGuiStats();
 
         var runData = RunData.getRunData(player);
         if(LevelGenerator.isNexus(level)) {
@@ -91,7 +72,6 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         if(currentData != instanceData) timer = 400;
         if(screen instanceof InventoryScreen) timer = 30;
 
-        timer = Math.max(0, timer - 1);
         instanceData = currentData;
     }
 
@@ -108,9 +88,6 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         if(instanceData.getMaxTime() > 0){
             progressBar(graphics, 8, startY, 38, 4, remainingTime, instanceData.getMaxTime(), 2, barColour, borderColour, uiFade());
             alwaysOnEntry(graphics, time.icon(), x - 2, startY - 18, size, -1, font, time.value());
-            var xp = new HudEntry(Icons.TRIAL_EXPERIENCE, HudEntry.getComp(runData.getStat(RunData.EXPERIENCE)));
-
-            alwaysOnEntry(graphics, xp.icon(), x + 53, 2, size, ColourHelpers.getCosmicPurple(), font, TextHelpers.withStyleComponent(xp.value().getString(), ColourHelpers.getCosmicPurple()));
 
             if(!ClientHelpers.isKeyDown(InputConstants.KEY_TAB)){
                 var scale = 0.5F;
@@ -152,7 +129,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         );
 
         for (var listOfEntry : listOfEntries) {
-            alwaysOnEntry(graphics, listOfEntry.icon(), x-3, (int) fade + spacer, size, -1, font, listOfEntry.value());
+            alwaysOnEntry(graphics, listOfEntry.icon(), x-3, (int) fadeIn + spacer, size, -1, font, listOfEntry.value());
             spacer += 16;
         }
 
@@ -269,7 +246,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
 
 
         final int spacer = 50;
-        final int startY = (int) (fade * 5) + (getQuest.isPresent() ? spacer : 0);
+        final int startY = (int) (fadeIn * 5) + (getQuest.isPresent() ? spacer : 0);
         final var startX = width / 2 + 22;
         final var iconSize = 14;
         final var rowHeight = 14;
@@ -283,7 +260,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         graphics.pose().pushPose();
         graphics.pose().scale(2, 2, 2);
 
-        graphics.drawCenteredString(mc.font, header.component(), width / 4 , (int) (fade) + (getQuest.isPresent() ? (spacer/2) : 0), -1);
+        graphics.drawCenteredString(mc.font, header.component(), width / 4 , (int) (fadeIn) + (getQuest.isPresent() ? (spacer/2) : 0), -1);
         graphics.pose().popPose();
 
 
@@ -292,7 +269,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
     }
 
     private float getMax(float maxAlpha) {
-        var fade1 = Math.min(Math.abs(fade/220), 1);
+        var fade1 = Math.min(Math.abs(fadeIn/220), 1);
         var v =  Math.min(maxAlpha, 1F - fade1);
         return Math.max(0, v);
     }

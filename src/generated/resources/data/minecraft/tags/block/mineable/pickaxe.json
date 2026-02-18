@@ -3,15 +3,9 @@
     "jahdoo:loot_crate",
     "jahdoo:tank",
     "jahdoo:challenge_altar",
-    "jahdoo:nexite_ore",
-    "jahdoo:rose_quartz_ore",
-    "jahdoo:enchanted_diamond_ore",
-    "jahdoo:lisite_ore",
-    "jahdoo:nexite_deepslate_ore",
-    "jahdoo:nexite_block",
     "jahdoo:enchanted_diamond_block",
-    "jahdoo:rose_quartz_block",
     "jahdoo:packed_mud_clay",
-    "jahdoo:raw_nexite_block"
+    "jahdoo:raw_nexite_block",
+    "#jahdoo:nexus_mineable"
   ]
 }

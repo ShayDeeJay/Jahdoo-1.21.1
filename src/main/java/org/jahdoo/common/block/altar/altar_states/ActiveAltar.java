@@ -15,6 +15,7 @@ import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
@@ -115,7 +116,7 @@ public class ActiveAltar {
     }
 
     private static void reAssignTarget(Level level, BlockPos pos) {
-        if (!(level instanceof CustomLevel cLevel)) return;
+        if (!(level instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel) && LevelGenerator.isNexus(level))) return;
 
         var bounds = roomBounding(pos);
         var entities = cLevel.getEntities(null, bounds);

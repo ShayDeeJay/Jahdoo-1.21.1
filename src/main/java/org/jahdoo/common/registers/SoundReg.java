@@ -18,6 +18,18 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> DASH_EFFECT =
         registerSoundEvent("dash_effect");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> INCREASE_SCORE =
+        registerSoundEvent("increase_score");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUANTUM =
+        registerSoundEvent("quantum");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> THUD_A =
+        registerSoundEvent("thud_1");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> THUD_B =
+        registerSoundEvent("thud_2");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> DASH_EFFECT_INSTANT =
         registerSoundEvent("dash_effect_instant");
 

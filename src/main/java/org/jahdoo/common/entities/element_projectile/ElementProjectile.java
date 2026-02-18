@@ -13,15 +13,15 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.IEntityProperties;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.ProjectileProperties;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.IEntityProperties;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.mod.EntityDataReg;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -261,7 +261,10 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
                     case 1 -> state.setAndContinue(FIREBALL);
                     case 2 -> state.setAndContinue(FIREBALL_EXPLODE);
                     case 3 -> state.setAndContinue(ICE_SPIKES);
-                    case 4 -> state.setAndContinue(QUANTUM_EXPANSION);
+                    case 4 -> {
+
+                        yield state.setAndContinue(QUANTUM_EXPANSION);
+                    }
                     case 5 -> state.setAndContinue(QUANTUM_COMBUSTION);
                     case 6 -> state.setAndContinue(SEMTEX);
                     case 7 -> state.setAndContinue(ORB);

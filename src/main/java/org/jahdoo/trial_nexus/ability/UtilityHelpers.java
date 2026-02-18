@@ -1,6 +1,5 @@
 package org.jahdoo.trial_nexus.ability;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -31,7 +30,9 @@ import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Range;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.event.TrailNexusDimensionEvents;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.EnchantmentHelpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,8 +104,8 @@ public class UtilityHelpers {
     }
 
     public static boolean canBreakInDim(ServerLevel serverLevel, BlockPos pos){
-        var a = serverLevel instanceof CustomLevel;
-        var b = serverLevel instanceof CustomLevel && serverLevel.getBlockState(pos).is(MINEABLE_NEXUS);
+        var a = LevelGenerator.isNexus(serverLevel);
+        var b = LevelGenerator.isNexus(serverLevel) && serverLevel.getBlockState(pos).is(MINEABLE_NEXUS);
 
         return !a || b;
     }
@@ -122,33 +123,37 @@ public class UtilityHelpers {
         var level = newProjectile.level();
         var fluidState = level.getFluidState(pos);
 
-        if(Range.of(0.0f, 10 + breakSpeed).contains(UtilityHelpers.destroySpeed(pos, level)) || !fluidState.isEmpty()){
-            var blockstate = level.getBlockState(pos);
-            if(!blockstate.isAir()){
-                level.setBlock(pos, AIR.defaultBlockState(), 3);
-                if (!voidBlocks) {
-                    var centre = pos.getCenter();
-                    if (!(level instanceof ServerLevel serverLevel)) return;
-                    if (isSilkTouch) {
-                        var getBlock = new ItemStack(blockstate.getBlock());
-                        var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
+        var canInteract = Range.of(0.0f, 10 + breakSpeed).contains(UtilityHelpers.destroySpeed(pos, level)) || !fluidState.isEmpty();
+        if(!canInteract) return;
 
-                        collectOrDrop(newProjectile, autoCollect, itementity, level);
-                    } else {
-                        var drops = lootBuilder(pos, serverLevel, blockstate, level, getDiamondPickaxe(fortuneLevel, serverLevel));
-                        for (ItemStack itemStack : drops) {
-                            var canBurn = smeltable(serverLevel, itemStack);
-                            var item = new ItemEntity(level, centre.x, centre.y, centre.z, smelt ? canBurn : itemStack);
+        var blockstate = level.getBlockState(pos);
+        if(blockstate.isAir()) return;
 
-                            collectOrDrop(newProjectile, autoCollect, item, level);
-                        }
-                    }
+        level.setBlock(pos, AIR.defaultBlockState(), 3);
+        if (!voidBlocks) {
+            var centre = pos.getCenter();
+            if (!(level instanceof ServerLevel serverLevel)) return;
+            if(newProjectile.getOwner() instanceof Player player){
+                TrailNexusDimensionEvents.getBlockExp(player, blockstate);
+            }
+            if (isSilkTouch) {
+                var getBlock = new ItemStack(blockstate.getBlock());
+                var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
+
+                collectOrDrop(newProjectile, autoCollect, itementity, level);
+            } else {
+                var drops = lootBuilder(pos, serverLevel, blockstate, level, getDiamondPickaxe(fortuneLevel, serverLevel));
+                for (ItemStack itemStack : drops) {
+                    var canBurn = smeltable(serverLevel, itemStack);
+                    var item = new ItemEntity(level, centre.x, centre.y, centre.z, smelt ? canBurn : itemStack);
+
+                    collectOrDrop(newProjectile, autoCollect, item, level);
                 }
-                var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-                ParticleHandlers.sendParticles(level, blockPart, pos.getCenter(), 5, 0, 0, 0, 1);
-                level.removeBlock(pos, false);
             }
         }
+        var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
+        ParticleHandlers.sendParticles(level, blockPart, pos.getCenter(), 5, 0, 0, 0, 1);
+        level.removeBlock(pos, false);
     }
 
     public static void collectOrDrop(GenericProjectile newProjectile, boolean autoCollect, ItemEntity item, Level level) {

@@ -33,6 +33,7 @@ public class AbilityBuilder {
     public static final String NUMBER_OF_RICOCHET = "Ricochets";
     public static final String LIFE_LEECH = "Life Leech Chance";
     public static final String FORTUNE = "Fortune";
+    public static final String IMPLOSIONS = "Implosions";
     public static final String VOID_BLOCKS = "Toggle Void";
     public static final String SILK_TOUCH = "Toggle Silk Touch";
     public static final String SMELTER = "Toggle Smelt";
@@ -78,6 +79,11 @@ public class AbilityBuilder {
 
     public AbilityBuilder setStaticMana(double value){
         this.setModifierWithoutBounds(MANA_COST, value);
+        return this;
+    }
+
+    public AbilityBuilder setImplosions(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(IMPLOSIONS, high, low, true, step, baseCost);
         return this;
     }
 

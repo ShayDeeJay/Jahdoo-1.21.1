@@ -154,7 +154,7 @@ public class EventHelpers {
 
     public static void disallowEffectsInCustomDim(MobEffectEvent.Applicable event) {
         if(!(event.getEntity() instanceof Player player)) return;
-        if(event.getEntity().level() instanceof CustomLevel && !player.isCreative()){
+        if(LevelGenerator.isNexus(event.getEntity().level()) && !player.isCreative()){
             if(!(event.getEffectInstance() instanceof JahdooMobEffect) && event.getEffectInstance().getEffect().value().isBeneficial()){
                 event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             }
@@ -164,7 +164,7 @@ public class EventHelpers {
     public static void removeNonAllowedEffects(EntityJoinLevelEvent event) {
         var entity = event.getEntity();
         if(entity instanceof ServerPlayer player){
-            if(event.getLevel() instanceof CustomLevel){
+            if(LevelGenerator.isNexus(event.getLevel())){
                 var iterator = new ArrayList<>(player.getActiveEffects().stream().filter(s -> !(s instanceof JahdooMobEffect)).toList()).iterator();
                 while (iterator.hasNext()) {
                     var effect = iterator.next();
@@ -191,7 +191,7 @@ public class EventHelpers {
     }
 
     public static void restrictElytra(ServerPlayer serverPlayer, Level level) {
-        if(level instanceof CustomLevel){
+        if(LevelGenerator.isNexus(level)){
             var itemStack = serverPlayer.getItemBySlot(EquipmentSlot.CHEST);
             if (itemStack.getItem() instanceof ElytraItem) {
                 if(serverPlayer.isFallFlying()){
@@ -203,7 +203,7 @@ public class EventHelpers {
 
     public static void resetGameModeOnDeath(LivingEntity entity) {
         //Reset game mode if died in custom dim
-        if(entity.level() instanceof CustomLevel){
+        if(LevelGenerator.isNexus(entity.level())){
             if(entity instanceof ServerPlayer serverPlayer){
                 if(serverPlayer.gameMode.getGameModeForPlayer() == GameType.ADVENTURE){
                     serverPlayer.setGameMode(GameType.SURVIVAL);
@@ -295,7 +295,7 @@ public class EventHelpers {
     }
 
     public static void removeShieldUse(PlayerInteractEvent.RightClickItem rightClickItem) {
-        if(rightClickItem.getItemStack().getItem() instanceof ShieldItem && rightClickItem.getLevel() instanceof CustomLevel){
+        if(rightClickItem.getItemStack().getItem() instanceof ShieldItem && LevelGenerator.isNexus(rightClickItem.getLevel())){
             rightClickItem.setCanceled(true);
             rightClickItem.getEntity().displayClientMessage(TextHelpers.withStyleComponent("This item doesn't work here", ColourHelpers.getOffWhite()), true);
         }
@@ -353,23 +353,28 @@ public class EventHelpers {
             if(item.isEmpty() && entity.getRecipe().isPresent() && !entity.canCraft()){
                 var casterData = player.getData(CASTER_DATA.get());
                 var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
-
                 if(ability.isPresent()) {
                     var element = ElementReg.utility();
-                    if (ability.get().getElemenType() == element) {
+                    var getAbility = ability.get();
+                    if (getAbility.getElemenType() == element) {
                         var holder = CasterData.entityHolderWithSelected(player);
                         if (holder != AbilityHolder.DEFAULT) {
                             entity.setHolder(holder);
-                            for (int i = 0; i < 10; i++) {
-                                var part = ParticleHandlers.getAllParticleTypes(element, 6, 2);
-                                ParticleHandlers.particleBurst(level, pos.getCenter().add(0,0.5,0), 1, part);
-                            }
+                            var i1 = 10;
+                            particleBurst(level, pos, i1);
                             SoundHelpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), BLOCKS, 1F, 0.5F);
                             return true;
                         } else {
                             var message = "You don't have this ability";
                             var messageComponent = TextHelpers.withStyleComponent(message, element.textColourA());
                             player.sendSystemMessage(messageComponent);
+                        }
+                    } else {
+                        if(level.isClientSide){
+                            var message = getAbility.getAbilityName();
+                            var messageComponent = TextHelpers.withStyleComponent(message, getAbility.getElemenType().textColourA());
+                            var append = messageComponent.copy().append(TextHelpers.withStyleComponent(" Is not compatible", -1));
+                            player.sendSystemMessage(append);
                         }
                     }
                 }
@@ -380,12 +385,19 @@ public class EventHelpers {
         return false;
     }
 
+    public static void particleBurst(Level level, BlockPos pos, int i1) {
+        for (int i = 0; i < i1; i++) {
+            var part = ParticleHandlers.getAllParticleTypes(ElementReg.utility(), 16, 1.5f);
+            ParticleHandlers.particleBurst(level, pos.getCenter().add(0,0.8,0), 1, part);
+        }
+    }
+
 
     public static void dontDamageAlliedMobs(ProjectileImpactEvent event) {
         var projectile = event.getProjectile();
         var type = event.getRayTraceResult();
 
-        if(projectile.level() instanceof CustomLevel){
+        if(LevelGenerator.isNexus(projectile.level())){
             if (projectile instanceof Arrow) {
                 if(type instanceof BlockHitResult) projectile.discard();
             }
@@ -427,7 +439,7 @@ public class EventHelpers {
 
     public static void removeInstanceBuffs(EntityLeaveLevelEvent event) {
         var entity = event.getEntity();
-        if(event.getLevel() instanceof CustomLevel && entity instanceof Player player){
+        if(LevelGenerator.isNexus(event.getLevel()) && entity instanceof Player player){
             for (var syncableAttribute : player.getAttributes().getSyncableAttributes()) {
                 var modifiers = syncableAttribute.getModifiers();
                 if(!modifiers.isEmpty()){
@@ -442,7 +454,7 @@ public class EventHelpers {
     }
 
     public static void championLootCalculator(LivingDamageEvent.Pre event, LivingEntity entity) {
-        if(entity.level() instanceof CustomLevel customLevel){
+        if(entity.level() instanceof CustomLevel customLevel && LevelGenerator.isNexus(customLevel)){
             var isChampion = entity.hasEffect(EffectReg.CHAMPION_EFFECT);
             if (isChampion && event.getSource().getEntity() != null) {
                 var position = entity.position();
@@ -584,7 +596,7 @@ public class EventHelpers {
     }
 
     public static void coinDropCalc(LivingEntity entity, int bonus) {
-        if(entity.level() instanceof CustomLevel level){
+        if(entity.level() instanceof CustomLevel level && LevelGenerator.isNexus(level)){
             var getKiller = entity.getKillCredit();
             entity.skipDropExperience();
 
@@ -670,7 +682,7 @@ public class EventHelpers {
     }
 
     public static void instanceEndingWarning(LevelTickEvent.Pre tickEvent) {
-        if(tickEvent.getLevel() instanceof CustomLevel cLevel){
+        if(tickEvent.getLevel() instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel)){
             if(!cLevel.hasData(INSTANCE_DATA)) return;
             var data = cLevel.getData(INSTANCE_DATA);
 
@@ -718,14 +730,14 @@ public class EventHelpers {
     //Remove custom levels when time runs out, level should already be discarded on end of run
     //this is more for safety incase something has been left behind
     public static void discardLevelOnEnd(LevelTickEvent.Pre tickEvent) {
-        if(tickEvent.getLevel() instanceof CustomLevel customLevel){
-            var data = customLevel.getData(INSTANCE_DATA.get());
-            var players = customLevel.players();
-            if(!data.getDifficulty().isEmpty() && players.isEmpty()){
+        if(tickEvent.getLevel() instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel)){
+            var data = cLevel.getData(INSTANCE_DATA.get());
+            var players = cLevel.players();
+            if(!InstanceData.hasInstanceStarted(cLevel) && players.isEmpty()){
                 var i = data.getMaxTime() - data.getTicks();
                 if (i <= 0) {
                     for (var player : players) player.kill();
-                    LevelGenerator.removeLevel(customLevel);
+                    LevelGenerator.removeLevel(cLevel);
                 }
             }
         }
@@ -783,7 +795,7 @@ public class EventHelpers {
     }
 
     public static void questTracker(Level level, Player player) {
-        if(!(level instanceof CustomLevel customLevel)) return;
+        if(!(level instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel))) return;
         if(!(player instanceof ServerPlayer serverPlayer)) return;
 
         var runData = serverPlayer.getData(RUN_DATA.get());
@@ -815,13 +827,13 @@ public class EventHelpers {
             var item = BlockReg.LOOT_CRATE.get();
             var newBlock = new ItemStack(item);
             var playerLevel = CasterData.getLevel(serverPlayer);
-            var instanceData = customLevel.getData(INSTANCE_DATA.get());
+            var instanceData = cLevel.getData(INSTANCE_DATA.get());
             var lootMultiplier = Math.max(1, instanceData.getQuestCrateMultiplier());
             var completionTime = instanceData.getMaxTime() - instanceData.getTicks();
             var difficulty = instanceData.getDifficulty();
             var value = new LootCrateData(playerLevel, lootMultiplier, completionTime, difficulty);
 
-            TriggerEvents.triggerQuestCompleteEvent(serverPlayer, customLevel);
+            TriggerEvents.triggerQuestCompleteEvent(serverPlayer, cLevel);
             newBlock.set(ComponentReg.LOOT_CRATE_DATA, value);
             ItemHelpers.throwOrAddItem(serverPlayer, newBlock);
 

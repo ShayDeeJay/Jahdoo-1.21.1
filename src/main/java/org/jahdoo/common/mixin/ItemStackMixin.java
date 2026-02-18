@@ -16,6 +16,7 @@ public abstract class ItemStackMixin {
             target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V"
         )
     )
+
     private void redirectShrink(ItemStack instance, int count) {
         if (instance.getItem() instanceof JahdooItem) return;
         instance.shrink(count);

@@ -173,8 +173,14 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> ANCIENT_GLAIVE =
         complexItem("ancient_glaive", AncientGlaive::new);
 
-    public static final DeferredHolder<Item, Item> EXPERIENCE_ORB =
-        complexItem("xp_orb", ExperienceOrb::new);
+    public static final DeferredHolder<Item, Item> DIM_EXPERIENCE_ORB =
+        complexItem("dim_xp_orb", ExperienceOrb::new);
+
+    public static final DeferredHolder<Item, Item> GLOWING_EXPERIENCE_ORB =
+        complexItem("glowing_xp_orb", ExperienceOrb::new);
+
+    public static final DeferredHolder<Item, Item> RADIANT_EXPERIENCE_ORB =
+        complexItem("radiant_xp_orb", ExperienceOrb::new);
 
     public static final DeferredHolder<Item, Item> MAGNET =
         complexItem("magnet", Magnet::new);

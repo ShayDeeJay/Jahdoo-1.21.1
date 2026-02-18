@@ -18,6 +18,7 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -77,7 +78,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     }
 
     public InstanceData data(){
-        if(!(getLevel() instanceof CustomLevel cLevel)) return new InstanceData();
+        if(!(getLevel() instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel))) return new InstanceData();
         return cLevel.getData(AttachmentReg.INSTANCE_DATA);
     }
 

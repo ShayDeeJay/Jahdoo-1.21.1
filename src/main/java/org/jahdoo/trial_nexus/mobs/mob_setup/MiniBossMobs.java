@@ -15,17 +15,22 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jahdoo.common.components.LootCrateData;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
+import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
@@ -85,11 +90,11 @@ public class MiniBossMobs {
     }
 
     public static void tickDeathLootsplotion(EntityTickEvent.Pre event) {
-        if(event.getEntity().level() instanceof CustomLevel){
+        if(LevelGenerator.isNexus(event.getEntity().level())){
             var entity = event.getEntity();
             if (entity instanceof Animation_Monsters animationMonsters) {
                 if (animationMonsters.deathTime > 0) {
-                    MiniBossMobs.onDeathTick(animationMonsters);
+                    MiniBossMobs.onDeathTick(animationMonsters, animationMonsters.deathTime);
                 }
             }
         }
@@ -104,7 +109,7 @@ public class MiniBossMobs {
     }
 
     public static void blockNoAIDamage(LivingShieldBlockEvent event, LivingEntity entity) {
-        if(entity.level() instanceof CustomLevel){
+        if(LevelGenerator.isNexus(entity.level())){
             if(entity instanceof Internal_Animation_Monster monster){
                 if(entity.getPersistentData().getBoolean(CHALLENGER_BOSS)){
                     if(monster.isNoAi()){
@@ -116,7 +121,7 @@ public class MiniBossMobs {
         }
     }
 
-    public static void onDeathTick(LivingEntity entity) {
+    public static void onDeathTick(LivingEntity entity, int animTick) {
         var level = entity.level();
         var instanceData = level.getData(AttachmentReg.INSTANCE_DATA);
         var killCredit = entity.getKillCredit();
@@ -129,6 +134,12 @@ public class MiniBossMobs {
             if (level instanceof ServerLevel serverLevel) {
                 var rewards = getCompletionLoot(serverLevel, entity.position(), difficulty.getSerializedName(), chestRarity);
                 var random = Helpers.listRandom(rewards);
+
+                if(animTick == 1){
+                    var reward = new ItemStack(ItemReg.CHALLENGER_SOUL);
+                    LootBeamComponent.toLootBeamComponent(LocalLootBeamData.soulItemBeam(), reward);
+                    itemBehaviour(entity.position(), serverLevel, ColourHelpers.getRgb(), false, 20, chestRarity, reward);
+                }
 
                 if(entity.tickCount % 2 == 0) {
                     itemBehaviour(entity.position(), serverLevel, ColourHelpers.getRgb(), false, 20, chestRarity, random);
@@ -182,25 +193,25 @@ public class MiniBossMobs {
 
     public static void onDeath(LivingEntity entity){
         if(!entity.getPersistentData().getBoolean(CHALLENGER_BOSS)) return;
-        if(entity.level() instanceof CustomLevel serverLevel){
+        if(entity.level() instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel)){
             var pos = NbtUtils.readBlockPos(entity.getPersistentData(), "block_pos");
             var direction = entity.getPersistentData().getString("direction");
             var name = Direction.byName(direction.toLowerCase());
 
             if(pos.isPresent()){
                 var get = pos.get();
-                placeLocksWithData(serverLevel, get.below(2), false, false);
-                sendAlterEndNotification(serverLevel, get);
-                removeLootAndOres(serverLevel, get);
-                for (var player : serverLevel.players()) {
+                placeLocksWithData(cLevel, get.below(2), false, false);
+                sendAlterEndNotification(cLevel, get);
+                removeLootAndOres(cLevel, get);
+                for (var player : cLevel.players()) {
                     JahdooHelpers.sendClientSound(player, SoundReg.LOOP.get(), 0.4F, 1, true);
                     JahdooHelpers.sendClientSound(player, SoundReg.END_TRIAL.get(), 0.4F, 1, false);
                 }
 
-                var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+                var data = cLevel.getData(AttachmentReg.INSTANCE_DATA);
                 data.incrementClearedRooms();
                 if(name != null){
-                    setEndFocusBlock(data, serverLevel, get, name);
+                    setEndFocusBlock(data, cLevel, get, name);
                 }
             }
         }

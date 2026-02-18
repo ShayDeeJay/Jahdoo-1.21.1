@@ -41,6 +41,7 @@ import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.networking.server2client.QuestTrackerS2CP;
+import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
@@ -49,6 +50,7 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.QuestTracker;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
@@ -67,6 +69,7 @@ import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.RUN_DATA;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
 
 public class JahdooHelpers {
@@ -89,11 +92,16 @@ public class JahdooHelpers {
     public static void syncClientData(Entity player) {
         if(player instanceof ServerPlayer serverPlayer){
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
-            var wallet = player.getData(PLAYER_WALLET_DATA).getWallet();
+            var wallet = serverPlayer.getData(PLAYER_WALLET_DATA).getWallet();
+            var runData = serverPlayer.getData(RUN_DATA);
             sendToPlayer(serverPlayer, new WalletSyncS2CP(wallet));
             CasterData.sharedPackets(serverPlayer, casterData);
-            sendToPlayer(serverPlayer, new QuestTrackerS2CP(QuestTracker.getQuestTracker(serverPlayer)));
             PlayerTrialData.updateClientData(serverPlayer);
+
+            if(LevelGenerator.isNexus(player.level())){
+                sendToPlayer(serverPlayer, new RunDataS2CP(runData));
+                sendToPlayer(serverPlayer, new QuestTrackerS2CP(QuestTracker.getQuestTracker(serverPlayer)));
+            }
         }
     }
 

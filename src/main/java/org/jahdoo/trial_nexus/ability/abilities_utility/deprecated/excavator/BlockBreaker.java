@@ -1,6 +1,5 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.deprecated.excavator;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.BlockHitResult;
@@ -9,6 +8,7 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class BlockBreaker extends AbstractUtilityProjectile {
@@ -19,7 +19,7 @@ public class BlockBreaker extends AbstractUtilityProjectile {
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         var level = generic.level();
         var isAcceptableBlockType = level.getBlockState(blockHitResult.getBlockPos()).is(BlockReg.NEXITE_ORE);
-        if(level instanceof CustomLevel && !isAcceptableBlockType) return;
+        if(LevelGenerator.isNexus(level) && !isAcceptableBlockType) return;
 
         super.onBlockBlockHit(blockHitResult);
         if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;

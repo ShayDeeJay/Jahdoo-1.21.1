@@ -36,9 +36,9 @@ public class ModTags {
         public static final TagKey<net.minecraft.world.level.block.Block> CAN_REPLACE_BLOCK = tag("replace");
         public static final TagKey<net.minecraft.world.level.block.Block> POWER_UP_SUPPORT = tag("power_up_support");
         public static final TagKey<net.minecraft.world.level.block.Block> MINEABLE_NEXUS = tag("nexus_mineable");
-        public static final TagKey<net.minecraft.world.level.block.Block> CHEAP_BLOCK = tag("nexus_mineable");
-        public static final TagKey<net.minecraft.world.level.block.Block> MID_RANGE_BLOCK = tag("nexus_mineable");
-        public static final TagKey<net.minecraft.world.level.block.Block> VALUABLE_BLOCK = tag("nexus_mineable");
+        public static final TagKey<net.minecraft.world.level.block.Block> CHEAP_BLOCK = tag("cheap_block");
+        public static final TagKey<net.minecraft.world.level.block.Block> MID_RANGE_BLOCK = tag("mid_range_block");
+        public static final TagKey<net.minecraft.world.level.block.Block> VALUABLE_BLOCK = tag("valuable_block");
 
         //Enchanted Block
         public static final TagKey<net.minecraft.world.level.block.Block> GARBAGE_BLOCKS = tag("garbage_blocks");

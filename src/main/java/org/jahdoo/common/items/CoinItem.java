@@ -16,6 +16,7 @@ import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.IItemEntityBehaviour;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
@@ -57,7 +58,11 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
 
             SoundHelpers.getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), SoundSource.MASTER, 1F, 0.8F);
             
-            if(level instanceof CustomLevel cLevel && entity instanceof LivingEntity lEntity) {
+            if(
+                level instanceof CustomLevel cLevel &&
+                LevelGenerator.isNexus(serverLevel) &&
+                entity instanceof LivingEntity lEntity
+            ) {
                 RunData.incrementCoin(cLevel, lEntity, data == null ? 0 : data.value(), count);
             }
         }

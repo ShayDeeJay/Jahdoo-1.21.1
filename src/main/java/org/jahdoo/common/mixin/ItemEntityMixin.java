@@ -5,6 +5,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.CoinItem;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.IItemEntityBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,6 +47,8 @@ public abstract class ItemEntityMixin {
         }
     }
 
+
+
     @Unique
     private boolean lootBeams$hasPlayedSound = false;
 
@@ -59,6 +62,10 @@ public abstract class ItemEntityMixin {
 
         if(lootBeams$hasPlayedSound && !itemEntity.onGround()){
             lootBeams$hasPlayedSound = false;
+        }
+
+        if(itemEntity.getItem().is(ItemReg.CHALLENGER_SOUL) && !itemEntity.isCurrentlyGlowing()){
+            itemEntity.setGlowingTag(true);
         }
     }
 }

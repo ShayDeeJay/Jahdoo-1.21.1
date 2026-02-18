@@ -1,6 +1,5 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.light_placer;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -9,6 +8,7 @@ import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
@@ -41,7 +41,7 @@ public class LightPlacer extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(getLevel() instanceof CustomLevel) return;
+        if(LevelGenerator.isNexus(getLevel())) return;
 
         if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var level = this.generic.level();

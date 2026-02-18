@@ -1,7 +1,6 @@
 package org.jahdoo.common.event;
 
 import com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.IABoss_monster;
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -12,6 +11,7 @@ import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -25,6 +25,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.attachments.player_abilities.TripleJump;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
@@ -59,7 +60,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void totem(LivingUseTotemEvent event){
         var entity = event.getEntity();
-        if(entity.level() instanceof CustomLevel) event.setCanceled(true);
+        if(LevelGenerator.isNexus(entity.level())) event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -97,7 +98,7 @@ public class ServerEvents {
         var level = event.getLevel();
         var getBlock = level.getBlockState(pos);
 
-        TrailNexusDimensionEvents.useItemBlockEvent(event);
+        TrailNexusDimensionEvents.mineBlockEvent(event);
         perkTableInteraction(getBlock, level, pos, player, event);
         removeWandInteractionWithBlocks(event, player, item, getBlock);
     }
@@ -179,8 +180,13 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void onBlockBreak(PlayerEvent.BreakSpeed event) {
-        TrailNexusDimensionEvents.useItemBlockEvent(event);
+    public static void onBlockBreakEvent(BlockEvent.BreakEvent event) {
+        TrailNexusDimensionEvents.breakBlockEvent(event);
+    }
+
+    @SubscribeEvent
+    public static void onMineEvent(PlayerEvent.BreakSpeed event) {
+        TrailNexusDimensionEvents.mineBlockEvent(event);
     }
 
     @SubscribeEvent
@@ -209,7 +215,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void livingDropsEvent(LivingDropsEvent event){
         var entity = event.getEntity();
-        if(entity.level() instanceof CustomLevel) event.setCanceled(true);
+        if(LevelGenerator.isNexus(entity.level())) event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -222,14 +228,13 @@ public class ServerEvents {
         tickDeathLootsplotion(event);
     }
 
-
     @SubscribeEvent
     public static void livingDeathEvent(LivingDeathEvent event){
         var entity = event.getEntity();
         var bonus = entity.tickCount / 10;
         var killer = event.getSource().getEntity();
 
-        if(entity.level() instanceof CustomLevel){
+        if(LevelGenerator.isNexus(entity.level())){
             MiniBossMobs.onDeath(entity);
             CasterData.incrementMultiKillStatic(killer);
         }

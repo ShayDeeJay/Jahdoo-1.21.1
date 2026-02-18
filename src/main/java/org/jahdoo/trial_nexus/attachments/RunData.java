@@ -222,9 +222,9 @@ public class RunData implements IAttachment {
 
         if (runData.dateAndTime != null) {
             runData.onEndRun(player, died);
-            if(player.level() instanceof CustomLevel customLevel) {
-                if(customLevel.players().isEmpty()){
-                    LevelGenerator.removeLevel(customLevel);
+            if(player.level() instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel)) {
+                if(cLevel.players().isEmpty()){
+                    LevelGenerator.removeLevel(cLevel);
                 }
             }
         }

@@ -7,13 +7,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+import static org.jahdoo.common.block.loot_pot.LootPotBlock.TEXTURE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.RUN_DATA;
+import static org.jahdoo.common.registers.BlockReg.LOOT_POT;
 
 public class TrailNexusDimensionEvents {
 
@@ -30,27 +33,42 @@ public class TrailNexusDimensionEvents {
         return 0;
     }
 
-    public static void useItemBlockEvent(PlayerEvent.BreakSpeed event){
+    public static void breakBlockEvent(BlockEvent.BreakEvent blockEvent){
+        var state = blockEvent.getState();
+        var player = blockEvent.getPlayer();
+        getBlockExp(player, state);
+    }
 
-        var state = event.getState();
-        var isAcceptableBlockType = state.is(ModTags.Block.MINEABLE_NEXUS);
-        var player = event.getEntity();
-        if(isAcceptableBlockType && player instanceof ServerPlayer serverPlayer) {
-            if(serverPlayer.level() instanceof ServerLevel level){
+    public static void getBlockExp(Player player, BlockState state) {
+        if(!(LevelGenerator.isNexus(player.level()))) return;
+
+        if(player instanceof ServerPlayer serverPlayer){
+            if (serverPlayer.level() instanceof ServerLevel level) {
                 var runData = player.getData(RUN_DATA.get());
                 var instanceData = level.getData(INSTANCE_DATA.get());
+                var lootPotMultiplier = 1;
+                if(state.is(LOOT_POT)){
+                    lootPotMultiplier = state.getValue(TEXTURE) + 1;
+                }
 
-                runData.setExperienceGained(instanceData.getDifficulty(), getMineBlockExp(state));
+                runData.setExperienceGained(instanceData.getDifficulty(), getMineBlockExp(state) * lootPotMultiplier);
                 sendToPlayer(serverPlayer, new RunDataS2CP(runData));
-                return;
             }
         }
+    }
+
+    public static void mineBlockEvent(PlayerEvent.BreakSpeed event){
+        if(!(LevelGenerator.isNexus(event.getEntity().level()))) return;
+
+        var isAcceptableBlockType = event.getState().is(ModTags.Block.MINEABLE_NEXUS);
+        if(isAcceptableBlockType) return;
+
         if(blockInteractionRules(event.getEntity().level(), event.getEntity())){
             event.setCanceled(true);
         }
     }
 
-    public static void useItemBlockEvent(UseItemOnBlockEvent event){
+    public static void mineBlockEvent(UseItemOnBlockEvent event){
         var player = event.getPlayer();
         if(player == null) return;
         if(blockInteractionRules(event.getLevel(), player)){

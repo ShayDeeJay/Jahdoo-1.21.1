@@ -10,6 +10,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.CustomModelData;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -100,8 +101,8 @@ public class SaveItemData implements IAttachment {
 
         allFilteredItems.forEach(player.getInventory()::removeItem);
 
-        if(player.level() instanceof CustomLevel customLevel){
-            getLostItemReceipt(player, customLevel);
+        if(player.level() instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel)){
+            getLostItemReceipt(player, cLevel);
         }
     }
 

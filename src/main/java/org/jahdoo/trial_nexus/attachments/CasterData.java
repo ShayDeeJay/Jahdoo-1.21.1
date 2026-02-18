@@ -32,6 +32,7 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.SkillReg;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
@@ -373,7 +374,7 @@ public class CasterData implements IAttachment {
 
 
     public static void checkMultiKillStatic(Player player, int multiKillCount){
-        if(!(player.level() instanceof CustomLevel)) return;
+        if(!(LevelGenerator.isNexus(player.level()))) return;
         player.getData(CASTER_DATA).checkMultiKill(player, multiKillCount);
     }
 

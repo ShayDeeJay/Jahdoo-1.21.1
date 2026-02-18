@@ -256,5 +256,29 @@
     "sounds": [
       "jahdoo:boss"
     ]
+  },
+  "increase_score": {
+    "subtitles": "sounds.jahdoo.increase_score",
+    "sounds": [
+      "jahdoo:increase_score"
+    ]
+  },
+  "quantum": {
+    "subtitles": "sounds.jahdoo.quantum",
+    "sounds": [
+      "jahdoo:quantum"
+    ]
+  },
+  "thud_1": {
+    "subtitles": "sounds.jahdoo.thud_1",
+    "sounds": [
+      "jahdoo:thud_1"
+    ]
+  },
+  "thud_2": {
+    "subtitles": "sounds.jahdoo.thud_2",
+    "sounds": [
+      "jahdoo:thud_2"
+    ]
   }
 }

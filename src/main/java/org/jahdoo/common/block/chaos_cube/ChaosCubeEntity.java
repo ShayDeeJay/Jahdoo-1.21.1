@@ -146,7 +146,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "idle", 10, state -> state.setAndContinue(IDLE_BLOCK)));
-        controllers.add(new AnimationController<>(this, "side_anim", 10, this::getPlayState));
+        controllers.add(new AnimationController<>(this, "side_anim", 0, this::getPlayState));
     }
 
     @Override
@@ -261,12 +261,12 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
 
         return state.setAndContinue(
             switch (direction) {
-                case NORTH -> MYS_NORTH;
-                case SOUTH -> MYS_SOUTH;
-                case EAST  -> MYS_EAST;
-                case WEST  -> MYS_WEST;
-                case UP    -> MYS_UP;
-                case DOWN  -> MYS_DOWN;
+                case NORTH -> C_NORTH;
+                case SOUTH -> C_SOUTH;
+                case EAST  -> C_EAST;
+                case WEST  -> C_WEST;
+                case UP    -> C_UP;
+                case DOWN  -> C_DOWN;
             }
         );
     }

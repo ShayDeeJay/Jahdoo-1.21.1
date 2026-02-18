@@ -1,9 +1,9 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.vein_miner;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +17,7 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.ArrayDeque;
@@ -95,29 +96,29 @@ public class VeinMiner extends AbstractUtilityProjectile {
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
         var level = generic.level();
+        if (!(level instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel))) return;
         if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
-        if (!(level instanceof ServerLevel serverLevel)) return;
-        BlockPos start = blockHitResult.getBlockPos();
-        BlockState target = serverLevel.getBlockState(start);
+
+        var start = blockHitResult.getBlockPos();
+        var target = cLevel.getBlockState(start);
         if (target.isAir()) return;
 
-        double x = generic.getX();
-        double y = generic.getY();
-        double z = generic.getZ();
-        serverLevel.playSound(
-            null, x, y, z,
-            serverLevel
-                .getBlockState(start)
-                .getSoundType(serverLevel, generic.blockPosition(), generic)
-                .getBreakSound(),
+        cLevel.playSound(
+            null,
+            generic.getX(), generic.getY(), generic.getY(),
+            cLevel
+            .getBlockState(start)
+            .getSoundType(cLevel, generic.blockPosition(), generic)
+            .getBreakSound(),
             SoundSource.BLOCKS, 1, 1
         );
+
         var part = ParticleHandlers.genericParticle(SOFT_PARTICLE, ElementReg.utility(), 6, 0.08f, true);
         var part2 = ParticleHandlers.genericParticle(GENERIC_PARTICLE, ElementReg.utility(), 3, 4f, false);
-        this.forAllBlocksAroundOf(start, serverLevel, target.getBlock(), veinSize,
+        this.forAllBlocksAroundOf(start, cLevel, target.getBlock(), veinSize,
             (pos, state) -> {
                 var breakSpeed = reinforced == 2 ? 50 : 0;
-                if(UtilityHelpers.canBreakInDim(serverLevel, pos)){
+                if(UtilityHelpers.canBreakInDim(cLevel, pos)){
                     dropItemsOrBlock(
                         generic,
                         pos,
@@ -129,10 +130,11 @@ public class VeinMiner extends AbstractUtilityProjectile {
                         valueToBool(collector)
                     );
                 }
-                ParticleHandlers.particleBurst(serverLevel, pos.getCenter(), 1, part, 0, 0, 0, 0.005f, 1);
-                ParticleHandlers.particleBurst(serverLevel, pos.getCenter(), 1, part2, 0, 0, 0, 0.05f, 2);
+                ParticleHandlers.particleBurst(cLevel, pos.getCenter(), 1, part, 0, 0, 0, 0.005f, 1);
+                ParticleHandlers.particleBurst(cLevel, pos.getCenter(), 1, part2, 0, 0, 0, 0.05f, 2);
             }
         );
+
         generic.discard();
     }
 

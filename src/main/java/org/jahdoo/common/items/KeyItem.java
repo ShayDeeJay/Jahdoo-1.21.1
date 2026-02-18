@@ -8,6 +8,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.level_manager.RoomData;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.NotNull;
@@ -56,8 +57,8 @@ public class KeyItem extends BaseJahdooItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if(level instanceof CustomLevel customLevel){
-            stack.set(ComponentReg.ID, customLevel.getDescriptionKey());
+        if(level instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel)){
+            stack.set(ComponentReg.ID, cLevel.getDescriptionKey());
         }
         super.inventoryTick(stack, level, entity, slotId, isSelected);
     }

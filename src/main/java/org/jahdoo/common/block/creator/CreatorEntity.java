@@ -15,6 +15,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.CreatorRecipeReg;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.jahdoo.common.event.event_helpers.EventHelpers.particleBurst;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
@@ -34,8 +36,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
     public static final GenericParticleOptions particleTypeA = genericParticle(SOFT_PARTICLE, utility(), 2, 0.08F, true);
     public static final BakedParticleOptions particleTypeB = bakedParticle(utility().id(), 2, 1F, false);
-    public double animIncrement = 0.5f;
-    private double animTickIncrement = 0.5f;
+    public int ticker;
     private ItemStack getResult;
     private AbilityHolder holder;
 
@@ -91,15 +92,14 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     public static void successfulCraftVisual(Level level, BlockPos blockPos){
-        SoundHelpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.5f, 0.8f);
+        particleBurst(level, blockPos, 20);
+//        SoundHelpers.getSoundWithPosition(level, blockPos, SoundReg.INCREASE_SCORE.get(), SoundSource.BLOCKS, 1f, 0.8f);
+        SoundHelpers.getSoundWithPosition(level, blockPos, SoundReg.MYSTIC_ABILITY.get(), SoundSource.BLOCKS, 0.5f, 2f);
+
     }
 
     public boolean isCompletedCraft(){
         return this.progress == 360;
-    }
-
-    public void setAnimTickIncrement(double animTickIncrement){
-        this.animTickIncrement = animTickIncrement;
     }
 
     public int getProgress(){
@@ -111,28 +111,25 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
+        animParticle(level, blockPos);
+        this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
 
         if(this.canCraft()){
+            if(progress == 0) this.ticker = 0;
             var creatorRecipes = this.getRecipe();
             if(creatorRecipes.isPresent()){
                 var getRecipe = creatorRecipes.get();
                 if(this.getResult == null) this.getResult = getRecipe.result(this);
                 this.progress++;
                 this.tableProcessingParticle(level);
-                this.setAnimTickIncrement(Math.min(this.animTickIncrement + 0.1, 2.5));
-                if (this.animIncrement < 2.5) this.animIncrement += 0.05;
                 this.onCompleteCraft(level, blockPos);
             }
-
         } else {
             if(this.holder != null) this.setHolder(null);
-            this.setAnimTickIncrement(Math.max(this.animTickIncrement - 0.1, 0.5));
             if(this.getResult != null) this.getResult = null;
-            if(this.animIncrement > 0.5) this.animIncrement = 0.5;
         }
 
-        animParticle(level, blockPos);
-        this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
+        if(ticker == Integer.MAX_VALUE) this.ticker = 0; else ticker ++;
     }
 
     private void animParticle(Level level, BlockPos blockPos) {
@@ -149,6 +146,9 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         if(this.progress == 1 || this.progress % 25 == 0){
             SoundHelpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, SoundSource.BLOCKS, 0.1F, Random.nextFloat(1.5F, 2F));
         }
+        if(this.progress == 1 || this.progress % 5 == 0){
+            SoundHelpers.getSoundWithPosition(level, this.getBlockPos(), SoundReg.LEVITATE.value(), SoundSource.BLOCKS, 0.5F, Random.nextFloat(0.4F, 0.8F));
+        }
     }
 
     public void onCompleteCraft(Level level, BlockPos blockPos){
@@ -157,6 +157,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         this.chargeTankFuel(getCraftingCost());
         this.getOutputItemHandler().insertItem(0, this.getResult.copy(), false);
         this.clearContentsOnCompletion();
+
         successfulCraftVisual(level, blockPos);
     }
 
@@ -196,8 +197,8 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     @Override
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(tag, pRegistries);
-        this.progress = tag.getInt("progress");
         if(this.holder != null) AbilityHolder.writeTag(holder, tag);
+        tag.putInt("ticks", ticker);
         if(tankPosition != null){
             int[] array = {tankPosition.getX(), tankPosition.getY(), tankPosition.getZ()};
             tag.putIntArray("blockPos", array);
@@ -207,7 +208,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     @Override
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
         super.saveAdditional(tag, pRegistries);
-        tag.putInt("progress", this.progress);
+        this.ticker = tag.getInt("ticks");
         if(tag.contains("abilities")){
             this.holder = AbilityHolder.readTag(tag);
         }

@@ -85,7 +85,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
         }
 
         //Delete old level on leave.
-        if(level instanceof CustomLevel cLevel) LevelGenerator.removeLevel(cLevel);
+        if(level instanceof CustomLevel cLevel && LevelGenerator.isNexus(cLevel)) LevelGenerator.removeLevel(cLevel);
         level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 
         return createLevelAndStartingRoom(player, level);

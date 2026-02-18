@@ -2,6 +2,7 @@ package org.jahdoo.common.block.ticket_bureau;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -31,6 +33,7 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
+import org.shaydee.shaydeeapi.helpers.ParticleHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.core.Direction.SOUTH;
@@ -157,25 +160,39 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
     }
 
     private static void acceptAnim(Level level, BlockPos pos, int partType, int colour) {
-        acceptParticle(level, pos, partType, colour);
+        acceptParticle(level, pos.getCenter(), partType, colour);
         SoundHelpers.getSoundWithPosition(level, pos, SoundReg.HEAL.get(), SoundSource.BLOCKS, 0.2F, 1.6F);
         SoundHelpers.getSoundWithPosition(level, pos, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.2F, 1.6F);
         SoundHelpers.getSoundWithPosition(level, pos, BOOK_PUT, SoundSource.BLOCKS, 3, 1F);
     }
 
-    private static void acceptParticle(Level level, BlockPos pos, int partType, int colour) {
-        for (int i = 0; i < 30; i++) {
-            var x = new BlockPos(0, 1, 0);
+    public static void acceptParticle(Level level, Vec3 pos, int partType, int colour) {
+        for (int i = 0; i < 90; i++) {
+            var x = new BlockPos(0, 2, 0);
             var lifetime = Random.nextInt(2, 30);
-            var size = Random.nextFloat(0.8F, 1.2F);
+            var size = Random.nextFloat(1F, 2F);
             var particleData = new GenericParticleOptions(partType, colour, 0, lifetime, size, false, 5);
-            level.addParticle(
-                particleData,
-                pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5,
-                (float)x.getX() + Random.nextFloat() - 0.5,
-                (float)x.getY() - Random.nextFloat() - 1.0F,
-                (float)x.getZ() + Random.nextFloat() - 0.5
-            );
+
+            if(level instanceof ServerLevel){
+                ParticleHelpers.sendParticles(
+                    level,
+                    particleData,
+                    pos,
+                    0,
+                    (float)x.getX() + Random.nextFloat() - 0.5,
+                    (float)x.getY() - Random.nextFloat() - 1.0F,
+                    (float)x.getZ() + Random.nextFloat() - 0.5,
+                    4
+                );
+            } else {
+                level.addParticle(
+                    particleData,
+                    pos.x + 0.5, pos.y + 2.0, pos.z + 0.5,
+                    (float)x.getX() + Random.nextFloat() - 0.5,
+                    (float)x.getY() - Random.nextFloat() - 1.0F,
+                    (float)x.getZ() + Random.nextFloat() - 0.5
+                );
+            }
         }
     }
 

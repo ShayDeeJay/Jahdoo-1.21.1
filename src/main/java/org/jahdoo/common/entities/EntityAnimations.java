@@ -19,12 +19,12 @@ public class EntityAnimations {
 
     //Chaos Cube
     public static final RawAnimation IDLE_BLOCK = RawAnimation.begin().thenPlay("idle");
-    public static final RawAnimation WEST = RawAnimation.begin().thenPlay("direction1");
-    public static final RawAnimation EAST = RawAnimation.begin().thenPlay("direction2");
-    public static final RawAnimation SOUTH = RawAnimation.begin().thenPlay("direction3");
-    public static final RawAnimation UP = RawAnimation.begin().thenPlay("direction4");
-    public static final RawAnimation DOWN = RawAnimation.begin().thenPlay("direction5");
-    public static final RawAnimation NORTH = RawAnimation.begin().thenPlay("direction6");
+    public static final RawAnimation C_WEST = RawAnimation.begin().thenPlay("direction1");
+    public static final RawAnimation C_EAST = RawAnimation.begin().thenPlay("direction2");
+    public static final RawAnimation C_SOUTH = RawAnimation.begin().thenPlay("direction3");
+    public static final RawAnimation C_UP = RawAnimation.begin().thenPlay("direction4");
+    public static final RawAnimation C_DOWN = RawAnimation.begin().thenPlay("direction5");
+    public static final RawAnimation C_NORTH = RawAnimation.begin().thenPlay("direction6");
 
     //Mystical Augmenter
     public static final RawAnimation MYS_WEST = RawAnimation.begin().thenPlay("direction_west");

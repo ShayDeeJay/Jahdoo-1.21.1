@@ -30,6 +30,7 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.level_manager.RoomData;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
@@ -42,7 +43,6 @@ import static net.minecraft.world.ItemInteractionResult.*;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeNewSide;
@@ -167,7 +167,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         }
 
         var getState = state.getValue(FACING);
-        var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
+        var noDifficultySelected = InstanceData.hasInstanceStarted(serverLevel);
 
         if (noDifficultySelected) {
             entity.setDifficulty();
@@ -204,7 +204,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     public static void getItemInteractionResult(BlockState state, BlockPos pos, LockBlockEntity entity, ServerLevel serverLevel) {
         var getState = state.getValue(FACING);
-        var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
+        var noDifficultySelected = InstanceData.hasInstanceStarted(serverLevel);
         if (noDifficultySelected) entity.setDifficulty();
 
         placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), TextHelpers.nameToId(entity.roomId.getString()), false);

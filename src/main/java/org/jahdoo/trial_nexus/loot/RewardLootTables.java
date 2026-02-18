@@ -187,7 +187,7 @@ public class RewardLootTables {
         lootTableItem(ItemReg.COIN.get());
 
     public static final LootPoolSingletonContainer.Builder<?> XP =
-        lootTableItem(ItemReg.EXPERIENCE_ORB.get());
+        lootTableItem(ItemReg.DIM_EXPERIENCE_ORB.get());
 
     public static final LootPoolSingletonContainer.Builder<?> RUNE =
         lootTableItem(ItemReg.RUNE.get());

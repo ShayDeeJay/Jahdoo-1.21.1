@@ -14,22 +14,20 @@ import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.block.creator.CreatorRenderer;
 import org.jahdoo.common.block.dissembler.DisassemblerRenderer;
+import org.jahdoo.common.block.divine_forge.DivineForgeRenderer;
+import org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreen;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
 import org.jahdoo.common.block.lock.LockRenderer;
 import org.jahdoo.common.block.loot_chest.LootChestRenderer;
+import org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterRenderer;
 import org.jahdoo.common.block.perk_table.PerkTableRenderer;
 import org.jahdoo.common.block.power_up_station.PowerUpStationRenderer;
-import org.jahdoo.common.block.divine_forge.DivineForgeRenderer;
-import org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreen;
-import org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterRenderer;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
 import org.jahdoo.common.block.tank.TankRenderer;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerScreen;
-import org.jahdoo.common.client.overlay.CustomHudOverlay;
-import org.jahdoo.common.client.overlay.InstanceDataOverlay;
-import org.jahdoo.common.client.overlay.WalletOverlay;
+import org.jahdoo.common.client.overlay.*;
 import org.jahdoo.common.client.tooltip_renderer.RarityTooltipRenderer;
 import org.jahdoo.common.client.tooltip_renderer.RuneTooltipRenderer;
 import org.jahdoo.common.entities.ancient_golem.AncientGolemRenderer;
@@ -76,6 +74,8 @@ public class ClientBusEvents {
     public static void onRegisterOverlays(RegisterGuiLayersEvent event) {
         event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("mana_bar"), new CustomHudOverlay());
         event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("level_data"), new InstanceDataOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("points_overlay"), new PointsOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("tooltip_overlay"), new BlockTooltipOverlay());
         event.registerAboveAll(JahdooHelpers.res("wallet"), new WalletOverlay());
     }
 

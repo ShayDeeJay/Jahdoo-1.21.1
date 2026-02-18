@@ -5,16 +5,11 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
-import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.toggleLockAbility;
@@ -26,7 +21,7 @@ import static org.jahdoo.common.event.event_helpers.RenderEventHelper.*;
 public class ClientEvents {
 
     @SubscribeEvent
-    public static void entityRenderer(Pre event) {
+    public static void entityRenderer(RenderLivingEvent.Pre event) {
         var poseStack = event.getPoseStack();
         var entity = event.getEntity();
         var instance = Minecraft.getInstance();
@@ -44,12 +39,6 @@ public class ClientEvents {
 
         crosshairManager(event);
         simpleGui(event, player);
-
-    }
-
-    @SubscribeEvent
-    public static void overlayEventPost(RenderGuiLayerEvent.Post event) {
-        OverlayBlockTooltip.overlayEvent(event);
     }
 
     @SubscribeEvent

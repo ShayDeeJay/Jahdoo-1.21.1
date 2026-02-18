@@ -15,6 +15,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.shaydee.shaydeeapi.helpers.ParticleHelpers;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
@@ -85,7 +86,7 @@ public class LightBlock extends Block {
         var lifetime = 10;
         var size = 0.8f;
         var bakedParticle = bakedParticle(type.id(), lifetime, size + 0.2f, false);
-        var generic = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, size, type.partColourA(), type.partColourFade(), false);
+        var generic = ParticleHelpers.genericParticle(GENERIC_PARTICLE, lifetime, size, type.partColourA(), type.partColourFade(), false);
 
         ParticleHandlers.invisibleLight(level, pos, bakedParticle, 0.03, 0.04,50);
         ParticleHandlers.invisibleLight(level, pos, generic, 0.03, 0.04, 50);

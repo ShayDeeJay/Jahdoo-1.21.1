@@ -41,7 +41,6 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-
         this.dropSelf(WAND_MANAGER_TABLE.get());
         this.dropSelf(TANK.value());
         this.dropSelf(TICKET_BUREAU.value());
@@ -69,35 +68,19 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(PACKED_MUD_CLAY.get());
         this.dropSelf(RAW_NEXITE_BLOCK.get());
 
-        this.add(
-            LISITE_ORE.get(),
-            block -> createCopperLikeOreDrops(LISITE_ORE.get(), LISITE_SHARD.get())
+        addDrops(this, LISITE_ORE.get(), LISITE_SHARD.get());
+        addDrops(this, ENCHANTED_DIAMOND_ORE.get(), ENCHANTED_DIAMOND.get());
+        addDrops(this, ROSE_QUARTZ_ORE.get(), ROSE_QUARTZ.get());
+        addDrops(this, NEXITE_DEEPSLATE_ORE.get(), NEXITE_POWDER.get());
+        addDrops(this, NEXITE_ORE.get(), NEXITE_POWDER.get());
+    }
+
+    public static void addDrops(ModBlockLootTables tables, Block blocks, Item drop  ) {
+        tables.add(
+            blocks, block -> tables
+                .createCopperLikeOreDrops(blocks, drop)
                 .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
         );
-
-        this.add(
-            ENCHANTED_DIAMOND_ORE.get(),
-            block -> createCopperLikeOreDrops(ENCHANTED_DIAMOND_ORE.get(), ENCHANTED_DIAMOND.get())
-                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
-        );
-
-        this.add(
-            ROSE_QUARTZ_ORE.get(),
-            block -> createCopperLikeOreDrops(ROSE_QUARTZ_ORE.get(), ROSE_QUARTZ.get())
-                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
-        );
-
-        this.add(
-            NEXITE_ORE.get(),
-            block -> createCopperLikeOreDrops(NEXITE_ORE.get(), NEXITE_POWDER.get())
-                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
-        );
-
-        this.add(NEXITE_DEEPSLATE_ORE.get(),
-            block -> createCopperLikeOreDrops(NEXITE_ORE.get(), NEXITE_POWDER.get())
-                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
-        );
-
     }
 
 }

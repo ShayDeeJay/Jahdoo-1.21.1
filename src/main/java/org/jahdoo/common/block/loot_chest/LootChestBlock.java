@@ -1,7 +1,6 @@
 package org.jahdoo.common.block.loot_chest;
 
 import com.mojang.serialization.MapCodec;
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
@@ -103,7 +103,7 @@ public class LootChestBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof LootChestEntity cEntity)) return FAIL;
         if (!(level instanceof ServerLevel serverLevel)) return FAIL;
 
-        if(serverLevel instanceof CustomLevel && !cEntity.isOpen){
+        if(LevelGenerator.isNexus(serverLevel) && !cEntity.isOpen){
             var data = serverLevel.getData(INSTANCE_DATA);
 
             if(cEntity.isCoinChest()){

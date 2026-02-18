@@ -1,6 +1,5 @@
 package org.jahdoo.common.items;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
@@ -24,6 +23,7 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
@@ -126,7 +126,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
     @Override
     public void onUseTick(Level level, LivingEntity player, ItemStack stack, int remainingUseDuration) {
-        if (!(player instanceof ServerPlayer serverPlayer) || level instanceof CustomLevel) return;
+        if (!(player instanceof ServerPlayer serverPlayer) || LevelGenerator.isNexus(level)) return;
         if(player.isUsingItem()){
             var getCastTime = 80;
             var ticksUsingItem = serverPlayer.getTicksUsingItem();

@@ -6,12 +6,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.level.Level;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 public class InstanceData implements IAttachment {
@@ -315,6 +317,11 @@ public class InstanceData implements IAttachment {
         data.incrementSpeed(15);
         data.setMaxTime(12000);
         return data;
+    }
+
+    public static boolean hasInstanceStarted(Level level) {
+        var currentData = level.getData(INSTANCE_DATA);
+        return currentData.getDifficulty().isEmpty();
     }
 
     public static InstanceData copyInstance(InstanceData original) {

@@ -35,6 +35,10 @@
   "item.jahdoo.wand_inferno": "Inferno Wand",
   "item.jahdoo.wand_vitality": "Vitality Wand",
 
+  "item.jahdoo.dim_xp_orb": "Dim XP Orb",
+  "item.jahdoo.glowing_xp_orb": "Glowing XP Orb",
+  "item.jahdoo.radiant_xp_orb": "Radiant XP Orb",
+
   "item.jahdoo.salamans_eye": "Salamans Eye",
   "item.jahdoo.skill_point": "Skill Point",
   "item.jahdoo.elemental_staff": "Elemental Staff",
@@ -222,6 +226,9 @@
   "info.jahdoo.challenge_accepted": "Challenge Accepted",
   "info.jahdoo.altar_complete": "Altar Complete",
 
+  "description.item.jahdoo.dim_xp_orb": "The Dim XP Orb grants experience when right-clicked. This variant provides 20 experience points.",
+  "description.item.jahdoo.glowing_xp_orb": "The Glowing XP Orb grants experience when right-clicked. This variant provides 120 experience points.",
+  "description.item.jahdoo.radiant_xp_orb": "Radiant XP Orb grants experience when right-clicked. This variant provides 1200 experience points.",
   "description.item.jahdoo.deed": "The Base Deed is an item that spawns a personal island for players to claim and enjoy — a place of calm for those seeking space away from the madness.\n(Coming soon: block render overlay previews, tooltip examples, and additional base variants.)",
   "description.item.jahdoo.challenger_soul": "The Challenger Soul is a rare crafting item with a chance to drop from Challengers within the Nexus.",
   "description.item.jahdoo.stamp": "Stamps can be applied to Trial Tickets at the Ticket Bureau. Each stamp adds a positive modifier, increasing the amount the ticket must be filled before use. Most tickets naturally come with a high chance of having a negative modifier.",

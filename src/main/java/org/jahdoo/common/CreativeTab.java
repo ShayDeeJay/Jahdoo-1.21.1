@@ -84,7 +84,10 @@ public class CreativeTab {
                 outPut.accept(UNDEAD_PROTECTOR_SHIELD.get());
                 outPut.accept(DIVINITY_PAXEL.get());
 
-                registerXpOrbs(outPut);
+                outPut.accept(DIM_EXPERIENCE_ORB.get());
+                outPut.accept(GLOWING_EXPERIENCE_ORB.get());
+                outPut.accept(RADIANT_EXPERIENCE_ORB.get());
+
                 registerMagnets(outPut);
                 registerCoins(outPut);
                 outPut.accept(COIN_SACK.get());
@@ -199,17 +202,17 @@ public class CreativeTab {
         }
     }
 
-    private static void registerXpOrbs(CreativeModeTab.Output pOutput) {
-        pOutput.accept(EXPERIENCE_ORB.get());
-
-        for(int i = 1; i < 3; i++) {
-            var xpOrb = new ItemStack(EXPERIENCE_ORB.get());
-            var customModelData = new CustomModelData(i);
-
-            xpOrb.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
-            pOutput.accept(xpOrb);
-        }
-    }
+//    private static void registerXpOrbs(CreativeModeTab.Output pOutput) {
+//        pOutput.accept(EXPERIENCE_ORB.get());
+//
+//        for(int i = 1; i < 3; i++) {
+//            var xpOrb = new ItemStack(EXPERIENCE_ORB.get());
+//            var customModelData = new CustomModelData(i);
+//
+//            xpOrb.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+//            pOutput.accept(xpOrb);
+//        }
+//    }
 
     private static void registerMagnets(CreativeModeTab.Output pOutput) {
         pOutput.accept((MAGNET.get()));
