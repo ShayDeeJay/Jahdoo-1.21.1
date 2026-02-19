@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "experience_orb",
+  "ingredients": [
+    {
+      "item": "jahdoo:radiant_xp_orb"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "jahdoo:glowing_xp_orb"
+  }
+}

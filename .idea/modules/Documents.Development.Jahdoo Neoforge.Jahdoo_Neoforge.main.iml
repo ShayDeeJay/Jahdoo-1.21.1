@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
-  <component name="AdditionalModuleElements">
-    <content url="file://$MODULE_DIR$/../../src/main" dumb="true">
-      <excludeFolder url="file://$MODULE_DIR$/../../src/main/java/org/jahdoo/common/block/creator/recipe/recipes" />
-      <excludeFolder url="file://$MODULE_DIR$/../../src/main/resources/assets/jahdoo/textures/item/augments/old_augments" />
-    </content>
-  </component>
   <component name="FacetManager">
     <facet type="minecraft" name="Minecraft">
       <configuration>
@@ -20,7 +14,7 @@
   </component>
   <component name="McpModuleSettings">
     <option name="minecraftVersion" value="1.21.1" />
-    <option name="platformVersion" value="21.1.137" />
+    <option name="platformVersion" value="21.1.150" />
     <option name="srgType" value="TSRG" />
   </component>
 </module>

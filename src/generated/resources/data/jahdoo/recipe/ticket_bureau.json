@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "tag": "c:stripped_logs"
+    },
+    "X": {
+      "item": "jahdoo:trial_ticket"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "MXM",
+    "MMM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:ticket_bureau"
+  }
+}

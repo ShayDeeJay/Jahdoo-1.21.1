@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "jahdoo:item/perka_sodas/perka_soda2"
+  }
+}

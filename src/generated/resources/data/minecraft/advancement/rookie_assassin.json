@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "rookie_assassin": {
+      "conditions": {
+        "items": [
+          {
+            "items": "jahdoo:boon_perk"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "#E19B32",
+      "text": "Kill 1000 mobs"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:rotten_flesh"
+    },
+    "title": {
+      "color": "#E6E22E",
+      "text": "Rookie Assassin"
+    }
+  },
+  "requirements": [
+    [
+      "rookie_assassin"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

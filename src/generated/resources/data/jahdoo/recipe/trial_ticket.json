@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "jahdoo:nexite_powder"
+    },
+    "X": {
+      "item": "minecraft:diamond"
+    },
+    "Y": {
+      "item": "minecraft:paper"
+    }
+  },
+  "pattern": [
+    " Y ",
+    "MXM",
+    " Y "
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:trial_ticket"
+  }
+}

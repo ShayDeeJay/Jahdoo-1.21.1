@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "jahdoo:glowing_xp_orb"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "jahdoo:dim_xp_orb"
+  }
+}

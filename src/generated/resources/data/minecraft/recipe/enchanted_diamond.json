@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "jahdoo:enchanted_diamond_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "jahdoo:enchanted_diamond"
+  }
+}

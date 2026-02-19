@@ -1,0 +1,6 @@
+{
+  "drop_rule": "ALWAYS_DROP",
+  "icon": "jahdoo:slot/protector",
+  "replace": true,
+  "size": 1
+}

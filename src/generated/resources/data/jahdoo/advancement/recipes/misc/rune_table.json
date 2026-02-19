@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "jahdoo:rune_table"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "wand_item": {
+      "conditions": {
+        "items": [
+          {
+            "items": "jahdoo:rune"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "wand_item"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "jahdoo:rune_table"
+    ]
+  }
+}

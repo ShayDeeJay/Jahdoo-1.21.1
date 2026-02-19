@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 2.0,
+  "group": "diamond",
+  "ingredient": {
+    "item": "minecraft:diamond_leggings"
+  },
+  "result": {
+    "count": 1,
+    "id": "jahdoo:diamond_nugget"
+  }
+}

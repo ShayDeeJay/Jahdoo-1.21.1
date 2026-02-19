@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "minecraft:dirt"
+    },
+    "X": {
+      "item": "minecraft:clay"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MXM",
+    " M "
+  ],
+  "result": {
+    "count": 4,
+    "id": "jahdoo:packed_mud_clay"
+  }
+}

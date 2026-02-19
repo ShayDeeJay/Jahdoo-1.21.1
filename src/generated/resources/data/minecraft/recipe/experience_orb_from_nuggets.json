@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "experience_orb",
+  "key": {
+    "#": {
+      "item": "jahdoo:dim_xp_orb"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:glowing_xp_orb"
+  }
+}

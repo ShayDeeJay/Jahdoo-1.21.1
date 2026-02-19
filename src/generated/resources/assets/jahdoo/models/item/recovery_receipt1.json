@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "jahdoo:item/recovery_receipts/recovery_receipt1"
+  }
+}

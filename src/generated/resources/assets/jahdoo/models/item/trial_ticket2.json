@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "jahdoo:item/trial_tickets/trial_ticket2"
+  }
+}

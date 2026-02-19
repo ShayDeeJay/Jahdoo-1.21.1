@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "jahdoo:packed_mud_clay"
+    },
+    "X": {
+      "item": "jahdoo:augment_core"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "MXM",
+    "MMM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:rune_table"
+  }
+}
