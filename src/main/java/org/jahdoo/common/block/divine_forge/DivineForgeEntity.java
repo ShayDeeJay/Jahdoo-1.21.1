@@ -25,7 +25,7 @@ import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLO
 public class DivineForgeEntity extends AbstractBEInventory implements MenuProvider {
 
     public ArmorStand stand;
-    public static final int MODIFICATION_SLOT = 16;
+    public static final int MODIFICATION_SLOT = 12;
 
     public DivineForgeEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);
@@ -102,7 +102,7 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new RuneTableMenu(i, inventory,this, this.getData());
+        return new DivineForgeMenu(i, inventory,this, this.getData());
     }
 
     public void setItem(ItemStack item){

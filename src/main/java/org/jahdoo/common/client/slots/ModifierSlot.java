@@ -3,7 +3,7 @@ package org.jahdoo.common.client.slots;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
-import org.jahdoo.common.block.divine_forge.RuneTableMenu;
+import org.jahdoo.common.block.divine_forge.DivineForgeMenu;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,14 +11,14 @@ public class ModifierSlot extends SlotItemHandler {
 
     int maxStackSize;
     boolean isActive = true;
-    private final RuneTableMenu menu;
+    private final DivineForgeMenu menu;
 
     public ModifierSlot(
         IItemHandler inputItemHandler,
         int index,
         int xPosition,
         int yPosition,
-        RuneTableMenu menu
+        DivineForgeMenu menu
     ) {
         super(inputItemHandler, index, xPosition, yPosition);
         this.menu = menu;
@@ -52,7 +52,7 @@ public class ModifierSlot extends SlotItemHandler {
     public boolean mayPlace(@NotNull ItemStack itemStack) {
         var hideModifierSlot = menu.hideModifierSlot;
         System.out.println(hideModifierSlot);
-        return itemStack.is(ItemReg.GEAR_SCRAP) && hideModifierSlot;
+        return itemStack.is(ItemReg.SEAL_OF_CHANGE) && hideModifierSlot;
     }
 
 

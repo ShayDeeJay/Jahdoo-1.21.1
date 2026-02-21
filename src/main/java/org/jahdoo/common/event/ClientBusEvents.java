@@ -15,7 +15,7 @@ import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.block.creator.CreatorRenderer;
 import org.jahdoo.common.block.dissembler.DisassemblerRenderer;
 import org.jahdoo.common.block.divine_forge.DivineForgeRenderer;
-import org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreen;
+import org.jahdoo.common.block.divine_forge.DivineForgeScreen;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
 import org.jahdoo.common.block.lock.LockRenderer;
 import org.jahdoo.common.block.loot_chest.LootChestRenderer;

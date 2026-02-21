@@ -107,7 +107,7 @@ public class RecoveryReceipt extends BaseItem {
         if (getPrice == null) return;
 
         tooltipComponents
-            .add(TextHelpers.withStyleComponent("Cost: ", ColourHelpers.getOffWhite())
+            .add(TextHelpers.withStyleComponentTrans("info.jahdoo.cost", ColourHelpers.getOffWhite(),": ")
             .copy()
             .append(TextHelpers.withStyleComponent("20" + " " + getPrice.getFirst().getSerializedName(), getPrice.getFirst().getTextColour())));
     }

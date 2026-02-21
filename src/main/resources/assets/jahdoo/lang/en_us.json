@@ -5,10 +5,11 @@
   "item.jahdoo.enchanted_diamond": "Enchanted Diamond",
 
   "item.jahdoo.essence_fragment": "Essence Fragment",
-  "item.jahdoo.bronze_coin": "Bronze Coin",
-  "item.jahdoo.silver_coin": "Silver Coin",
-  "item.jahdoo.gold_coin": "Gold Coin",
-  "item.jahdoo.platinum_coin": "Platinum Coin",
+  "item.jahdoo.bronze": "Bronze %s",
+  "item.jahdoo.silver": "Silver %s",
+  "item.jahdoo.gold": "Gold %s",
+  "item.jahdoo.platinum": "Platinum %s",
+  "item.jahdoo.coin": "Coin",
   "item.jahdoo.nexite_powder": "Nexite Essence",
   "item.jahdoo.augment_core": "Hollow Basic Core",
   "item.jahdoo.advanced_augment_core": "Hollow Advance Core",
@@ -35,6 +36,10 @@
   "item.jahdoo.wand_inferno": "Inferno Wand",
   "item.jahdoo.wand_vitality": "Vitality Wand",
   "item.jahdoo.overenchanted_book": "Overenchanted Book",
+
+  "item.jahdoo.seal_of_change": "Seal of Change",
+  "item.jahdoo.seal_of_repair": "Seal of Repair",
+  "item.jahdoo.seal_of_rejuvenation": "Seal of Rejuvenation",
 
   "item.jahdoo.dim_xp_orb": "Dim XP Orb",
   "item.jahdoo.glowing_xp_orb": "Glowing XP Orb",
@@ -227,6 +232,7 @@
   "info.jahdoo.challenge_accepted": "Challenge Accepted",
   "info.jahdoo.altar_complete": "Altar Complete",
   "info.jahdoo.enchantments": "Enchantments",
+  "info.jahdoo.cost": "Cost%s",
 
   "description.item.jahdoo.overenchanted_book": "Overenchanted Books grant access to significantly more powerful enchantments, allowing certain enchantments to reach levels up to 10. These enhanced effects far exceed those of standard enchanted books.",
   "description.item.jahdoo.dim_xp_orb": "The Dim XP Orb grants experience when right-clicked. This variant provides 20 experience points.",

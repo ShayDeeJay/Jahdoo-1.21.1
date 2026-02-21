@@ -90,6 +90,7 @@ public class CreativeTab {
                 outPut.accept(RADIANT_EXPERIENCE_ORB.get());
 
                 registerMagnets(outPut);
+                registerSeals(outPut);
                 registerCoins(outPut);
                 outPut.accept(COIN_SACK.get());
 
@@ -227,6 +228,20 @@ public class CreativeTab {
             pOutput.accept(magnet);
         }
     }
+
+    private static void registerSeals(CreativeModeTab.Output pOutput) {
+        var item = SEAL_OF_CHANGE.get();
+        pOutput.accept(item);
+
+        for(int i = 1; i < 3; i++) {
+            var magnet = new ItemStack(item);
+            var customModelData = new CustomModelData(i);
+
+            magnet.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+            pOutput.accept(magnet);
+        }
+    }
+
 
 
 }

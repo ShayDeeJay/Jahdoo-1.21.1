@@ -195,10 +195,10 @@ public class PlayerWallet implements IAttachment {
     }
 
     public enum CoinProperties implements StringRepresentable, IExtensibleEnum {
-        BRONZE(Icons.BRONZE_COIN, "bronze_coin", ColourHelpers.getBronzeCoin()),
-        SILVER(Icons.SILVER_COIN, "silver_coin", ColourHelpers.getSilverCoin()),
-        GOLD(Icons.GOLD_COIN, "gold_coin", ColourHelpers.getChampionGold()),
-        PLATINUM(Icons.PLATINUM_COIN, "platinum_coin", ColourHelpers.getPlatinumCoin());
+        BRONZE(Icons.BRONZE_COIN, "item.jahdoo.bronze", ColourHelpers.getBronzeCoin()),
+        SILVER(Icons.SILVER_COIN, "item.jahdoo.silver", ColourHelpers.getSilverCoin()),
+        GOLD(Icons.GOLD_COIN, "item.jahdoo.gold", ColourHelpers.getChampionGold()),
+        PLATINUM(Icons.PLATINUM_COIN, "item.jahdoo.platinum", ColourHelpers.getPlatinumCoin());
 
         private final ResourceLocation location;
         private final String name;
@@ -219,12 +219,13 @@ public class PlayerWallet implements IAttachment {
         }
 
         public String getName() {
-            return name;
+            var suffix = TextHelpers.withStyleComponentTrans("item.jahdoo.coin", -1);
+            return TextHelpers.withStyleComponentTrans(name, -1 , suffix).getString();
         }
 
         @Override
         public String getSerializedName() {
-            return TextHelpers.stringIdToName(name.replace("_coin", ""));
+            return TextHelpers.withStyleComponentTrans(this.name, -1).getString();
         }
 
         public static CoinProperties getType (int value) {

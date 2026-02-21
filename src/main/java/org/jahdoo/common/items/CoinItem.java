@@ -73,14 +73,19 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
     @Override
     public Component getName(ItemStack stack) {
         var data = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        if(data == null) return TextHelpers.withStyleComponent("Bronze Coin", CoinProperties.BRONZE.getTextColour());
-        var value = switch (data.value()) {
-            case 1 -> CoinProperties.SILVER;
-            case 2 -> CoinProperties.GOLD;
-            default -> CoinProperties.PLATINUM;
-        };
+        CoinProperties suffix;
 
-        return TextHelpers.withStyleComponent(value.getSerializedName() + " Coin", value.getTextColour());
+        if(data == null) {
+            suffix = CoinProperties.BRONZE;
+        } else {
+            suffix = switch (data.value()) {
+                case 1 -> CoinProperties.SILVER;
+                case 2 -> CoinProperties.GOLD;
+                default -> CoinProperties.PLATINUM;
+            };
+        }
+
+        return TextHelpers.withStyleComponent(suffix.getName(), suffix.getTextColour());
     }
 
     @Override

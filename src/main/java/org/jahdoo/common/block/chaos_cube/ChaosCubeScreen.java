@@ -274,7 +274,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
                     if(abilityModifiers != null){
                         var operationCost = abilityModifiers.setValue();
                         var roundCost = MathHelpers.roundNonWholeString(operationCost);
-                        tooltipLines2.add(TextHelpers.withStyleComponent("Cost: ", colourSet).copy().append(TextHelpers.withStyleComponent(roundCost, ColourHelpers.getSubHeaderColour())));
+                        tooltipLines2.add(TextHelpers.withStyleComponentTrans("info.jahdoo.cost", colourSet,": ").copy().append(TextHelpers.withStyleComponent(roundCost, ColourHelpers.getSubHeaderColour())));
                     }
                 }
                 tooltipLines.add(TextHelpers.withStyleComponent("Tank: ", colourSet).copy().append(TextHelpers.withStyleComponent(tracker, colour)));

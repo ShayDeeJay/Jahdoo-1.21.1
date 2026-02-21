@@ -44,7 +44,19 @@ public class ItemInBlockC2SP implements CustomPacketPayload {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
                     if(bEntity instanceof AbstractBEInventory abstractBEntity){
-                        abstractBEntity.getInputItemHandler().setStackInSlot(index, itemStack);
+                        System.out.println(abstractBEntity.getInputItemHandler().getStackInSlot(index));
+                        var stackInSlot = abstractBEntity.getInputItemHandler().getStackInSlot(index);
+
+                        var all = abstractBEntity.getInputItemHandler().getSlots();
+
+                        for (var i = 0; i < all; i++) {
+                            var item = abstractBEntity.getInputItemHandler().getStackInSlot(i);
+                            if (item == itemStack) {
+                                item.shrink(1);
+                            }
+                        }
+
+                        stackInSlot.shrink(1);
                     }
                 }
             }

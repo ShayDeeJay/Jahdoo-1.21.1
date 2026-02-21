@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.divine_forge.helpers;
+package org.jahdoo.common.block.divine_forge;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -8,8 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
-import org.jahdoo.common.block.divine_forge.RuneTableMenu;
+import org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreenShared;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
 import org.jahdoo.common.registers.SoundReg;
@@ -24,10 +23,11 @@ import java.util.Optional;
 
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.common.block.divine_forge.helpers.RepairManager.*;
+import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.MODIFICATION_SLOT;
+import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeManager.*;
 import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreenHelpers.*;
-import static org.jahdoo.common.block.divine_forge.helpers.RuneScreenShared.overlayInventory;
-import static org.jahdoo.common.block.divine_forge.helpers.RuneScreenShared.tooltipSlots;
+import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreenShared.overlayInventory;
+import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreenShared.tooltipSlots;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.augmentCoreSlots;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
@@ -37,20 +37,20 @@ import static org.jahdoo.common.client.screens.AbilityModificationScreen.WIDGET;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.canRepair;
 
-public class DivineForgeScreen extends AbstractContainerScreen<RuneTableMenu> {
+public class DivineForgeScreen extends AbstractContainerScreen<DivineForgeMenu> {
 
     private static final int RUNE_MANAGE = 0;
     private static final int REPAIR_MANAGE = 1;
     private static final int MODIFIER_MANAGE = 2;
     private List<Component> hoverTooltip = new ArrayList<>();
-    private final RuneTableMenu runeTableMenu;
+    private final DivineForgeMenu runeTableMenu;
     private final int borderColour;
     private boolean showTooltip;
     private int scaleItem = 60;
     private int selection;
     private int coinCost;
 
-    public DivineForgeScreen(RuneTableMenu menu, Inventory inventory, Component title) {
+    public DivineForgeScreen(DivineForgeMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         var element = ElementReg.fromWand(menu.tableEntity().itemSlot().getItem());
 
@@ -111,38 +111,44 @@ public class DivineForgeScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     private void modifyItem(WidgetSprites selected) {
-        if(isModifierManager() && !this.getItem().isEmpty()){
-            var canRepairItem = repairable(getItem(), entity());
-            var posX1 = this.width / 2 + 9;
-            var posY1 = this.height / 2 - 43;
-            var instance = forUI(SoundReg.UPGRADE_MODIFIER.get(), 0F);
-            var buttonType = canRepair(getItem()) ? WIDGET : selected;
+        var spacer = 0;
+        for (int i = 0; i < 4; i++){
+            if(isModifierManager() && !this.getItem().isEmpty()){
+                var canRepairItem = repairable(getItem(), entity());
+                var posX1 = this.width / 2 - 38 + spacer;
+                var posY1 = this.height / 2 - 38;
+                var instance = forUI(SoundReg.UPGRADE_MODIFIER.get(), 0F);
+                var buttonType = canRepair(getItem()) ? WIDGET : selected;
 
-            var b = entity().getModificationSlot().isEmpty();
-            this.addRenderableWidget(
-                menuButtonSound(
-                    posX1, posY1,
-                    (press) -> {
-                        onRepair(getMinecraft(), menu);
-                        this.rebuildWidgets();
-                    }, COG,
-                    44, b, 0, buttonType, !b,
-                    () -> onHoverRepair(this.hoverTooltip, borderColour, getItem()),
-                    instance
-                )
-            );
+                var b = entity().getInputItemHandler().getStackInSlot(i + MODIFICATION_SLOT).isEmpty();
+                int finalI = i;
+                this.addRenderableWidget(
+                    menuButtonSound(
+                        posX1 + 12, posY1 + 4,
+                        (press) -> {
+                            onRepairSlot(getMinecraft(), menu);
+                            this.rebuildWidgets();
+                        },
+                        COG, 20, b, 0, buttonType, !b,
+                        () -> onHoverRepair(this.hoverTooltip, borderColour, getItem()),
+                        instance
+                    )
+                );
 
-            this.addRenderableOnly(
-                new Overlay() {
-                    @Override
-                    public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
-                        var color = color(200, canRepairItem ? ColourHelpers.getHeaderColour() : borderColour);
-                        SharedUI.boxMaker(guiGraphics, posX1 + 6, posY1 + 6, 16, 16, color, 0, 0);
-                        guiGraphics.blit(GUI_ITEM_SLOT, posX1 + 6, posY1 - 22, 0,0,32,32,32,32);
+                this.addRenderableOnly(
+                    new Overlay() {
+                        @Override
+                        public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
+                            var color = color(200, canRepairItem ? ColourHelpers.getHeaderColour() : borderColour);
+//                        SharedUI.boxMaker(guiGraphics, posX1 + 6, posY1 + 6, 16, 16, color, 0, 0);
+                            guiGraphics.blit(GUI_ITEM_SLOT, posX1 + 6, posY1 - 22, 0,0,32,32,32,32);
+                        }
                     }
-                }
-            );
+                );
+                spacer += 32;
+            }
         }
+
     }
 
     private void toggleFullItemToolTip(int posX, int posY2, WidgetSprites selected) {
@@ -233,10 +239,10 @@ public class DivineForgeScreen extends AbstractContainerScreen<RuneTableMenu> {
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
 
         hoverCarried(guiGraphics, mouseX, mouseY, hoveredSlot, runeTableMenu, getMinecraft());
-        RuneScreenShared.renderItem(guiGraphics, mouseX, mouseY, startX, startY, width, height, scaleItem, getMinecraft(), getItem(), this.leftPos, this.topPos, borderColour);
         sharedGearData(guiGraphics, i, i1);
         costToolTip(guiGraphics, mouseX, mouseY);
         header(guiGraphics);
+        DivineForgeScreenShared.renderItem(guiGraphics, mouseX, mouseY, startX, startY, width, height, scaleItem, getMinecraft(), getItem(), this.leftPos, this.topPos, borderColour);
 
         this.hoverTooltip = new ArrayList<>();
         this.coinCost = 0;

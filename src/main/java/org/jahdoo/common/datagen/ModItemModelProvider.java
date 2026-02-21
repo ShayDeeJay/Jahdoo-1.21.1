@@ -39,6 +39,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerTickets();
         registerPerkaSoda();
         registerStamps();
+        registerSeals();
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -126,6 +127,13 @@ public class ModItemModelProvider extends ItemModelProvider {
         for (int i = 1; i < 14; i++) {
             createModel("stamp" + i, "item/stamps/stamp" + i);
             createOverride(i, ItemReg.STAMP, "item/stamp");
+        }
+    }
+
+    private void registerSeals() {
+        for (int i = 1; i < 3; i++) {
+            createModel("seal" + i, "item/seals/seal" + i);
+            createOverride(i, ItemReg.SEAL_OF_CHANGE, "item/seal");
         }
     }
 

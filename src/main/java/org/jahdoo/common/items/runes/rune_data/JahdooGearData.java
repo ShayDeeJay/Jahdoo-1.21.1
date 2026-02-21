@@ -46,45 +46,21 @@ public record JahdooGearData(
         return holder.repairSlots.contains(1);
     }
 
-    public static int checkAndRepair(ItemStack itemStack){
+    public static void checkAndRepair(ItemStack itemStack){
         var holder = getGearData(itemStack);
-        var originalSlots = holder.repairSlots;
+        var originalSlots = new ArrayList<>(holder.repairSlots);
         var hasRepairSlots = originalSlots.contains(1);
-        var newRepair = new ArrayList<Integer>();
 
         if(hasRepairSlots) {
-            var foundSlot = false;
-            var index = 0;
-            for (var repairSlot : originalSlots) {
-                if(repairSlot == 1 && !foundSlot) {
-                    newRepair.add(0);
-                    foundSlot = true;
-                    index = originalSlots.indexOf(repairSlot);
-                } else {
-                    newRepair.add(repairSlot);
-                }
-            }
-            updateRepairSlots(itemStack, newRepair);
-            return index;
+            var index = originalSlots.indexOf(1);
+            originalSlots.set(index, 0);
+            updateRepairSlots(itemStack, originalSlots);
         }
-
-        return -1;
     }
 
     public static int totalRepairs(ItemStack itemStack){
         var holder = getGearData(itemStack);
-        var originalSlots = holder.repairSlots;
-        var hasRepairSlots = originalSlots.contains(1);
-
-        if(hasRepairSlots) {
-            var index = 0;
-            for (var repairSlot : originalSlots) {
-                if(repairSlot == 1) return originalSlots.indexOf(repairSlot);
-            }
-            return index;
-        }
-
-        return -1;
+        return holder.repairSlots.stream().filter(i -> i == 0).toList().size();
     }
 
     public static JahdooGearData getGearData(ItemStack itemStack){

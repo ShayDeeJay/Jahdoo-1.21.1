@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
-import org.jahdoo.common.block.divine_forge.RuneTableMenu;
+import org.jahdoo.common.block.divine_forge.DivineForgeMenu;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.components.CoreData;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreen.groupFade;
+import static org.jahdoo.common.block.divine_forge.DivineForgeScreen.groupFade;
 import static org.jahdoo.common.client.Icons.GUI_GENERAL_SLOT;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
@@ -42,7 +42,7 @@ public class DivineForgeScreenHelpers {
         boolean showInventory,
         Minecraft minecraft,
         int borderColour,
-        RuneTableMenu runeTableMenu
+        DivineForgeMenu runeTableMenu
     ) {
         var shiftY = 0;
         var shiftX = -5;
@@ -128,7 +128,7 @@ public class DivineForgeScreenHelpers {
     }
 
 
-    public static void hoverCarried(GuiGraphics guiGraphics, int x, int y, Slot hoveredSlot, RuneTableMenu runeTableMenu, Minecraft minecraft){
+    public static void hoverCarried(GuiGraphics guiGraphics, int x, int y, Slot hoveredSlot, DivineForgeMenu runeTableMenu, Minecraft minecraft){
         var carried = hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? runeTableMenu.getCarried() : hoveredSlot.getItem();
         var isRuneSlot = hoveredSlot instanceof RuneSlot;
         var isNonRuneSlot = !carried.isEmpty() && !isRuneSlot;

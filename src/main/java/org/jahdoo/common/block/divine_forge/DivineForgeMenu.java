@@ -22,7 +22,7 @@ import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLO
 import static org.jahdoo.common.client.SharedUI.getCore;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
 
-public class RuneTableMenu extends AbstractInternalContainer  {
+public class DivineForgeMenu extends AbstractInternalContainer  {
 
     public int posX = 34;
     public int posY = 104;
@@ -32,12 +32,12 @@ public class RuneTableMenu extends AbstractInternalContainer  {
     public boolean hideRuneSlots = true;
     public boolean hideModifierSlot = true;
 
-    public RuneTableMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
+    public DivineForgeMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         super(MenuReg.RUNE_TABLE_MENU.get(), id, inv, extraData);
         this.addSlots();
     }
 
-    public RuneTableMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {
+    public DivineForgeMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {
         super(MenuReg.RUNE_TABLE_MENU.get(), id, inv, entity, data);
         this.addSlots();
     }
@@ -73,7 +73,11 @@ public class RuneTableMenu extends AbstractInternalContainer  {
     }
 
     private void insertModificationSlot() {
-        this.addSlot(new ModifierSlot(tableEntity().getInputItemHandler(), MODIFICATION_SLOT, posX + 77, posY - 78, this));
+        var spacer = 0;
+        for(int i = 0; i < 4; i++){
+            this.addSlot(new ModifierSlot(tableEntity().getInputItemHandler(), MODIFICATION_SLOT+i, posX + 30 + spacer, posY - 78, this));
+            spacer += 32;
+        }
     }
 
     private void insertAugmentSlots() {

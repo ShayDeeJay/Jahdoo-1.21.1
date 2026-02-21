@@ -175,9 +175,11 @@ public class GenericMeleeAttackGoal extends Goal {
             this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
             if(this.mob instanceof AncientGolem ancientGolem){
                 ancientGolem.particle();
+
                 if(this.isTimeToAttack()){
                     ancientGolem.runningParticle();
                 }
+
                 if(ancientGolem.triggerDamage) {
                     ancientGolem.damageDelay++;
                     var target = ancientGolem.getTarget();

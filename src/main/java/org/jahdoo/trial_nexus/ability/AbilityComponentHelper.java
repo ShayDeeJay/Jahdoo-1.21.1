@@ -269,14 +269,14 @@ public class AbilityComponentHelper {
         if(!unlocked && showUnlockDetails){
             toolTips.addLast(TextHelpers.withStyleComponent(ability.getAbilityName(), ability.getElemenType().textColourA()));
             toolTips.addLast(Component.empty());
-            var prefix = TextHelpers.withStyleComponent("Cost: ", ColourHelpers.getSubHeaderColour());
-            var suffix = TextHelpers.withStyleComponent("◆ " + ability.getAbilityCost() + " Skill Points", ColourHelpers.getPerkGreen()).copy();
+            var prefix = TextHelpers.withStyleComponentTrans("info.jahdoo.cost", ColourHelpers.getSubHeaderColour(), ": ");
+            var suffix = TextHelpers.withStyleComponentTrans("info.jahdoo.skill_points", ColourHelpers.getPerkGreen(), "◆ " + ability.getAbilityCost() + " ").copy();
 
             toolTips.addLast(prefix.copy().append(suffix));
             var hasDependency = ability.levelRequirement() <= data.getLevel();
 
             if(!hasDependency){
-                var prefix1 = TextHelpers.withStyleComponent("Requires Level: ", ColourHelpers.getSubHeaderColour());
+                var prefix1 = TextHelpers.withStyleComponentTrans("info.jahdoo.requires_level", ColourHelpers.getSubHeaderColour());
                 var suffix1 = TextHelpers.withStyleComponent(ability.levelRequirement() + "", ability.getElemenType().textColourA()).copy();
                 toolTips.addLast(prefix1.copy().append(suffix1));
             }

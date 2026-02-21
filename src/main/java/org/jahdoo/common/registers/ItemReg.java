@@ -82,10 +82,13 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> CHALLENGER_SOUL =
         basicItem("challenger_soul");
 
-    //Core Items
     public static final DeferredHolder<Item, Item> DEED =
         complexItem("deed", Deed::new);
 
+    public static final DeferredHolder<Item, Item> SEAL_OF_CHANGE =
+        complexItem("seal", Seals::new);
+
+    //Core Items
     public static final DeferredHolder<Item, Item> CHARGED_AUGMENT_CORE =
         chargedCoreItems("augment_core_filled");
 

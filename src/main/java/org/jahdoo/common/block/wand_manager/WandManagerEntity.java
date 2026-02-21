@@ -17,7 +17,7 @@ import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 public class WandManagerEntity extends AbstractBEInventory implements MenuProvider {
 
     public static final int DEFAULT_SLOTS = 5;
-    public static final int ADDITIONAL_RUNE_SLOTS = 12;
+    public static final int ADDITIONAL_RUNE_SLOTS = 16;
     public int privateTicks;
     public ItemStack itemStack;
 

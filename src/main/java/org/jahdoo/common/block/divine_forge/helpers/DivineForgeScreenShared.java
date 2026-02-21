@@ -16,10 +16,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreen.groupFade;
+import static org.jahdoo.common.block.divine_forge.DivineForgeScreen.groupFade;
 import static org.jahdoo.common.client.SharedUI.*;
 
-public class RuneScreenShared {
+public class DivineForgeScreenShared {
 
     public static void renderItem(
         GuiGraphics guiGraphics,

@@ -181,12 +181,12 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
         if(!haveSkill){
             component.addLast(Component.empty());
-            var prefix = TextHelpers.withStyleComponent("Cost: ", ColourHelpers.getSubHeaderColour());
+            var prefix = TextHelpers.withStyleComponentTrans("info.jahdoo.cost", ColourHelpers.getSubHeaderColour(), ": ");
             var suffix = TextHelpers.withStyleComponent("◆ " + skill.unlockCost() + " Skill Points", ColourHelpers.getPerkGreen()).copy();
             component.addLast(prefix.copy().append(suffix));
 
             if(!dependency){
-                var prefix1 = TextHelpers.withStyleComponent("Requires Level: ", ColourHelpers.getSubHeaderColour());
+                var prefix1 = TextHelpers.withStyleComponentTrans("info.jahdoo.requires_level", ColourHelpers.getSubHeaderColour());
                 var suffix1 = TextHelpers.withStyleComponent(skill.levelRequirement() + "", headerColour).copy();
                 component.addLast(prefix1.copy().append(suffix1));
             }
