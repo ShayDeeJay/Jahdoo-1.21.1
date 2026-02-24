@@ -14,10 +14,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
+import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.ADDITIONAL_RUNE_SLOTS;
+
 public class WandManagerEntity extends AbstractBEInventory implements MenuProvider {
 
     public static final int DEFAULT_SLOTS = 5;
-    public static final int ADDITIONAL_RUNE_SLOTS = 16;
     public int privateTicks;
     public ItemStack itemStack;
 

@@ -264,7 +264,6 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
     public void particle(){
         if(!this.level().isClientSide){
             var isRunning = this.getSpeed() > 0.25 && isEntityMoving();
-            System.out.println(this.getSpeed());
             if (this.tickCount % (isRunning ? 1 : 4) == 0) {
                 var level = this.level();
                 var position = new Vec3(this.getRandomX(1), this.getRandomY(), this.getRandomZ(1));
@@ -313,7 +312,6 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
             var y = targetEntity.onGround() ? Math.min(0.8D, vec3.y / 2.0D + strength) : vec3.y;
             var z = vec3.z / 2.0D - vec31.z;
             var x = vec3.x / 2.0D - vec31.x;
-            System.out.println(y);
             targetEntity.setDeltaMovement(x, y, z);
         }
     }

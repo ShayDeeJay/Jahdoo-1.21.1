@@ -96,7 +96,6 @@ public class DivinityPaxel extends DiggerItem implements JahdooItem {
                             serverLevel.setBlockAndUpdate(blockPos, block.defaultBlockState());
                             serverLevel.updateNeighborsAt(blockPos, block);
                         }
-                        System.out.println("found");
                     }
                 }
             }

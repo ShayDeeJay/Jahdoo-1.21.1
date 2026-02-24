@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
@@ -13,6 +12,7 @@ import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.HashMap;
 
@@ -56,7 +56,7 @@ public class FlexiButton extends ImageButton {
 
     @Override
     public void playDownSound(SoundManager handler) {
-        handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1));
+        SoundHelpers.uiSound(SoundReg.SELECT.get());
     }
 
     @Override

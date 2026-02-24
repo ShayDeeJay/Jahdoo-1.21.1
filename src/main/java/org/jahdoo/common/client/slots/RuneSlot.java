@@ -1,5 +1,6 @@
 package org.jahdoo.common.client.slots;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -13,15 +14,19 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
+import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.RuneReg;
+import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.DEFAULT_SLOTS;
+import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.MODIFICATION_SLOTS;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getCostFromRune;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
@@ -74,11 +79,11 @@ public class RuneSlot extends SlotItemHandler {
         var getData = getAllSlots.get(JAHDOO_GEAR_DATA);
 
         if (getData != null) {
-            var index = new AtomicInteger(4);
+            var index = DEFAULT_SLOTS + MODIFICATION_SLOTS;
             var list = new ArrayList<ItemStack>();
             for (ItemStack ignored : getData.runeSlots()) {
-                list.add(this.entity.getInputItemHandler().getStackInSlot(index.get()));
-                index.set(index.get() + 1);
+                list.add(this.entity.getInputItemHandler().getStackInSlot(index));
+                index++;
             }
             JahdooGearData.updateRuneSlots(getAllSlots, list);
         }
@@ -101,8 +106,14 @@ public class RuneSlot extends SlotItemHandler {
             var hasCoins = canPurchase(removeCurrencyCost(getItem()), player);
             if(canRemove && hasCoins) {
                 runeTable.checkAndChargeCores(coreCost, true);
-                purchase(convertToCoins(removeCurrencyCost(getItem())), player);
-                return super.tryRemove(count, decrement, player);
+                if(!player.level().isClientSide){
+                    if(player instanceof ServerPlayer serverPlayer){
+                        var coinCost = removeCurrencyCost(getItem());
+                        purchaseWithConverter(convertToCoins(coinCost), serverPlayer);
+                        sendToPlayer(serverPlayer, new WalletSyncS2CP(PlayerWallet.getWalletValue(serverPlayer)));
+                        return super.tryRemove(count, decrement, player);
+                    }
+                }
             } else {
                 SoundHelpers.getSoundWithPosition(player.level(), runeTable.getBlockPos(), SoundReg.REJECT.get(), SoundSource.BLOCKS, 0.4F, 1F);
             }

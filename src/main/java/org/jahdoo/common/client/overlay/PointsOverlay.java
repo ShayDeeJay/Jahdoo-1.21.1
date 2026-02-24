@@ -12,9 +12,8 @@ import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
-
-import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 
 public class PointsOverlay extends AbstractTimedOverlay {
     int points;
@@ -42,8 +41,7 @@ public class PointsOverlay extends AbstractTimedOverlay {
             if(round >= round1) fadeIn = minFadeIn;
             if(difference != 0 && points != 0) {
                 timer = 100;
-                var soundManager = ClientHelpers.getMinecraft().getSoundManager();
-                soundManager.play(forUI(SoundReg.INCREASE_SCORE.get(), 1.2F, 1));
+                SoundHelpers.uiSound(SoundReg.SELECT.get(), 1.2F);
             }
 
             difference = exp - points;

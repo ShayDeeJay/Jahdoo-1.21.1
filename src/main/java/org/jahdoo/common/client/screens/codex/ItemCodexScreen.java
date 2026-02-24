@@ -101,7 +101,8 @@ public class ItemCodexScreen extends Screen {
         pose.scale(scale, scale, scale);
         var y1 = y + 30;
         var x1 = x + 54;
-        graphics.drawString(font, TextHelpers.withStyleComponentTrans(codec.getDescriptionId(), uiColour()), x1, y1 -2, -1);
+        var color = codec.getHoverName().getStyle().getColor();
+        graphics.drawString(font, TextHelpers.withStyleComponentTrans(codec.getDescriptionId(), color == null ? uiColour() : color.getValue()), x1, y1 -2, -1);
         pose.popPose();
     }
 
@@ -153,7 +154,6 @@ public class ItemCodexScreen extends Screen {
             var sharedY = 20;
             var sharedX = 2;
 
-            var text = TextHelpers.withStyleComponentTrans(others.component1(), ColourHelpers.getSubHeaderColour());
             graphics.pose().pushPose();
             graphics.pose().scale(2, 2, 2);
             graphics.drawCenteredString(minecraft.font, "Recipe", 35 + sharedX/2, 68 + sharedY/2, ElementReg.utility().partColourB());

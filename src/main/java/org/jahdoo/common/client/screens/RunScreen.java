@@ -241,7 +241,8 @@ public class RunScreen extends AbstractPanableScreen {
         if(!stat.isEmpty()){
             var completed = runData.isCompletedQuest();
             var statusColour = completed ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed();
-            allComponents.add(new StatEntry(componentTemplate("Quest Type", QuestReg.getQuestByName(stat).get().getDisplayName(), ColourHelpers.getRating5Green()), null));
+            var questByName = QuestReg.getQuestByName(stat);
+            questByName.ifPresent(abstractQuest -> allComponents.add(new StatEntry(componentTemplate("Quest Type", abstractQuest.getDisplayName(), ColourHelpers.getRating5Green()), null)));
             allComponents.add(new StatEntry(componentTemplate("Quest Status", (completed ? "Completed" : "Failed"), statusColour), null));
         }
 

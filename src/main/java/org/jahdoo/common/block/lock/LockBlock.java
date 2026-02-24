@@ -120,7 +120,6 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        System.out.println("imim");
         return super.useWithoutItem(state, level, pos, player, hitResult);
     }
 

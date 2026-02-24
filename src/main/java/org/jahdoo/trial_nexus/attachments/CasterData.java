@@ -667,7 +667,6 @@ public class CasterData implements IAttachment {
 
     public static boolean isNewLoadout(LivingEntity livingEntity){
         var data = livingEntity.getData(CASTER_DATA);
-        System.out.println(data.loadoutIndex);
         return data.loadoutIndex == -1 && data.refundableSkillPoints == data.abilityPoints;
     }
 

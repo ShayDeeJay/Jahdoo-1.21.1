@@ -41,21 +41,9 @@ public record JahdooGearData(
         return new JahdooGearData(runeSlots, repairSlots, refinementPotential);
     }
 
-    public static boolean canRepair(ItemStack itemStack){
+    public static int totalRepairSlots(ItemStack itemStack){
         var holder = getGearData(itemStack);
-        return holder.repairSlots.contains(1);
-    }
-
-    public static void checkAndRepair(ItemStack itemStack){
-        var holder = getGearData(itemStack);
-        var originalSlots = new ArrayList<>(holder.repairSlots);
-        var hasRepairSlots = originalSlots.contains(1);
-
-        if(hasRepairSlots) {
-            var index = originalSlots.indexOf(1);
-            originalSlots.set(index, 0);
-            updateRepairSlots(itemStack, originalSlots);
-        }
+        return holder.repairSlots.size();
     }
 
     public static int totalRepairs(ItemStack itemStack){

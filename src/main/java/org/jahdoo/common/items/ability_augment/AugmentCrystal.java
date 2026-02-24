@@ -48,7 +48,6 @@ public class AugmentCrystal extends BaseItem implements ICurioItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var itemStack = player.getItemInHand(usedHand);
         var bouncyFoot = AttributeReg.CHAINED_SEMTEX;
-//        System.out.println(player.level());
         replaceOrAddAttribute(itemStack, bouncyFoot.getRegisteredName(), bouncyFoot, 1, EquipmentSlot.BODY, true, "bonus");
         return super.use(level, player, usedHand);
     }

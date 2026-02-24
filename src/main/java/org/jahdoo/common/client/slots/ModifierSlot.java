@@ -1,11 +1,14 @@
 package org.jahdoo.common.client.slots;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jahdoo.common.block.divine_forge.DivineForgeMenu;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
+
+import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.MODIFICATION_SLOTS;
 
 public class ModifierSlot extends SlotItemHandler {
 
@@ -50,11 +53,14 @@ public class ModifierSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack itemStack) {
-        var hideModifierSlot = menu.hideModifierSlot;
-        System.out.println(hideModifierSlot);
-        return itemStack.is(ItemReg.SEAL_OF_CHANGE) && hideModifierSlot;
+        var ind = index - MODIFICATION_SLOTS;
+        var isSealAndIsInMenu = itemStack.is(ItemReg.SEAL_OF_CHANGE) && menu.hideModifierSlot;
+        var isBlueprintSeal = !itemStack.has(DataComponents.CUSTOM_MODEL_DATA) && ind == 0;
+
+        var customModelData = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
+        var isValidType = customModelData != null && customModelData.value() == ind;
+
+        return isSealAndIsInMenu && isBlueprintSeal || isValidType;
     }
-
-
 
 }

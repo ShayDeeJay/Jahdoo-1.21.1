@@ -5,12 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
 import org.shaydee.shaydeeapi.helpers.ClientHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import javax.annotation.Nullable;
 
@@ -75,7 +75,7 @@ public class AbilityScreenButton extends ImageButton {
 
     @Override
     public void playDownSound(SoundManager handler) {
-        handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1));
+        SoundHelpers.uiSound(SoundReg.SELECT.get());
     }
 
     @Override

@@ -20,7 +20,6 @@ public class Experience extends AbstractLevelBoon {
     @Override
     public void execute(ServerLevel level, double value) {
         for (var player : level.players()) {
-            System.out.println(player.getName());
             RunData.addExperienceToTotal((int) value, player);
         }
     }

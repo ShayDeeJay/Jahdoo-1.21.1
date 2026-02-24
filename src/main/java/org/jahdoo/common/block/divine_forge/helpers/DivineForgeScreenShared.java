@@ -8,18 +8,71 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.common.block.divine_forge.DivineForgeMenu;
+import org.jahdoo.common.block.divine_forge.DivineForgeScreen;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.slots.CoreItemSlot;
+import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 
 import java.util.List;
 
-import static org.jahdoo.common.block.divine_forge.DivineForgeScreen.groupFade;
+import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
 import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 
 public class DivineForgeScreenShared {
+
+    public static int groupFade() {
+        return fadeBlack(0.7f);
+    }
+
+    public static void tooltipSlots(List<Component> hoverTooltip, Slot hoveredSlot, ItemStack carried) {
+        if(hoveredSlot != null && hoveredSlot.getItem().isEmpty() && carried.isEmpty() && hoveredSlot instanceof CoreItemSlot generalItemSlot){
+            var defaultInstance = generalItemSlot.getSlotType().getDefaultInstance();
+            CoreData.setFilled(defaultInstance);
+            hoverTooltip.add(defaultInstance.getHoverName());
+        }
+    }
+
+    public static void hoverCarried(GuiGraphics guiGraphics, int x, int y, Slot hoveredSlot, DivineForgeMenu runeTableMenu, Minecraft minecraft){
+        var carried = hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? runeTableMenu.getCarried() : hoveredSlot.getItem();
+        var isRuneSlot = hoveredSlot instanceof RuneSlot;
+        var isNonRuneSlot = !carried.isEmpty() && !isRuneSlot;
+        var isRuneWithShift = isRuneSlot && ClientHelpers.isKeyDown(KEY_LSHIFT);
+
+        if (isNonRuneSlot || isRuneWithShift) {
+            guiGraphics.renderTooltip(minecraft.font, carried, x, y);
+        }
+    }
+
+    public static void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY, Screen screen, int borderColour) {
+        guiGraphics.pose().popPose();
+        var i = 40;
+
+        guiGraphics.pose().translate(0,0,20);
+        var startX1 = startX + i + 3;
+
+        boxMaker(guiGraphics, startX1 + 11, startY - 5, 86, 43, borderColour, groupFade());
+        renderInventoryBackground(guiGraphics, screen, 256, 24, true);
+        guiGraphics.pose().pushPose();
+    }
+
+    public static void sharedGearData(DivineForgeScreen divineForgeScreen, @NotNull GuiGraphics guiGraphics, ItemStack getItem, int i, int i1) {
+        var gearDataX = i - 37;
+        var gearDataY = i1 - 85;
+        var getFont = divineForgeScreen.getMinecraft().font;
+
+        getPotentialComponent(getItem, (s) -> guiGraphics.drawString(getFont, s, gearDataX, gearDataY + 2, 0));
+
+        if(divineForgeScreen.isRepairManager()){
+            guiGraphics.drawString(getFont, appendDurability(getItem), gearDataX, gearDataY + 14, -1);
+            getRepairSlotsComponent(getItem, (s) -> guiGraphics.drawString(getFont, s, gearDataX, gearDataY + 26, -1));
+        }
+    }
 
     public static void renderItem(
         GuiGraphics guiGraphics,
@@ -83,27 +136,6 @@ public class DivineForgeScreenShared {
 
         guiGraphics.disableScissor();
         guiGraphics.pose().popPose();
-    }
-
-
-    public static void tooltipSlots(List<Component> hoverTooltip, Slot hoveredSlot, ItemStack carried) {
-        if(hoveredSlot != null && hoveredSlot.getItem().isEmpty() && carried.isEmpty() && hoveredSlot instanceof CoreItemSlot generalItemSlot){
-            var defaultInstance = generalItemSlot.getSlotType().getDefaultInstance();
-            CoreData.setFilled(defaultInstance);
-            hoverTooltip.add(defaultInstance.getHoverName());
-        }
-    }
-
-    public static void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY, Screen screen, int borderColour) {
-        guiGraphics.pose().popPose();
-        var i = 40;
-
-        guiGraphics.pose().translate(0,0,20);
-        var startX1 = startX + i + 3;
-
-        boxMaker(guiGraphics, startX1 + 11, startY - 5, 86, 43, borderColour, groupFade());
-        renderInventoryBackground(guiGraphics, screen, 256, 24, true);
-        guiGraphics.pose().pushPose();
     }
 
 

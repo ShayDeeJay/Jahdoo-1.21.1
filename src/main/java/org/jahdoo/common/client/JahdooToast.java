@@ -4,12 +4,12 @@ import net.minecraft.advancements.AdvancementType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 public class JahdooToast implements Toast {
 
@@ -54,8 +54,7 @@ public class JahdooToast implements Toast {
         if (!this.playedSound && timeSinceLastVisible > 0L) {
             this.playedSound = true;
             if (type == AdvancementType.CHALLENGE) {
-                var soundInstance = SimpleSoundInstance.forUI(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0F, 1.0F);
-                toastComponent.getMinecraft().getSoundManager().play(soundInstance);
+                SoundHelpers.uiSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
             }
         }
 

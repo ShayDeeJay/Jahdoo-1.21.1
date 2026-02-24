@@ -22,7 +22,8 @@ import static org.jahdoo.trial_nexus.attachments.PlayerWallet.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToWallet;
 
-public class WalletOverlay extends AbstractTimedOverlay {
+public class
+WalletOverlay extends AbstractTimedOverlay {
     private int previousWallet;
 
     public static int canPurchase(CurrencyConverter wallet, CurrencyConverter currencyConverter) {
@@ -121,7 +122,7 @@ public class WalletOverlay extends AbstractTimedOverlay {
             var cantPurchase = canPurchase(wallet, currencyConverter) <= 0;
             if(cantPurchase){
                 var comp = TextHelpers.withStyleComponent("Insufficient Funds!", ColourHelpers.getNegativeRed());
-                graphics.drawString(minecraft.font, comp, getX + 15, getY + (isHorizontal ? 36 : 84) + spacer, -1, false);
+                graphics.drawString(minecraft.font, comp, getX + 5, getY + (isHorizontal ? 36 : 86) + spacer, -1, false);
             }
         }
 

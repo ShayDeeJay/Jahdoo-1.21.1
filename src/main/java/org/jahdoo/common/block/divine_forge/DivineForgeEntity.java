@@ -19,13 +19,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
-import static org.jahdoo.common.block.wand_manager.WandManagerEntity.ADDITIONAL_RUNE_SLOTS;
-import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLOTS;
-
 public class DivineForgeEntity extends AbstractBEInventory implements MenuProvider {
 
     public ArmorStand stand;
-    public static final int MODIFICATION_SLOT = 12;
+
+    public static final int DEFAULT_SLOTS = 4;
+    public static final int MODIFICATION_SLOTS = 4;
+    public static final int ADDITIONAL_RUNE_SLOTS = 12;
 
     public DivineForgeEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);
@@ -45,7 +45,6 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
         var handler = this.getInputItemHandler();
         for (int i = 0; i < handler.getSlots(); i++){
             var runeTableItem = handler.getStackInSlot(i);
-
             if(runeTableItem.getItem().equals(item)){
                 if(charge){
                     handler.getStackInSlot(i).shrink(1);
@@ -72,12 +71,12 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
     }
 
     public ItemStack getModificationSlot(){
-        return getInputItemHandler().getStackInSlot(MODIFICATION_SLOT);
+        return getInputItemHandler().getStackInSlot(MODIFICATION_SLOTS);
     }
 
     @Override
     public int setInputSlots() {
-        return DEFAULT_SLOTS + ADDITIONAL_RUNE_SLOTS;
+        return DEFAULT_SLOTS + MODIFICATION_SLOTS + ADDITIONAL_RUNE_SLOTS;
     }
 
     @Override

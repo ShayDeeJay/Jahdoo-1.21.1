@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.button.QuestLogButton;
@@ -17,6 +16,7 @@ import org.jahdoo.trial_nexus.attachments.QuestTracker;
 import org.jahdoo.trial_nexus.tasks.AbstractTask;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
@@ -104,8 +104,8 @@ public class QuestLogScreen extends AbstractPanableScreen {
 
     private void claimReward(String id, List<ItemStack> rewards){
         sendToServer(new QuestTrackerC2SP(id));
-        getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundReg.QUEST_COMPLETE, 1));
-        getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 0.6F));
+        SoundHelpers.uiSound(SoundReg.QUEST_COMPLETE.get());
+        SoundHelpers.uiSound(SoundEvents.PLAYER_LEVELUP, 0.6F);
         for (var reward : rewards) sendToServer(new GivePlayerItemsC2SP(reward));
     }
 

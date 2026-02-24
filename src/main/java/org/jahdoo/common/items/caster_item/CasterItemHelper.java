@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -24,6 +25,7 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -51,9 +53,13 @@ public class CasterItemHelper {
         var wandData = gearItem.get(JAHDOO_GEAR_DATA);
         if(wandData == null) return;
 
-        var slot = TextHelpers.withStyleComponent(String.valueOf(wandData.refinementPotential()), ColourHelpers.getDiamondBox());
-        var append = TextHelpers.withStyleComponent("Potential: ", ColourHelpers.getSubHeaderColour()).copy().append(slot);
+        var append = getPotentialComponent(wandData.refinementPotential());
         render.accept(append);
+    }
+
+    public static @NotNull MutableComponent getPotentialComponent(int value) {
+        var slot = TextHelpers.withStyleComponent(String.valueOf(value), ColourHelpers.getDiamondBox());
+        return TextHelpers.withStyleComponent("Potential: ", ColourHelpers.getSubHeaderColour()).copy().append(slot);
     }
 
     public static Component appendDurability(ItemStack wandItem) {

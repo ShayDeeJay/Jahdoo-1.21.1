@@ -5,10 +5,10 @@
   "item.jahdoo.enchanted_diamond": "Enchanted Diamond",
 
   "item.jahdoo.essence_fragment": "Essence Fragment",
-  "item.jahdoo.bronze": "Bronze %s",
-  "item.jahdoo.silver": "Silver %s",
-  "item.jahdoo.gold": "Gold %s",
-  "item.jahdoo.platinum": "Platinum %s",
+  "item.jahdoo.bronze": "Bronze%s",
+  "item.jahdoo.silver": "Silver%s",
+  "item.jahdoo.gold": "Gold%s",
+  "item.jahdoo.platinum": "Platinum%s",
   "item.jahdoo.coin": "Coin",
   "item.jahdoo.nexite_powder": "Nexite Essence",
   "item.jahdoo.augment_core": "Hollow Basic Core",
@@ -148,7 +148,9 @@
   "augmentHelper.jahdoo.discover": "Right-click to discover",
   "augmentHelper.jahdoo.hold_details": "Hold %s For Details",
   "augmentHelper.jahdoo.hotkey": "[i]",
-  "augmentHelper.jahdoo.shift": "[Ctrl]",
+  "augmentHelper.jahdoo.ctrl": "[Ctrl]",
+  "augmentHelper.jahdoo.shift": "[Shift]",
+
   "augmentHelper.jahdoo.attributes": "%s Unique Attributes %s",
 
   "jahdoo.configuration.customUI": "Enable Custom UI",

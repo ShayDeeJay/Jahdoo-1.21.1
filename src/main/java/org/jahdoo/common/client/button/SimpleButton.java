@@ -4,11 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker2;
@@ -47,7 +47,7 @@ public class SimpleButton extends ImageButton {
 
     @Override
     public void playDownSound(SoundManager handler) {
-        handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1));
+        SoundHelpers.uiSound(SoundReg.SELECT.get());
     }
 
     @Override

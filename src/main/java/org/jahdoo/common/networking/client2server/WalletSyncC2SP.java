@@ -5,10 +5,13 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
+import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
-import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 
 public class WalletSyncC2SP implements CustomPacketPayload {
     public static final Type<WalletSyncC2SP> TYPE = new Type<>(JahdooHelpers.res("sync_server_wallet"));
@@ -35,13 +38,17 @@ public class WalletSyncC2SP implements CustomPacketPayload {
                 @Override
                 public void run() {
                     if(ctx.player() instanceof ServerPlayer serverPlayer) {
-                        var getWallet = serverPlayer.getData(PLAYER_WALLET_DATA);
-                        getWallet.setWallet(wallet);
+                        PlayerWallet.updateWallet(serverPlayer, wallet);
+                        sendToPlayer(serverPlayer, new WalletSyncS2CP(wallet));
                     }
                 }
             }
         );
         return true;
+    }
+
+    public static void sendWallet(int value){
+        PacketDistributor.sendToServer(new WalletSyncC2SP(value));
     }
 
     @Override

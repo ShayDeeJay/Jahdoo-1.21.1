@@ -11,11 +11,13 @@ import net.minecraft.world.level.Level;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
+
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties.*;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 
 public class CoinSack extends Item implements JahdooItem {
     public CoinSack() {
@@ -48,14 +50,15 @@ public class CoinSack extends Item implements JahdooItem {
     }
 
     public static void coinToolTip(List<Component> tooltipComponents, int coins) {
-        var asWallet = PlayerWallet.CurrencyConverter.convertToCoins(coins);
+        var asWallet = CurrencyConverter.convertToCoins(coins);
+
         if (asWallet.platinum() > 0)
-            tooltipComponents.add(TextHelpers.withStyleComponent("Platinum: " + asWallet.platinum(), ColourHelpers.getPlatinumCoin()));
+            tooltipComponents.add(TextHelpers.withStyleComponentTrans(PLATINUM.getRaw(), PLATINUM.getTextColour(), ": " + asWallet.platinum()));
         if (asWallet.gold() > 0)
-            tooltipComponents.add(TextHelpers.withStyleComponent("Gold: " + asWallet.gold(), ColourHelpers.getGoldCoin()));
+            tooltipComponents.add(TextHelpers.withStyleComponentTrans(GOLD.getRaw(), GOLD.getTextColour(), ": " + asWallet.gold()));
         if (asWallet.silver() > 0)
-            tooltipComponents.add(TextHelpers.withStyleComponent("Silver: " + asWallet.silver(), ColourHelpers.getSilverCoin()));
+            tooltipComponents.add(TextHelpers.withStyleComponentTrans(SILVER.getRaw(), SILVER.getTextColour(), ": " + asWallet.silver()));
         if (asWallet.bronze() > 0)
-            tooltipComponents.add(TextHelpers.withStyleComponent("Bronze: " + asWallet.bronze(), ColourHelpers.getBronzeCoin()));
+            tooltipComponents.add(TextHelpers.withStyleComponentTrans(BRONZE.getRaw(), BRONZE.getTextColour(), ": " + asWallet.bronze()));
     }
 }

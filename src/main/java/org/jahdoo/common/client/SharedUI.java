@@ -435,12 +435,13 @@ public class SharedUI {
         var centerX = sharedScreenWidth / 2;
         var centerY = shareScreenHeight / 2;
 
+        var i1 = 80;
         if (totalSlots <= 4) {
             int startX = centerX - (totalSlots - 1) * xSpacing / 2; // Center the row
 
             for (int i = 0; i < totalSlots; i++) {
                 int slotX = startX + i * xSpacing;
-                slotAction.accept(slotX + 80, centerY + 50, i);
+                slotAction.accept(slotX + i1, centerY + 50, i);
             }
 
         } else {
@@ -463,7 +464,7 @@ public class SharedUI {
                     slotY = startYBottomRow;
                 }
 
-                slotAction.accept(slotX + 80, slotY + 55, i);
+                slotAction.accept(slotX + i1, slotY + 55, i);
             }
         }
     }

@@ -118,8 +118,6 @@ public class AugmentScreen extends Screen  {
             (e, v) -> {
                 var value = getModifierContextSingle(e, MathHelpers.roundNonWholeString(v.setValue()), 1).getString();
                 if(e.contains("Toggle")){
-//                    System.out.println(e);
-//                    System.out.println(v.);
                     if(v.actualValue() == v.highestValue()){
                         buildBooleanComponent(this.width / 2 - 70, verticalSpacing.get() - 8, e, () -> buttonReduce(e, v), () -> buttonIncrease(e, v), value);
                         verticalSpacing.set(verticalSpacing.get() + 36);

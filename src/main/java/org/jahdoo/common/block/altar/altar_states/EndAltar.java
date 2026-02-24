@@ -71,8 +71,6 @@ public class EndAltar {
         var clearedRooms = data.getClearedRooms();
         var interval = InstanceDifficulty.getFromLevel(data).getSanctumIntervals();
 
-        System.out.println(clearedRooms);
-        System.out.println(interval);
         if(clearedRooms % interval == 0){
             BlockSetupManager.setPerkTable(serverLevel, pos, 4);
             return;

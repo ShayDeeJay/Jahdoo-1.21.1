@@ -32,14 +32,18 @@ public class CoreItem extends Item implements JahdooItem{
     public Component getName(ItemStack stack) {
         var level = Minecraft.getInstance().level;
         if(level == null) return Component.empty();
-        var tick = level.getGameTime();
+
         var isFilled = !stack.has(ComponentReg.CORE_DATA);
+        var coreColour = getCoreColour(level.getGameTime());
+        var filledColour = isFilled ? coreColour : ColourHelpers.getColourDarker(coreColour, 2F);
+
+        return TextHelpers.withStyleComponent(super.getName(stack).getString(), filledColour);
+    }
+
+    public static int getCoreColour(long tick){
         var color = color(233, 132, 148);
         var color1 = color(234, 144, 248);
-        var colour = getColorTransition(color, color1, (int) tick, 50);
-        var string = super.getName(stack).getString();
-        var filledColour = isFilled ? colour : color(182, 156, 180);
-        return TextHelpers.withStyleComponent(string, filledColour);
+        return getColorTransition(color, color1, (int) tick, 50);
     }
 
     @Override

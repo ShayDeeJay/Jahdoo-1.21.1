@@ -124,7 +124,7 @@ public class RecoveryReceipt extends BaseItem {
                 for (var itemStack : content.items()) ItemHelpers.throwNewItem(player, itemStack);
 
                 player.playSound(SoundReg.COINBOX_OPEN.get(), 1, 1.8F);
-                purchase(getPrice.getSecond(), player);
+                purchaseWithConverter(getPrice.getSecond(), player);
                 stack.shrink(1);
                 player.stopUsingItem();
             }

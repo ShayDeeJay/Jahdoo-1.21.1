@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
-public class Seals extends BaseJahdooItem{
+public class Seals extends BaseJahdooItem {
 
     public Seals() {
         super(new Properties());

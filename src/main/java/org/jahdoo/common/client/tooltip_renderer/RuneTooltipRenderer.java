@@ -69,13 +69,13 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
 
         for (int i = 0; i < this.component.runes.size(); i++) {
             int size = 15;
-            gfx.blit(Icons.GUI_GENERAL_SLOT, x-1, y + this.spacing * i - 1, 0, 0, 0, size, size, size, size);
+            gfx.blit(Icons.GUI_RUNE_SLOT, x-1, y + this.spacing * i - 1, 0, 0, 0, size, size, size, size);
         }
 
         for (ItemStack inst : this.component.runes()) {
             pose.pushPose();
             pose.scale(0.5F, 0.5F, 1);
-            gfx.renderFakeItem(inst, 2 * x + 5, (2 * y + 5));
+            gfx.renderItem(inst, 2 * x + 5, (2 * y + 5));
             pose.popPose();
             y += this.spacing;
         }

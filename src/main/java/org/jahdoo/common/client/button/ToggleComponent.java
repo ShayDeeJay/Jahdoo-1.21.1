@@ -11,6 +11,7 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.registers.SoundReg;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static org.jahdoo.common.client.Icons.*;
@@ -174,7 +175,7 @@ public class ToggleComponent  {
         return new AbilityScreenButton(posX, posY, button, size, action, active, location, "", scale, showHover, isDummy, locked, hasDependency, isSkill) {
 
             public void playDownSound(SoundManager handler) {
-                if(!locked) handler.play(forUI(SoundReg.SELECT, 1F));
+                if(!locked) SoundHelpers.uiSound(SoundReg.SELECT.get());
             }
 
             public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {

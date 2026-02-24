@@ -948,7 +948,7 @@ public class EventHelpers {
             var s = jahdooItem.descriptionId();
             if(s != null && !Component.translatable(s).getString().equals(s)){
 
-                var hotkey = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.shift", ColourHelpers.getPerkGreen());
+                var hotkey = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.ctrl", ColourHelpers.getPerkGreen());
                 var holdToInfo = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", ColourHelpers.getHeaderColour(), hotkey);
                 var loading = "█".repeat(Math.min(toolTipTimer / 20, 5));
 

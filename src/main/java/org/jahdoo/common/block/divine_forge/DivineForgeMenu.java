@@ -6,6 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.common.client.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.CoreItemSlot;
 import org.jahdoo.common.client.slots.ModifierSlot;
@@ -17,8 +18,7 @@ import org.jahdoo.common.registers.MenuReg;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
-import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.MODIFICATION_SLOT;
-import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLOTS;
+import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.*;
 import static org.jahdoo.common.client.SharedUI.getCore;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
 
@@ -55,7 +55,7 @@ public class DivineForgeMenu extends AbstractInternalContainer  {
     @Override
     protected int getAllSlots() {
         int size = JahdooGearData.getGearData(tableEntity().getItem().getStackInSlot(0)).runeSlots().size();
-        return size + DEFAULT_SLOTS -1;
+        return DEFAULT_SLOTS + MODIFICATION_SLOTS + size;
     }
 
     public void switchModifierVisibility(boolean switchC) {
@@ -67,41 +67,47 @@ public class DivineForgeMenu extends AbstractInternalContainer  {
     }
 
     public void addSlots() {
-        insertModificationSlot();
         insertAugmentSlots();
+        insertModificationSlot();
         insertRuneSlots();
-    }
-
-    private void insertModificationSlot() {
-        var spacer = 0;
-        for(int i = 0; i < 4; i++){
-            this.addSlot(new ModifierSlot(tableEntity().getInputItemHandler(), MODIFICATION_SLOT+i, posX + 30 + spacer, posY - 78, this));
-            spacer += 32;
-        }
     }
 
     private void insertAugmentSlots() {
         var spacer = 0;
-        for (int i = 1; i < 4; i ++){
+        for (int i = 1; i < DEFAULT_SLOTS; i ++){
             this.addSlot(new CoreItemSlot(tableEntity().getInputItemHandler(), i, posX - 75, posY + spacer - 96, getCore().get(i-1)));
             spacer += 28;
         }
     }
 
-    private void insertRuneSlots() {
+    private void insertModificationSlot() {
+        var spacer = 0;
+        for(int i = 0; i < MODIFICATION_SLOTS; i++){
+            this.addSlot(new ModifierSlot(tableEntity().getInputItemHandler(), i + MODIFICATION_SLOTS, posX + 30 + spacer, posY - 73, this));
+            spacer += 32;
+        }
+    }
+
+    public void insertRuneSlots() {
         var getAllSlots = this.tableEntity().getItem().getStackInSlot(0);
         var getData = JahdooGearData.getGearData(getAllSlots);
         var iHandler = tableEntity().getInputItemHandler();
-        var indexOne = 4;
+        var indexOne = DivineForgeEntity.DEFAULT_SLOTS + DivineForgeEntity.MODIFICATION_SLOTS;
+
         for (ItemStack itemStack : getData.runeSlots()) {
             iHandler.setStackInSlot(indexOne, itemStack);
             indexOne++;
         }
 
         handleSlotsInGridLayout(
-            (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX - 3, slotY - posY + 90, this.tableEntity(), this, 1)),
-            getData.runeSlots().size(), 0,0, offSetX, offSetY
+            (slotX, slotY, index) -> getAddSlot(slotX, slotY, index, iHandler),
+            getData.runeSlots().size(), 0, 0, offSetX - 6, offSetY - 2
         );
+    }
+
+    private void getAddSlot(Integer slotX, Integer slotY, Integer index, ItemStackHandler iHandler) {
+        var slot = new RuneSlot(iHandler, index + 8, slotX + posX - 3, slotY - posY + 90, this.tableEntity(), this, 1);
+        this.addSlot(slot);
     }
 
     @Override

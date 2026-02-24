@@ -125,10 +125,13 @@ public class PlayerWallet implements IAttachment {
             return new CurrencyConverter(0, 0, 0, bronze);
         }
 
-        public static void purchase(CurrencyConverter converter, Player player) {
+        public static void purchaseWithConverter(CurrencyConverter converter, Player player) {
+            updateWallet(player, purchase(converter, player));
+        }
+
+        public static int purchase(CurrencyConverter converter, Player player) {
             var wallet = PlayerWallet.getWalletValue(player);
-            var walletAfterPurchase = wallet - convertToWallet(converter);
-            updateWallet(player, walletAfterPurchase);
+            return wallet - convertToWallet(converter);
         }
 
         public static boolean checkAndPurchase(CurrencyConverter converter, Player player) {
@@ -218,6 +221,10 @@ public class PlayerWallet implements IAttachment {
             return location;
         }
 
+        public String getRaw(){
+            return name;
+        }
+
         public String getName() {
             var suffix = TextHelpers.withStyleComponentTrans("item.jahdoo.coin", -1);
             return TextHelpers.withStyleComponentTrans(name, -1 , suffix).getString();
@@ -225,7 +232,7 @@ public class PlayerWallet implements IAttachment {
 
         @Override
         public String getSerializedName() {
-            return TextHelpers.withStyleComponentTrans(this.name, -1).getString();
+            return TextHelpers.withStyleComponentTrans(this.name, -1, "").getString();
         }
 
         public static CoinProperties getType (int value) {

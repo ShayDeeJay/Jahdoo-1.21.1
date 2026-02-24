@@ -113,6 +113,9 @@ public class Icons {
     public static final ResourceLocation REPAIR =
         texture(PREFIX + "repair");
 
+    public static final ResourceLocation RUNE =
+        texture(PREFIX + "rune");
+
     public static final ResourceLocation DATA =
         texture(PREFIX + "data");
 
@@ -304,6 +307,9 @@ public class Icons {
 
     public static final ResourceLocation GUI_GENERAL_SLOT =
         texture(BUTTON_PREFIX + "gui_general_slot");
+
+    public static final ResourceLocation GUI_RUNE_SLOT =
+        texture(BUTTON_PREFIX + "gui_rune_slot");
 
     public static final ResourceLocation GUI_AUGMENT_SLOT =
         texture(SLOTS_PREFIX + "slot_v2");

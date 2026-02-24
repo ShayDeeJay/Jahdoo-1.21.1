@@ -4,7 +4,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
-import org.jahdoo.common.components.CoreData;
 import org.jetbrains.annotations.NotNull;
 
 public class CoreItemSlot extends SlotItemHandler {
@@ -55,7 +54,6 @@ public class CoreItemSlot extends SlotItemHandler {
     @Override
     public boolean mayPlace(@NotNull ItemStack itemStack) {
         var isCorrectCore = this.item != null && itemStack.is(this.item);
-        var isFullCore = CoreData.isFull(itemStack);
         return (isCorrectCore) && isActive;
     }
 
