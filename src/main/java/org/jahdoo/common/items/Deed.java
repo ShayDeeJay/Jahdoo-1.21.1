@@ -38,7 +38,7 @@ public class Deed extends BaseJahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var itemInHand = player.getItemInHand(usedHand);
         if(level instanceof ServerLevel serverLevel){
-            var blockPos = new BlockPos(0, 90, 0);
+            var blockPos = new BlockPos(0, 90, 1);
             var pos = blockPos.getCenter();
             if(player instanceof  ServerPlayer serverPlayer){
                 var findLevel = LevelGenerator.findLevel(LevelGenerator.getPlayerHome(player), serverLevel);
@@ -48,7 +48,6 @@ public class Deed extends BaseJahdooItem {
                     var transition = LevelGenerator.generateNewHome(serverLevel, player, blockPos);
                     var nLevel = transition.newLevel();
                     ItemHelpers.throwOrAddItem(player, new ItemStack(ModItems.warpStone));
-//                    serverPlayer.teleportTo(nLevel, pos.x, pos.y, pos.z, 180, 0);
 
                     serverPlayer.setRespawnPosition(nLevel.dimension(), blockPos, 0, false, false);
                 }

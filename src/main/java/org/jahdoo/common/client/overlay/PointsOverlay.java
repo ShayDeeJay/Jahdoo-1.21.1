@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
@@ -32,7 +33,7 @@ public class PointsOverlay extends AbstractTimedOverlay {
         var font = minecraft.font;
         var size = 18;
         var runData = RunData.getRunData(player);
-        var exp = runData.getStat(RunData.EXPERIENCE);
+        var exp = runData.getStat(StatEntryReg.EXPERIENCE.get().id());
 
         if(points != exp) {
             var round = Math.round(fadeIn);

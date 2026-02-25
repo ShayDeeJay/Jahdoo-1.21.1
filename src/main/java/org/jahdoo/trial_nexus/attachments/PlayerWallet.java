@@ -227,7 +227,7 @@ public class PlayerWallet implements IAttachment {
 
         public String getName() {
             var suffix = TextHelpers.withStyleComponentTrans("item.jahdoo.coin", -1);
-            return TextHelpers.withStyleComponentTrans(name, -1 , suffix).getString();
+            return TextHelpers.withStyleComponentTrans(name, -1 , " " + suffix.getString()).getString();
         }
 
         @Override

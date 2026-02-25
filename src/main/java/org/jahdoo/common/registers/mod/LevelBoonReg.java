@@ -120,17 +120,17 @@ public class LevelBoonReg {
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> HEALTH =
         registerElement(MobHealth::new);
 
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> ARMOR =
+        registerElement(MobArmor::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> DAMAGE =
+        registerElement(MobDamage::new);
+
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> SPEED =
         registerElement(MobSpeed::new);
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> KNOCKBACK =
         registerElement(MobKnockback::new);
-
-    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> DAMAGE =
-        registerElement(MobDamage::new);
-
-    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> ARMOR =
-        registerElement(MobArmor::new);
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> HORDE =
         registerElement(Horde::new);
@@ -148,20 +148,17 @@ public class LevelBoonReg {
         registerElement(InfernoCreeper::new);
 
     //Positive
-    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> ORE_MULTIPLIER =
-        registerElement(OreMultiplier::new);
-
-    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> LOOT_POT_MULTIPLIER =
-        registerElement(LootPotMultiplier::new);
-
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> TIME =
         registerElement(Time::new);
 
-    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> BRONZE_COIN =
-        registerElement(BronzeCoins::new);
-
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> TRAIL_EXPERIENCE =
         registerElement(Experience::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> QUEST_MULTIPLIER =
+        registerElement(QuestLootMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> BRONZE_COIN =
+        registerElement(BronzeCoins::new);
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> SILVER_COIN =
         registerElement(SilverCoins::new);
@@ -169,11 +166,11 @@ public class LevelBoonReg {
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> GOLD_COIN =
         registerElement(GoldCoins::new);
 
-    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> QUEST_MULTIPLIER =
-        registerElement(QuestLootMultiplier::new);
-
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> SAFE_LOOT_MULTIPLIER =
         registerElement(SafeLootMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> LOOT_POT_MULTIPLIER =
+        registerElement(LootPotMultiplier::new);
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> COMMON_LOOT_MULTIPLIER =
         registerElement(CommonLootMultiplier::new);
@@ -186,6 +183,9 @@ public class LevelBoonReg {
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> MYTHIC_LOOT_MULTIPLIER =
         registerElement(MythicLootMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> ORE_MULTIPLIER =
+        registerElement(OreMultiplier::new);
 
     public static void register(IEventBus eventBus) {
         LEVEL_BOON.register(eventBus);

@@ -22,6 +22,7 @@ public class Seals extends BaseJahdooItem {
 
         return switch (value.value()){
             case 2 -> TextHelpers.withStyleComponentTrans("item.jahdoo.seal_of_rejuvenation", -1);
+            case 3 -> TextHelpers.withStyleComponentTrans("item.jahdoo.seal_of_reinforcement", -1);
             default -> TextHelpers.withStyleComponentTrans("item.jahdoo.seal_of_repair", -1);
         };
     }

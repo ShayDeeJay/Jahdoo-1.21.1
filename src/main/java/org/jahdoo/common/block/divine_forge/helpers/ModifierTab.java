@@ -1,9 +1,11 @@
 package org.jahdoo.common.block.divine_forge.helpers;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.block.divine_forge.DivineForgeScreen;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
-import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
+import org.jahdoo.common.networking.client2server.ChargeSealC2SP;
+import org.jahdoo.common.networking.client2server.DurabilityC2SP;
 import org.jahdoo.common.networking.client2server.JahdooGearDataC2SP;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -21,8 +23,7 @@ public class ModifierTab {
     public static void onModifyClick(int index, ItemStack itemStack, DivineForgeScreen screen) {
         var gearData = itemStack.get(ComponentReg.JAHDOO_GEAR_DATA);
         var correctIndex = index + DEFAULT_SLOTS;
-
-        switch(index){
+        switch(index) {
 
             case 0 -> {
                 sharedClicks(
@@ -55,11 +56,20 @@ public class ModifierTab {
 
             }
             case 3 -> {
-
+                sharedClicks(
+                    itemStack,
+                    screen,
+                    (gData) -> addDurability(screen.entity().getBlockPos(), 50),
+                    correctIndex,
+                    gearData
+                );
             }
         }
+    }
 
-
+    private static boolean addDurability(BlockPos pos, int duraIncrease) {
+        sendToServer(new DurabilityC2SP(pos, duraIncrease));
+        return true;
     }
 
     private static boolean increasePotential(ItemStack itemStack, JahdooGearData gData) {
@@ -93,6 +103,7 @@ public class ModifierTab {
 
             return true;
         }
+
         return false;
     }
 
@@ -110,7 +121,7 @@ public class ModifierTab {
             SoundHelpers.uiSound(SoundReg.UNLOCK_NOTIFICATION.get(), 1F, 0.6F);
             SoundHelpers.uiSound(SoundReg.REJECT.get(), 1F, 1.8F);
 
-            sendToServer(new ItemInBlockC2SP(ItemStack.EMPTY, blockPos, correctIndex));
+            sendToServer(new ChargeSealC2SP(blockPos, correctIndex));
             sendToServer(new JahdooGearDataC2SP(itemStack.get(ComponentReg.JAHDOO_GEAR_DATA), blockPos, 0));
 
         } else {

@@ -139,8 +139,6 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
                 }
 
                 this.onSuccessfulCast(serverPlayer, getHolder, (int) (getCastTime == 0 ? 200 : getCastTime));
-            } else {
-                sendNoHomeMessage(player, this.getElement());
             }
         }
     }

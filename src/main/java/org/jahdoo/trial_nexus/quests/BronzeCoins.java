@@ -3,7 +3,7 @@ package org.jahdoo.trial_nexus.quests;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
-import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.boon.StatEntry.stats.BronzeCoin;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class BronzeCoins extends CollectCoinQuest {
 
     @Override
     public String questName() {
-        return RunData.BRONZE_COIN;
+        return BronzeCoin.id;
     }
 
     @Override

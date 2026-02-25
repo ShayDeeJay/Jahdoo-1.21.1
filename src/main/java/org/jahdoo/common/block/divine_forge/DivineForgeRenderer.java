@@ -40,11 +40,12 @@ public class DivineForgeRenderer implements BlockEntityRenderer<DivineForgeEntit
     ) {
         var mc = Minecraft.getInstance();
         var itemRenderer = mc.getItemRenderer();
-        var pose = poseStack;
 
         renderPrimaryItem(entity, poseStack, source, packedLight, itemRenderer, partial);
+
         var outputSlot = JahdooGearData.getGearData(entity.itemSlot()).runeSlots();
         var ticks = entity.getPrivateTicks();
+
         if(outputSlot != null & ticks+partial > 6){
             var newSlots = outputSlot.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
             var size = newSlots.size();
@@ -73,7 +74,7 @@ public class DivineForgeRenderer implements BlockEntityRenderer<DivineForgeEntit
 
             var mc = Minecraft.getInstance();
             var rotate = entity.getPrivateTicks()+ partialTick;
-            var bobOff = Math.sin((entity.getLevel().getGameTime() + partialTick )/ 10.0F) * 0.02F + 2F - 0.51;
+            var bobOff = Math.sin((entity.getPrivateTicks() + partialTick )/ 10.0F) * 0.02F + 2F - 0.51;
 
             if(renderItem.getItem() instanceof ArmorItem armorItem){
                 var stand = entity.getStand(mc.level);

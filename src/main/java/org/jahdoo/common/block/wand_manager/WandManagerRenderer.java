@@ -39,7 +39,7 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         var itemAngle = angleOffset * index;
 
         poseStack.translate(0.5, 0.8F, 0.5);
-        poseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (ticks + partialTicks) ));
+        poseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (ticks + partialTicks)));
         stuff.run();
         poseStack.popPose();
     }
@@ -115,7 +115,7 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         poseStack.pushPose();
         var mc = Minecraft.getInstance();
         var level = mc.level;
-        var getCurrentTime = level.getGameTime() + partialTicks;
+        var getCurrentTime = ticks + partialTicks;
         var scaleItem = 0.2f;
         var bobOff = Math.sin(getCurrentTime / 20.0F) * 0.02F + 1.15f - 0.51;
         var animateRunes = Math.min(Math.max((double) distance / 44, 0.1), getCurrentTime / 20);

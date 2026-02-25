@@ -18,7 +18,7 @@ import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
-import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
+import org.jahdoo.common.networking.client2server.ChargeSealC2SP;
 import org.jahdoo.common.networking.client2server.PlayerExpC2SP;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
@@ -309,7 +309,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         }
 
         JahdooGearData.updateRefinementPotential(wandItemCopy, Math.max(0, JahdooGearData.getItemPotential(wandItemCopy) - 20));
-        PacketDistributor.sendToServer(new ItemInBlockC2SP(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos(), 0));
+        PacketDistributor.sendToServer(new ChargeSealC2SP(wandManager.getWandManagerEntity().getBlockPos(), 0));
 
         var player = Minecraft.getInstance().player;
         if(player != null){

@@ -3,16 +3,17 @@ package org.jahdoo.trial_nexus.boon.level_boons.positive;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class BronzeCoins extends Coins {
     @Override
     public String id() {
-        return InstanceData.KEY_BRONZE_COIN;
+        return TextHelpers.withStyleComponentTrans(PlayerWallet.CoinProperties.BRONZE.getName(), -1).getString();
     }
 
     @Override

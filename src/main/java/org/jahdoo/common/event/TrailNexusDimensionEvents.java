@@ -8,14 +8,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import org.jahdoo.common.networking.server2client.RunDataS2CP;
+import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
-import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.block.loot_pot.LootPotBlock.TEXTURE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.common.registers.AttachmentReg.RUN_DATA;
 import static org.jahdoo.common.registers.BlockReg.LOOT_POT;
 
 public class TrailNexusDimensionEvents {
@@ -44,15 +42,14 @@ public class TrailNexusDimensionEvents {
 
         if(player instanceof ServerPlayer serverPlayer){
             if (serverPlayer.level() instanceof ServerLevel level) {
-                var runData = player.getData(RUN_DATA.get());
                 var instanceData = level.getData(INSTANCE_DATA.get());
-                var lootPotMultiplier = 1;
+                var base = getMineBlockExp(state);
                 if(state.is(LOOT_POT)){
-                    lootPotMultiplier = state.getValue(TEXTURE) + 1;
+                    var potMultiplier = state.getValue(TEXTURE) + 1;
+                    RunData.incrementPotsBroken(serverPlayer, instanceData.getDifficulty(), base * potMultiplier);
+                } else {
+                    RunData.incrementOres(serverPlayer, instanceData.getDifficulty(), base);
                 }
-
-                runData.setExperienceGained(instanceData.getDifficulty(), getMineBlockExp(state) * lootPotMultiplier);
-                sendToPlayer(serverPlayer, new RunDataS2CP(runData));
             }
         }
     }

@@ -8,36 +8,41 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
+import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoon;
 import org.jahdoo.trial_nexus.boon.player_boons.boons.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.Helpers;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class PlayerBoonReg {
 
-    public static final ResourceKey<Registry<AbstractPlayerBoons>> PLAYER_BOON_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("player_boon"));
-    private static final DeferredRegister<AbstractPlayerBoons> PLAYER_BOON = DeferredRegister.create(PLAYER_BOON_REGISTRY_KEY, JahdooMod.MOD_ID);
-    public static final Registry<AbstractPlayerBoons> REGISTRY =  new RegistryBuilder<>(PLAYER_BOON_REGISTRY_KEY).create();
+    public static final ResourceKey<Registry<AbstractPlayerBoon>> PLAYER_BOON_REGISTRY_KEY = ResourceKey.createRegistryKey(JahdooHelpers.res("player_boon"));
+    private static final DeferredRegister<AbstractPlayerBoon> PLAYER_BOON = DeferredRegister.create(PLAYER_BOON_REGISTRY_KEY, JahdooMod.MOD_ID);
+    public static final Registry<AbstractPlayerBoon> REGISTRY =  new RegistryBuilder<>(PLAYER_BOON_REGISTRY_KEY).create();
 
     public static void registerRegistry(NewRegistryEvent event) {
         JahdooMod.LOGGER.debug("PlayerBoon.RegisterRegistry");
         event.register(REGISTRY);
     }
 
-    private static DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> registerElement(Supplier<AbstractPlayerBoons> levelBoon) {
+    private static DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> registerElement(Supplier<AbstractPlayerBoon> levelBoon) {
         return PLAYER_BOON.register(levelBoon.get().id(), levelBoon);
     }
 
-    public static AbstractPlayerBoons randomBoon() {
+    public static List<AbstractPlayerBoon> getAll() {
+        return REGISTRY.stream().toList();
+    }
+
+    public static AbstractPlayerBoon randomBoon() {
         var element = REGISTRY
             .stream()
             .toList();
         return Helpers.listRandom(element);
     }
 
-    public static AbstractPlayerBoons getFromId(String id) {
+    public static AbstractPlayerBoon getFromId(String id) {
         var element = REGISTRY
             .stream()
             .filter(a -> a.id().equals(id))
@@ -46,31 +51,31 @@ public class PlayerBoonReg {
     }
 
     //Negative
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MANA_POOL =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> MANA_POOL =
         registerElement(ManaPoolBoon::new);
 
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MANA_REGEN =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> MANA_REGEN =
         registerElement(ManaRegenBoon::new);
 
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> COOLDOWN =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> COOLDOWN =
         registerElement(CooldownBoon::new);
 
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> DAMAGE =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> DAMAGE =
         registerElement(DamageAmplifierBoon::new);
 
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MANA_REDUCTION =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> MANA_REDUCTION =
         registerElement(ManaReductionBoon::new);
 
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MAX_HEALTH =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> MAX_HEALTH =
         registerElement(MaxHealthBoon::new);
 
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MAX_ABSORPTION =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> MAX_ABSORPTION =
         registerElement(MaxAbsorptionBoon::new);
 
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> ATTACK_DAMAGE =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> ATTACK_DAMAGE =
         registerElement(AttackDamageBoon::new);
 
-    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> ATTACK_SPEED =
+    public static final DeferredHolder<AbstractPlayerBoon, AbstractPlayerBoon> ATTACK_SPEED =
         registerElement(AttackSpeedBoon::new);
 
     public static void register(IEventBus eventBus) {

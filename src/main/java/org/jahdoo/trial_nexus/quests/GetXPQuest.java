@@ -4,18 +4,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.boon.StatEntry.stats.ExperienceStat;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.attachments.RunData.EXPERIENCE;
-
-public class GetXPQuest extends AbstractQuest{
+public class GetXPQuest extends AbstractQuest {
 
     @Override
     public String questName() {
-        return EXPERIENCE;
+        return ExperienceStat.id;
     }
 
     @Override

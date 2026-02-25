@@ -40,9 +40,15 @@ public class Network {
         );
 
         payloadRegistrar.playToServer(
-            ItemInBlockC2SP.TYPE,
-            ItemInBlockC2SP.STREAM_CODEC,
-            ItemInBlockC2SP::handle
+            ChargeSealC2SP.TYPE,
+            ChargeSealC2SP.STREAM_CODEC,
+            ChargeSealC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            DurabilityC2SP.TYPE,
+            DurabilityC2SP.STREAM_CODEC,
+            DurabilityC2SP::handle
         );
 
         payloadRegistrar.playToServer(

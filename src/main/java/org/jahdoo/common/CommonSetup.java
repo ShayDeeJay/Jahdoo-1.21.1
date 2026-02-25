@@ -25,6 +25,7 @@ public class CommonSetup {
 
     public static void listeners(IEventBus modEventBus){
         modEventBus.addListener(AbilityReg::registerRegistry);
+        modEventBus.addListener(StatEntryReg::registerRegistry);
         modEventBus.addListener(ElementReg::registerRegistry);
         modEventBus.addListener(EntityDataReg::registerRegistry);
         modEventBus.addListener(CreatorRecipeReg::registerRegistry);
@@ -47,6 +48,7 @@ public class CommonSetup {
     public static void registers(IEventBus modEventBus){
         ArmorMaterialReg.register(modEventBus);
         AttributeReg.register(modEventBus);
+        StatEntryReg.register(modEventBus);
         AttachmentReg.register(modEventBus);
         CreativeTab.register(modEventBus);
         BlockReg.register(modEventBus);

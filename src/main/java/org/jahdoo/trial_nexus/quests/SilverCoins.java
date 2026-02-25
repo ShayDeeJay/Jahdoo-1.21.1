@@ -3,7 +3,7 @@ package org.jahdoo.trial_nexus.quests;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
-import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.boon.StatEntry.stats.SilverCoin;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class SilverCoins extends CollectCoinQuest {
 
     @Override
     public String questName() {
-        return RunData.SILVER_COIN;
+        return SilverCoin.id;
     }
 
     @Override

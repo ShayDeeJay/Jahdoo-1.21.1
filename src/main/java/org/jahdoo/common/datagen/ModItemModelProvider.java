@@ -131,7 +131,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void registerSeals() {
-        for (int i = 1; i < 3; i++) {
+        for (int i = 1; i < 4; i++) {
             createModel("seal" + i, "item/seals/seal" + i);
             createOverride(i, ItemReg.SEAL_OF_CHANGE, "item/seal");
         }

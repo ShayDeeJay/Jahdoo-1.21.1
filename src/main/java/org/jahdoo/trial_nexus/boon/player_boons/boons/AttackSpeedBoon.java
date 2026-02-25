@@ -3,13 +3,13 @@ package org.jahdoo.trial_nexus.boon.player_boons.boons;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
+import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoon;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
-public class AttackSpeedBoon extends AbstractPlayerBoons {
+public class AttackSpeedBoon extends AbstractPlayerBoon {
 
     @Override
     public @Nullable AbstractElement element() {

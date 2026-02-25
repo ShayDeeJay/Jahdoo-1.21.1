@@ -7,6 +7,7 @@ import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 
@@ -39,7 +40,7 @@ public class RookieAssassin extends AbstractTask {
     @Override
     public int trackedValue(Player player) {
         var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getMobsKilled).sum();
-        var current = RunData.getStat(player, RunData.MOBS_KILLED);
+        var current = RunData.getStat(player, StatEntryReg.MOBS_KILLED.get().id());
 
         return x + current;
     }

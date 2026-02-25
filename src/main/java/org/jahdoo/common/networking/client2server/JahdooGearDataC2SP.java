@@ -45,10 +45,19 @@ public class JahdooGearDataC2SP implements CustomPacketPayload {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
                     if(bEntity instanceof AbstractBEInventory wandBlock){
-                        wandBlock
-                            .getInputItemHandler()
-                            .getStackInSlot(index)
-                            .set(ComponentReg.JAHDOO_GEAR_DATA, gearData);
+                        if(index == 0){
+                            var copy = wandBlock
+                                .getInputItemHandler()
+                                .getStackInSlot(index);
+
+                            copy.set(ComponentReg.JAHDOO_GEAR_DATA, gearData);
+
+                            wandBlock.getInputItemHandler().setStackInSlot(index, copy);
+
+                        } else if(index == 1){
+
+                        }
+
 
 //                        JahdooHelpers.repairDurability(original);
 //                        wandBlock.getInputItemHandler().setStackInSlot(index, original);

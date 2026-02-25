@@ -55,7 +55,7 @@ public class DivineForgeMenu extends AbstractInternalContainer  {
     @Override
     protected int getAllSlots() {
         int size = JahdooGearData.getGearData(tableEntity().getItem().getStackInSlot(0)).runeSlots().size();
-        return DEFAULT_SLOTS + MODIFICATION_SLOTS + size;
+        return DEFAULT_SLOTS + MODIFICATION_SLOTS + size -1;
     }
 
     public void switchModifierVisibility(boolean switchC) {

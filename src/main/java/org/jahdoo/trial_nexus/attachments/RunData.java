@@ -13,6 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 
@@ -29,27 +30,11 @@ import static org.jahdoo.trial_nexus.attachments.CasterData.addExperience;
 
 public class RunData implements IAttachment {
 
-    public static final String EXPERIENCE = "experience";
-    public static final String MOBS_KILLED = "mobs_killed";
-    public static final String ROOMS_CLEARED = "rooms_cleared";
-    public static final String CHAMPIONS_KILLED = "champions_killed";
-    public static final String PLAYER_LEVEL = "player_level";
-
-    public static final String CHESTS_COMMON = "chests_common";
-    public static final String CHESTS_RARE = "chests_rare";
-    public static final String CHESTS_LEGENDARY = "chests_legendary";
-    public static final String CHESTS_MYTHIC = "chests_mythic";
-    public static final String SAFE = "safe";
-
-    public static final String TIME_IN_TRIAL = "time_in_trial";
-    public static final String BRONZE_COIN = PlayerWallet.CoinProperties.BRONZE.getName();
-    public static final String SILVER_COIN = PlayerWallet.CoinProperties.SILVER.getName();
-    public static final String GOLD_COIN = PlayerWallet.CoinProperties.GOLD.getName();
-    public static final String PLATINUM_COIN = PlayerWallet.CoinProperties.PLATINUM.getName();
-
     private Map<String, Integer> stats = new HashMap<>();
     private String currentQuestId = "";
     private String dateAndTime;
+    private int playerLevel;
+    private int timeInTrial;
     private boolean completedQuest;
     private boolean died;
 
@@ -72,47 +57,55 @@ public class RunData implements IAttachment {
     }
 
     public int getBronzeCoin(){
-        return getStat(BRONZE_COIN);
+        return getStat(StatEntryReg.BRONZE_COIN_STAT.get().id());
     }
 
     public int getSilverCoin(){
-        return getStat(SILVER_COIN);
+        return getStat(StatEntryReg.SILVER_COIN_STAT.get().id());
     }
 
     public int getGoldCoin(){
-        return getStat(GOLD_COIN);
+        return getStat(StatEntryReg.GOLD_COIN_STAT.get().id());
     }
 
     public int getPlatinumCoin(){
-        return getStat(PLATINUM_COIN);
+        return getStat(StatEntryReg.PLATINUM_COIN_STAT.get().id());
     }
 
     public int getRoomsCleared(){
-        return getStat(ROOMS_CLEARED);
+        return getStat(StatEntryReg.ROOMS_CLEARED.get().id());
     }
 
     public int getMobsKilled(){
-        return getStat(MOBS_KILLED);
+        return getStat(StatEntryReg.MOBS_KILLED.get().id());
     }
 
     public int getCommonChests(){
-        return getStat(CHESTS_COMMON);
+        return getStat(StatEntryReg.COMMON_CHEST.get().id());
     }
 
     public int getRareChests(){
-        return getStat(CHESTS_RARE);
+        return getStat(StatEntryReg.RARE_CHEST.get().id());
     }
 
     public int getLegendaryChests(){
-        return getStat(CHESTS_LEGENDARY);
+        return getStat(StatEntryReg.LEGENDARY_CHEST.get().id());
     }
 
     public int getMythicChests(){
-        return getStat(CHESTS_MYTHIC);
+        return getStat(StatEntryReg.MYTHIC_CHEST.get().id());
     }
 
     public int getChampionsKilled(){
-        return getStat(CHAMPIONS_KILLED);
+        return getStat(StatEntryReg.CHAMPIONS_KILLED.get().id());
+    }
+
+    public int getPotsBroken(){
+        return getStat(StatEntryReg.LOOT_POT.get().id());
+    }
+
+    public int getOresBroken(){
+        return getStat(StatEntryReg.ORES.get().id());
     }
 
     public int getStat(String key) {
@@ -127,6 +120,13 @@ public class RunData implements IAttachment {
         return died;
     }
 
+    public int getTimeInTrial() {
+        return timeInTrial;
+    }
+
+    public int getPlayerLevel() {
+        return playerLevel;
+    }
 
     public boolean isCompletedQuest() {
         return completedQuest;
@@ -148,6 +148,14 @@ public class RunData implements IAttachment {
         this.died = true;
     }
 
+    public void setTimeInTrial(int timeInTrial) {
+        this.timeInTrial = timeInTrial;
+    }
+
+    public void setPlayerLevel(int playerLevel) {
+        this.playerLevel = playerLevel;
+    }
+
     public void setDateAndTime(String dateAndTime) {
         this.dateAndTime = dateAndTime;
     }
@@ -166,20 +174,21 @@ public class RunData implements IAttachment {
 
     public void setExperienceGained(String difficulty, int baseExp) {
         var multiplier = InstanceDifficulty.getFromName(difficulty);
-        addStat(EXPERIENCE, baseExp * multiplier.expMultiplier());
+        addStat(StatEntryReg.EXPERIENCE.get().id(), baseExp * multiplier.expMultiplier());
     }
 
     public void onEndRun(Player player, boolean died) {
 
         if(!this.dateAndTime.isEmpty()){
             var data = player.level().getData(INSTANCE_DATA);
-            addStat(TIME_IN_TRIAL, data.getTicks());
+
+            setTimeInTrial(data.getTicks());
 
             var thisInstance = new InstanceData(data.getDifficulty(), data.getInstance());
             var thisRun = new RunData(new HashMap<>(stats), dateAndTime, currentQuestId, completedQuest, died);
 
             PlayerTrialData.addNewTrialData(player, thisRun, thisInstance);
-            if (!died) addExperience(player, getStat(EXPERIENCE));
+            if (!died) addExperience(player, getStat(StatEntryReg.EXPERIENCE.get().id()));
         }
 
         stats.clear();
@@ -232,29 +241,41 @@ public class RunData implements IAttachment {
 
     public static void setPlayerLevel(int value, ServerPlayer player) {
         var data = player.getData(RUN_DATA.get());
-        data.addStat(RunData.PLAYER_LEVEL, value);
-//        sendToPlayer(player, new RunDataS2CP(data));
+        data.setPlayerLevel(value);
     }
 
     public static void addExperienceToTotal(int value, ServerPlayer player) {
         var runData = player.getData(RUN_DATA.get());
-        runData.addStat(EXPERIENCE, value);
+        runData.addStat(StatEntryReg.EXPERIENCE.get().id(), value);
         sendToPlayer(player, new RunDataS2CP(runData));
     }
 
     public static void incrementRoomExp(ServerPlayer player, String difficulty) {
         var runData = player.getData(AttachmentReg.RUN_DATA.get());
-        runData.incrementStat(ROOMS_CLEARED);
+        runData.incrementStat(StatEntryReg.ROOMS_CLEARED.get().id());
         runData.setExperienceGained(difficulty, 5);
         sendToPlayer(player, new RunDataS2CP(runData));
     }
 
+    public static void incrementOres(ServerPlayer player, String difficulty, int amount) {
+        var runData = player.getData(AttachmentReg.RUN_DATA.get());
+        runData.incrementStat(StatEntryReg.ORES.get().id());
+        runData.setExperienceGained(difficulty, amount);
+        sendToPlayer(player, new RunDataS2CP(runData));
+    }
+
+    public static void incrementPotsBroken(ServerPlayer player, String difficulty, int amount) {
+        var runData = player.getData(AttachmentReg.RUN_DATA.get());
+        runData.incrementStat(StatEntryReg.LOOT_POT.get().id());
+        runData.setExperienceGained(difficulty, amount);
+        sendToPlayer(player, new RunDataS2CP(runData));
+    }
 
     public static void incrementKilledMobsExp(ServerLevel level, LivingEntity player, int amount) {
         var instanceData = level.getData(INSTANCE_DATA.get());
         var runData = player.getData(RUN_DATA.get());
 
-        runData.incrementStat(MOBS_KILLED);
+        runData.incrementStat(StatEntryReg.MOBS_KILLED.get().id());
         runData.setExperienceGained(instanceData.getDifficulty(), amount);
 
         if (player instanceof ServerPlayer serverPlayer) {
@@ -276,7 +297,7 @@ public class RunData implements IAttachment {
 
     public static void incrementSafeOpened(LivingEntity player) {
         var runData = player.getData(RUN_DATA.get());
-        runData.incrementStat(SAFE);
+        runData.incrementStat(StatEntryReg.SAFE.get().id());
 
         if (player instanceof ServerPlayer serverPlayer) {
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
@@ -285,7 +306,7 @@ public class RunData implements IAttachment {
 
     public static void incrementChampionsKilled(LivingEntity player) {
         var runData = player.getData(RUN_DATA.get());
-        runData.incrementStat(CHAMPIONS_KILLED);
+        runData.incrementStat(StatEntryReg.CHAMPIONS_KILLED.get().id());
 
         if (player instanceof ServerPlayer serverPlayer) {
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
@@ -295,7 +316,11 @@ public class RunData implements IAttachment {
     public static void incrementChestOpenedExp(ServerLevel level, LivingEntity player, int chestValue) {
         var instanceData = level.getData(INSTANCE_DATA.get());
         var runData = player.getData(RUN_DATA.get());
-        var key = chestValue == 0 ? CHESTS_COMMON : chestValue == 1 ? CHESTS_RARE : chestValue == 2 ? CHESTS_LEGENDARY : CHESTS_MYTHIC;
+        var key = chestValue == 0 ?
+            StatEntryReg.COMMON_CHEST.get().id() : chestValue == 1 ?
+            StatEntryReg.RARE_CHEST.get().id() : chestValue == 2 ?
+            StatEntryReg.LEGENDARY_CHEST.get().id() :
+            StatEntryReg.MYTHIC_CHEST.get().id();
         runData.incrementStat(key);
         runData.setExperienceGained(instanceData.getDifficulty(), chestValue);
         if (player instanceof ServerPlayer serverPlayer) {

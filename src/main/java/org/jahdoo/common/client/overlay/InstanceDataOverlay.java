@@ -18,6 +18,7 @@ import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.screens.RunScreen;
 import org.jahdoo.common.registers.mod.QuestReg;
+import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
@@ -118,9 +119,9 @@ public class InstanceDataOverlay extends AbstractTimedOverlay {
             HudEntry.chestRare(runData),
             HudEntry.chestLegendary(runData),
             HudEntry.chestMystic(runData),
-            new HudEntry(Icons.SAFE, HudEntry.getComp(runData.getStat(RunData.SAFE))),
-            new HudEntry(Icons.CHAMPIONS_CROWN, HudEntry.getComp(runData.getStat(RunData.CHAMPIONS_KILLED))),
-            new HudEntry(Icons.HORDE, HudEntry.getComp(runData.getStat(RunData.MOBS_KILLED))),
+            new HudEntry(Icons.SAFE, HudEntry.getComp(runData.getStat(StatEntryReg.SAFE.get().id()))),
+            new HudEntry(Icons.CHAMPIONS_CROWN, HudEntry.getComp(runData.getStat(StatEntryReg.CHAMPIONS_KILLED.get().id()))),
+            new HudEntry(Icons.HORDE, HudEntry.getComp(runData.getStat(StatEntryReg.MOBS_KILLED.get().id()))),
             HudEntry.bronze(runData),
             HudEntry.silver(runData),
             HudEntry.gold(runData),

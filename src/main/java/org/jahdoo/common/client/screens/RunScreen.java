@@ -7,30 +7,27 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.button.FlexiButton;
+import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.common.registers.mod.QuestReg;
+import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.boon.StatEntry.AbstractStatEntry;
+import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
-import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static net.minecraft.world.effect.MobEffects.*;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.Icons.SAFE;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
-import static org.jahdoo.trial_nexus.attachments.RunData.*;
-import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
 
 
 public class RunScreen extends AbstractPanableScreen {
@@ -41,6 +38,7 @@ public class RunScreen extends AbstractPanableScreen {
     private double panYMain;
     private double mouseX;
     private double mouseY;
+    private int levelBoonEntries;
 
     @Override
     protected void init() {
@@ -49,20 +47,22 @@ public class RunScreen extends AbstractPanableScreen {
         var instanceData1 = getPlayerTrialData().getInstanceData().reversed();
         var spacer = 0;
         var moveX = -5;
+        var i2 = 15;
+
 
         this.addRenderableOnly(
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics graphics, int i, int i1, float v) {
                     var start = canScrollSelections(mouseX, mouseY, width) ? fadeBlack(0.8F): uiFade();
-                    boxMaker(graphics, width/2 - WIDTH_OFFSET * 2 + moveX, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, mouseY, width) ? color(180, uiColour()) : 0, start, start);
+                    boxMaker(graphics, i2 + moveX, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, mouseY, width) ? color(180, uiColour()) : 0, start, start);
                     graphics.enableScissor(3, 69, width - 3, height - 20);
                 }
             }
         );
 
         for (var pastRun : reversed) {
-            var x = this.addRenderableWidget(new FlexiButton(width/2 - WIDTH_OFFSET * 2 + 15 + moveX, (int) (this.panY + spacer  + 78), 130, 36, runData == pastRun, pastRun, (s) -> doOnClick(pastRun, instanceData1.get(reversed.indexOf(pastRun)))));
+            var x = this.addRenderableWidget(new FlexiButton(i2 + 15 + moveX, (int) (this.panY + spacer  + 78), 130, 36, runData == pastRun, pastRun, (s) -> doOnClick(pastRun, instanceData1.get(reversed.indexOf(pastRun)))));
             x.visible = x.getY() < this.height && x.getY() > 0;
             spacer += 47;
         }
@@ -112,7 +112,7 @@ public class RunScreen extends AbstractPanableScreen {
             panYMain += dragY;
             panYMain = Math.min(panYMain, 0); // Top bound
 
-            var componentHeight = getComponents(instanceData, runData, getPlayerTrialData()).size() * 14;
+            var componentHeight = this.levelBoonEntries * 14;
             var visibleHeight = (height - 13) - (62 + 36); // Matches your layout
             var minPanYMain = Math.min(0, visibleHeight - componentHeight - 10); // Add bottom padding
 
@@ -142,7 +142,7 @@ public class RunScreen extends AbstractPanableScreen {
             panYMain += scrollSpeed;
             panYMain = Math.min(panYMain, 0); // Top bound
 
-            var componentHeight = getComponents(instanceData, runData, getPlayerTrialData()).size() * 14;
+            var componentHeight = this.levelBoonEntries * 14;
             var visibleHeight = (height - 13) - (62 + 36); // Matches your layout
             var minPanYMain = Math.min(0, visibleHeight - componentHeight - 10);
 
@@ -153,8 +153,8 @@ public class RunScreen extends AbstractPanableScreen {
     }
 
     private static boolean canScrollSelections(double mouseX, double mouseY, int width) {
-        var v = (double) width / 2-5;
-        return mouseX > v - WIDTH_OFFSET * 2 && mouseX < v;
+        var v = 4;
+        return mouseX > v * 2 && mouseX < v + WIDTH_OFFSET * 2;
     }
 
     private static boolean canScrollDetails(double mouseX, double mouseY, int width) {
@@ -165,18 +165,8 @@ public class RunScreen extends AbstractPanableScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-    }
-
-    @Override
-    protected void renderBlurredBackground(float partialTick) {
-        super.renderBlurredBackground(partialTick);
-    }
-
-    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        var startX = this.width/2 + 5;
+        var startX = 176;
         var startY = 62;
         var startAllX = startX + 10;
         var startAllY = (int) (startY + 36 + this.panYMain);
@@ -191,7 +181,7 @@ public class RunScreen extends AbstractPanableScreen {
 
         super.render(graphics, mouseX, mouseY, partialTick);
         var colourBorder = canScrollDetails(mouseX, mouseY, width) ? color(180, uiColour()) : 0;
-        boxMaker(graphics, startX, startY+1, 80, this.height/2 - 38, colourBorder, start, start);
+        boxMaker(graphics, startX, startY+1, this.width/2 - 94, this.height/2 - 38, colourBorder, start, start);
         graphics.enableScissor(startX, startY+8, this.width/2 + 200, this.height - 18);
 
         pose.pushPose();
@@ -199,17 +189,33 @@ public class RunScreen extends AbstractPanableScreen {
         graphics.drawCenteredString(getMinecraft().font, TextHelpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
         pose.popPose();
 
-        if(runData != null) {
-            var getAllComponents = getComponents(instanceData, runData, getPlayerTrialData());
-            for (var component : getAllComponents) {
-                var hasIcon = component.icon != null;
-                if(hasIcon){
-                    var size = 14;
-                    graphics.blit(component.icon, startAllX - 4, startAllY + spacer - 3, 0, 0, size, size, size, size);
-                }
-                graphics.drawString(getMinecraft().font, component.component(), startAllX + (hasIcon ? 10 : 0), startAllY + spacer, -1, true);
-                spacer += 14;
+        if (runData != null) {
+
+            var allComponents = getComponents(instanceData, runData, getPlayerTrialData());
+            var positiveBoons = LevelBoonReg.getAllPositive();
+            var negativeBoons = LevelBoonReg.getAllNegative();
+            var coins = StatEntryReg.getCoins();
+            var ores = StatEntryReg.getOres();
+            var general = StatEntryReg.getGeneral();
+            var mob = StatEntryReg.getMob();
+            var loot = StatEntryReg.getLoot();
+
+
+            for (var component : allComponents) {
+                spacer = drawEntryWithOptionalIcon(
+                    graphics,
+                    component.icon,
+                    component.component(),
+                    startAllX,
+                    startAllY,
+                    spacer
+                );
             }
+
+            spacer = instanceInfo(graphics, spacer, startAllX, startAllY, positiveBoons, negativeBoons);
+            spacer = runInfo(graphics, spacer, startAllX, startAllY, general, mob, loot, coins, ores);
+
+            this.levelBoonEntries = spacer / 14;
         }
 
         if(runData == null || !PlayerTrialData.getData(getMinecraft().player).getPastRuns().contains(runData)){
@@ -222,6 +228,179 @@ public class RunScreen extends AbstractPanableScreen {
         this.rebuildWidgets();
     }
 
+    private int instanceInfo(GuiGraphics graphics, int spacer, int startAllX, int startAllY, List<AbstractLevelBoon> positiveBoons, List<AbstractLevelBoon> negativeBoons) {
+        spacer = drawHeader(graphics, "Instance Modifiers", ColourHelpers.getHeaderColour(), startAllX, startAllY, spacer, true, true);
+        spacer = drawHeader(graphics, "Positive", ColourHelpers.getMagnetRangeGreen(), startAllX, startAllY, spacer, true, false);
+        spacer = drawLevelBoonList(graphics, positiveBoons, instanceData, startAllX, startAllY, spacer);
+
+        var i = positiveBoons.size() * 14 + 14;
+        var i1 = 170;
+
+        drawHeader(graphics, "Negative", ColourHelpers.getMagnetStrengthRed(), startAllX + i1, startAllY, spacer - i, true, false);
+        drawLevelBoonList(graphics, negativeBoons, instanceData, startAllX + i1, startAllY, spacer - i + 14);
+        return spacer;
+    }
+
+    private int runInfo(GuiGraphics graphics, int spacer, int startAllX, int startAllY, List<AbstractStatEntry> general, List<AbstractStatEntry> mob, List<AbstractStatEntry> loot, List<AbstractStatEntry> coins, List<AbstractStatEntry> ores) {
+        spacer = addSpacerLines(spacer, 1);
+        spacer = drawHeader(graphics, "Run Stats", ColourHelpers.getHeaderColour(), startAllX, startAllY, spacer, true, true);
+
+        spacer = drawHeader(graphics, "General", ColourHelpers.getOffWhite(), startAllX, startAllY, spacer, true, false);
+        spacer = drawPlayerBoonList(graphics, general, runData, startAllX, startAllY, spacer);
+//        spacer = addSpacerLines(spacer, 1);
+
+        var x = startAllX + 170;
+        var i = general.size() * 14 + 14;
+
+        drawHeader(graphics, "Mob", ColourHelpers.getMagnetStrengthRed(), x, startAllY,  spacer - i, true, false);
+        drawPlayerBoonList(graphics, mob, runData, x, startAllY,  spacer - i + 14);
+        spacer = addSpacerLines(spacer, 1);
+
+        spacer = drawHeader(graphics, "Loot", ColourHelpers.getAetherBlue(), startAllX, startAllY, spacer, true, false);
+        spacer = drawPlayerBoonList(graphics, loot, runData, startAllX, startAllY, spacer);
+        spacer = addSpacerLines(spacer, 1);
+
+        var xs = coins.size() * 14 + 56;
+        drawHeader(graphics, "Coins", ColourHelpers.getGoldCoin(), x, startAllY,  spacer - xs, true, false);
+        drawPlayerBoonList(graphics, coins, runData, x, startAllY,  spacer - xs + 14);
+
+        spacer = drawHeader(graphics, "Ores", ColourHelpers.getHeaderColour(), startAllX, startAllY, spacer, true, false);
+        spacer = drawPlayerBoonList(graphics, ores, runData, startAllX, startAllY, spacer);
+        return spacer;
+    }
+
+    private int drawPlayerBoonList(
+        GuiGraphics graphics,
+        Collection<AbstractStatEntry> boons,
+        RunData runData,
+        int startX,
+        int startY,
+        int spacer
+    ) {
+
+        for (var boon : boons) {
+
+            var icon = boon.icon();
+            boolean hasIcon = icon != null;
+
+            if (hasIcon) {
+                int size = 14;
+                graphics.blit(icon, startX - 4, startY + spacer - 3,
+                    0, 0, size, size, size, size);
+            }
+
+            var label = TextHelpers.withStyleComponent(TextHelpers.stringIdToName(boon.getLabel()) + ": ", ColourHelpers.getHeaderColour());
+            var labelX = TextHelpers.withStyleComponent(runData.getStat(boon.id()) + "", boon.colour());
+
+            graphics.drawString(
+                getMinecraft().font, label.copy().append(labelX),
+                startX + (hasIcon ? 10 : 0),
+                startY + spacer,
+                -1, true
+            );
+
+            spacer += 14;
+        }
+
+        return spacer;
+    }
+
+    private int drawLevelBoonList(
+        GuiGraphics graphics,
+        Collection<AbstractLevelBoon> boons,
+        InstanceData instanceData,
+        int startX,
+        int startY,
+        int spacer
+    ) {
+
+        for (var boon : boons) {
+
+            var icon = boon.getIcon();
+            boolean hasIcon = icon != null;
+
+            if (hasIcon) {
+                int size = 14;
+                graphics.blit(icon, startX - 4, startY + spacer - 3,
+                    0, 0, size, size, size, size);
+            }
+
+            var value = instanceData.get(boon.id());
+            var label = boon.boonLabel(value, boon.id());
+
+            graphics.drawString(
+                getMinecraft().font,
+                label,
+                startX + (hasIcon ? 10 : 0),
+                startY + spacer,
+                -1,
+                true
+            );
+
+            spacer += 14;
+        }
+
+        return spacer;
+    }
+
+    private int drawEntryWithOptionalIcon(
+        GuiGraphics graphics,
+        ResourceLocation icon,
+        Component text,
+        int startX,
+        int startY,
+        int spacer
+    ) {
+
+        boolean hasIcon = icon != null;
+
+        if (hasIcon) {
+            int size = 14;
+            graphics.blit(icon, startX - 4, startY + spacer - 3,
+                0, 0, size, size, size, size);
+        }
+
+        graphics.drawString(
+            getMinecraft().font,
+            text,
+            startX + (hasIcon ? 10 : 0),
+            startY + spacer,
+            -1,
+            true
+        );
+
+        return spacer + 14;
+    }
+
+    private int drawHeader(
+        GuiGraphics graphics,
+        String text,
+        int colour,
+        int startX,
+        int startY,
+        int spacer,
+        boolean bold,
+        boolean underline
+    ) {
+
+        var styled = TextHelpers.withStyleComponent(text, colour, bold, underline);
+
+        graphics.drawString(
+            getMinecraft().font,
+            styled,
+            startX,
+            startY + spacer,
+            -1,
+            true
+        );
+
+        return spacer + 14;
+    }
+
+    private int addSpacerLines(int spacer, int lines) {
+        return spacer + (14 * lines);
+    }
+
     public static List<StatEntry> getComponents(@Nullable InstanceData instanceData, RunData runData, PlayerTrialData trialData){
         var allComponents = new ArrayList<StatEntry>();
         var spacer = new StatEntry(Component.empty().copy(), null);
@@ -231,7 +410,7 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Difficulty", TextHelpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
-        allComponents.add(new StatEntry(componentTemplate("Player Level", String.valueOf(runData.getStat(PLAYER_LEVEL)), uiColour()), null));
+        allComponents.add(new StatEntry(componentTemplate("Player Level", String.valueOf(runData.getPlayerLevel()), uiColour()), null));
 
         var died = runData.died();
         allComponents.add(new StatEntry(componentTemplate("Fate", died ? "Died!" : "Survived!", died ? ColourHelpers.getRating2Red() : ColourHelpers.getRating5Green()), null));
@@ -246,48 +425,7 @@ public class RunScreen extends AbstractPanableScreen {
             allComponents.add(new StatEntry(componentTemplate("Quest Status", (completed ? "Completed" : "Failed"), statusColour), null));
         }
 
-        allComponents.add(new StatEntry(componentTemplate("Run Time", MathHelpers.ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), ColourHelpers.getPerkGreen()), CLOCK));
-        allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", ColourHelpers.getCosmicPurple()), TRIAL_EXPERIENCE));
-        allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(RunData.ROOMS_CLEARED) + "", ColourHelpers.getAetherBlue()), Icons.ROOMS_CLEARED));
-        allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", ColourHelpers.getMagnetStrengthRed()), Icons.HORDE));
-        allComponents.add(new StatEntry(componentTemplate("Champions Killed", runData.getStat(CHAMPIONS_KILLED) + "", ColourHelpers.getChampionGold()), CHAMPIONS_CROWN));
-        allComponents.add(new StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", ColourHelpers.getBronzeCoin()), Icons.BRONZE_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", ColourHelpers.getSilverCoin()), Icons.SILVER_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", ColourHelpers.getGoldCoin()), Icons.GOLD_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", ColourHelpers.getPlatinumCoin()), Icons.PLATINUM_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Quest Loot Multiplier", instanceData.getQuestCrateMultiplier() + "", ColourHelpers.getWalletBrown()), QUEST_CRATE));
-
-        addChestStats(allComponents, "Common Chest", COMMON.getColour(), CHESTS_COMMON, instanceData.getCommonLootMultiplier(), CHEST_COMMON, runData);
-        addChestStats(allComponents, "Rare Chest", RARE.getColour(), CHESTS_RARE, instanceData.getRareLootMultiplier(), CHEST_RARE, runData);
-        addChestStats(allComponents, "Legendary Chest", LEGENDARY.getColour(), CHESTS_LEGENDARY, instanceData.getLegendaryLootMultiplier(), CHEST_LEGENDARY, runData);
-        addChestStats(allComponents, "Eternal Chest", MYTHIC.getColour(), CHESTS_MYTHIC, instanceData.getMythicLootMultiplier(), CHEST_MYTHIC, runData);
-
-        allComponents.add(new StatEntry(componentTemplate("Safe", "", ColourHelpers.getGoldCoin(), ColourHelpers.getGoldCoin()), SAFE));
-        allComponents.add(new StatEntry(componentTemplate("Opened", runData.getStat(RunData.SAFE) + "", ColourHelpers.getGoldCoin()), BLANK));
-        allComponents.add(new StatEntry(componentTemplate("Multiplier", instanceData.getSafeMultiplier() + "", ColourHelpers.getGoldCoin()), BLANK));
-
-        allComponents.add(spacer);
-
-        // Mob multipliers
-        allComponents.add(new StatEntry(componentTemplate("Mob Health","+" + MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Armor","+" + MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Damage","+" + MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Speed","+" + MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
-
-        // Mob counts / composition
-        allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", ColourHelpers.getAetherBlue()), Icons.HORDE));
-        allComponents.add(new StatEntry(componentTemplate("Skeletons", instanceData.getSkeleton() + "", ColourHelpers.getOffWhite()), Icons.SKELETON));
-        allComponents.add(new StatEntry(componentTemplate("Void Spiders", instanceData.getVoidSpider() + "", ColourHelpers.getCosmicPurple()), Icons.VOID_SPIDER));
-        allComponents.add(new StatEntry(componentTemplate("Inferno Creepers", instanceData.getInfernoCreeper() + "", ColourHelpers.getSympathiserOrange()), Icons.INFERNO_CREEPER));
-        allComponents.add(new StatEntry(componentTemplate("Eternal Wizards", instanceData.getEternalWizard() + "", ColourHelpers.getMagnetStrengthRed()), Icons.ETERNAL_WIZARD));
-
         return allComponents;
-    }
-
-    public static void addChestStats(List<StatEntry> allComponents, String name, int colour, String chestStat, int multiplier, ResourceLocation buttonType, RunData runData) {
-        allComponents.add(new StatEntry(componentTemplate(name, "", colour, colour), buttonType));
-        allComponents.add(new StatEntry(componentTemplate("Opened", runData.getStat(chestStat) + "", colour), BLANK));
-        allComponents.add(new StatEntry(componentTemplate("Multiplier", multiplier + "", colour), BLANK));
     }
 
     public static MutableComponent componentTemplate(String header, String stat, int statColour){

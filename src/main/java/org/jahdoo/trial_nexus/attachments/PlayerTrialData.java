@@ -14,6 +14,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.networking.server2client.ClearPlayerTrialDataS2CP;
 import org.jahdoo.common.networking.server2client.PlayerTrialDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.shaydee.shaydeeapi.Helpers;
 
@@ -23,7 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.jahdoo.common.registers.AttachmentReg.PLAYER_TRIAL_DATA;
-import static org.jahdoo.trial_nexus.attachments.RunData.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class PlayerTrialData implements IAttachment{
@@ -232,20 +232,22 @@ public class PlayerTrialData implements IAttachment{
                     var time = LocalTime.now().format(timeFormatter);
 
                     newRunData.setDateAndTime(date + " " + time);
-                    newRunData.addStat(ROOMS_CLEARED, Random.nextInt(40, 80));
-                    newRunData.addStat(CHESTS_COMMON, Random.nextInt(0, 10));
-                    newRunData.addStat(CHESTS_RARE, Random.nextInt(0, 10));
-                    newRunData.addStat(CHESTS_LEGENDARY, Random.nextInt(0, 10));
-                    newRunData.addStat(CHESTS_MYTHIC, Random.nextInt(0, 10));
+                    newRunData.addStat(StatEntryReg.ROOMS_CLEARED.get().id(), Random.nextInt(40, 80));
+                    newRunData.addStat(StatEntryReg.COMMON_CHEST.get().id(), Random.nextInt(0, 10));
+                    newRunData.addStat(StatEntryReg.RARE_CHEST.get().id(), Random.nextInt(0, 10));
+                    newRunData.addStat(StatEntryReg.LEGENDARY_CHEST.get().id(), Random.nextInt(0, 10));
+                    newRunData.addStat(StatEntryReg.MYTHIC_CHEST.get().id(), Random.nextInt(0, 10));
+                    newRunData.addStat(StatEntryReg.LOOT_POT.get().id(), Random.nextInt(50, 100));
+                    newRunData.addStat(StatEntryReg.ORES.get().id(), Random.nextInt(200, 500));
 
-                    newRunData.addStat(MOBS_KILLED, Random.nextInt(300, 700));
-                    newRunData.addStat(TIME_IN_TRIAL, Random.nextInt(38400, 43000));
-                    newRunData.addStat(EXPERIENCE, Random.nextInt(400, 700));
-                    newRunData.addStat(BRONZE_COIN, Random.nextInt(3050, 9050));
-                    newRunData.addStat(SILVER_COIN, Random.nextInt(50, 150));
-                    newRunData.addStat(GOLD_COIN, Random.nextInt(10, 50));
-                    newRunData.addStat(PLATINUM_COIN, Random.nextInt(5, 30));
-
+                    newRunData.addStat(StatEntryReg.MOBS_KILLED.get().id(), Random.nextInt(300, 700));
+                    newRunData.setTimeInTrial(Random.nextInt(38400, 43000));
+                    newRunData.addStat(StatEntryReg.EXPERIENCE.get().id(), Random.nextInt(400, 700));
+                    newRunData.addStat(StatEntryReg.BRONZE_COIN_STAT.get().id(), Random.nextInt(3050, 9050));
+                    newRunData.addStat(StatEntryReg.SILVER_COIN_STAT.get().id(), Random.nextInt(50, 150));
+                    newRunData.addStat(StatEntryReg.GOLD_COIN_STAT.get().id(), Random.nextInt(10, 50));
+                    newRunData.addStat(StatEntryReg.PLATINUM_COIN_STAT.get().id(), Random.nextInt(5, 30));
+                    newRunData.addStat(StatEntryReg.PLATINUM_COIN_STAT.get().id(), Random.nextInt(5, 30));
 
                     x.addInstance(newInstance);
                     x.addNewRun(newRunData);

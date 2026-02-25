@@ -21,11 +21,11 @@ import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 
 public class DivineForgeEntity extends AbstractBEInventory implements MenuProvider {
 
-    public ArmorStand stand;
-
     public static final int DEFAULT_SLOTS = 4;
     public static final int MODIFICATION_SLOTS = 4;
-    public static final int ADDITIONAL_RUNE_SLOTS = 12;
+    public static final int ADDITIONAL_RUNE_SLOTS = 10;
+
+    public ArmorStand stand;
 
     public DivineForgeEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);

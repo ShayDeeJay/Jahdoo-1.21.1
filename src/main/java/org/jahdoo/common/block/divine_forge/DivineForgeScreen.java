@@ -130,17 +130,17 @@ public class DivineForgeScreen extends AbstractContainerScreen<DivineForgeMenu> 
                 var posY1 = this.height / 2 - 38;
                 var instance = forUI(SoundReg.UPGRADE_MODIFIER.get(), 0F, 0F);
                 var buttonType = hasRepairSlots(getItem()) ? WIDGET : selected;
-
                 var b = entity().getInputItemHandler().getStackInSlot(i + MODIFICATION_SLOTS).isEmpty();
-                int finalI = i;
+                var finI = i;
+
                 this.addRenderableWidget(
                     menuButtonSound(
                         posX1 + 12, posY1 + 4,
                         (press) -> {
-                            onModifyClick(finalI, getItem(), this);
+                            onModifyClick(finI, getItem(), this);
                             this.rebuildWidgets();
                         },
-                        COG, 20, b, 0, buttonType, !b,
+                        b ? UPGRADE_DISABLED : UPGRADE, 20, b, 0, buttonType, !b,
                         () -> onHoverRepair(this.hoverTooltip, borderColour, getItem()),
                         instance
                     )

@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 
@@ -36,7 +37,7 @@ public class DeeperDungeon extends AbstractTask {
     @Override
     public int trackedValue(Player player) {
         var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getRoomsCleared).sum();
-        var current = RunData.getStat(player, RunData.ROOMS_CLEARED);
+        var current = RunData.getStat(player, StatEntryReg.ROOMS_CLEARED.get().id());
         return x + current;
     }
 

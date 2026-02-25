@@ -3,13 +3,13 @@ package org.jahdoo.trial_nexus.boon.player_boons.boons;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
+import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoon;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
-public class CooldownBoon extends AbstractPlayerBoons {
+public class CooldownBoon extends AbstractPlayerBoon {
 
     @Override
     public @Nullable AbstractElement element() {
