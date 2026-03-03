@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.networking.client2server.MageFlightC2SP;
 import org.jahdoo.common.networking.server2client.MageFlightSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -16,6 +17,8 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.level_manager.PlayerHomeDim;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
@@ -64,11 +67,16 @@ public class MageFlight implements IAttachment {
     }
 
     public static void mageFlightTickEvent(Player player){
+        if(PlayerHomeDim.isPlayerHome(player)){
+            player.getAbilities().mayfly = true;
+            return;
+        }
+
         var mageFlight = player.getData(MAGE_FLIGHT);
         mageFlight.serverFlight(player);
-        if(player instanceof ServerPlayer serverPlayer) {
+
+        if (player instanceof ServerPlayer serverPlayer)
             PacketDistributor.sendToPlayer(serverPlayer, new MageFlightC2SP());
-        }
     }
 
     private boolean cancelAttempt(Player player) {
@@ -81,22 +89,27 @@ public class MageFlight implements IAttachment {
         return false;
     }
 
-    private void flying(Player player, CasterData manaSystem, ItemStack wandItem) {
-        if (manaSystem.getManaPool() > manaCost) {
+    private void flying(Player player, CasterData casterData, ItemStack wandItem) {
+        if (CastHelper.sufficientMana(player, casterData, (float) manaCost, null)) {
             var getPool = player.getAttribute(AttributeReg.MANA_POOL);
             var manaCost = (getPool != null ? getPool.getValue() : 1) / 200;
             var getDelta = player.getDeltaMovement();
-            var speedModifier = 0.02;
+            var mod = player.getAttribute(AttributeReg.MAGE_FLIGHT);
+            if(mod == null) return;
+
+            var speedModifier = mod.getValue();
 
             player.getAbilities().mayfly = true;
-            manaSystem.subtractMana(Math.min(manaCost, 2), player);
-            player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.09, getDelta.z * speedModifier));
-            mageFlightAnimation(wandItem, player);
+            casterData.subtractMana(Math.min(manaCost, 2), player);
+            player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.090, getDelta.z * speedModifier));
+
+            var usedItem = JahdooHelpers.getUsedItem(player).getItem();
+            var element = fromWand(usedItem).orElse(ElementReg.random());
+            mageFlightAnimation(element, player);
         }
     }
 
-    private void mageFlightAnimation(ItemStack wandItem, Player player){
-        var element = fromWand(wandItem.getItem()).orElse(ElementReg.random());
+    private void mageFlightAnimation(AbstractElement element, Player player){
         var part1 = ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, element, 2, 0.2f, true);
         var part2 = bakedParticle(element.id(), 2, 1f, false);
         var getMovement = player.getDeltaMovement().y > -0.5;

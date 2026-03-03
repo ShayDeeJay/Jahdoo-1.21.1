@@ -248,6 +248,9 @@ public class PlayerTrialData implements IAttachment{
                     newRunData.addStat(StatEntryReg.GOLD_COIN_STAT.get().id(), Random.nextInt(10, 50));
                     newRunData.addStat(StatEntryReg.PLATINUM_COIN_STAT.get().id(), Random.nextInt(5, 30));
                     newRunData.addStat(StatEntryReg.PLATINUM_COIN_STAT.get().id(), Random.nextInt(5, 30));
+                    if(Random.nextBoolean()) {
+                        newRunData.setDied();
+                    }
 
                     x.addInstance(newInstance);
                     x.addNewRun(newRunData);

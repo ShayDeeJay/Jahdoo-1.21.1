@@ -79,7 +79,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
     }
 
     public static AbilityHolder setModifiers(double damage, double range, double healValue) {
-        return new AbilityBuilder(null, abilityId.getPath().intern())
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setModifierWithoutBounds(DAMAGE, damage)
             .setModifierWithoutBounds(RANGE, range)
             .setModifierWithoutBounds(HEAL_VALUE, healValue)

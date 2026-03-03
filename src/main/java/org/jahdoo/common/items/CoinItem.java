@@ -9,27 +9,27 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.IItemEntityBehaviour;
+import org.shaydee.loot_beams_neoforge.components.DataComponentsReg;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties;
 import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.COIN;
-import static org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg.INSTANCE;
 
-public class CoinItem extends Item implements IItemEntityBehaviour {
+public class CoinItem extends BaseJahdooItem implements IItemEntityBehaviour {
 
     public CoinItem() {
-        super(new Properties().component(INSTANCE.getLOOT_BEAM_DATA(), COIN));
+        super(new Properties().component(DataComponentsReg.getLOOT_BEAM_DATA(), COIN));
     }
 
     @Override
@@ -63,7 +63,8 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
                 LevelGenerator.isNexus(serverLevel) &&
                 entity instanceof LivingEntity lEntity
             ) {
-                RunData.incrementCoin(cLevel, lEntity, data == null ? 0 : data.value(), count);
+                var difficulty = InstanceData.getDifficulty(cLevel);
+                RunData.incrementCoin(lEntity, difficulty, data == null ? 0 : data.value(), count);
             }
         }
 

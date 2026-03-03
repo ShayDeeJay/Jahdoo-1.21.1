@@ -10,13 +10,10 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
-import org.shaydee.shaydeeapi.helpers.ClientHelpers;
-import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.HashMap;
 
-import static com.mojang.blaze3d.platform.InputConstants.KEY_DELETE;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
@@ -74,27 +71,18 @@ public class FlexiButton extends ImageButton {
         var spacer = 0;
         var newInst = new InstanceData("", new HashMap<>());
         var getAllComponents = getComponents(newInst, pastRun, trialData).subList(0,3);
-        var isSelected = !this.isSelected ? fade : color(160, ColourHelpers.getHeaderColour());
-        var borderColour =  0;
+        var isSelected = !this.isSelected ? fade : color(60, uiColour());
+        var borderColour = this.isSelected ? uiColour() : uiFade();
         var width = (int) this.width / 2;
         var height = (int) this.height / 2;
-        var window = minecraft.getWindow().getWindow();
 
-        if(isHovered) {
-//            var literal = TextHelpers.withStyleComponent("Press Delete To Remove", -1);
-//            graphics.renderTooltip(minecraft.font, List.of(literal), Optional.empty(), mouseX, mouseY);
-            if(ClientHelpers.isKeyDown(KEY_DELETE)){
-                var index = trialData.getPastRuns().indexOf(pastRun);
-//                Helpers.syncPlayerTrialData(index);
-            }
-        }
-
+        graphics.pose().pushPose();
         boxMaker(graphics, this.getX(), this.getY(), width, height, borderColour, isSelected, isSelected);
         for (var getAllComponent : getAllComponents) {
             graphics.drawString(minecraft.font, getAllComponent.component(), getXStart, startY2 + spacer, -1, true);
             spacer += 10;
         }
-
+        graphics.pose().popPose();
     }
 
 

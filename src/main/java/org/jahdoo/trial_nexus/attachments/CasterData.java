@@ -6,7 +6,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -596,8 +595,10 @@ public class CasterData implements IAttachment {
     }
 
     public void subtractMana(double regenMana, Player player) {
-        this.manaPool = Math.max(manaPool - regenMana, 0);
-        if(player instanceof ServerPlayer serverPlayer) sendToPlayer(serverPlayer, new ManaSyncS2CP(manaPool));
+        if(!player.isCreative()){
+            this.manaPool = Math.max(manaPool - regenMana, 0);
+            if (player instanceof ServerPlayer serverPlayer) sendToPlayer(serverPlayer, new ManaSyncS2CP(manaPool));
+        }
     }
 
     public static void manaTickEvent(ServerPlayer serverPlayer) {

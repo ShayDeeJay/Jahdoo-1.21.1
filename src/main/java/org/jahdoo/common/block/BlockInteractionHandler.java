@@ -126,6 +126,7 @@ public class BlockInteractionHandler {
                 }
             }
         }
+
         return Optional.empty();
     }
 

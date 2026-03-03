@@ -11,11 +11,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.BaseJahdooItem;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.PlayerBoonReg;
@@ -26,7 +29,7 @@ import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import java.util.List;
 import java.util.UUID;
 
-public class PerkaSoda extends Item implements JahdooItem {
+public class PerkaSoda extends BaseJahdooItem {
 
     public PerkaSoda() {
         super(new Properties());

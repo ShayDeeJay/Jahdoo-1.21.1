@@ -91,8 +91,7 @@ public class RuneTab {
 
             if(!shiftDown){
                 list.add(TextHelpers.withStyleComponent("------------", uiColour()));
-                var sibling = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.shift", ColourHelpers.getOffWhite());
-                list.add(TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", ColourHelpers.getHeaderColour(), sibling));
+                list.add(TextHelpers.displaySelectedKey(KEY_LSHIFT));
             }
 
             var toolTipSpacer = shiftDown ? ((list.size() * 10) + 10) : 0;

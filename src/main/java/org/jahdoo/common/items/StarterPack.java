@@ -1,6 +1,5 @@
 package org.jahdoo.common.items;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -20,7 +19,7 @@ import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import java.util.List;
 
 
-public class StarterPack extends Item {
+public class StarterPack extends BaseJahdooItem {
 
     public static final List<Item> IRON = List.of(Items.IRON_HELMET, Items.IRON_CHESTPLATE, Items.IRON_LEGGINGS, Items.IRON_BOOTS, Items.IRON_SWORD);
     public static final List<Item> DIAMOND = List.of(Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE, Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS, Items.DIAMOND_SWORD);
@@ -31,11 +30,11 @@ public class StarterPack extends Item {
     @Override
     public Component getName(ItemStack stack) {
         var data = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        var getType = data == null ? Pair.of("Iron ", ColourHelpers.getSilverCoin()) :
-                 data.value() == 1 ? Pair.of("Diamond ", ColourHelpers.getDiamondBox()) :
-                                     Pair.of("Netherite ", ColourHelpers.getNetheriteBox()) ;
+        var getType = data == null ? ColourHelpers.getSilverCoin() :
+                 data.value() == 1 ? ColourHelpers.getDiamondBox() :
+                                     ColourHelpers.getNetheriteBox() ;
 
-        return TextHelpers.withStyleComponent(getType.getFirst() + "Starter Pack", getType.getSecond());
+        return TextHelpers.withStyleComponent(super.getName(stack).getString(), getType);
     }
 
     @Override

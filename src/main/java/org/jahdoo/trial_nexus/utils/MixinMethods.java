@@ -13,13 +13,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 
 import javax.annotation.Nullable;
@@ -32,13 +30,13 @@ import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 public class MixinMethods {
 
     public static void onTargetHit(Vec3 pos, Level level){
-        var aoeCloud = new AoeCloud(level, null, 0f, EntityDataReg.BARRAGE.get().setAbilityId(), WAND_ABILITY_HOLDER_BARRAGE, abilityId.getPath().intern());
-        aoeCloud.setPos(pos.x, pos.y, pos.z);
-        level.addFreshEntity(aoeCloud);
+//        var aoeCloud = new AoeCloud(level, null, 0f, EntityDataReg.BARRAGE.get().setAbilityId(), WAND_ABILITY_HOLDER_BARRAGE, abilityId.getPath().intern());
+//        aoeCloud.setPos(pos.x, pos.y, pos.z);
+//        level.addFreshEntity(aoeCloud);
     }
 
     private static final AbilityHolder WAND_ABILITY_HOLDER_BARRAGE =
-        new AbilityBuilder(null, abilityId.getPath().intern())
+        new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(1200)
             .setEffectDurationWithValue(300, 100, 100)

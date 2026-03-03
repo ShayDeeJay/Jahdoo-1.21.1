@@ -83,7 +83,7 @@ public class BurningSkullsAbility extends Ability {
 
     @Override
     public AbilityHolder setModifiers() {
-        return new AbilityBuilder(abilityId.getPath().intern())
+        return new AbilityBuilder(BurningSkullsAbility.abilityId.getPath().intern())
             .setStaticMana(40)
             .setStaticCooldown(300)
             .setDamage(32, 26, 2, 1)
@@ -108,7 +108,7 @@ public class BurningSkullsAbility extends Ability {
             for (int i = 0; i < projectileCount; i++) {
                 var isValid = !getLocalEntities.isEmpty();
                 var randomTarget = isValid ? Helpers.listRandom(getLocalEntities) : null;
-                var skull = new BurningSkull(player, 0);
+                var skull = new BurningSkull(player,  0);
                 skull.setTarget(randomTarget);
                 if (isValid) getLocalEntities.remove(randomTarget);
 

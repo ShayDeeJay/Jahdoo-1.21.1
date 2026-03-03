@@ -1,5 +1,6 @@
 package org.jahdoo.common.items.caster_item.elemental_wand;
 
+import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -47,4 +48,8 @@ public class ElementalWand extends CasterItem implements GeoItem {
         );
     }
 
+    @Override
+    public String descriptionId(ItemStack stack) {
+        return "description.item.jahdoo.elemental_wands";
+    }
 }

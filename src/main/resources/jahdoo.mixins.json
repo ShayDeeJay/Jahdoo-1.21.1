@@ -12,12 +12,14 @@
     "ItemEntityMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
+    "LivingEntityRendererMixin",
     "PlayerSpinAttackMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
+    "GameRendererMixin",
     "ItemRenderMixin"
   ]
 }

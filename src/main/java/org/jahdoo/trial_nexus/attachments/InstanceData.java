@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 
@@ -50,7 +51,6 @@ public class InstanceData implements IAttachment {
 
     private final Map<String, Double> values = new HashMap<>();
     private String difficulty;
-
 
     public InstanceData() {}
 
@@ -326,6 +326,10 @@ public class InstanceData implements IAttachment {
 
     public static InstanceData copyInstance(InstanceData original) {
         return new InstanceData(original.difficulty, original.values);
+    }
+
+    public static String getDifficulty(ServerLevel level) {
+        return level.getData(INSTANCE_DATA).getDifficulty();
     }
 
     public static Optional<InstanceDifficulty> difficultyFromInstance(InstanceData instanceData){

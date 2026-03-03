@@ -6,7 +6,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.BaseMagicWeapon;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -17,7 +16,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-public class ElementalStaff extends BaseMagicWeapon implements GeoItem, JahdooItem {
+public class ElementalStaff extends BaseMagicWeapon implements GeoItem {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public String location;

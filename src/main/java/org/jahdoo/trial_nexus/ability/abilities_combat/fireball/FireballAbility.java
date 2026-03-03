@@ -79,7 +79,7 @@ public class FireballAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
-            .setStaticCooldown(600)
+            .setStaticCooldown(400)
             .setDamage(50, 30, 10, 4)
             .setEffectDuration(300, 100, 100, 2)
             .setEffectStrength(6, 0, 2, 1)

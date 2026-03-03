@@ -98,6 +98,7 @@ public class ClientBusEvents {
         event.register(WAND_SLOT_8A);
         event.register(WAND_SLOT_9A);
         event.register(WAND_SLOT_10A);
+        event.register(BLINK);
         event.register(QUICK_SELECT);
         event.register(ABILITY_SCREEN);
         event.register(STAT_SCREEN);

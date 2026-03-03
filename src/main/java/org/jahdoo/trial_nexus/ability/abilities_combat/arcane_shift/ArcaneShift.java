@@ -77,20 +77,7 @@ public class ArcaneShift extends AbstractAbility {
         var areaOfEffect = getTag(AOE);
         var effectDuration = getTag(EFFECT_DURATION);
 
-        for (int i = 0; i < 50; i++) {
-            var particle = getAllParticleTypes(element(), 10, 1.5f);
-
-            ParticleHandlers.sendParticles(
-                level,
-                particle,
-                new Vec3(player.getRandomX(2), player.getRandomY()-1, player.getRandomZ(2)),
-                0,
-                Random.nextDouble(0.1, 0.3) - 0.2,
-                Random.nextDouble(0.2, 0.5),
-                Random.nextDouble(0.1, 0.3) - 0.2,
-                2F
-            );
-        }
+        particles(player, level, element(), 50, 2, 10);
 
         var list = level.getEntities((Entity) null, player.getBoundingBox().inflate(areaOfEffect, 4, areaOfEffect), LIVING_ENTITY_STILL_ALIVE);
 
@@ -99,6 +86,23 @@ public class ArcaneShift extends AbstractAbility {
                 launchParticle(level, livingEntity.position(), livingEntity.getBbWidth());
                 livingEntity.addEffect(new JahdooMobEffect(EffectReg.MYSTIC_EFFECT, (int) effectDuration, 1));
             }
+        }
+    }
+
+    public static void particles(Player player, Level level, AbstractElement element, int count, float radius, int lifetime) {
+        for (int i = 0; i < count; i++) {
+            var particle = getAllParticleTypes(element, lifetime, 1.5f);
+
+            ParticleHandlers.sendParticles(
+                level,
+                particle,
+                new Vec3(player.getRandomX(radius), player.getRandomY()-1, player.getRandomZ(radius)),
+                0,
+                Random.nextDouble(0.1, 0.3) - 0.2,
+                Random.nextDouble(0.2, 0.5),
+                Random.nextDouble(0.1, 0.3) - 0.2,
+                2F
+            );
         }
     }
 

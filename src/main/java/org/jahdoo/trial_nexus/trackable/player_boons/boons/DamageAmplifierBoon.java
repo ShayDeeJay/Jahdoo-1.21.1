@@ -1,0 +1,49 @@
+package org.jahdoo.trial_nexus.trackable.player_boons.boons;
+
+import net.minecraft.core.Holder;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.trackable.player_boons.AbstractPlayerBoon;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+
+public class DamageAmplifierBoon extends AbstractPlayerBoon {
+
+    @Override
+    public @Nullable AbstractElement element() {
+        return ElementReg.random();
+    }
+
+    @Override
+    public String getLabel() {
+        return ELEMENTAL_ENERGY;
+    }
+
+    @Override
+    public String id() {
+        return "damage_amplifier_boon";
+    }
+
+    @Override
+    public int colour() {
+        return ColourHelpers.getNegativeRed();
+    }
+
+    @Override
+    public int getTextureId() {
+        return 1;
+    }
+
+    @Override
+    public Holder<Attribute> attributeHolder() {
+        return element().damageAmplifier();
+    }
+
+    @Override
+    public double getValue(JahdooRarity getRarity) {
+        return getRarity.getAttributes().getRandomDamage();
+    }
+
+}

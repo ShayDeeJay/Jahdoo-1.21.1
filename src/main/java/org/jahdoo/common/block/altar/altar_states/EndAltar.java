@@ -41,15 +41,16 @@ public class EndAltar {
             placeLocksWithData(serverLevel, pos.below(2), false, false);
             sendAlterEndNotification(serverLevel, pos);
             removeLootAndOres(serverLevel, pos);
-            manageEndEntities(aEntity, serverLevel);
+            manageEndEntities(serverLevel);
             setEndFocusBlock(aEntity.data(), serverLevel, pos, aEntity.direction);
         }
     }
 
-    private static void manageEndEntities(AltarBlockEntity aEntity, ServerLevel serverLevel) {
+    private static void manageEndEntities(ServerLevel serverLevel) {
+        var difficulty = InstanceData.getDifficulty(serverLevel);
         for (var entity : serverLevel.getEntities().getAll()) {
             if(entity instanceof Safe safe) safe.kill();
-            if(entity instanceof ServerPlayer player) incrementRoomExp(player, aEntity.data().getDifficulty());
+            if(entity instanceof ServerPlayer player) incrementRoomExp(player, difficulty, 5);
         }
     }
 

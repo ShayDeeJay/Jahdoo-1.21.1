@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreenShared;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
@@ -244,8 +243,8 @@ public class DivineForgeScreen extends AbstractContainerScreen<DivineForgeMenu> 
         overlayInventory(guiGraphics, startX, startY, this, borderColour);
         sharedGearData(this, guiGraphics, getItem(), i, i1);
         header(guiGraphics);
-        DivineForgeScreenShared.renderItem(guiGraphics, mouseX, mouseY, startX, startY, width, height, scaleItem, getMinecraft(), getItem(), this.leftPos, this.topPos, borderColour);
         runeSlotTexture(guiGraphics, width, height, isRuneManager(), getMinecraft(), borderColour, runeTableMenu);
+        renderItem(guiGraphics, mouseX, mouseY, startX, startY, width, height, scaleItem, getMinecraft(), getItem(), this.leftPos, this.topPos, borderColour);
 
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         runeTooltip(guiGraphics, mouseX, mouseY);
@@ -281,10 +280,16 @@ public class DivineForgeScreen extends AbstractContainerScreen<DivineForgeMenu> 
     }
 
     private void header(@NotNull GuiGraphics guiGraphics) {
-        var header = Component.literal(isRuneManager() ? "Rune Manager" : "Gear Repair");
-        var x = width / 2 ;
-        var y1 = height / 2 - 120;
-        guiGraphics.drawString(font, header, x, y1, borderColour);
+        var header = switch (selection){
+            case 1 -> "Gear Repair";
+            case 2 -> "Item Modifiers";
+            default -> "Rune Manager";
+        };
+        var newHead = Component.literal(header);
+
+        var x = width / 2  - 104;
+        var y1 = height / 2 - 100;
+        guiGraphics.drawString(font, newHead, x, y1, borderColour);
     }
 
     @Override

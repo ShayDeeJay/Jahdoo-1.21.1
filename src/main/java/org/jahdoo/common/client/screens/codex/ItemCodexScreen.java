@@ -81,7 +81,7 @@ public class ItemCodexScreen extends Screen {
             var v = this.fade ;
             var y = (int) (v - 100);
             renderBounding(graphics, 12, 12, width / 2 - 12);
-            renderItem(graphics, x, y);
+            renderItem(graphics, x, y, mouseX, mouseY);
             renderHeader(graphics, -y, 0);
             description(graphics, x, (int) (100 - v));
             additionalInformation(graphics, mouseX, mouseY);
@@ -102,11 +102,11 @@ public class ItemCodexScreen extends Screen {
         var y1 = y + 30;
         var x1 = x + 54;
         var color = codec.getHoverName().getStyle().getColor();
-        graphics.drawString(font, TextHelpers.withStyleComponentTrans(codec.getDescriptionId(), color == null ? uiColour() : color.getValue()), x1, y1 -2, -1);
+        graphics.drawString(font, TextHelpers.withStyleComponentTrans(codec.getHoverName().getString(), color == null ? uiColour() : color.getValue()), x1, y1 -2, -1);
         pose.popPose();
     }
 
-    private void renderItem(GuiGraphics graphics, int x, int y) {
+    private void renderItem(GuiGraphics graphics, int x, int y, int mouseX, int mouseY) {
         var scale = 4;
         var pose = graphics.pose();
         var fade1 = fade / 28f;
@@ -193,8 +193,9 @@ public class ItemCodexScreen extends Screen {
 
     private void description(GuiGraphics graphics, int x, int y) {
         if(codec.getItem() instanceof JahdooItem item){
-            var text = TextHelpers.withStyleComponentTrans(item.descriptionId(), ColourHelpers.getSubHeaderColour());
+            var text = TextHelpers.withStyleComponentTrans(item.descriptionId(codec), ColourHelpers.getSubHeaderColour());
             textWithWidthAdjust(font, x+1, y-10, text, graphics);
+
         }
     }
 

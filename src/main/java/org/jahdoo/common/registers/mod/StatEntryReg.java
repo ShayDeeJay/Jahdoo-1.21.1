@@ -8,9 +8,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.boon.StatEntry.AbstractStatEntry;
-import org.jahdoo.trial_nexus.boon.StatEntry.StatCategory;
-import org.jahdoo.trial_nexus.boon.StatEntry.stats.*;
+import org.jahdoo.trial_nexus.trackable.stat_entry.AbstractStatEntry;
+import org.jahdoo.trial_nexus.trackable.stat_entry.StatCategory;
+import org.jahdoo.trial_nexus.trackable.stat_entry.stats.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
@@ -101,12 +101,16 @@ public class StatEntryReg {
     //General
     public static final DeferredHolder<AbstractStatEntry, AbstractStatEntry> EXPERIENCE =
         registerElement(ExperienceStat::new);
-    public static final DeferredHolder<AbstractStatEntry, AbstractStatEntry> MOBS_KILLED =
-        registerElement(MobsKilled::new);
     public static final DeferredHolder<AbstractStatEntry, AbstractStatEntry> ROOMS_CLEARED =
         registerElement(RoomsCleared::new);
+
+    //Mobs
+    public static final DeferredHolder<AbstractStatEntry, AbstractStatEntry> MOBS_KILLED =
+        registerElement(MobsKilled::new);
     public static final DeferredHolder<AbstractStatEntry, AbstractStatEntry> CHAMPIONS_KILLED =
         registerElement(ChampionsKilled::new);
+    public static final DeferredHolder<AbstractStatEntry, AbstractStatEntry> CHALLENGER =
+        registerElement(ChallengersKilled::new);
 
     public static void register(IEventBus eventBus) {
         STAT_ENTRY.register(eventBus);

@@ -88,7 +88,7 @@ public class RuneItem extends BaseItem {
             tooltipComponents.add(component);
         }
 
-        if(!description.getString().isEmpty() && !AbilityComponentHelper.shiftForDetails(tooltipComponents, false)) {
+        if(!description.getString().isEmpty() && !AbilityComponentHelper.holdKey(tooltipComponents, false)) {
             tooltipComponents.add(TextHelpers.withStyleComponent(description.getString(), ColourHelpers.getHeaderColour()));
         }
 

@@ -3,7 +3,7 @@ package org.jahdoo.trial_nexus.quests;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
-import org.jahdoo.trial_nexus.boon.StatEntry.stats.GoldCoin;
+import org.jahdoo.trial_nexus.trackable.stat_entry.stats.GoldCoin;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class GoldCoins extends CollectCoinQuest {
 
     @Override
     public String questName() {
-        return GoldCoin.id;
+        return GoldCoin.ID;
     }
 
     @Override

@@ -30,7 +30,7 @@ import static org.jahdoo.trial_nexus.attachments.PlayerWallet.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties.*;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
 
-public class RecoveryReceipt extends BaseItem {
+public class RecoveryReceipt extends BaseJahdooItem {
 
     public RecoveryReceipt() { super(new Properties()); }
 
@@ -55,7 +55,7 @@ public class RecoveryReceipt extends BaseItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return TextHelpers.withStyleComponent("Recovery Receipt", ColourHelpers.getSubHeaderColour());
+        return TextHelpers.withStyleComponentTrans(super.getName(stack).getString(), ColourHelpers.getSubHeaderColour());
     }
 
     @Override

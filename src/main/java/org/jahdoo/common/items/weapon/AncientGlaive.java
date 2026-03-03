@@ -34,8 +34,8 @@ public class AncientGlaive extends BaseWeapon {
 
     public static Properties glaiveProperties(){
         var properties = new Properties();
-        int attackDamage = 3;
-        float attackSpeed = -1.4F;
+        int attackDamage = 1;
+        float attackSpeed = -2F;
         var modifier = new AttributeModifier(BASE_ATTACK_DAMAGE_ID, attackDamage + Tiers.NETHERITE.getAttackDamageBonus(), AttributeModifier.Operation.ADD_VALUE);
         var modifier1 = new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE);
         var modifier2 = new AttributeModifier(JahdooHelpers.res("reach"), 2, AttributeModifier.Operation.ADD_VALUE);

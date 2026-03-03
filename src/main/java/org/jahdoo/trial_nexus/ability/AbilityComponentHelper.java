@@ -2,7 +2,6 @@ package org.jahdoo.trial_nexus.ability;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +15,7 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
@@ -25,7 +25,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
+import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
+import static com.mojang.blaze3d.platform.InputConstants.KEY_TAB;
 import static org.jahdoo.common.registers.mod.ElementReg.UTILITY;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.ability.AbilityRating.*;
@@ -74,36 +75,35 @@ public class AbilityComponentHelper {
             .append(getModifierContextSingle(keys, format, comparison)));
     }
 
-    public static boolean shiftForDetails(List<Component> toolTips, boolean spacer){
-        if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
+    public static boolean holdKey(List<Component> toolTips, boolean spacer){
+        var keyI = KEY_TAB;
+        if(!ClientHelpers.isKeyDown(keyI)){
             if(spacer) toolTips.add(Component.literal(" "));
-            var hotkey = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey", ColourHelpers.getOffWhite());
-            var holdToDiscover = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", ColourHelpers.getHeaderColour(), hotkey);
+            var holdToDiscover = TextHelpers.displaySelectedKey(keyI);
             toolTips.add(holdToDiscover);
             return true;
         }
         return false;
     }
 
-    public static List<Component> shiftForDetails(boolean showSpacer, boolean canUpgrade){
+    public static List<Component> holdKey(boolean showSpacer, boolean canUpgrade){
         var comps = new ArrayList<Component>();
+        var tab = KEY_TAB;
 
-        if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
+        if(!ClientHelpers.isKeyDown(tab)){
             if(showSpacer) comps.add(Component.literal(" "));
-            var hotkey = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey", ColourHelpers.getOffWhite());
-            var holdToDiscover = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", ColourHelpers.getHeaderColour(), hotkey);
-            comps.add(holdToDiscover);
+            comps.add(TextHelpers.displaySelectedKey(tab));
 
             if(showSpacer){
                 if(!canUpgrade){
-                    var component = TextHelpers.withStyleComponent("[Click] ", ColourHelpers.getOffWhite());
-                    var sibling = TextHelpers.withStyleComponent("To Upgrade", ColourHelpers.getHeaderColour());
-                    comps.add(component.copy().append(sibling));
+                    comps.add(TextHelpers.displaySplitText("keys.jahdoo.upgrade", "keys.jahdoo.click"));
                 }
+                var leftShift = TextHelpers.withStyleComponentTrans(InputConstants.getKey(KEY_LSHIFT, 0).getName(), 0);
+                var leftClick = TextHelpers.withStyleComponentTrans("keys.jahdoo.click", 0);
+                var prefix = TextHelpers.withStyleComponent("[" + leftShift.getString() + " + " + leftClick.getString() + "]", ColourHelpers.getSubHeaderColour());
+                var suffix = TextHelpers.withStyleComponentTrans("keys.jahdoo.add", ColourHelpers.getHeaderColour(), prefix);
 
-                var component = TextHelpers.withStyleComponent("[Shift + Click] ", ColourHelpers.getOffWhite());
-                var sibling = TextHelpers.withStyleComponent("To Add", ColourHelpers.getHeaderColour());
-                comps.add(component.copy().append(sibling));
+                comps.add(suffix);
             }
 
             return comps;
@@ -139,31 +139,6 @@ public class AbilityComponentHelper {
         return AbilityReg.getFirstSpellByTypeId(data.getSelectedAbility());
     }
 
-    public static Optional<String> isValidAugmentUtil(ItemStack itemStack) {
-        var itemStacks = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
-        if(itemStacks == null) return Optional.empty();
-
-        var typeId = itemStacks.abilityName();
-        var ability = AbilityReg.getFirstSpellByTypeId(typeId);
-        if(ability.isPresent()){
-            if (isConfigAbility(ability.get(), typeId, itemStack)) {
-                return Optional.of(typeId);
-            }
-        }
-        return Optional.empty();
-    }
-
-    public static boolean isConfigAbility(Ability selectedAbility, String ability, ItemStack itemStack) {
-        var wandAbilityHolder = itemStack.get(ABILITY_HOLDER);
-        if(wandAbilityHolder == null) return false;
-        var filterOutBase = wandAbilityHolder.data().abilityProperties()
-            .keySet()
-            .stream()
-            .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
-        return /*selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && */!filterOutBase.toList().isEmpty();
-//        return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
-    }
-
     public static boolean isConfigAbility(Player player) {
         var ability = getAbility(player);
         if(ability.isEmpty()) return false;
@@ -174,7 +149,6 @@ public class AbilityComponentHelper {
             .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
         return ability.get().getElemenType().equals(UTILITY.get()) && !filterOutBase.toList().isEmpty();
     }
-
 
     public static Component getCurrentModifierRating(Ability ability, AbilityHolder holder, ItemStack itemStack1, String keys) {
         if(ability == null) return Component.empty();
@@ -270,7 +244,7 @@ public class AbilityComponentHelper {
             toolTips.addLast(TextHelpers.withStyleComponent(ability.getAbilityName(), ability.getElemenType().textColourA()));
             toolTips.addLast(Component.empty());
             var prefix = TextHelpers.withStyleComponentTrans("info.jahdoo.cost", ColourHelpers.getSubHeaderColour(), ": ");
-            var suffix = TextHelpers.withStyleComponentTrans("info.jahdoo.skill_points", ColourHelpers.getPerkGreen(), "◆ " + ability.getAbilityCost() + " ").copy();
+            var suffix = TextHelpers.withStyleComponentTrans("info.jahdoo.skill_points", ColourHelpers.getPerkGreen(), "◆" + ability.getAbilityCost() + " ").copy();
 
             toolTips.addLast(prefix.copy().append(suffix));
             var hasDependency = ability.levelRequirement() <= data.getLevel();

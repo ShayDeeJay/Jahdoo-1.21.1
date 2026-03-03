@@ -28,6 +28,18 @@ public class Network {
         );
 
         payloadRegistrar.playToServer(
+            BlinkC2SP.TYPE,
+            BlinkC2SP.STREAM_CODEC,
+            BlinkC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            TripleJumpMagicCircleC2SP.TYPE,
+            TripleJumpMagicCircleC2SP.STREAM_CODEC,
+            TripleJumpMagicCircleC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
             FlyingC2SP.TYPE,
             FlyingC2SP.STREAM_CODEC,
             FlyingC2SP::handle
@@ -237,6 +249,12 @@ public class Network {
             MoveClientEntityS2CP.TYPE,
             MoveClientEntityS2CP.STREAM_CODEC,
             MoveClientEntityS2CP::handle
+        );
+
+        payloadRegistrar.playToClient(
+            BlinkS2CP.TYPE,
+            BlinkS2CP.STREAM_CODEC,
+            BlinkS2CP::handle
         );
 
         payloadRegistrar.playToClient(

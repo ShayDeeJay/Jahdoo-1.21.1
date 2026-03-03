@@ -22,6 +22,7 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.Dimens
 import org.jahdoo.trial_nexus.ability.abilities_combat.nova_smash.NovaSmash;
 import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.attachments.player_abilities.TripleJump;
@@ -155,17 +156,19 @@ public class ServerEvents {
         var player = event.getEntity();
         var level = player.level();
 
-        questTracker(level, player);
+//        questTracker(level, player);
 
         if(player instanceof ServerPlayer serverPlayer){
             restrictElytra(serverPlayer, level);
             CasterData.cooldownTickEvent(serverPlayer);
             CasterData.manaTickEvent(serverPlayer);
             CasterData.checkMultiKillStatic(serverPlayer, 3);
+            questTracker(level, player);
+            Blink.blinkTickEvent(serverPlayer);
         }
 
-        copyPasteBlockProperties(player);
         MageFlight.mageFlightTickEvent(player);
+        copyPasteBlockProperties(player);
         VitalRejuvenation.staticTickEvent(player);
         DimensionalRecall.staticTickEvent(player);
         NovaSmash.novaSmashTickEvent(player);
@@ -209,7 +212,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void hitEvent(ProjectileImpactEvent event) {
-        dontDamageAlliedMobs(event);
+        avoidDamageAlliedMobs(event);
     }
 
     @SubscribeEvent

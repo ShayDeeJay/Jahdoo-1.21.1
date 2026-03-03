@@ -7,6 +7,6 @@ public interface IAttachment {
 
     void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider);
 
-    void loadNBTData(CompoundTag nbt,HolderLookup.Provider provider);
+    void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider);
 
 }

@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.armor.BaseArmor;
 import org.jahdoo.common.registers.ArmorMaterialReg;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -22,7 +21,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-public class MageArmor extends BaseArmor implements GeoItem, JahdooItem {
+public class MageArmor extends BaseArmor implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public MageArmor(Type type) {

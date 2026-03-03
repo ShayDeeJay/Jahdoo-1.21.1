@@ -64,7 +64,7 @@ public class ArcaneShiftAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(80)
-            .setStaticCooldown(800)
+            .setStaticCooldown(200)
             .setAoe(10, 4, 2, 2)
             .setEffectDuration(200, 50, 50, 1)
             .setCastingDistance(50, 20, 10, 1)

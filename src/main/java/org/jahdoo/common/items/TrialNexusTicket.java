@@ -12,7 +12,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
@@ -22,8 +21,8 @@ import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
-import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.trackable.level_modifiers.AbstractLevelBoon;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
@@ -42,7 +41,7 @@ import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAnd
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getSoundWithPositionV;
 
-public class TrialNexusTicket extends Item implements JahdooItem {
+public class TrialNexusTicket extends BaseJahdooItem {
 
     public static final List<Integer> colourWithRarity= List.of(
         color(225, 176, 73),
@@ -68,11 +67,6 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         var colour = getType == null ? ColourHelpers.getSubHeaderColour() : colourWithRarity.get(getType.value()-1);
 
         return TextHelpers.withStyleComponent(name, colour);
-    }
-
-    @Override
-    public String descriptionId() {
-        return "description.item.jahdoo.ticket";
     }
 
     @Override

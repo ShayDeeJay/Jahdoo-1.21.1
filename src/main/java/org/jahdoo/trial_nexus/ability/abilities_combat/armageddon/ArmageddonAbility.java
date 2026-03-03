@@ -76,7 +76,7 @@ public class ArmageddonAbility extends Ability {
     public AbilityHolder setModifiers( ) {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(150)
-            .setStaticCooldown(4800)
+            .setStaticCooldown(1800)
             .setDamage(60, 30, 10, 2)
             .setCastingDistance(30, 10, 10, 2)
             .setLifetime(400, 200, 100, 3)

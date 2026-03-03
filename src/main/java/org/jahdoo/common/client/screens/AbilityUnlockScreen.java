@@ -139,12 +139,23 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     private void overlaySkills() {
         var skillHeight = centerY + (scaledSpacing / 2) - (size * 25);
         var allSkills = SkillReg.getAllSkills();
-        var startXS = centerX - (4.2 * scaledXOffset+1); // Center the first element
 
-        var skillSpacer = 0;
-        for (var allSkill : allSkills) {
-            skillButton(startXS + skillSpacer * scaledXOffset, skillHeight, size, allSkill);
-            skillSpacer += 2;
+        var spacing = scaledXOffset * 1.5;
+        var count = allSkills.size();
+
+        // Total width occupied by all skills
+        var totalWidth = (count - 1) * spacing;
+
+        // X position of the first skill so the row is centered
+        var startX = centerX - (scaledXOffset / 3.8) - (totalWidth / 2);
+
+        for (int i = 0; i < count; i++) {
+            skillButton(
+                startX + i * spacing,
+                skillHeight,
+                size,
+                allSkills.get(i)
+            );
         }
     }
 
@@ -173,7 +184,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var component = new ArrayList<Component>();
         var headerColour = color(100, 116, 245);
 
-        if(AbilityComponentHelper.shiftForDetails(component, false)){
+        if(AbilityComponentHelper.holdKey(component, false)){
             component.add(component.size()-1, TextHelpers.withStyleComponent(TextHelpers.stringIdToName(skill.id()), headerColour));
         } else {
             component.addAll(toComponent(skill.description(), TextHelpers.stringIdToName(skill.id()), headerColour, color(161, 171, 255)));
@@ -445,7 +456,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         this.pos = new Vec3(posX, posY, 0);
 
         if(!isDummy) {
-            var components = AbilityComponentHelper.shiftForDetails(isLocked, modifiableHolder(holder));
+            var components = AbilityComponentHelper.holdKey(isLocked, modifiableHolder(holder));
             var allAbilityModifiers = getAllAbilityModifiers(ability, holder, components.isEmpty(), true, player);
             allAbilityModifiers.addAll(!isLocked ? 1 : allAbilityModifiers.size(), components);
             this.components = allAbilityModifiers;

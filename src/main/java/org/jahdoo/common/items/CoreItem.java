@@ -16,7 +16,7 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.registers.ComponentReg.CORE_DATA;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getColorTransition;
 
-public class CoreItem extends Item implements JahdooItem{
+public class CoreItem extends BaseJahdooItem {
 
     public CoreItem(int value) {
         super(addCompData(value));
@@ -56,7 +56,7 @@ public class CoreItem extends Item implements JahdooItem{
     }
 
     @Override
-    public String descriptionId() {
+    public String descriptionId(ItemStack stack) {
         return "description.item.jahdoo.cores";
     }
 

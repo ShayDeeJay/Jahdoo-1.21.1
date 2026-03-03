@@ -15,4 +15,6 @@ public class GenericEffect extends MobEffect {
         return true;
     }
 
+
+
 }

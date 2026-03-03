@@ -65,6 +65,31 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
 
     public BurningSkull(
         LivingEntity owner,
+        AbilityHolder holder,
+        double spacing
+    ) {
+        super(EntityReg.FLAMING_SKULL.get(), owner.level());
+        setProjectileWithOffsets(this, owner, spacing, 1);
+        this.reapplyPosition();
+        this.setOwner(owner);
+
+        System.out.println(holder);
+
+        this.effectChance = getTag(EFFECT_CHANCE, holder);
+        this.effectStrength = getTag(EFFECT_STRENGTH, holder);
+        this.effectDuration = getTag(EFFECT_DURATION, holder);
+
+        setLifetimes((int) getTag(LIFETIME, holder));
+
+        if(!(this.getOwner() instanceof Player)){
+            this.damage = getTag(DAMAGE, holder);
+        } else {
+            damageWithModifiers(holder);
+        }
+    }
+
+    public BurningSkull(
+        LivingEntity owner,
         double spacing
     ) {
         super(EntityReg.FLAMING_SKULL.get(), owner.level());
@@ -85,7 +110,6 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         } else {
             damageWithModifiers(holder);
         }
-
     }
 
     public void setTarget(LivingEntity livingEntity){

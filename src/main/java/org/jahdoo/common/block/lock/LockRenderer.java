@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.level_manager.RoomData;
-import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +25,8 @@ import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.effect.MobEffects.*;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
-import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
-import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
+import static org.jahdoo.trial_nexus.trackable.level_modifiers.AbstractLevelBoon.SyncableData.EMPTY;
+import static org.jahdoo.trial_nexus.trackable.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{

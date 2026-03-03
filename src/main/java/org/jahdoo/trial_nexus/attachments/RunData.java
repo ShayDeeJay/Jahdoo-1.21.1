@@ -11,11 +11,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.trackable.stat_entry.AbstractStatEntry;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -98,6 +100,10 @@ public class RunData implements IAttachment {
 
     public int getChampionsKilled(){
         return getStat(StatEntryReg.CHAMPIONS_KILLED.get().id());
+    }
+
+    public int getChallengersKilled(){
+        return getStat(StatEntryReg.CHALLENGER.get().id());
     }
 
     public int getPotsBroken(){
@@ -226,7 +232,6 @@ public class RunData implements IAttachment {
 
     public static void endRun(ServerPlayer player, boolean died) {
         var runData = player.getData(AttachmentReg.RUN_DATA.get());
-        var castData = PlayerTrialData.getData(player);
         setPlayerLevel(CasterData.getLevel(player), player);
 
         if (runData.dateAndTime != null) {
@@ -250,65 +255,53 @@ public class RunData implements IAttachment {
         sendToPlayer(player, new RunDataS2CP(runData));
     }
 
-    public static void incrementRoomExp(ServerPlayer player, String difficulty) {
-        var runData = player.getData(AttachmentReg.RUN_DATA.get());
-        runData.incrementStat(StatEntryReg.ROOMS_CLEARED.get().id());
-        runData.setExperienceGained(difficulty, 5);
-        sendToPlayer(player, new RunDataS2CP(runData));
-    }
-
-    public static void incrementOres(ServerPlayer player, String difficulty, int amount) {
-        var runData = player.getData(AttachmentReg.RUN_DATA.get());
-        runData.incrementStat(StatEntryReg.ORES.get().id());
-        runData.setExperienceGained(difficulty, amount);
-        sendToPlayer(player, new RunDataS2CP(runData));
-    }
-
-    public static void incrementPotsBroken(ServerPlayer player, String difficulty, int amount) {
-        var runData = player.getData(AttachmentReg.RUN_DATA.get());
-        runData.incrementStat(StatEntryReg.LOOT_POT.get().id());
-        runData.setExperienceGained(difficulty, amount);
-        sendToPlayer(player, new RunDataS2CP(runData));
-    }
-
-    public static void incrementKilledMobsExp(ServerLevel level, LivingEntity player, int amount) {
-        var instanceData = level.getData(INSTANCE_DATA.get());
-        var runData = player.getData(RUN_DATA.get());
-
-        runData.incrementStat(StatEntryReg.MOBS_KILLED.get().id());
-        runData.setExperienceGained(instanceData.getDifficulty(), amount);
-
-        if (player instanceof ServerPlayer serverPlayer) {
-            sendToPlayer(serverPlayer, new RunDataS2CP(runData));
-        }
-    }
-
-    public static void incrementCoin(ServerLevel level, LivingEntity player, int coinType, int coinValue) {
-        var instanceData = level.getData(INSTANCE_DATA.get());
-        var runData = player.getData(RUN_DATA.get());
+    public static void incrementCoin(LivingEntity player, String difficulty, int coinType, int coinValue) {
         var type = PlayerWallet.CoinProperties.getType(coinType);
+        addAndSync(player, difficulty, coinValue, type.getSerializedName(), coinValue);
+    }
 
-        runData.addStat(type.getName(), coinValue);
-        runData.setExperienceGained(instanceData.getDifficulty(), coinValue);
+    public static void incrementRoomExp(LivingEntity player, String difficulty, int amount) {
+        incrementAndSync(player, difficulty, amount, StatEntryReg.ROOMS_CLEARED);
+    }
+
+    public static void incrementOres(LivingEntity player, String difficulty, int amount) {
+        incrementAndSync(player, difficulty, amount, StatEntryReg.ORES);
+    }
+
+    public static void incrementPotsBroken(LivingEntity player, String difficulty, int amount) {
+        incrementAndSync(player, difficulty, amount, StatEntryReg.LOOT_POT);
+    }
+
+    public static void incrementSafeOpened(LivingEntity player, String difficulty, int amount) {
+        incrementAndSync(player, difficulty, amount, StatEntryReg.SAFE);
+    }
+
+    public static void incrementChampionsKilled(LivingEntity player, String difficulty, int amount) {
+        incrementAndSync(player, difficulty, amount, StatEntryReg.CHAMPIONS_KILLED);
+    }
+
+    public static void incrementKilledMobsExp(LivingEntity player, String difficulty, int amount) {
+        incrementAndSync(player, difficulty, amount, StatEntryReg.MOBS_KILLED);
+    }
+
+    public static void incrementChallengerKilled(LivingEntity player, String difficulty, int amount) {
+        incrementAndSync(player, difficulty, amount, StatEntryReg.CHALLENGER);
+    }
+
+    public static void incrementAndSync(LivingEntity player, String difficulty, int amount, DeferredHolder<AbstractStatEntry, AbstractStatEntry> stat) {
         if (player instanceof ServerPlayer serverPlayer) {
+            var runData = player.getData(RUN_DATA.get());
+            runData.incrementStat(stat.get().id());
+            runData.setExperienceGained(difficulty, amount);
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
         }
     }
 
-    public static void incrementSafeOpened(LivingEntity player) {
-        var runData = player.getData(RUN_DATA.get());
-        runData.incrementStat(StatEntryReg.SAFE.get().id());
-
+    public static void addAndSync(LivingEntity player, String difficulty, int amount, String stat, int increment) {
         if (player instanceof ServerPlayer serverPlayer) {
-            sendToPlayer(serverPlayer, new RunDataS2CP(runData));
-        }
-    }
-
-    public static void incrementChampionsKilled(LivingEntity player) {
-        var runData = player.getData(RUN_DATA.get());
-        runData.incrementStat(StatEntryReg.CHAMPIONS_KILLED.get().id());
-
-        if (player instanceof ServerPlayer serverPlayer) {
+            var runData = player.getData(RUN_DATA.get());
+            runData.addStat(stat, increment);
+            runData.setExperienceGained(difficulty, amount);
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
         }
     }
@@ -321,11 +314,13 @@ public class RunData implements IAttachment {
             StatEntryReg.RARE_CHEST.get().id() : chestValue == 2 ?
             StatEntryReg.LEGENDARY_CHEST.get().id() :
             StatEntryReg.MYTHIC_CHEST.get().id();
+
         runData.incrementStat(key);
         runData.setExperienceGained(instanceData.getDifficulty(), chestValue);
-        if (player instanceof ServerPlayer serverPlayer) {
+
+        if (player instanceof ServerPlayer serverPlayer)
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
-        }
+
     }
 
     public static final StreamCodec<FriendlyByteBuf, RunData> STREAM_CODEC = StreamCodec.ofMember(

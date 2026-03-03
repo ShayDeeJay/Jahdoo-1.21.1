@@ -44,7 +44,7 @@ import static net.minecraft.world.level.block.Blocks.OBSERVER;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
-import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
+import static org.jahdoo.trial_nexus.trackable.level_modifiers.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeNewSide;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;

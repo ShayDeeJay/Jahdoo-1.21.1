@@ -30,7 +30,7 @@ import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
-import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
+import org.shaydee.loot_beams_neoforge.components.LootBeamComponent;
 import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;

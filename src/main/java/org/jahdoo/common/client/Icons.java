@@ -221,6 +221,9 @@ public class Icons {
     public static final ResourceLocation MAGE_FLIGHT =
         texture(SKILLS + "mage_flight");
 
+    public static final ResourceLocation BLINK =
+        texture(SKILLS + "blink");
+
     public static final ResourceLocation CLIMBER =
         texture(SKILLS + "climber");
 
@@ -391,6 +394,9 @@ public class Icons {
 
     public static final ResourceLocation CHAMPIONS_CROWN =
         texture(PREFIX + "champions_crown");
+
+    public static final ResourceLocation CHALLENGER =
+        texture(PREFIX + "challenger");
 
     public static final ResourceLocation BRONZE_COIN =
         texture(ITEMS_PREFIX + "coins/coin");

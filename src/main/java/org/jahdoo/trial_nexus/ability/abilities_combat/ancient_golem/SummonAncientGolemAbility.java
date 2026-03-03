@@ -52,7 +52,7 @@ public class SummonAncientGolemAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(200)
-            .setStaticCooldown(6000)
+            .setStaticCooldown(2400)
             .setDamage(40, 10, 10, 2)
             .setEffectStrength(10, 0, 2, 1)
             .setEffectDuration(600, 200, 100, 1)

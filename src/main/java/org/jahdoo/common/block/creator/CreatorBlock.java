@@ -19,16 +19,25 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.shaydeeapi.helpers.ItemHelpers;
+import org.shaydee.shaydeeapi.helpers.SoundHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
+import static net.minecraft.sounds.SoundSource.BLOCKS;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static net.minecraft.world.level.block.SoundType.DEEPSLATE_BRICKS;
 import static org.jahdoo.common.block.BlockInteractionHandler.removeItemsFromHandToSlot;
-import static org.jahdoo.common.event.event_helpers.EventHelpers.setChaosCubeAbility;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 
 public class CreatorBlock extends BaseEntityBlock{
@@ -120,6 +129,49 @@ public class CreatorBlock extends BaseEntityBlock{
                 }
                 return FAIL;
             }
+        }
+    }
+
+
+    public static boolean setChaosCubeAbility(Player player, Level level, BlockPos pos, ItemStack item) {
+        if(level.getBlockEntity(pos) instanceof CreatorEntity entity){
+            if(item.isEmpty() && entity.getRecipe().isPresent() && !entity.canCraft()){
+                var casterData = player.getData(CASTER_DATA.get());
+                var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
+                if(ability.isPresent()) {
+                    var element = ElementReg.utility();
+                    var getAbility = ability.get();
+                    if (getAbility.getElemenType() == element) {
+                        var holder = CasterData.entityHolderWithSelected(player);
+                        if (holder != AbilityHolder.DEFAULT) {
+                            entity.setHolder(holder);
+                            particleBurst(level, pos);
+                            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), BLOCKS, 1F, 0.5F);
+                            return true;
+                        } else {
+                            var message = "You don't have this ability";
+                            var messageComponent = TextHelpers.withStyleComponent(message, element.textColourA());
+                            player.sendSystemMessage(messageComponent);
+                        }
+                    } else {
+                        if(level.isClientSide){
+                            var message = getAbility.getAbilityName();
+                            var messageComponent = TextHelpers.withStyleComponent(message, getAbility.getElemenType().textColourA());
+                            var append = messageComponent.copy().append(TextHelpers.withStyleComponent(" Is not compatible", -1));
+                            player.sendSystemMessage(append);
+                        }
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
+
+    public static void particleBurst(Level level, BlockPos pos) {
+        for (int i = 0; i < 10; i++) {
+            var part = ParticleHandlers.getAllParticleTypes(ElementReg.utility(), 16, 1.5f);
+            ParticleHandlers.particleBurst(level, pos.getCenter().add(0,0.8,0), 1, part);
         }
     }
 

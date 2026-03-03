@@ -5,13 +5,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.client.overlay.InstanceDataOverlay;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
-import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
@@ -21,7 +21,7 @@ import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.overlay.WalletOverlay.renderWallet;
 import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
+import static org.jahdoo.trial_nexus.trackable.player_boons.BoonSelection.iconFromEffect;
 public class StatScreen extends AbstractPanableScreen {
 
     public static int fadeBackground = fadeBlack(0.6F);
@@ -81,7 +81,7 @@ public class StatScreen extends AbstractPanableScreen {
             guiGraphics, mc, xSpacing, ySpacing - 224,
             "Base Stats",
             iconFromEffect(REGENERATION),
-            color(123, 184, 17),
+            ColourHelpers.getPerkGreen(),
             player.getAttribute(MAX_HEALTH),
             player.getAttribute(MAX_ABSORPTION),
             player.getAttribute(ARMOR),
@@ -96,7 +96,7 @@ public class StatScreen extends AbstractPanableScreen {
             guiGraphics, mc, xSpacing, ySpacing - 114,
             "Mana",
             Icons.MANA,
-            color(39, 130, 196),
+            ColourHelpers.getAetherBlue(),
             player.getAttribute(MANA_POOL),
             player.getAttribute(MANA_REGEN),
             player.getAttribute(MANA_COST_REDUCTION),
@@ -107,7 +107,7 @@ public class StatScreen extends AbstractPanableScreen {
             guiGraphics, mc, xSpacing, ySpacing - 44,
             "Cooldown",
             Icons.CLOCK,
-            color(0, 176, 129),
+            ColourHelpers.getCooldownGreen(),
             player.getAttribute(COOLDOWN_REDUCTION),
             player.getAttribute(SKIP_COOLDOWN)
         );
@@ -116,7 +116,7 @@ public class StatScreen extends AbstractPanableScreen {
             guiGraphics, mc, xSpacing, ySpacing + 6,
             "Magic Damage",
             Icons.EASY,
-            color(201, 154, 0),
+            ColourHelpers.getColorTransition(ColourHelpers.getCosmicPurple(), ColourHelpers.getNetheriteBox(), (int) mc.level.getGameTime(),100),
             player.getAttribute(MAGIC_DAMAGE_MULTIPLIER)
         );
     }
@@ -127,15 +127,17 @@ public class StatScreen extends AbstractPanableScreen {
         var colour = ColourHelpers.getCosmicPurple();
 
         var adjustY = -5;
-        var adjustX = -16;
-        SharedUI.boxMaker(guiGraphics, x - 20, y - 2, 70, 11, 0, fadeBackground, fadeBackground);
-        var showLevel = TextHelpers.withStyleComponent("Level: ", ColourHelpers.getSubHeaderColour()).copy().append(TextHelpers.withStyleComponent("" + data.getLevel(), colour));
-        guiGraphics.drawString(font, showLevel, x + adjustX, y + 5 + adjustY, -1);
+        SharedUI.boxMaker(guiGraphics, x - 20, y - 8, 70, 14, 0, fadeBackground, fadeBackground);
+
+        var showLevel = TextHelpers.withStyleComponent("Level: ", colour).copy().append(TextHelpers.withStyleComponent("" + data.getLevel(), colour));
+        guiGraphics.drawCenteredString(font, showLevel, x + 50, y + adjustY - 1, -1);
 
         var nextLevel = CasterData.getXpNeededForNextLevel(CasterData.getLevel(player));
         var progressToNextLevel = CasterData.getXpRemainingToNextLevel(player);
-        var showNextLevel = TextHelpers.withStyleComponent("Next Level: ", ColourHelpers.getSubHeaderColour()).copy().append(TextHelpers.withStyleComponent((nextLevel - progressToNextLevel) + "/" + nextLevel, colour));
-        guiGraphics.drawString(font, showNextLevel, x + adjustX, y + 15 + adjustY, -1);
+        var showNextLevel = TextHelpers.withStyleComponent((nextLevel - progressToNextLevel) + "/" + nextLevel, ColourHelpers.getOffWhite());
+
+        guiGraphics.drawCenteredString(font, showNextLevel, x + 50, y + 12 + adjustY, -1);
+        InstanceDataOverlay.progressBar(guiGraphics, x - 18, y + 4, 68, 7, nextLevel - progressToNextLevel, nextLevel, 2, colour, colour, ColourHelpers.getBoxColour());
     }
 
 }

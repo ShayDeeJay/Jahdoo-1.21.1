@@ -27,6 +27,7 @@ import org.jahdoo.common.items.paxel.DivinityPaxel;
 import org.jahdoo.common.items.perk_soda.PerkaSoda;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.shields.JahdooShieldItem;
+import org.jahdoo.common.items.shields.UndeadProtectorShield;
 import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.items.weapon.AncientGlaive;
 import org.jahdoo.common.items.weapon.ElementalSword;
@@ -195,7 +196,7 @@ public class ItemReg {
         complexItem("basic_shield", JahdooShieldItem::new);
 
     public static final DeferredHolder<Item, Item> UNDEAD_PROTECTOR_SHIELD =
-        complexItem("undead_protector", JahdooShieldItem::new);
+        complexItem("undead_protector", UndeadProtectorShield::new);
 
     public static final DeferredHolder<Item, Item> COIN_SACK =
         complexItem("coin_sack", CoinSack::new);

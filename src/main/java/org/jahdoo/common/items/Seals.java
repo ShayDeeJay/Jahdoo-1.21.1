@@ -16,14 +16,25 @@ public class Seals extends BaseJahdooItem {
         return getConverted(stack);
     }
 
-    public static Component getConverted(ItemStack stack){
-        var value = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        if(value == null) return TextHelpers.withStyleComponentTrans("item.jahdoo.seal_of_change", -1);
+    public static Component getConverted(ItemStack stack) {
+        return TextHelpers.withStyleComponentTrans(getSealTranslationKey(stack), -1);
+    }
 
-        return switch (value.value()){
-            case 2 -> TextHelpers.withStyleComponentTrans("item.jahdoo.seal_of_rejuvenation", -1);
-            case 3 -> TextHelpers.withStyleComponentTrans("item.jahdoo.seal_of_reinforcement", -1);
-            default -> TextHelpers.withStyleComponentTrans("item.jahdoo.seal_of_repair", -1);
+    private static String getSealTranslationKey(ItemStack stack) {
+        var value = stack.get(DataComponents.CUSTOM_MODEL_DATA);
+        if (value == null) {
+            return "item.jahdoo.seal_of_extension";
+        }
+
+        return switch (value.value()) {
+            case 2 -> "item.jahdoo.seal_of_power";
+            case 3 -> "item.jahdoo.seal_of_defence";
+            default -> "item.jahdoo.seal_of_repair";
         };
+    }
+
+    @Override
+    public String descriptionId(ItemStack stack) {
+        return "description."+getSealTranslationKey(stack);
     }
 }

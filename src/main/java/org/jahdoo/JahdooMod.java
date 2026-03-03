@@ -8,7 +8,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static org.jahdoo.common.CommonSetup.*;
+import static org.jahdoo.CommonSetup.*;
 
 @Mod(JahdooMod.MOD_ID)
 public class JahdooMod {

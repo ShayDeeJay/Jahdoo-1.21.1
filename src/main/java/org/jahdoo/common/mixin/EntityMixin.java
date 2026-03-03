@@ -4,15 +4,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -67,6 +72,20 @@ public abstract class EntityMixin {
         }
 
         return original;
+    }
+
+    @Inject(
+        method = "playStepSound",
+        at = @At("HEAD"),
+        cancellable = true
+    )
+    private void stopStepSound(BlockPos pos, BlockState state, CallbackInfo ci) {
+        Entity self = (Entity) (Object) this;
+        if (self instanceof Player player) {
+            if(Blink.isActive(player)){
+                ci.cancel();
+            }
+        }
     }
 
 }

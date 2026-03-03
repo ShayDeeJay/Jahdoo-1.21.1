@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.networking.client2server.PerkTableSyncC2SP;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.boon.player_boons.Boon;
+import org.jahdoo.trial_nexus.trackable.player_boons.Boon;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.util.ArrayList;

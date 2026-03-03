@@ -7,6 +7,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
@@ -25,6 +27,9 @@ public class ClientEvents {
         var poseStack = event.getPoseStack();
         var entity = event.getEntity();
         var instance = Minecraft.getInstance();
+
+        event.setCanceled(Blink.isActive(entity));
+        event.getEntity().walkAnimation.setSpeed(entity.getData(AttachmentReg.MAGE_FLIGHT).isFlying ? 0.05f : event.getEntity().walkAnimation.speed());
 
         if(!entity.isAlive()) return;
         renderHealthBar(event, entity, instance, poseStack);
@@ -48,12 +53,10 @@ public class ClientEvents {
         var item = itemStack.getItem();
         var instance = Minecraft.getInstance();
 
-        renderMoreInfoTooltip(itemStack, instance, current);
         specialisedJahdooItemTooltip(item, current);
         renderOverEnchantedToolTip(itemStack, instance, current);
         renderRuneSockets(itemStack, current);
     }
-
 
     @SubscribeEvent
     public static void playerRenderer(RenderLevelStageEvent event) {

@@ -28,8 +28,8 @@ import static org.jahdoo.common.block.lock.LockBlock.FACING;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.mod.LevelBoonReg.*;
 import static org.jahdoo.trial_nexus.attachments.RunData.setDateAndTime;
-import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData;
-import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.*;
+import static org.jahdoo.trial_nexus.trackable.level_modifiers.AbstractLevelBoon.SyncableData;
+import static org.jahdoo.trial_nexus.trackable.level_modifiers.AbstractLevelBoon.SyncableData.*;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromLevel;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
 

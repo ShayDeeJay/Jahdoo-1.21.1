@@ -1,12 +1,10 @@
 package org.jahdoo.trial_nexus.ability;
 
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.ComponentReg;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
+import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
-import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 
 public class AbilityBuilder {
@@ -41,17 +39,81 @@ public class AbilityBuilder {
     public static final String REINFORCED = "Toggle Reinforced";
 
 
-    private ItemStack item = null;
+    public enum AbilityModifierNames {
+
+        // Mandatory
+        MANA_COST("mana_cost",  ModifierCategory.EMPTY),
+        COOLDOWN("cooldown_duration", ModifierCategory.TIME),
+
+        // Combat / effects
+        DAMAGE("damage", ModifierCategory.MULTIPLIER),
+        EFFECT_CHANCE("effect_apply_chance", ModifierCategory.PROBABILITY),
+        EFFECT_DURATION("effect_duration", ModifierCategory.TIME),
+        EFFECT_STRENGTH("effect_strength", ModifierCategory.MULTIPLIER),
+
+        // Range / movement
+        RANGE("range", ModifierCategory.DISTANCE),
+        CASTING_DISTANCE("cast_distance", ModifierCategory.DISTANCE),
+        VELOCITY("projectile_velocity", ModifierCategory.MULTIPLIER),
+        OFFSET("offset", ModifierCategory.DISTANCE),
+        LIFETIME("lifetime", ModifierCategory.TIME),
+
+        // Area & size
+        AOE("area_of_effect", ModifierCategory.BLOCK_RADIUS),
+        SIZE("block_size", ModifierCategory.BLOCK_RADIUS),
+        IMPLOSIONS("implosions", ModifierCategory.BLOCK_RADIUS),
+
+        // Special mechanics
+        GRAVITATIONAL_PULL("gravitational_pull", ModifierCategory.MULTIPLIER),
+        SHOT_MULTIPLIER("shot_multiplier", ModifierCategory.MULTIPLIER),
+        NUMBER_OF_RICOCHET("ricochets", ModifierCategory.MULTIPLIER),
+
+        // Sustain / rewards
+        LIFE_LEECH("life_leech_chance", ModifierCategory.LEECH),
+        FORTUNE("fortune", ModifierCategory.MULTIPLIER),
+
+        // Toggles
+        VOID_BLOCKS("toggle_void", ModifierCategory.TOGGLE),
+        SILK_TOUCH("toggle_silk_touch", ModifierCategory.TOGGLE),
+        SMELTER("toggle_smelt", ModifierCategory.TOGGLE),
+        AUTO_COLLECT("toggle_collector", ModifierCategory.TOGGLE),
+        REINFORCED("toggle_reinforced", ModifierCategory.TOGGLE);
+
+        private final String displayName;
+        private final ModifierCategory category;
+
+        AbilityModifierNames(String displayName, ModifierCategory category) {
+            this.displayName = displayName;
+            this.category = category;
+        }
+
+        public String getFormattedName(){
+            return TextHelpers.stringIdToName(getDisplayName());
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public ModifierCategory getCategory() {
+            return category;
+        }
+
+        public enum ModifierCategory {
+            TIME,
+            PROBABILITY,
+            DISTANCE,
+            LEECH,
+            MULTIPLIER,
+            BLOCK_RADIUS,
+            TOGGLE,
+            EMPTY
+        }
+
+    }
+
     private final String abilityId;
     private final AbilityData abilityData = new AbilityData(new LinkedHashMap<>());
-
-    /**
-     * If you null ItemStack then you should only buildAndReturn()
-     * **/
-    public AbilityBuilder(@Nullable ItemStack itemStack, String abilityId) {
-        this.item = itemStack;
-        this.abilityId = abilityId;
-    }
 
     public AbilityBuilder(String abilityId) {
         this.abilityId = abilityId;
@@ -124,6 +186,10 @@ public class AbilityBuilder {
 
     public AbilityBuilder setEffectStrengthWithValue(double high, double low, double value){
         this.setModifier(EFFECT_STRENGTH, high, low, false, value);
+        return this;
+    }
+    public AbilityBuilder shotMultiplierWithValue(double high, double low, double value){
+        this.setModifier(SHOT_MULTIPLIER, high, low, true, value);
         return this;
     }
 
@@ -219,14 +285,13 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityHolder buildAndReturn(){
-        return new AbilityHolder(abilityId, abilityData);
+    public AbilityBuilder setLifetimeWithValue(double high, double low, double value){
+        this.setModifier(LIFETIME, high, low, true, value);
+        return this;
     }
 
-    public void build() {
-        if(this.item != null){
-            this.item.set(ComponentReg.ABILITY_HOLDER.get(), new AbilityHolder(abilityId, abilityData));
-        }
+    public AbilityHolder buildAndReturn(){
+        return new AbilityHolder(abilityId, abilityData);
     }
 
     public AbilityBuilder setElement(double actualValue) {
@@ -260,10 +325,12 @@ public class AbilityBuilder {
 
     public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step, double baseCost) {
         var getValue = isHigherBetter ? low : high;
+
         var chosenR = MathHelpers.doubleFormattedDouble(getValue);
         var highR = MathHelpers.doubleFormattedDouble(high);
         var lowR = MathHelpers.doubleFormattedDouble(low);
         var stepR = MathHelpers.doubleFormattedDouble(step);
+
         var abilityModifiers = new AbilityData.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, baseCost, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;

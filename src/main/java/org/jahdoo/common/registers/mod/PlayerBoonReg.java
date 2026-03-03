@@ -8,8 +8,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoon;
-import org.jahdoo.trial_nexus.boon.player_boons.boons.*;
+import org.jahdoo.trial_nexus.trackable.player_boons.AbstractPlayerBoon;
+import org.jahdoo.trial_nexus.trackable.player_boons.boons.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.Helpers;
 

@@ -99,7 +99,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
         );
     }
 
-    public void clientDiggingParticles(LivingEntity livingEntity, Level level) {
+    public static void clientDiggingParticles(LivingEntity livingEntity, Level level) {
         var randomsource = livingEntity.getRandom();
         var blockstate = livingEntity.getBlockStateOn();
         if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
@@ -119,7 +119,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
                 this.ancientGolem = ancientGolems;
             }
         }
-        if(this.ancientGolem != null) this.clientDiggingParticles(this.ancientGolem, level());
+        if(this.ancientGolem != null) clientDiggingParticles(this.ancientGolem, level());
         this.spawnAnimation();
         this.spawnEternalWizard();
         this.setSpawnParticles(level());
@@ -206,7 +206,6 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
             cloud.level().addFreshEntity(ancientGolemLocal);
             if(cloud.getOwner() instanceof ServerPlayer player){
                 ancientGolemLocal.setOwnerUUIDOptional(player.getUUID());
-
             }
 
             ancientGolemLocal.setNoAi(true);

@@ -79,7 +79,7 @@ public class SummonEternalWizardAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(100)
-            .setStaticCooldown(6000)
+            .setStaticCooldown(2400)
             .setDamage(40, 10, 10, 1)
             .setLifeLeechChance(25, 5, 5, 2)
             .setEffectStrength(4, 0, 2, 3)

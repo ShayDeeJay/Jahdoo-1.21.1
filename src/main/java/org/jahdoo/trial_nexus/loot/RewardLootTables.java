@@ -32,8 +32,8 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
 import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
 import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
-import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
-import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
+import org.shaydee.loot_beams_neoforge.components.DataComponentsReg;
+import org.shaydee.loot_beams_neoforge.components.LootBeamComponent;
 import org.shaydee.shaydeeapi.helpers.EnchantHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 

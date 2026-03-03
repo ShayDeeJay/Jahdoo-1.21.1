@@ -57,15 +57,8 @@ public class AttributeReg {
     public static final DeferredHolder<Attribute, Attribute> CHAINED_SEMTEX =
         register(MOD + ".abilities.chained_semtex", 0);
 
-    //Skill Attributes
     public static final DeferredHolder<Attribute, Attribute> DESTINY_BOND =
         register(MOD + ".skills.destiny_bond", 0);
-
-    public static final DeferredHolder<Attribute, Attribute> MAGE_FLIGHT =
-        register(MOD + ".skills.mage_flight", 0);
-
-    public static final DeferredHolder<Attribute, Attribute> TRIPLE_JUMP =
-        register(MOD + ".skills.triple_jump", 0);
 
     public static final DeferredHolder<Attribute, Attribute> RESILIENCE =
         register(MOD + ".resilience.resilience", 0);
@@ -116,6 +109,16 @@ public class AttributeReg {
 
     public static final DeferredHolder<Attribute, Attribute> VITALITY_MANA_COST_REDUCTION =
         register(MOD + ".vitality_mana.cost_reduction", 0);
+
+    //Skills
+    public static final DeferredHolder<Attribute, Attribute> BLINK_RANGE =
+        register(MOD + ".blink_range", 2);
+
+    public static final DeferredHolder<Attribute, Attribute> MAGE_FLIGHT =
+        register(MOD + ".skills.mage_flight", 0.02);
+
+    public static final DeferredHolder<Attribute, Attribute> TRIPLE_JUMP =
+        register(MOD + ".skills.triple_jump", 2);
 
     public static DeferredHolder<Attribute, Attribute> register (String name, double defaultVal){
         var rangedAttribute = new RangedAttribute("attribute.name."+name, defaultVal, 0.0, 2048.0);
@@ -173,11 +176,17 @@ public class AttributeReg {
     public static void attachAttribute(EntityAttributeModificationEvent event){
         event.add(PLAYER, MANA_POOL);
         event.add(PLAYER, MANA_REGEN);
-        event.add(PLAYER, MAGE_FLIGHT);
-        event.add(PLAYER, TRIPLE_JUMP);
+
+        event.add(PLAYER, SKIP_COOLDOWN);
         event.add(PLAYER, RESILIENCE);
+
+        //Test Alts
         event.add(PLAYER, ELEMENTAL_SHOTGUN);
         event.add(PLAYER, CHAINED_SEMTEX);
+
+        event.add(PLAYER, BLINK_RANGE);
+        event.add(PLAYER, MAGE_FLIGHT);
+        event.add(PLAYER, TRIPLE_JUMP);
 
         event.add(PLAYER, SKIP_MANA);
         event.add(PLAYER, SKIP_COOLDOWN);

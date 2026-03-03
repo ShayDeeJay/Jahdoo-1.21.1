@@ -116,4 +116,9 @@ public class Magnet extends BaseItem implements ICurioItem {
 
         ICurioItem.super.curioTick(slotContext, stack);
     }
+
+    @Override
+    public String descriptionId(ItemStack stack) {
+        return "description.item.jahdoo.magent";
+    }
 }

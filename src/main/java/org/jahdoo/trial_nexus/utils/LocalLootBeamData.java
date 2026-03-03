@@ -2,8 +2,8 @@ package org.jahdoo.trial_nexus.utils;
 
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
-import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
+import org.shaydee.loot_beams_neoforge.components.DataComponentsReg;
+import org.shaydee.loot_beams_neoforge.components.LootBeamComponent;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 import java.awt.*;

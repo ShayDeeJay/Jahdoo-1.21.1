@@ -101,8 +101,7 @@ dependencies {
     implementation "org.shaydee:loot-beams-neoforge:${loot_beams_version}"
     implementation("org.shaydee:ShaydeeAPI:${shaydeeapi_version}")
     implementation fileTree(dir: 'build/libs', include: ['ShoulderSurfing-NeoForge-1.21.1-4.10.4.jar'])
-    implementation fileTree(dir: 'build/libs', include: ['combat_roll-neoforge-2.0.4+1.21.1.jar'])
-    implementation fileTree(dir: 'build/libs', include: ['L_Ender\'s Cataclysm 1.21.1-3.16.jar'])
+    implementation fileTree(dir: 'build/libs', include: ['L_Ender\'s Cataclysm 1.21.1-3.23.jar'])
     implementation fileTree(dir: 'build/libs', include: ['lionfishapi-2.6.jar'])
     implementation fileTree(dir: 'build/libs', include: ['balm-neoforge-1.21.1-21.0.56.jar'])
     implementation fileTree(dir: 'build/libs', include: ['waystones-neoforge-1.21.1-21.1.26.jar'])

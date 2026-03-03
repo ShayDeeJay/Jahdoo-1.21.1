@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.items.BaseJahdooItem;
+import org.jahdoo.common.registers.AttributeReg;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -104,14 +106,8 @@ public class CasterItem extends BaseJahdooItem {
         var itemStack = player.getItemInHand(interactionHand);
         var pic = player.pick(player.blockInteractionRange(), 1, false);
 
-        //testing roll mod
-//        if(player.onGround()){
-//            var lookAngle = player.getDeltaMovement();
-//            var i = 1;
-//            player.setDeltaMovement(lookAngle.x + i, 0.1, lookAngle.z + i);
-//            SoundHelpers.getSoundWithPosition(level, player.position(), SoundReg.LEVITATE.get(), SoundSource.PLAYERS,  1, 1);
-//            SoundHelpers.getSoundWithPosition(level, player.position(), SoundReg.UPGRADE_MODIFIER.get(), SoundSource.PLAYERS,  0.2f, 2);
-//        }
+//        player.getAttribute(AttributeReg.MAGE_FLIGHT).setBaseValue(0.02);
+        AttributeReg.replaceOrAddAttribute(itemStack, "test_name", AttributeReg.MAGE_FLIGHT, 0.06, EquipmentSlot.MAINHAND, false, "blink");
 
         if(level instanceof ServerLevel){
             if(pic instanceof BlockHitResult result){

@@ -28,7 +28,7 @@ public class OverenchantedBook extends EnchantedBookItem implements JahdooItem {
     }
 
     @Override
-    public String descriptionId() {
+    public String descriptionId(ItemStack stack) {
         return "description."+this.getDescriptionId();
     }
 

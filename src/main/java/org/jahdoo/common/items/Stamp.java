@@ -1,6 +1,7 @@
 package org.jahdoo.common.items;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomModelData;
@@ -32,7 +33,7 @@ public class Stamp extends BaseJahdooItem implements JahdooItem{
 
     @Override
     public Component getName(ItemStack stack) {
-        return Component.empty();
+        return TextHelpers.withStyleComponentTrans("item.jahdoo.stamp", FastColor.ARGB32.color(192, 160, 124));
     }
 
     @Override

@@ -49,8 +49,8 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.creator.CreatorEntity;
@@ -72,6 +72,8 @@ import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.CastHelper;
+import org.jahdoo.common.items.shields.JahdooShieldItem;
+import org.jahdoo.common.networking.client2server.BlinkC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.UseAbilityC2SP;
 import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
@@ -102,11 +104,13 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import java.util.*;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
-import static net.minecraft.sounds.SoundSource.*;
+import static net.minecraft.sounds.SoundSource.HOSTILE;
+import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.client.KeyBinding.*;
+import static org.jahdoo.common.client.KeyBinding.BLINK;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.getAllSlots;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
@@ -115,7 +119,8 @@ import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
-import static org.jahdoo.trial_nexus.attachments.RunData.*;
+import static org.jahdoo.trial_nexus.attachments.RunData.EMPTY;
+import static org.jahdoo.trial_nexus.attachments.RunData.addExperienceToTotal;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.itemBehaviour;
 import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
 import static org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs.CHALLENGER_BOSS;
@@ -306,20 +311,26 @@ public class EventHelpers {
         if(curioSlotsItems.isEmpty()) return;
 
         var shieldSlots = curioSlotsItems.get().findCurios("shield");
+
         if(!shieldSlots.isEmpty()){
             var getTome = shieldSlots.getFirst().stack();
             var shieldDurability = durabilityDamageCount(getTome);
             var blockPercentage = getTome.get(ComponentReg.SHIELD_BLOCK_CHANCE);
+
             if(blockPercentage == null) return;
+
             var blockChance = MathHelpers.percentageChance(blockPercentage);
 
             if (blockChance && shieldDurability > 0) {
                 event.setBlocked(true);
                 var damage = (int) (event.getBlockedDamage());
 
-                if(event.getEntity().level() instanceof ServerLevel serverLevel){
+                if(event.getEntity().level() instanceof ServerLevel serverLevel)
                     hurtAndKeepItem(getTome, damage, serverLevel, entity);
-                }
+
+                if(getTome.getItem() instanceof JahdooShieldItem shieldItem)
+                    shieldItem.doOnBlock(entity);
+
                 SoundHelpers.getSoundWithPosition(entity.level(), entity.position(), SoundReg.BLOCK.get(), PLAYERS);
             }
         }
@@ -348,52 +359,7 @@ public class EventHelpers {
         }
     }
 
-    public static boolean setChaosCubeAbility(Player player, Level level, BlockPos pos, ItemStack item) {
-        if(level.getBlockEntity(pos) instanceof CreatorEntity entity){
-            if(item.isEmpty() && entity.getRecipe().isPresent() && !entity.canCraft()){
-                var casterData = player.getData(CASTER_DATA.get());
-                var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
-                if(ability.isPresent()) {
-                    var element = ElementReg.utility();
-                    var getAbility = ability.get();
-                    if (getAbility.getElemenType() == element) {
-                        var holder = CasterData.entityHolderWithSelected(player);
-                        if (holder != AbilityHolder.DEFAULT) {
-                            entity.setHolder(holder);
-                            var i1 = 10;
-                            particleBurst(level, pos, i1);
-                            SoundHelpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), BLOCKS, 1F, 0.5F);
-                            return true;
-                        } else {
-                            var message = "You don't have this ability";
-                            var messageComponent = TextHelpers.withStyleComponent(message, element.textColourA());
-                            player.sendSystemMessage(messageComponent);
-                        }
-                    } else {
-                        if(level.isClientSide){
-                            var message = getAbility.getAbilityName();
-                            var messageComponent = TextHelpers.withStyleComponent(message, getAbility.getElemenType().textColourA());
-                            var append = messageComponent.copy().append(TextHelpers.withStyleComponent(" Is not compatible", -1));
-                            player.sendSystemMessage(append);
-                        }
-                    }
-                }
-            }
-
-        }
-
-        return false;
-    }
-
-    public static void particleBurst(Level level, BlockPos pos, int i1) {
-        for (int i = 0; i < i1; i++) {
-            var part = ParticleHandlers.getAllParticleTypes(ElementReg.utility(), 16, 1.5f);
-            ParticleHandlers.particleBurst(level, pos.getCenter().add(0,0.8,0), 1, part);
-        }
-    }
-
-
-    public static void dontDamageAlliedMobs(ProjectileImpactEvent event) {
+    public static void avoidDamageAlliedMobs(ProjectileImpactEvent event) {
         var projectile = event.getProjectile();
         var type = event.getRayTraceResult();
 
@@ -434,7 +400,7 @@ public class EventHelpers {
 
         shulkerBox.set(DataComponents.CUSTOM_NAME, TextHelpers.withStyleComponent("Starter Box", ColourHelpers.getHeaderColour()));
         shulkerBox.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(freeItems));
-        ItemHandlerHelper.giveItemToPlayer(player, shulkerBox);
+        ItemHelpers.throwOrAddItem(player, shulkerBox);
     }
 
     public static void removeInstanceBuffs(EntityLeaveLevelEvent event) {
@@ -597,63 +563,80 @@ public class EventHelpers {
 
     public static void coinDropCalc(LivingEntity entity, int bonus) {
         if(entity.level() instanceof CustomLevel level && LevelGenerator.isNexus(level)){
-            var getKiller = entity.getKillCredit();
             entity.skipDropExperience();
+
+            if(entity.hasEffect(EffectReg.CHAMPION_EFFECT)){
+                var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
+                onKillExpAndCoin(entity, level, stack, 25, 1, RunData::incrementChampionsKilled);
+                return;
+            }
 
             if(entity.getType().is(ModTags.Entities.HORDE_MOBS)){
                 var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                onKillExpAndCoin(entity, level, stack, getKiller, 1, 0);
+                onKillExpAndCoin(entity, level, stack, 1, 0, RunData::incrementKilledMobsExp);
+                return;
             }
 
             if(entity instanceof CustomSkeleton){
                 var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(5, 20 - bonus));
-                onKillExpAndCoin(entity, level, stack, getKiller, 3, 0);
+                onKillExpAndCoin(entity, level, stack, 3, 0, RunData::incrementKilledMobsExp);
+                return;
             }
 
             if(entity instanceof VoidSpider spider && !spider.isBaby()){
                 if(spider.getOwner() == null){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                    onKillExpAndCoin(entity, level, stack, getKiller, 5, 1);
+                    onKillExpAndCoin(entity, level, stack, 5, 1, RunData::incrementKilledMobsExp);
+                    return;
                 }
             }
 
             if(entity instanceof EternalWizard wizard){
                 if(wizard.getOwner() == null){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus));
-                    onKillExpAndCoin(entity, level, stack, getKiller, 10, Random.nextInt(10) == 0 ? 2 : 1);
+                    onKillExpAndCoin(entity, level, stack, 10, Random.nextInt(10) == 0 ? 2 : 1, RunData::incrementKilledMobsExp);
+                    return;
                 }
             }
 
             if(entity instanceof InfernoCreeper){
                 var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus));
-                onKillExpAndCoin(entity, level, stack, getKiller, 10, Random.nextInt(10) == 0 ? 2 : 1);
+                onKillExpAndCoin(entity, level, stack, 10, Random.nextInt(10) == 0 ? 2 : 1, RunData::incrementKilledMobsExp);
+                return;
             }
 
             if(entity.getPersistentData().getBoolean(CHALLENGER_BOSS)){
                 var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus)).copyWithCount(10);
-                onKillExpAndCoin(entity, level, stack, getKiller, 200, 2);
+                onKillExpAndCoin(entity, level, stack, 200, 2, RunData::incrementChallengerKilled);
             }
         }
     }
 
-    private static void onKillExpAndCoin(LivingEntity entity, CustomLevel level, ItemStack stack, LivingEntity getKiller, int exp, int modelData) {
-        var isChampion = entity.hasEffect(EffectReg.CHAMPION_EFFECT);
-        var championMultiplier = 5;
-        entity.getPersistentData().putInt(GenericProjectile.POWER_UP_KEY, exp * (isChampion ? championMultiplier : 1));
-        var data = InstanceData.difficultyFromInstance(level.getData(INSTANCE_DATA.get()));
+    private static void onKillExpAndCoin(
+        LivingEntity entity,
+        CustomLevel level,
+        ItemStack stack,
+        int exp,
+        int modelData,
+        TriConsumer<LivingEntity, String, Integer> exc
+    ) {
+        var difficulty = level.getData(INSTANCE_DATA.get()).getDifficulty();
+        if(difficulty.isEmpty()) return;
 
-        var originalCount = stack.getCount() * (data.map(InstanceDifficulty::expMultiplier).orElse(1));
-        var originalExp = exp * (data.map(InstanceDifficulty::expMultiplier).orElse(1));
+        entity.getPersistentData().putInt(GenericProjectile.POWER_UP_KEY, exp);
 
-        var withChampionCoins = originalCount * (isChampion ? championMultiplier : 1);
-        var withChampionExp = originalExp * (isChampion ? championMultiplier : 1);
+        var data = InstanceDifficulty.getFromName(difficulty);
+        var originalCount = stack.getCount() * data.expMultiplier();
+        var originalExp = exp * data.expMultiplier();
 
+        //Throw coin on kill, attach data if is more valuable coin
         if(modelData > 0) stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(modelData));
-        throwItem(entity, stack.copyWithCount(withChampionCoins), entity.position());
+        throwItem(entity, stack.copyWithCount(originalCount), entity.position());
+
+        var getKiller = entity.getKillCredit();
         if(getKiller != null) {
-            var correct = getKiller instanceof ITamableEntity tamable && tamable.getOwner() != null ? tamable.getOwner() : getKiller;
-            incrementKilledMobsExp(level, correct, withChampionExp);
-            if(isChampion) incrementChampionsKilled(correct);
+            var reassignKillCredit = getKiller instanceof ITamableEntity tamable && tamable.getOwner() != null ? tamable.getOwner() : getKiller;
+            exc.accept(reassignKillCredit, difficulty, originalExp);
         }
     }
 
@@ -856,6 +839,8 @@ public class EventHelpers {
         checkKey(WAND_SLOT_9A, () -> selectAbilitySlot(9));
         checkKey(WAND_SLOT_10A, () -> selectAbilitySlot(10));
 
+        checkKey(BLINK, () -> PacketDistributor.sendToServer(new BlinkC2SP()));
+
         checkKey(STAT_SCREEN, () -> instance.setScreen(new StatScreen()));
         checkKey(ABILITY_SCREEN, () -> instance.setScreen(new AbilityUnlockScreen()));
         checkKey(ABILITY_MODIFICATION_SCREEN, () -> instance.setScreen(getAugmentModificationScreenWand(player, null)));
@@ -877,9 +862,15 @@ public class EventHelpers {
         List<Either<FormattedText, TooltipComponent>> current
     ){
         var allSlots = getAllSlots(itemStack);
-        if(allSlots.isEmpty()) return;
+        var instance = ClientHelpers.getMinecraft();
+        if(allSlots.isEmpty()) {
+            renderMoreInfoTooltip(itemStack, instance, current);
+            return;
+        }
         var runeSockets = new RuneTooltipRenderer.RuneComponent(itemStack, allSlots);
         current.add(current.size(), Either.right(runeSockets));
+        renderMoreInfoTooltip(itemStack, instance, current);
+
     }
 
     public static void renderOverEnchantedToolTip(
@@ -945,21 +936,22 @@ public class EventHelpers {
         List<Either<FormattedText, TooltipComponent>> current
     ){
         if(item.getItem() instanceof JahdooItem jahdooItem) {
-            var s = jahdooItem.descriptionId();
-            if(s != null && !Component.translatable(s).getString().equals(s)){
+            var b = jahdooItem.descriptionId(item);
+            if(b != null && !Component.translatable(b).getString().equals(b)){
 
-                var hotkey = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.ctrl", ColourHelpers.getPerkGreen());
-                var holdToInfo = TextHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", ColourHelpers.getHeaderColour(), hotkey);
-                var loading = "█".repeat(Math.min(toolTipTimer / 20, 5));
+                var key = KEY_LCONTROL;
+                var holdToInfo = TextHelpers.displaySelectedKey(key);
+                var a = toolTipTimer / 8;
+                var loading = "█".repeat(Math.min(a, 5));
 
-                var literal = TextHelpers.withStyleComponent(loading,  ColourHelpers.colourByPercent(100, toolTipTimer, true));
+                var literal = TextHelpers.withStyleComponent(loading,  ColourHelpers.colourByPercent(5, a, true));
                 var eitherListIterator = current.listIterator(current.size());
 
                 eitherListIterator.add(Either.left(holdToInfo));
                 if(!loading.isEmpty()) eitherListIterator.add(Either.left(literal));
-                if(ClientHelpers.isKeyDown(KEY_LCONTROL)) toolTipTimer++; else toolTipTimer = 0;
+                if(ClientHelpers.isKeyDown(key)) toolTipTimer++; else toolTipTimer = 0;
 
-                if(toolTipTimer > 120){
+                if(a >= 5){
                     instance.setScreen(new ItemCodexScreen(item, instance.screen));
                     toolTipTimer = 0;
                 }

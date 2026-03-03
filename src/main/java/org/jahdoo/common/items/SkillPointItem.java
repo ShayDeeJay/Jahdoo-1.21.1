@@ -4,7 +4,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -14,7 +13,7 @@ import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.List;
 
-public class SkillPointItem extends Item  {
+public class SkillPointItem extends BaseJahdooItem {
 
     public SkillPointItem() { super(new Properties()); }
 

@@ -1,6 +1,7 @@
 package org.jahdoo.common.items;
 
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 public class BaseJahdooBlockItem extends BlockItem implements JahdooItem {
@@ -10,7 +11,7 @@ public class BaseJahdooBlockItem extends BlockItem implements JahdooItem {
     }
 
     @Override
-    public String descriptionId() {
+    public String descriptionId(ItemStack stack) {
         return "description."+getBlock().getDescriptionId();
     }
 

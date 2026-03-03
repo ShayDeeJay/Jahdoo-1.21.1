@@ -101,6 +101,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         compoundTag.putDouble(AOE, this.aoe);
         compoundTag.putDouble(ArmageddonAbility.SPAWNING_SPEED, this.spawnSpeed);
         compoundTag.putDouble(LIFETIME, this.lifetime);
+        compoundTag.putInt("cloud_tick_count", cloud.tickCount);
     }
 
     @Override
@@ -109,6 +110,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         this.aoe = compoundTag.getDouble(AOE);
         this.spawnSpeed = compoundTag.getDouble(ArmageddonAbility.SPAWNING_SPEED);
         this.lifetime = compoundTag.getDouble(LIFETIME);
+        this.cloud.tickCount = compoundTag.getInt("cloud_tick_count");
     }
 
     private void createModule(Vec3 location){

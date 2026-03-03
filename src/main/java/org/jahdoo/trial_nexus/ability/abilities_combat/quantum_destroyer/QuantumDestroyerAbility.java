@@ -76,7 +76,7 @@ public class QuantumDestroyerAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(160)
-            .setStaticCooldown(6000)
+            .setStaticCooldown(3000)
             .setImplosions(10, 4, 2, 2)
             .setDamage(80, 40, 10, 3)
             .setCastingDistance(30, 10, 10, 3)

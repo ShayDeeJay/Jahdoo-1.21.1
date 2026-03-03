@@ -8,8 +8,6 @@ import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-import java.util.List;
-
 public class BattlemageGauntlet extends BaseItem implements ICurioItem {
 
     public BattlemageGauntlet() {
@@ -29,11 +27,4 @@ public class BattlemageGauntlet extends BaseItem implements ICurioItem {
     public Component getName(ItemStack stack) {
         return TextHelpers.withStyleComponent(super.getName(stack).getString(), ColourHelpers.getGoldCoin());
     }
-
-    @Override
-    public void implicitModifiers(ItemStack stack, List<Component> tooltipComponents) {
-        super.implicitModifiers(stack, tooltipComponents);
-        tooltipComponents.add(TextHelpers.withStyleComponent("Offhand Wands", ColourHelpers.getSympathiserOrange()));
-    }
-
 }

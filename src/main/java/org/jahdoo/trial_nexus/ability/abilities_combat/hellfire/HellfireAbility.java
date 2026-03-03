@@ -70,7 +70,7 @@ public class HellfireAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(80)
-            .setStaticCooldown(600)
+            .setStaticCooldown(400)
             .setDamage(40, 25, 5, 2)
             .setEffectDuration(300, 100, 50, 1)
             .setEffectStrength(10, 4, 2, 2)

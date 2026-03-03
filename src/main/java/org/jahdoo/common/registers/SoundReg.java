@@ -30,6 +30,12 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> THUD_B =
         registerSoundEvent("thud_2");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLINK_A =
+        registerSoundEvent("blink_1");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLINK_B =
+        registerSoundEvent("blink_2");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> DASH_EFFECT_INSTANT =
         registerSoundEvent("dash_effect_instant");
 

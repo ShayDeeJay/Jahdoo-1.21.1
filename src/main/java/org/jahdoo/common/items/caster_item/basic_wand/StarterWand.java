@@ -1,7 +1,6 @@
 package org.jahdoo.common.items.caster_item.basic_wand;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -16,7 +15,7 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.common.items.caster_item.ItemAnimations.*;
 
-public class StarterWand extends CasterItem implements GeoItem, JahdooItem {
+public class StarterWand extends CasterItem implements GeoItem {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 

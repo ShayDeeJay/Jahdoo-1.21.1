@@ -531,7 +531,6 @@ public class JahdooHelpers {
         THE_PROWLER,
         THE_LEVIATHAN,
         ANCIENT_REMNANT,
-        ANCIENT_ANCIENT_REMNANT,
         MALEDICTUS,
         CLAWDIAN,
         SCYLLA,

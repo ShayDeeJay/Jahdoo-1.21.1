@@ -20,6 +20,7 @@ public class KeyBinding {
     public static final String WAND_SLOT_10 = "key.assets.jahdoo.slot_10";
     public static final String JAHDOO_CUSTOM_BIND = "key.assets.jahdoo.customBind";
 
+    public static final String BLINK_KEY = "key.assets.jahdoo.blink";
     public static final String MAGNET_STATE = "key.assets.jahdoo.magnet_state";
     public static final String QUICK_SELECT_MENU = "key.assets.jahdoo.quick_select_menu";
     public static final String STAT_SCREEN_KEY = "key.assets.jahdoo.stat_screen";
@@ -39,6 +40,7 @@ public class KeyBinding {
     public static final KeyMapping WAND_SLOT_9A = map(WAND_SLOT_9);
     public static final KeyMapping WAND_SLOT_10A = map(WAND_SLOT_10);
 
+    public static final KeyMapping BLINK = map(BLINK_KEY);
     public static final KeyMapping QUICK_SELECT = map(QUICK_SELECT_MENU);
     public static final KeyMapping STAT_SCREEN = map(STAT_SCREEN_KEY);
     public static final KeyMapping ABILITY_SCREEN = map(ABILITY_SCREEN_KEY);

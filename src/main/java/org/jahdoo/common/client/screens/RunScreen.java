@@ -14,10 +14,11 @@ import org.jahdoo.common.registers.mod.StatEntryReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.boon.StatEntry.AbstractStatEntry;
-import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
+import org.jahdoo.trial_nexus.trackable.stat_entry.AbstractStatEntry;
+import org.jahdoo.trial_nexus.trackable.level_modifiers.AbstractLevelBoon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
@@ -32,6 +33,7 @@ import static org.jahdoo.common.client.SharedUI.fadeBlack;
 
 public class RunScreen extends AbstractPanableScreen {
 
+    public static final int SPACER = 14;
     public static final int WIDTH_OFFSET = 80;
     private RunData runData;
     private InstanceData instanceData;
@@ -48,14 +50,23 @@ public class RunScreen extends AbstractPanableScreen {
         var spacer = 0;
         var moveX = -5;
         var i2 = 15;
+        var mc = getMinecraft();
+        var player = mc.player;
+        if(player == null) return;
 
+        if (runData == null || !PlayerTrialData.getData(player).getPastRuns().contains(runData)) {
+            PlayerTrialData.getLastRun(player).ifPresent(x -> this.runData = x);
+            PlayerTrialData.getLastInstance(player).ifPresent(x -> this.instanceData = x);
+        }
 
         this.addRenderableOnly(
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics graphics, int i, int i1, float v) {
-                    var start = canScrollSelections(mouseX, mouseY, width) ? fadeBlack(0.8F): uiFade();
-                    boxMaker(graphics, i2 + moveX, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, mouseY, width) ? color(180, uiColour()) : 0, start, start);
+                    var start = canScrollSelections(mouseX, mouseY, height) ? fadeBlack(0.8F): uiFade();
+                    if(instanceData != null && runData != null) {
+                        boxMaker(graphics, i2 + moveX, 63, WIDTH_OFFSET, height / 2 - 38, canScrollSelections(mouseX, mouseY, height) ? color(180, uiColour()) : 0, start, start);
+                    }
                     graphics.enableScissor(3, 69, width - 3, height - 20);
                 }
             }
@@ -77,7 +88,6 @@ public class RunScreen extends AbstractPanableScreen {
         );
 
     }
-
     @Override
     public void onClose() {
         this.runData = null;
@@ -91,185 +101,207 @@ public class RunScreen extends AbstractPanableScreen {
     private void doOnClick(RunData runData, InstanceData instanceData){
         this.runData = runData;
         this.instanceData = instanceData;
+        this.rebuildWidgets();
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (canScrollSelections(mouseX, mouseY, width)) {
+
+        if (canScrollSelections(mouseX, mouseY, height)) {
+            this.rebuildWidgets();
             var zoomScale = this.zoomX + 1;
             panY += Math.round(dragY / zoomScale);
-            panY = Math.min(panY, 0); // Clamp to top
+            panY = Math.min(panY, 0);
 
             int entryCount = getPlayerTrialData().getPastRuns().size();
             int totalHeight = entryCount * 47;
-            int visibleHeight = (height - 13) - 64; // Bottom - Top
-            int minPanY = Math.min(0, visibleHeight - totalHeight - 18); // Extra 10 for bottom padding
 
-            panY = Math.max(panY, minPanY); // Clamp to bottom
+            int visibleHeight = (height - 13) - 64;
+            int minPanY = Math.min(0, visibleHeight - totalHeight - 18);
+
+            panY = Math.max(panY, minPanY);
+            return true;
         }
 
-        if (canScrollDetails(mouseX, mouseY, width)) {
+        if (canScrollDetails(mouseX, mouseY, height, width)) {
+            this.rebuildWidgets();
             panYMain += dragY;
-            panYMain = Math.min(panYMain, 0); // Top bound
+            panYMain = Math.min(panYMain, 0);
 
-            var componentHeight = this.levelBoonEntries * 14;
-            var visibleHeight = (height - 13) - (62 + 36); // Matches your layout
-            var minPanYMain = Math.min(0, visibleHeight - componentHeight - 10); // Add bottom padding
+            var componentHeight = this.levelBoonEntries * SPACER;
+            var visibleHeight = (height - 13) - (62 + 36);
+            var minPanYMain = Math.min(0, visibleHeight - componentHeight - 10);
 
-            panYMain = Math.max(panYMain, minPanYMain); // Bottom bound
+            panYMain = Math.max(panYMain, minPanYMain);
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        var scrollSpeed = scrollY * 14;
-        if (canScrollSelections(mouseX, mouseY, width)) {
+        var scrollSpeed = scrollY * SPACER;
+
+        if (canScrollSelections(mouseX, mouseY, height)) {
+            this.rebuildWidgets();
             var zoomScale = this.zoomX + 1;
             var scrollAmount = Math.round(scrollSpeed / zoomScale);
-            panY = Math.min(panY + scrollAmount, 0); // Upper limit still 1 (top)
+            panY = Math.min(panY + scrollAmount, 0);
 
             int entryCount = getPlayerTrialData().getPastRuns().size();
             int totalHeight = entryCount * 47;
-            int visibleHeight = (height - 13) - 64; // Bottom - Top of scroll box
-            int minPanY = Math.min(0, visibleHeight - totalHeight - 18); // Extra 10 for bottom padding
+            int visibleHeight = (height - 13) - 64;
+            int minPanY = Math.min(0, visibleHeight - totalHeight - 18);
 
-            panY = Math.max(panY, minPanY); // Clamp to prevent overscroll
+            panY = Math.max(panY, minPanY);
+            return true;
         }
 
-        if (canScrollDetails(mouseX, mouseY, width)) {
+        if (canScrollDetails(mouseX, mouseY, height, width)) {
+            this.rebuildWidgets();
             panYMain += scrollSpeed;
-            panYMain = Math.min(panYMain, 0); // Top bound
+            panYMain = Math.min(panYMain, 0);
 
-            var componentHeight = this.levelBoonEntries * 14;
-            var visibleHeight = (height - 13) - (62 + 36); // Matches your layout
+            var componentHeight = this.levelBoonEntries * SPACER;
+            var visibleHeight = (height - 13) - (62 + 36);
             var minPanYMain = Math.min(0, visibleHeight - componentHeight - 10);
 
-            panYMain = Math.max(panYMain, minPanYMain); // Bottom bound
+            panYMain = Math.max(panYMain, minPanYMain);
+            return true;
         }
 
-        return true;
+        return false;
     }
 
-    private static boolean canScrollSelections(double mouseX, double mouseY, int width) {
-        var v = 4;
-        return mouseX > v * 2 && mouseX < v + WIDTH_OFFSET * 2;
+    private static boolean canScrollSelections(double mouseX, double mouseY, int height) {
+        var v = 5;
+        var boundMouseX = mouseX > v * 2 && mouseX < v + WIDTH_OFFSET * 2 + v;
+        return boundMouseX && heightRestriction(mouseY, height);
     }
 
-    private static boolean canScrollDetails(double mouseX, double mouseY, int width) {
+    private static boolean canScrollDetails(double mouseX, double mouseY, int height, int width) {
         var v = (double) width / 2;
-        var canScrollX = mouseX > v + 4 && mouseX < v + WIDTH_OFFSET * 2;
-        var canScrollY = mouseY > v + 4 && mouseY < v + WIDTH_OFFSET * 2;
-        return canScrollX;
+        var canScrollX = mouseX > 175 && mouseX < (v * 2) - 12;
+        return canScrollX && heightRestriction(mouseY, height);
+    }
+
+    public static boolean heightRestriction(double mouseY, int height){
+        var v = 5;
+        return mouseY > v * 10 + 12 && mouseY < v + height - (v*4) + 1;
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.render(graphics, mouseX, mouseY, partialTick);
+
+        var scale = 2F;
         var startX = 176;
         var startY = 62;
         var startAllX = startX + 10;
         var startAllY = (int) (startY + 36 + this.panYMain);
-        var pose = graphics.pose();
-        var scale = 2F;
         var y = (int) Math.round((startY - 24 + (this.panYMain / 2)));
-        var spacer = 0;
-        var start = canScrollDetails(mouseX, mouseY, width) ? fadeBlack(0.8F): uiFade();
+        var pose = graphics.pose();
 
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
+        if(instanceData != null && runData != null) {
+            var spacer = 0;
+            var start = canScrollDetails(mouseX, mouseY, height, width) ? fadeBlack(0.8F) : uiFade();
 
-        super.render(graphics, mouseX, mouseY, partialTick);
-        var colourBorder = canScrollDetails(mouseX, mouseY, width) ? color(180, uiColour()) : 0;
-        boxMaker(graphics, startX, startY+1, this.width/2 - 94, this.height/2 - 38, colourBorder, start, start);
-        graphics.enableScissor(startX, startY+8, this.width/2 + 200, this.height - 18);
-
-        pose.pushPose();
-        pose.scale(scale, scale, scale);
-        graphics.drawCenteredString(getMinecraft().font, TextHelpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
-        pose.popPose();
-
-        if (runData != null) {
-
-            var allComponents = getComponents(instanceData, runData, getPlayerTrialData());
-            var positiveBoons = LevelBoonReg.getAllPositive();
-            var negativeBoons = LevelBoonReg.getAllNegative();
-            var coins = StatEntryReg.getCoins();
-            var ores = StatEntryReg.getOres();
-            var general = StatEntryReg.getGeneral();
-            var mob = StatEntryReg.getMob();
-            var loot = StatEntryReg.getLoot();
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
 
 
-            for (var component : allComponents) {
-                spacer = drawEntryWithOptionalIcon(
-                    graphics,
-                    component.icon,
-                    component.component(),
-                    startAllX,
-                    startAllY,
-                    spacer
-                );
+            var colourBorder = canScrollDetails(mouseX, mouseY, height, width) ? color(180, uiColour()) : 0;
+            boxMaker(graphics, startX, startY + 1, this.width / 2 - 94, this.height / 2 - 38, colourBorder, start, start);
+            graphics.enableScissor(startX, startY + 8, this.width / 2 + 200, this.height - 18);
+
+            pose.pushPose();
+            pose.scale(scale, scale, scale);
+            graphics.drawCenteredString(getMinecraft().font, TextHelpers.withStyleComponentTrans("Run Data", uiColour()), startX / 2 + 27, y, -1);
+            pose.popPose();
+
+            if (runData != null) {
+                var allComponents = getComponents(instanceData, runData, getPlayerTrialData());
+                var coins = StatEntryReg.getCoins();
+                var ores = StatEntryReg.getOres();
+                var general = StatEntryReg.getGeneral();
+                var mob = StatEntryReg.getMob();
+                var loot = StatEntryReg.getLoot();
+
+                for (var component : allComponents) {
+                    spacer = drawEntryWithOptionalIcon(
+                        graphics,
+                        component.icon,
+                        component.component(),
+                        startAllX,
+                        startAllY,
+                        spacer
+                    );
+                }
+
+                spacer = runInfo(graphics, spacer, startAllX, startAllY, general, mob, loot, coins, ores);
+                spacer = instanceInfo(graphics, spacer, startAllX, startAllY, instanceData);
+
+                this.levelBoonEntries = spacer / SPACER;
             }
 
-            spacer = instanceInfo(graphics, spacer, startAllX, startAllY, positiveBoons, negativeBoons);
-            spacer = runInfo(graphics, spacer, startAllX, startAllY, general, mob, loot, coins, ores);
-
-            this.levelBoonEntries = spacer / 14;
+            graphics.disableScissor();
+        } else {
+            pose.pushPose();
+            pose.scale(scale, scale, scale);
+            graphics.drawCenteredString(getMinecraft().font, TextHelpers.withStyleComponentTrans("No Run Data", uiColour()), width/4, height/4, -1);
+            pose.popPose();
         }
-
-        if(runData == null || !PlayerTrialData.getData(getMinecraft().player).getPastRuns().contains(runData)){
-            var player = getMinecraft().player;
-            PlayerTrialData.getLastRun(player).ifPresent(x -> this.runData = x);
-            PlayerTrialData.getLastInstance(player).ifPresent(x -> this.instanceData = x);
-        }
-
-        graphics.disableScissor();
-        this.rebuildWidgets();
     }
 
-    private int instanceInfo(GuiGraphics graphics, int spacer, int startAllX, int startAllY, List<AbstractLevelBoon> positiveBoons, List<AbstractLevelBoon> negativeBoons) {
+    public static int instanceInfo(GuiGraphics graphics, int spacer, int startAllX, int startAllY, InstanceData instanceData) {
+        var positiveBoons = LevelBoonReg.getAllPositive();
+        var negativeBoons = LevelBoonReg.getAllNegative();
+
         spacer = drawHeader(graphics, "Instance Modifiers", ColourHelpers.getHeaderColour(), startAllX, startAllY, spacer, true, true);
         spacer = drawHeader(graphics, "Positive", ColourHelpers.getMagnetRangeGreen(), startAllX, startAllY, spacer, true, false);
         spacer = drawLevelBoonList(graphics, positiveBoons, instanceData, startAllX, startAllY, spacer);
 
-        var i = positiveBoons.size() * 14 + 14;
+        var i = positiveBoons.size() * SPACER + SPACER;
         var i1 = 170;
 
         drawHeader(graphics, "Negative", ColourHelpers.getMagnetStrengthRed(), startAllX + i1, startAllY, spacer - i, true, false);
-        drawLevelBoonList(graphics, negativeBoons, instanceData, startAllX + i1, startAllY, spacer - i + 14);
+        drawLevelBoonList(graphics, negativeBoons, instanceData, startAllX + i1, startAllY, spacer - i + SPACER);
+        spacer = addSpacerLines(spacer, 1);
+
         return spacer;
     }
 
     private int runInfo(GuiGraphics graphics, int spacer, int startAllX, int startAllY, List<AbstractStatEntry> general, List<AbstractStatEntry> mob, List<AbstractStatEntry> loot, List<AbstractStatEntry> coins, List<AbstractStatEntry> ores) {
-        spacer = addSpacerLines(spacer, 1);
+//        spacer = addSpacerLines(spacer, 1);
         spacer = drawHeader(graphics, "Run Stats", ColourHelpers.getHeaderColour(), startAllX, startAllY, spacer, true, true);
 
         spacer = drawHeader(graphics, "General", ColourHelpers.getOffWhite(), startAllX, startAllY, spacer, true, false);
         spacer = drawPlayerBoonList(graphics, general, runData, startAllX, startAllY, spacer);
-//        spacer = addSpacerLines(spacer, 1);
 
         var x = startAllX + 170;
-        var i = general.size() * 14 + 14;
+        var i = general.size() * SPACER + SPACER;
 
-        drawHeader(graphics, "Mob", ColourHelpers.getMagnetStrengthRed(), x, startAllY,  spacer - i, true, false);
-        drawPlayerBoonList(graphics, mob, runData, x, startAllY,  spacer - i + 14);
+        drawHeader(graphics, "Killed", ColourHelpers.getMagnetStrengthRed(), x, startAllY,  spacer - i, true, false);
+        spacer = drawPlayerBoonList(graphics, mob, runData, x, startAllY,  spacer - i + SPACER);
         spacer = addSpacerLines(spacer, 1);
 
-        spacer = drawHeader(graphics, "Loot", ColourHelpers.getAetherBlue(), startAllX, startAllY, spacer, true, false);
+        spacer = drawHeader(graphics, "Looted", ColourHelpers.getAetherBlue(), startAllX, startAllY, spacer, true, false);
         spacer = drawPlayerBoonList(graphics, loot, runData, startAllX, startAllY, spacer);
         spacer = addSpacerLines(spacer, 1);
 
-        var xs = coins.size() * 14 + 56;
-        drawHeader(graphics, "Coins", ColourHelpers.getGoldCoin(), x, startAllY,  spacer - xs, true, false);
-        drawPlayerBoonList(graphics, coins, runData, x, startAllY,  spacer - xs + 14);
+        var xs = coins.size() * SPACER + 56;
+        drawHeader(graphics, "Collected", ColourHelpers.getGoldCoin(), x, startAllY,  spacer - xs, true, false);
+        drawPlayerBoonList(graphics, coins, runData, x, startAllY,  spacer - xs + SPACER);
 
-        spacer = drawHeader(graphics, "Ores", ColourHelpers.getHeaderColour(), startAllX, startAllY, spacer, true, false);
+        spacer = drawHeader(graphics, "Mined", ColourHelpers.getHeaderColour(), startAllX, startAllY, spacer, true, false);
         spacer = drawPlayerBoonList(graphics, ores, runData, startAllX, startAllY, spacer);
+        spacer = addSpacerLines(spacer, 1);
+
         return spacer;
     }
 
-    private int drawPlayerBoonList(
+    public static int drawPlayerBoonList(
         GuiGraphics graphics,
         Collection<AbstractStatEntry> boons,
         RunData runData,
@@ -284,7 +316,7 @@ public class RunScreen extends AbstractPanableScreen {
             boolean hasIcon = icon != null;
 
             if (hasIcon) {
-                int size = 14;
+                int size = SPACER;
                 graphics.blit(icon, startX - 4, startY + spacer - 3,
                     0, 0, size, size, size, size);
             }
@@ -293,19 +325,19 @@ public class RunScreen extends AbstractPanableScreen {
             var labelX = TextHelpers.withStyleComponent(runData.getStat(boon.id()) + "", boon.colour());
 
             graphics.drawString(
-                getMinecraft().font, label.copy().append(labelX),
+                ClientHelpers.getMinecraft().font, label.copy().append(labelX),
                 startX + (hasIcon ? 10 : 0),
                 startY + spacer,
                 -1, true
             );
 
-            spacer += 14;
+            spacer += SPACER;
         }
 
         return spacer;
     }
 
-    private int drawLevelBoonList(
+    public static int drawLevelBoonList(
         GuiGraphics graphics,
         Collection<AbstractLevelBoon> boons,
         InstanceData instanceData,
@@ -313,14 +345,13 @@ public class RunScreen extends AbstractPanableScreen {
         int startY,
         int spacer
     ) {
-
         for (var boon : boons) {
 
             var icon = boon.getIcon();
             boolean hasIcon = icon != null;
 
             if (hasIcon) {
-                int size = 14;
+                int size = SPACER;
                 graphics.blit(icon, startX - 4, startY + spacer - 3,
                     0, 0, size, size, size, size);
             }
@@ -329,7 +360,7 @@ public class RunScreen extends AbstractPanableScreen {
             var label = boon.boonLabel(value, boon.id());
 
             graphics.drawString(
-                getMinecraft().font,
+                ClientHelpers.getMinecraft().font,
                 label,
                 startX + (hasIcon ? 10 : 0),
                 startY + spacer,
@@ -337,7 +368,7 @@ public class RunScreen extends AbstractPanableScreen {
                 true
             );
 
-            spacer += 14;
+            spacer += SPACER;
         }
 
         return spacer;
@@ -355,7 +386,7 @@ public class RunScreen extends AbstractPanableScreen {
         boolean hasIcon = icon != null;
 
         if (hasIcon) {
-            int size = 14;
+            int size = SPACER;
             graphics.blit(icon, startX - 4, startY + spacer - 3,
                 0, 0, size, size, size, size);
         }
@@ -369,10 +400,10 @@ public class RunScreen extends AbstractPanableScreen {
             true
         );
 
-        return spacer + 14;
+        return spacer + SPACER;
     }
 
-    private int drawHeader(
+    public static int drawHeader(
         GuiGraphics graphics,
         String text,
         int colour,
@@ -386,7 +417,7 @@ public class RunScreen extends AbstractPanableScreen {
         var styled = TextHelpers.withStyleComponent(text, colour, bold, underline);
 
         graphics.drawString(
-            getMinecraft().font,
+            ClientHelpers.getMinecraft().font,
             styled,
             startX,
             startY + spacer,
@@ -394,11 +425,11 @@ public class RunScreen extends AbstractPanableScreen {
             true
         );
 
-        return spacer + 14;
+        return spacer + SPACER;
     }
 
-    private int addSpacerLines(int spacer, int lines) {
-        return spacer + (14 * lines);
+    public static int addSpacerLines(int spacer, int lines) {
+        return spacer + (SPACER * lines);
     }
 
     public static List<StatEntry> getComponents(@Nullable InstanceData instanceData, RunData runData, PlayerTrialData trialData){
@@ -406,11 +437,12 @@ public class RunScreen extends AbstractPanableScreen {
         var spacer = new StatEntry(Component.empty().copy(), null);
         if(trialData == null || instanceData == null) return allComponents;
 
-        allComponents.add(new StatEntry(componentTemplate("Trial No", trialData.getPastRuns().indexOf(runData) + 1 + "", uiColour()), null));
-        allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], uiColour()), null));
-        allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
-        allComponents.add(new StatEntry(componentTemplate("Difficulty", TextHelpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
-        allComponents.add(new StatEntry(componentTemplate("Player Level", String.valueOf(runData.getPlayerLevel()), uiColour()), null));
+        var statColour = ColourHelpers.getOffWhite();
+        allComponents.add(new StatEntry(componentTemplate("Trial No", trialData.getPastRuns().indexOf(runData) + 1 + "", statColour), null));
+        allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], statColour), null));
+        allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], statColour), null));
+        allComponents.add(new StatEntry(componentTemplate("Difficulty", TextHelpers.stringIdToName(instanceData.getDifficulty()), statColour), null));
+        allComponents.add(new StatEntry(componentTemplate("Player Level", String.valueOf(runData.getPlayerLevel()), statColour), null));
 
         var died = runData.died();
         allComponents.add(new StatEntry(componentTemplate("Fate", died ? "Died!" : "Survived!", died ? ColourHelpers.getRating2Red() : ColourHelpers.getRating5Green()), null));
@@ -429,7 +461,7 @@ public class RunScreen extends AbstractPanableScreen {
     }
 
     public static MutableComponent componentTemplate(String header, String stat, int statColour){
-        return componentTemplate(header, stat, statColour, ColourHelpers.getSubHeaderColour());
+        return componentTemplate(header, stat, statColour, uiColour());
     }
 
     public static MutableComponent componentTemplate(String header, String stat, int statColour, int headerColour){

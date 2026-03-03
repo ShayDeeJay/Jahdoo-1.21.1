@@ -31,7 +31,11 @@ public interface JahdooItem {
 
     Pair<String, List<ItemStack>> EMPTY = new Pair<>("", List.of());
 
-    default String descriptionId(){
+//    default String descriptionId(){
+//        return null;
+//    }
+
+    default String descriptionId(ItemStack stack){
         return null;
     }
 

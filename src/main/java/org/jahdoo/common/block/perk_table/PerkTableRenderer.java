@@ -13,8 +13,6 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
@@ -35,7 +33,7 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
     }
 
     public static final List<Item> getByIndex = List.of(
-        HEALTH_CONTAINER.get(),MANA_CONTAINER.get(),QUEST_CONTAINER.get(),BOON_CONTAINER.get(),Blocks.BLACK_BED.asItem(),Items.DIAMOND_SWORD.asItem()
+        HEALTH_CONTAINER.get(),MANA_CONTAINER.get(),QUEST_CONTAINER.get(), BOON_CONTAINER.get()
     );
 
     @Override
@@ -44,7 +42,7 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
         var mc = getInstance();
         var itemRenderer = mc.getItemRenderer();
         int state = entity.getBlockState().getValue(TEXTURE);
-        var render = new ItemStack(getByIndex.get(state));
+        var render = new ItemStack(getByIndex.get(Math.min(state, 3)));
         var rotate = entity.getPrivateTicks() + partialTick;
         var animate = rotate / 12;
         var scale = Math.min(1.2F, animate);

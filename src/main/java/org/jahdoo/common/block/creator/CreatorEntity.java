@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.jahdoo.common.event.event_helpers.EventHelpers.particleBurst;
+import static org.jahdoo.common.block.creator.CreatorBlock.particleBurst;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
@@ -92,7 +92,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     public static void successfulCraftVisual(Level level, BlockPos blockPos){
-        particleBurst(level, blockPos, 20);
+        particleBurst(level, blockPos);
 //        SoundHelpers.getSoundWithPosition(level, blockPos, SoundReg.INCREASE_SCORE.get(), SoundSource.BLOCKS, 1f, 0.8f);
         SoundHelpers.getSoundWithPosition(level, blockPos, SoundReg.MYSTIC_ABILITY.get(), SoundSource.BLOCKS, 0.5f, 2f);
 

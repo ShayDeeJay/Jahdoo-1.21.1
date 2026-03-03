@@ -1,6 +1,7 @@
 package org.jahdoo.common.items.shields;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.ComponentReg;
@@ -36,5 +37,12 @@ public class JahdooShieldItem extends BaseItem implements ICurioItem {
             var value = TextHelpers.withStyleComponent(newValue + " Block Chance", ColourHelpers.getGoldCoin());
             tooltipComponents.add(value);
         }
+    }
+
+    public void doOnBlock(LivingEntity livingEntity){}
+
+    @Override
+    public String descriptionId(ItemStack stack) {
+        return "description.item.jahdoo.shields";
     }
 }

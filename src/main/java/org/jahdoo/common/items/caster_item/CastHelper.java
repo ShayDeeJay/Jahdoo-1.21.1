@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -157,16 +158,6 @@ public class CastHelper {
         var itemStack = JahdooHelpers.getUsedItem(player);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
 
-//        var typeId = CasterData.selectedAbility(player);
-//        var getAbility = AbilityReg.getFirstSpellByTypeId(typeId);
-//        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.isPresent() && getAbility.get().getElemenType().equals(ElementReg.utility());
-//        var fail = InteractionResultHolder.fail(itemStack);
-//        if(cantUseInDim) {
-//            player.displayClientMessage(Component.literal("You cant use that here"), true);
-//            failedCastNotification(player);
-//            return fail;
-//        }
-
         if(canUse) executeAndCharge(player); else failedCastNotification(player);
 
         return InteractionResultHolder.pass(itemStack);
@@ -196,33 +187,49 @@ public class CastHelper {
     }
 
     public static boolean validManaAndCooldown(Player player){
-        var casterData = player.getData(CASTER_DATA);
         var typeId = CasterData.selectedAbility(player);
         var ability = AbilityReg.getFirstSpellByTypeId(typeId).orElseThrow();
         var getManaCost = CasterData.getSpecificValue(player, MANA_COST);
         var element = ability.getElemenType();
         var adjustedMana = JahdooHelpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, element.manaReduction());
-        var manaAvailable = casterData.getManaPool();
-        var sufficientMana = casterData.getManaPool() >= adjustedMana;
-        var abilityOnCooldown = casterData.isAbilityOnCooldown(typeId);
+        var casterData = player.getData(CASTER_DATA);
 
         if(!player.isCreative()){
-            if (abilityOnCooldown) {
-                var nameComp = TextHelpers.withStyleComponent(ability.getAbilityName(), element.partColourB());
-                var messageComp = Component.translatable("casting.jahdoo.on_cooldown", nameComp);
-                player.displayClientMessage(messageComp, true);
-                return false;
-            }
+            if (isOnCooldown(player, casterData, typeId, ability, element)) return false;
 
-            if (!sufficientMana) {
-                var formattedCost = MathHelpers.getFormattedFloat(adjustedMana);
-                var formattedAvailable = MathHelpers.getFormattedFloat((float) manaAvailable);
-                var costComp = TextHelpers.withStyleComponent(String.valueOf(formattedCost), element.partColourA());
-                var availComp = TextHelpers.withStyleComponent(String.valueOf(formattedAvailable), element.partColourB());
-                var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);
-                player.displayClientMessage(notEnoughManaMessage, true);
-                return false;
-            }
+            return sufficientMana(player, casterData, adjustedMana, element);
+        }
+        return true;
+    }
+
+    public static boolean isOnCooldown(Player player, CasterData casterData, String typeId, Ability ability, AbstractElement element) {
+        if(player.isCreative()) return false;
+        var abilityOnCooldown = casterData.isAbilityOnCooldown(typeId);
+        if (abilityOnCooldown) {
+            var nameComp = TextHelpers.withStyleComponent(ability.getAbilityName(), element.partColourB());
+            var messageComp = Component.translatable("casting.jahdoo.on_cooldown", nameComp);
+            player.displayClientMessage(messageComp, true);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean sufficientMana(Player player, CasterData casterData, float adjustedMana, @Nullable AbstractElement element) {
+        if(player.isCreative()) return true;
+        var manaAvailable = casterData.getManaPool();
+        var sufficientMana = casterData.getManaPool() >= adjustedMana;
+
+        if (!sufficientMana) {
+            var formattedCost = MathHelpers.getFormattedFloat(adjustedMana);
+            var formattedAvailable = MathHelpers.getFormattedFloat((float) manaAvailable);
+
+            var b = FastColor.ARGB32.color(31, 48, 188);
+
+            var costComp = TextHelpers.withStyleComponent(String.valueOf(formattedCost), element == null ? b : element.partColourA());
+            var availComp = TextHelpers.withStyleComponent(String.valueOf(formattedAvailable), element == null ? b : element.partColourB());
+            var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);
+            player.displayClientMessage(notEnoughManaMessage, true);
+            return false;
         }
         return true;
     }

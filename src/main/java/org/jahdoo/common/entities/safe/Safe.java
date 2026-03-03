@@ -257,7 +257,7 @@ public class Safe extends LivingEntity implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (getCurrentState() < 2 && source.getEntity() instanceof Player player) {
+        if (getCurrentState() < 2 && source.getEntity() instanceof Player) {
 
             sharedSound(SoundReg.BLOCK.get(), 1F, Random.nextFloat(0.8F, Math.max(0.85F, getDamageCounter() / 10)));
             sharedSound(SoundEvents.CHAIN_BREAK, 1F, Random.nextFloat(1F, 1.2F));
@@ -273,14 +273,15 @@ public class Safe extends LivingEntity implements GeoEntity {
                 setCurrentState(2);
                 if (getCurrentState() == 2) {
                     if (level() instanceof ServerLevel serverLevel) {
-                        var hasInstanceData = serverLevel.hasData(INSTANCE_DATA.get());
-                        var getInstanceDifficulty = serverLevel.getData(INSTANCE_DATA.get());
-                        var difficulty = hasInstanceData ? getFromName(getInstanceDifficulty.getDifficulty()) : NOVICE;
-                        var instanceLootMultiplier = Math.max(1, getInstanceDifficulty.getSafeMultiplier());
+                        var instanceData = serverLevel.getData(INSTANCE_DATA.get());
+                        var getDifficulty = instanceData.getDifficulty();
+                        var difficulty = !instanceData.getDifficulty().isEmpty() ? getFromName(getDifficulty) : NOVICE;
+                        var instanceLootMultiplier = Math.max(1, instanceData.getSafeMultiplier());
+
                         if(source.getEntity() instanceof ServerPlayer serverPlayer){
-                            RunData.addExperienceToTotal((difficulty.getId() * 10) * difficulty.expMultiplier(), serverPlayer);
-                            RunData.incrementSafeOpened(player);
+                            RunData.incrementSafeOpened(serverPlayer, getDifficulty, 20);
                         }
+
                         for (int i = 0; i < instanceLootMultiplier; i++) {
                             var rewards = getCompletionLoot(serverLevel, this.position(), difficulty.getSerializedName(), difficulty.getId());
                             for (var reward : rewards) {

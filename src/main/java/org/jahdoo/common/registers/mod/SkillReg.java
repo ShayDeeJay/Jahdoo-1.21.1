@@ -11,6 +11,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.ability.skills.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -30,7 +31,9 @@ public class SkillReg {
     }
 
     public static List<AbstractSkill> getAllSkills() {
-        return REGISTRY.stream().toList();
+        return REGISTRY.stream()
+            .sorted(Comparator.comparingInt(AbstractSkill::levelRequirement))
+            .toList();
     }
 
     public static final DeferredHolder<AbstractSkill, AbstractSkill> CLIMBER =
@@ -47,6 +50,9 @@ public class SkillReg {
 
     public static final DeferredHolder<AbstractSkill, AbstractSkill> MAGE_FLIGHT =
         registerElement(MageFlightSkill::new);
+
+    public static final DeferredHolder<AbstractSkill, AbstractSkill> BLINK =
+        registerElement(BlinkSkill::new);
 
     public static void register(IEventBus eventBus) {
         ELEMENT.register(eventBus);

@@ -22,12 +22,13 @@ public class PointsOverlay extends AbstractTimedOverlay {
 
     @Override
     public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-
         var minecraft = ClientHelpers.getMinecraft();
-        var player =  minecraft.player;
+        if(minecraft.screen != null) return;
 
+        var player =  minecraft.player;
         if(player == null || !(player.level() instanceof ClientLevel cLevel)) return;
         if(!LevelGenerator.isNexus(cLevel) || InstanceData.hasInstanceStarted(cLevel)) return;
+
         super.render(graphics, deltaTracker);
 
         var font = minecraft.font;
@@ -49,7 +50,7 @@ public class PointsOverlay extends AbstractTimedOverlay {
             points = exp;
         }
 
-        renderExperienceOverlay(graphics, font, exp, difference, fadeIn, size, true);
+        renderExperienceOverlay(graphics, font, exp, difference, fadeIn, size, false);
 
     }
 
@@ -62,9 +63,7 @@ public class PointsOverlay extends AbstractTimedOverlay {
         int size,
         boolean centered
     ) {
-        var info = TextHelpers
-            .withStyleComponent(InstanceDataOverlay.HudEntry.getComp(exp).getString(), ColourHelpers.getCosmicPurple());
-
+        var info = TextHelpers.withStyleComponent(exp + "", ColourHelpers.getCosmicPurple());
         var x1 = graphics.guiWidth() / 10;
         var y1 = -1;
 

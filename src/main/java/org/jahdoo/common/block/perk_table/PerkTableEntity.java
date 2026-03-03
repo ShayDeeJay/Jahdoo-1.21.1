@@ -20,7 +20,7 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.QuestReg;
-import org.jahdoo.trial_nexus.boon.player_boons.Boon;
+import org.jahdoo.trial_nexus.trackable.player_boons.Boon;
 import org.jahdoo.trial_nexus.level_manager.BlockSetupManager;
 import org.jahdoo.trial_nexus.level_manager.StructureManager;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;

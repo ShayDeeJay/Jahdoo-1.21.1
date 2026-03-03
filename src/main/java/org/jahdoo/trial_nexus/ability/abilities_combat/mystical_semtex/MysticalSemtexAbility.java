@@ -80,7 +80,7 @@ public class MysticalSemtexAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
-            .setStaticCooldown(500)
+            .setStaticCooldown(400)
             .setDamage(45, 25, 5, 1)
             .setAbilityTagModifiersRandom(CLUSTER_COUNT, 10, 4, true, 2, 2)
 //            .setAbilityTagModifiersRandom(CLUSTER_CHANCE, 10, 2, false, 2, 2)

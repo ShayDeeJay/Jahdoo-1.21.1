@@ -280,5 +280,17 @@
     "sounds": [
       "jahdoo:thud_2"
     ]
+  },
+  "blink_1": {
+    "subtitles": "sounds.jahdoo.blink_1",
+    "sounds": [
+      "jahdoo:blink_1"
+    ]
+  },
+  "blink_2": {
+    "subtitles": "sounds.jahdoo.blink_2",
+    "sounds": [
+      "jahdoo:blink_2"
+    ]
   }
 }

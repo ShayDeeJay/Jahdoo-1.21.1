@@ -29,6 +29,9 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<TripleJump>> TRIPLE_JUMP =
         withProvider("triple_jump", TripleJump::new);
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Blink>> BLINK =
+        withProvider("blink", Blink::new);
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<DimensionalRecall>> DIMENSIONAL_RECALL =
         withProvider("dimensional_recall", DimensionalRecall::new);
 

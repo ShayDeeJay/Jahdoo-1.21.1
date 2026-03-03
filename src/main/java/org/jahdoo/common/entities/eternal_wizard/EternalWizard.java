@@ -254,7 +254,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
 
     public AbilityHolder fireballModule() {
         //NOTE: Does not work when spawned without player as does not have any attributes, so may need static values
-        return new AbilityBuilder(null, FireballAbility.abilityId.getPath().intern())
+        return new AbilityBuilder(FireballAbility.abilityId.getPath().intern())
             .setDamageWithValue(0,0, this.damage)
             .setEffectDurationWithValue(0,0,this.effectDuration)
             .setEffectChanceWithValue(0,0, this.effectChance)

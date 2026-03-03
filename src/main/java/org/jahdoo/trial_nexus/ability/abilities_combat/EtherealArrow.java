@@ -114,7 +114,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
     }
 
     public static AbilityHolder setArrowProperties(double damage, double effectDuration, double effectStrength, double effectChance, int elementType){
-        return new AbilityBuilder(null, EtherealArrow.abilityId.getPath().intern())
+        return new AbilityBuilder(EtherealArrow.abilityId.getPath().intern())
             .setModifierWithoutBounds(DAMAGE, damage)
             .setModifierWithoutBounds(EFFECT_DURATION, effectDuration)
             .setModifierWithoutBounds(EFFECT_STRENGTH, effectStrength)
@@ -125,7 +125,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
     }
 
     public static AbilityHolder setArrowProperties(double damage, double effectDuration, double effectStrength, double effectChance, int elementType, double lifeLeechChance){
-        return new AbilityBuilder(null, EtherealArrow.abilityId.getPath().intern())
+        return new AbilityBuilder(EtherealArrow.abilityId.getPath().intern())
             .setModifierWithoutBounds(DAMAGE, damage)
             .setModifierWithoutBounds(EFFECT_DURATION, effectDuration)
             .setModifierWithoutBounds(EFFECT_STRENGTH, effectStrength)

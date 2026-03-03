@@ -22,7 +22,7 @@ import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
 public class OverlayHelpers {
 
-    public static int elementalModStat(
+    public static int   elementalModStat(
         GuiGraphics graphics,
         Minecraft minecraft,
         LocalPlayer player,
@@ -55,13 +55,19 @@ public class OverlayHelpers {
             var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
             if (syncableAttribute.getAttribute().value().getDescriptionId().contains(filterType.toLowerCase())) {
                 if(modName.equals(getName.toLowerCase())){
-                    var text = syncableAttribute.getAttribute().value().getDescriptionId();
-                    var prefix = TextHelpers.withStyleComponentTrans(text, ColourHelpers.getSubHeaderColour());
-                    var withoutType = prefix.getString().replace(filterType + " ", "");
-                    var prefix2 = TextHelpers.withStyleComponentTrans(withoutType, ColourHelpers.getSubHeaderColour());
                     var value = syncableAttribute.getValue();
-                    var readableValues = MathHelpers.roundNonWholeString(MathHelpers.singleFormattedDouble(value));
-                    var suffix = TextHelpers.withStyleComponent(" " + readableValues, value > 0 ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed());
+                    var hasValue = value > 0;
+
+                    var text = syncableAttribute.getAttribute().value().getDescriptionId();
+                    var subHeaderColour = ColourHelpers.getHeaderColour();
+
+                    var prefix = TextHelpers.withStyleComponentTrans(text, subHeaderColour);
+                    var withoutType = prefix.getString().replace(filterType + " ", "");
+
+                    var prefix2 = TextHelpers.withStyleComponentTrans(withoutType, subHeaderColour);
+                    var readableValues = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(value));
+
+                    var suffix = TextHelpers.withStyleComponent(" " + readableValues, hasValue ? element.textColourA() : subHeaderColour);
                     var string = prefix2.copy().append(Component.literal(":")).append(suffix);
 
                     graphics.drawString(minecraft.font, string, startX1 + 56, adjustForHeader + 13 + attSpacer.get(), ColourHelpers.getHeaderColour());
@@ -104,14 +110,16 @@ public class OverlayHelpers {
 
         for (var syncableAttribute : attributes) {
             var text = syncableAttribute.getAttribute().value().getDescriptionId();
-            var prefix = TextHelpers.withStyleComponentTrans(text, ColourHelpers.getSubHeaderColour());
+            var headerColour = ColourHelpers.getHeaderColour();
+            var prefix = TextHelpers.withStyleComponentTrans(text, headerColour);
+
             var value = syncableAttribute.getValue();
             var readableValues = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(value));
 
-            var suffix = TextHelpers.withStyleComponent(" " + readableValues, value > 0 ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed());
+            var suffix = TextHelpers.withStyleComponent(" " + readableValues, value > 0 ? gradientColour : headerColour);
             var string = prefix.copy().append(Component.literal(":")).append(suffix);
 
-            graphics.drawString(minecraft.font, string, startX1 + 56, adjustForHeader + 13 + attSpacer.get(), ColourHelpers.getHeaderColour());
+            graphics.drawString(minecraft.font, string, startX1 + 56, adjustForHeader + 13 + attSpacer.get(), headerColour);
             attSpacer.addAndGet(10);
         }
 

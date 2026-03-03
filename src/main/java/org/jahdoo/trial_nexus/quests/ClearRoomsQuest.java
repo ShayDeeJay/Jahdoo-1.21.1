@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.trial_nexus.boon.StatEntry.stats.RoomsCleared;
+import org.jahdoo.trial_nexus.trackable.stat_entry.stats.RoomsCleared;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
@@ -14,7 +14,7 @@ public class ClearRoomsQuest extends AbstractQuest{
 
     @Override
     public String questName() {
-        return RoomsCleared.id;
+        return RoomsCleared.ID;
     }
 
     @Override

@@ -76,7 +76,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
     public AbilityHolder armageddonFireballModifiers() {
         var damageA = CasterData.getSpecificValue(this.cloud.getAbilityHolder(), DAMAGE);
 
-        return new AbilityBuilder(null, FireballAbility.abilityId.getPath().intern())
+        return new AbilityBuilder(FireballAbility.abilityId.getPath().intern())
             .setDamageWithValue(0,0, damageA)
             .setEffectDurationWithValue(0,0,200)
             .setEffectChanceWithValue(0,0,20)
