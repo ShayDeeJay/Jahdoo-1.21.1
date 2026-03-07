@@ -3,7 +3,7 @@ package org.jahdoo.trial_nexus.level_manager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 

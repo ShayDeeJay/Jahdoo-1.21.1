@@ -34,10 +34,10 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
-import org.jahdoo.trial_nexus.ability.AbilityBuilder;
-import org.jahdoo.trial_nexus.ability.abilities_combat.EtherealArrow;
-import org.jahdoo.trial_nexus.ability.abilities_combat.fireball.FireballAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility;
+import org.jahdoo.trial_nexus.magic.AbilityBuilder;
+import org.jahdoo.trial_nexus.magic.abilities_combat.EtherealArrow;
+import org.jahdoo.trial_nexus.magic.abilities_combat.fireball.FireballAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.frostbolts.FrostboltsAbility;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,9 +48,9 @@ import java.util.UUID;
 import static org.jahdoo.common.entities.EntityHelpers.canTarget;
 import static org.jahdoo.common.items.caster_item.CastHelper.castAnimation;
 import static org.jahdoo.common.items.caster_item.ItemAnimations.SINGLE_CAST_ID;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.ArmageddonModule.IS_BUDDY;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.fireball.FireballAbility.abilityId;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.magic.abilities_combat.armageddon.ArmageddonModule.IS_BUDDY;
+import static org.jahdoo.trial_nexus.magic.abilities_combat.fireball.FireballAbility.abilityId;
 
 public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
 

@@ -7,10 +7,11 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecall;
-import org.jahdoo.trial_nexus.ability.abilities_combat.nova_smash.NovaSmash;
-import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.trial_nexus.magic.abilities_combat.dimensional_recall.DimensionalRecall;
+import org.jahdoo.trial_nexus.magic.abilities_combat.nova_smash.NovaSmash;
+import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.trial_nexus.attachments.*;
+import org.jahdoo.trial_nexus.attachments.effects.MysticEffect;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.*;
 
@@ -26,8 +27,8 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<MageFlight>> MAGE_FLIGHT =
         withProvider("mage_flight",MageFlight::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TripleJump>> TRIPLE_JUMP =
-        withProvider("triple_jump", TripleJump::new);
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PhantomJump>> TRIPLE_JUMP =
+        withProvider("triple_jump", PhantomJump::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Blink>> BLINK =
         withProvider("blink", Blink::new);
@@ -49,6 +50,9 @@ public class AttachmentReg {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<InstanceData>> INSTANCE_DATA =
         withProvider("instance_data", InstanceData::new);
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MysticEffect>> MYSTIC_EFFECT =
+        withProvider("mystic_effect", MysticEffect::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL =
         regAttachment("bool", builder(() -> false).serialize(Codec.BOOL));

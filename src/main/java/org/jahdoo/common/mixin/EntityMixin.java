@@ -10,6 +10,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
@@ -18,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -87,5 +89,13 @@ public abstract class EntityMixin {
             }
         }
     }
+
+    @Inject(method = "isCurrentlyGlowing", at = @At("HEAD"), cancellable = true)
+    private void forceGlow(CallbackInfoReturnable<Boolean> cir) {
+        Entity self = (Entity)(Object)this;
+
+        cir.setReturnValue(self.hasData(AttachmentReg.MYSTIC_EFFECT));
+    }
+
 
 }

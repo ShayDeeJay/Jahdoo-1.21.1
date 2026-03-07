@@ -8,7 +8,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.registers.DamageTypeReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;

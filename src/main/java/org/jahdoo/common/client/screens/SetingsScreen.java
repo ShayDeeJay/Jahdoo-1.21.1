@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;

@@ -21,10 +21,10 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.SkillReg;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.ability.AbilityBuilder;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
-import org.jahdoo.trial_nexus.ability.skills.AbstractSkill;
+import org.jahdoo.trial_nexus.magic.Ability;
+import org.jahdoo.trial_nexus.magic.AbilityBuilder;
+import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.magic.skills.AbstractSkill;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jetbrains.annotations.NotNull;
@@ -41,11 +41,11 @@ import static com.mojang.blaze3d.platform.InputConstants.KEY_LCONTROL;
 import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
-import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAllAbilityModifiers;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getAllAbilityModifiers;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.texture;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {

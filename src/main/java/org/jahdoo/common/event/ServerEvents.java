@@ -1,7 +1,9 @@
 package org.jahdoo.common.event;
 
 import com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.IABoss_monster;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -16,16 +18,17 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.commands.JahdooCommands;
+import org.jahdoo.trial_nexus.attachments.player_abilities.PhantomJump;
+import org.jahdoo.trial_nexus.utils.JahdooCommands;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecall;
-import org.jahdoo.trial_nexus.ability.abilities_combat.nova_smash.NovaSmash;
-import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.trial_nexus.magic.abilities_combat.dimensional_recall.DimensionalRecall;
+import org.jahdoo.trial_nexus.magic.abilities_combat.nova_smash.NovaSmash;
+import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.effects.MysticEffect;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
-import org.jahdoo.trial_nexus.attachments.player_abilities.TripleJump;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
@@ -172,7 +175,7 @@ public class ServerEvents {
         VitalRejuvenation.staticTickEvent(player);
         DimensionalRecall.staticTickEvent(player);
         NovaSmash.novaSmashTickEvent(player);
-        TripleJump.tripleJumpTickEvent(player);
+        PhantomJump.jumpTickEvent(player);
         Rebound.staticTickEvent(player);
     }
 
@@ -223,11 +226,21 @@ public class ServerEvents {
 
     @SubscribeEvent
     private static void entityInteractEvent(PlayerInteractEvent.EntityInteractSpecific event){
+        var entity = event.getTarget();
+        var player = event.getEntity();
+
+//        MysticEffect.setMysticEffect(player, (LivingEntity) entity, true, 100, 10);
+
         rightClickInteract(event);
     }
 
     @SubscribeEvent
     private static void entityTickEvent(EntityTickEvent.Pre event){
+        var entity = event.getEntity();
+        if(entity instanceof LivingEntity livingEntity && livingEntity.level() instanceof ServerLevel){
+            MysticEffect.serverOnTick(livingEntity);
+        }
+
         tickDeathLootsplotion(event);
     }
 

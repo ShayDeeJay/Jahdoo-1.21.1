@@ -73,9 +73,7 @@ import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.items.shields.JahdooShieldItem;
-import org.jahdoo.common.networking.client2server.BlinkC2SP;
-import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.networking.client2server.UseAbilityC2SP;
+import org.jahdoo.common.networking.client2server.*;
 import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.*;
@@ -83,10 +81,10 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.common.registers.mod.RuneReg;
-import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.trial_nexus.ability.abilities_utility.deprecated.block_placer.BlockPlacerAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.wall_placer.WallPlacerAbility;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.trial_nexus.magic.abilities_utility.deprecated.block_placer.BlockPlacerAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.wall_placer.WallPlacerAbility;
+import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.RunData;
@@ -97,7 +95,6 @@ import org.jahdoo.trial_nexus.utils.ModTags;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.helpers.*;
-import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -109,8 +106,8 @@ import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
-import static org.jahdoo.common.client.KeyBinding.*;
-import static org.jahdoo.common.client.KeyBinding.BLINK;
+import static org.jahdoo.trial_nexus.utils.KeyBinding.*;
+import static org.jahdoo.trial_nexus.utils.KeyBinding.BLINK;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.getAllSlots;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
@@ -118,7 +115,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
-import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getAugmentModificationScreenWand;
 import static org.jahdoo.trial_nexus.attachments.RunData.EMPTY;
 import static org.jahdoo.trial_nexus.attachments.RunData.addExperienceToTotal;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.itemBehaviour;
@@ -307,32 +304,27 @@ public class EventHelpers {
     }
 
     public static void shieldBlock(LivingShieldBlockEvent event, LivingEntity entity) {
-        var curioSlotsItems = CuriosApi.getCuriosInventory(entity);
-        if(curioSlotsItems.isEmpty()) return;
+        var getTome = JahdooHelpers.getCurioSlotItem(entity, "shield");
+        if(getTome.isEmpty()) return;
 
-        var shieldSlots = curioSlotsItems.get().findCurios("shield");
+        var shieldDurability = durabilityDamageCount(getTome);
+        var blockPercentage = getTome.get(ComponentReg.SHIELD_BLOCK_CHANCE);
 
-        if(!shieldSlots.isEmpty()){
-            var getTome = shieldSlots.getFirst().stack();
-            var shieldDurability = durabilityDamageCount(getTome);
-            var blockPercentage = getTome.get(ComponentReg.SHIELD_BLOCK_CHANCE);
+        if(blockPercentage == null) return;
 
-            if(blockPercentage == null) return;
+        var blockChance = MathHelpers.percentageChance(blockPercentage);
 
-            var blockChance = MathHelpers.percentageChance(blockPercentage);
+        if (blockChance && shieldDurability > 0) {
+            event.setBlocked(true);
+            var damage = (int) (event.getBlockedDamage());
 
-            if (blockChance && shieldDurability > 0) {
-                event.setBlocked(true);
-                var damage = (int) (event.getBlockedDamage());
+            if(event.getEntity().level() instanceof ServerLevel serverLevel)
+                hurtAndKeepItem(getTome, damage, serverLevel, entity);
 
-                if(event.getEntity().level() instanceof ServerLevel serverLevel)
-                    hurtAndKeepItem(getTome, damage, serverLevel, entity);
+            if(getTome.getItem() instanceof JahdooShieldItem shieldItem)
+                shieldItem.doOnBlock(entity);
 
-                if(getTome.getItem() instanceof JahdooShieldItem shieldItem)
-                    shieldItem.doOnBlock(entity);
-
-                SoundHelpers.getSoundWithPosition(entity.level(), entity.position(), SoundReg.BLOCK.get(), PLAYERS);
-            }
+            SoundHelpers.getSoundWithPosition(entity.level(), entity.position(), SoundReg.BLOCK.get(), PLAYERS);
         }
     }
 
@@ -464,17 +456,17 @@ public class EventHelpers {
 
     public static void mysticEffectClient(RenderLivingEvent.Pre event) {
         var entity = event.getEntity();
-        var effect = EffectReg.MYSTIC_EFFECT;
-        var putEffect = entity.getEffect(effect);
-        if(entity.hasEffect(effect)){
+        var mysticEffect = event.getEntity().hasData(MYSTIC_EFFECT);
+        var tick = entity.tickCount;
+
+        if(mysticEffect){
             var height = entity.getBbHeight() / 2;
-            var tick = entity.tickCount;
-            var anim = (tick + event.getPartialTick());
+            var anim = (tick  + event.getPartialTick()) * 2.5f;
             var pos = event.getPoseStack();
+
             pos.rotateAround(Axis.XN.rotationDegrees(anim), 0, height, 0);
-            pos.rotateAround(Axis.YN.rotationDegrees(anim), 0, height, 0);
+            pos.rotateAround(Axis.YN.rotationDegrees(-anim), 0, height, 0);
             pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
-            if(putEffect.getDuration() == 0) entity.removeEffect(effect);
         }
     }
 
@@ -840,7 +832,9 @@ public class EventHelpers {
         checkKey(WAND_SLOT_10A, () -> selectAbilitySlot(10));
 
         checkKey(BLINK, () -> PacketDistributor.sendToServer(new BlinkC2SP()));
+        checkKey(RUSH, RushC2SP::clientRush);
 
+        checkKey(POCKET_DIMENSION, () -> PacketDistributor.sendToServer(new PocketDimensionC2SP()));
         checkKey(STAT_SCREEN, () -> instance.setScreen(new StatScreen()));
         checkKey(ABILITY_SCREEN, () -> instance.setScreen(new AbilityUnlockScreen()));
         checkKey(ABILITY_MODIFICATION_SCREEN, () -> instance.setScreen(getAugmentModificationScreenWand(player, null)));

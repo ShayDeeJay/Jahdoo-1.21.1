@@ -22,7 +22,7 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;

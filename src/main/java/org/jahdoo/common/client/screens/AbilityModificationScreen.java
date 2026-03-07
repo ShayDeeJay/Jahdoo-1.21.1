@@ -20,8 +20,8 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.AbilityPointC2SP;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.magic.Ability;
+import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
@@ -39,12 +39,12 @@ import java.util.regex.Pattern;
 import static java.lang.String.valueOf;
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
 import static org.jahdoo.common.registers.mod.ElementReg.*;
-import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextSingle;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getModifierContextSingle;
 
 public class AbilityModificationScreen extends Screen {
 

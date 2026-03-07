@@ -5,17 +5,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.burning_skull.BurningSkull;
-import org.jahdoo.trial_nexus.ability.AbilityBuilder;
-import org.jahdoo.trial_nexus.ability.abilities_combat.BurningSkullsAbility;
+import org.jahdoo.trial_nexus.magic.AbilityBuilder;
+import org.jahdoo.trial_nexus.magic.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.ArrayList;
 
-import static org.jahdoo.trial_nexus.ability.Ability.calculateDirectionOffset;
-import static org.jahdoo.trial_nexus.ability.Ability.fireProjectileDirection;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SHOT_MULTIPLIER;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.BurningSkullsAbility.infernoSoundEffect;
+import static org.jahdoo.trial_nexus.magic.Ability.calculateDirectionOffset;
+import static org.jahdoo.trial_nexus.magic.Ability.fireProjectileDirection;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.SHOT_MULTIPLIER;
+import static org.jahdoo.trial_nexus.magic.abilities_combat.BurningSkullsAbility.infernoSoundEffect;
 
 public class UndeadProtectorShield extends JahdooShieldItem {
 

@@ -35,16 +35,20 @@ public class AugmentCrystalRenderer implements ICurioRenderer {
     ) {
         if (!(renderLayerParent.getModel() instanceof HumanoidModel<?>)) return;
 
-        var scale = 0.55F;
+        var scale = 0.5F;
         var mc = Minecraft.getInstance();
-        var itemRenderer = mc.getItemRenderer();
-        var rotate = mc.level.getGameTime() + partialTicks;
-        var animate = rotate / 15;
+        var level = mc.level;
+        if(level == null) return;
+
+        var rotate = level.getGameTime() + partialTicks;
+        var animate = rotate / 14;
         var bobOff = Math.sin(rotate / 4.0F) * 0.02F + 1.9F - 0.51;
 
         poseStack.pushPose();
         poseStack.translate(0, Math.min(bobOff, animate) - 2.4, 0);
-        poseStack.mulPose(Axis.YP.rotation(rotate/4));
+        poseStack.mulPose(Axis.YP.rotation(rotate/8));
+        poseStack.mulPose(Axis.XN.rotationDegrees(180.0F));
+
         poseStack.scale(scale, scale, scale);
         itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, null, 0);
         poseStack.popPose();

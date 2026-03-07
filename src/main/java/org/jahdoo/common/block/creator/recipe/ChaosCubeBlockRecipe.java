@@ -20,7 +20,6 @@ public class ChaosCubeBlockRecipe implements CreatorRecipes {
             if(inputItem.is(Items.DIAMOND)) diamonds++;
         }
 
-
         return chaosCube == 1 && diamonds == 7;
     }
 

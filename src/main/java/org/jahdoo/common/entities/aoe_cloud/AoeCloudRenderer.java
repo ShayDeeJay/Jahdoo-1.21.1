@@ -7,9 +7,9 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.Armageddon;
-import org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonNova;
-import org.jahdoo.trial_nexus.ability.abilities_combat.permafrost.Permafrost;
+import org.jahdoo.trial_nexus.magic.abilities_combat.armageddon.Armageddon;
+import org.jahdoo.trial_nexus.magic.abilities_combat.life_siphon.LifeSiphonNova;
+import org.jahdoo.trial_nexus.magic.abilities_combat.permafrost.Permafrost;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 import static org.jahdoo.common.registers.mod.ElementReg.*;
 
 public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
+
 
     public AoeCloudRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -82,6 +83,8 @@ public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
 
             var x = new ArrayList<String>();
 
+            System.out.println();
+
             if(circ) {
                 x.add("a");
                 x.add("b");
@@ -97,25 +100,17 @@ public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
             if(entity.getEntityType().equals(Armageddon.abilityId.getPath().intern())) {
                 x.add("a");
                 x.add("b");
-//                x.add("c");
-//                x.add("d");
-//                x.add("e");
+                x.add("c");
             }
 
             if(entity.getEntityType().equals(LifeSiphonNova.abilityId.getPath().intern())) {
-//                x.add("a");
                 x.add("b");
                 x.add("c");
-//                x.add("d");
-//                x.add("e");
             }
 
-            System.out.println(entity.getEntityType());
             if(Objects.equals(entity.getEntityType(), "blink")){
                 x.add("a");
                 x.add("b");
-//                x.add("c");
-//                x.add("d");
                 x.add("e");
             }
 
@@ -130,10 +125,27 @@ public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
 
     private static void getMagicCircle(AoeCloud entity, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, int color, int index, String type) {
         pose.pushPose();
-        var degrees = (entity.tickCount * 1.2f) + partialTicks;
+        var degrees = (entity.tickCount + partialTicks) * 1.2f;
+        var isCircle = entity.getEntityType().equals("jump_circle");
 
-        System.out.println(index);
-        pose.rotateAround(Axis.YN.rotationDegrees((index%2 == 0) ? degrees : -degrees), 0, 0, 0);
+        var isType = type.equals("c") || type.equals("b");
+        var b = entity.getEntityType().equals(Armageddon.abilityId.getPath().intern()) && isType;
+        var i = isCircle ? Math.max(10, 200 - (entity.tickCount * 14)) : 0;
+        var v = index % 2 == 0 ? degrees : -degrees;
+
+        pose.rotateAround(Axis.YN.rotationDegrees(v * i), 0, 0, 0);
+
+
+        if(b){
+            drawTexture(
+                pose.last(),
+                bufferSource,
+                255,
+                min(entity.getBbWidth() + 0.4f, entity.tickCount + partialTicks),
+                JahdooHelpers.res("textures/entity/shield.png"), color(155, color)
+            );
+        }
+
         drawTexture(
             pose.last(),
             bufferSource,

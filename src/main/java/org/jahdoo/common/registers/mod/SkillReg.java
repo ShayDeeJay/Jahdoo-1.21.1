@@ -8,7 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.ability.skills.*;
+import org.jahdoo.trial_nexus.magic.skills.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.Comparator;
@@ -43,7 +43,7 @@ public class SkillReg {
         registerElement(ReboundSkill::new);
 
     public static final DeferredHolder<AbstractSkill, AbstractSkill> TRIPLE_JUMP =
-        registerElement(TripleJumpSkill::new);
+        registerElement(PhantomJumpSkill::new);
 
     public static final DeferredHolder<AbstractSkill, AbstractSkill> DRIP_WALK =
         registerElement(DripWalkSkill::new);
@@ -53,6 +53,9 @@ public class SkillReg {
 
     public static final DeferredHolder<AbstractSkill, AbstractSkill> BLINK =
         registerElement(BlinkSkill::new);
+
+    public static final DeferredHolder<AbstractSkill, AbstractSkill> RUSH =
+        registerElement(RushSkill::new);
 
     public static void register(IEventBus eventBus) {
         ELEMENT.register(eventBus);

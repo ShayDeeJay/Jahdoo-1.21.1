@@ -112,13 +112,16 @@ public class AttributeReg {
 
     //Skills
     public static final DeferredHolder<Attribute, Attribute> BLINK_RANGE =
-        register(MOD + ".blink_range", 2);
+        register(MOD + ".blink_range", 1);
 
     public static final DeferredHolder<Attribute, Attribute> MAGE_FLIGHT =
         register(MOD + ".skills.mage_flight", 0.02);
 
     public static final DeferredHolder<Attribute, Attribute> TRIPLE_JUMP =
-        register(MOD + ".skills.triple_jump", 2);
+        register(MOD + ".skills.triple_jump", 1);
+
+    public static final DeferredHolder<Attribute, Attribute> RUSH =
+        register(MOD + ".skills.rush", 1);
 
     public static DeferredHolder<Attribute, Attribute> register (String name, double defaultVal){
         var rangedAttribute = new RangedAttribute("attribute.name."+name, defaultVal, 0.0, 2048.0);
@@ -187,6 +190,7 @@ public class AttributeReg {
         event.add(PLAYER, BLINK_RANGE);
         event.add(PLAYER, MAGE_FLIGHT);
         event.add(PLAYER, TRIPLE_JUMP);
+        event.add(PLAYER, RUSH);
 
         event.add(PLAYER, SKIP_MANA);
         event.add(PLAYER, SKIP_COOLDOWN);

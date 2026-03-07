@@ -34,7 +34,7 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static net.minecraft.world.item.TooltipFlag.ADVANCED;
 import static net.neoforged.neoforge.client.ClientTooltipFlag.of;
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;

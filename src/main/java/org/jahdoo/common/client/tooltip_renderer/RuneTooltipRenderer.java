@@ -6,7 +6,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.joml.Matrix4f;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;

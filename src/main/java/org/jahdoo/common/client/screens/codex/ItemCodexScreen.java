@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.mod.ElementReg;

@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.items.caster_item.CastHelper;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.minecraft.world.InteractionHand.MAIN_HAND;
@@ -38,9 +39,10 @@ public class UseAbilityC2SP implements CustomPacketPayload {
                     if(CastHelper.validCasterType(mainHand)) hand = MAIN_HAND;
                     if(CastHelper.validCasterType(offHand)) hand = OFF_HAND;
 
-                    if(hand == null) return;
-                    var item = serverPlayer.getItemInHand(hand);
-                    item.use(serverPlayer.level(), serverPlayer, hand);
+//                    if(hand == null) return;
+//                    var item = serverPlayer.getItemInHand(hand);
+                    var item = JahdooHelpers.getCurioSlotItem(serverPlayer, ItemReg.AUGMENT_CRYSTAL.get());
+                    item.use(serverPlayer.level(), serverPlayer, InteractionHand.MAIN_HAND);
                 }
             }
         );

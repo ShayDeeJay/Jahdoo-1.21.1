@@ -15,7 +15,6 @@ public class ModTags {
         public static final TagKey<Item> ESSENCE_FRAGMENT = tag("essence_fragment");
         public static final TagKey<Item> AUGMENT_CORE = tag("augment_core");
 
-
         private static TagKey<Item> tag(String name) {
             return ItemTags.create(JahdooHelpers.res(name));
         }

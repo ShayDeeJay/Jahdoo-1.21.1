@@ -13,8 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand;
 import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
-import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.magic.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
@@ -28,9 +29,9 @@ import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttributeReg.COOLDOWN_REDUCTION;
 import static org.jahdoo.common.registers.AttributeReg.MANA_COST_REDUCTION;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
-import static org.jahdoo.trial_nexus.ability.Ability.DISTANCE_CAST;
-import static org.jahdoo.trial_nexus.ability.Ability.HOLD_CAST;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.magic.Ability.DISTANCE_CAST;
+import static org.jahdoo.trial_nexus.magic.Ability.HOLD_CAST;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 
 
@@ -86,7 +87,7 @@ public class CastHelper {
         var cooldownSystem = player.getData(CASTER_DATA);
         var ability = AbilityReg.getFirstSpellByTypeId(abilityId);
         var reCalculatedCooldown = JahdooHelpers.attributeModifierCalculator(player, (float) cooldownCost, false,  ability.orElseThrow().getElemenType().cooldownReduction(), COOLDOWN_REDUCTION);
-        cooldownSystem.addCooldown(abilityId, (int) reCalculatedCooldown);
+        cooldownSystem.addCooldown(player, abilityId, (int) reCalculatedCooldown);
     }
 
     public static void chargeMana(String abilityId, Player player) {
@@ -118,8 +119,15 @@ public class CastHelper {
         playDebugMessage(player, "adjusted mana = " + adjustedMana);
     }
 
-    public static void executeAndCharge(Player player) {
+    public static ItemStack hasValidCasterItem(Player player) {
         var wandItem = JahdooHelpers.getUsedItem(player);
+        var getCurioCaster = JahdooHelpers.getCurioSlotItem(player, ItemReg.AUGMENT_CRYSTAL.get());
+        return wandItem.isEmpty() ? getCurioCaster : wandItem;
+    }
+
+    public static void executeAndCharge(Player player) {
+        var actual = hasValidCasterItem(player);
+
         var typeId = CasterData.selectedAbility(player);
         var ability = AbilityReg.getFirstSpellByTypeId(typeId);
         if(ability.isPresent()){
@@ -127,7 +135,7 @@ public class CastHelper {
             var getElement = getAbility.getElemenType();
 
             if (!player.isCreative()) {
-                if(durabilityDamageCount(wandItem) > 0){
+                if(durabilityDamageCount(actual) > 0){
                     if (validManaAndCooldown(player)) {
                         if (!getAbility.selfChargeAbility()) {
                             chargeCooldown(typeId, player);
@@ -136,7 +144,7 @@ public class CastHelper {
                         onCast(player, getAbility);
                         OnCastPerks.onCastPerkApply(player);
                         if(player.level() instanceof ServerLevel serverLevel){
-                            JahdooHelpers.hurtAndKeepItem(wandItem, 5, serverLevel, player);
+                            JahdooHelpers.hurtAndKeepItem(actual, 5, serverLevel, player);
                             if (CasterItemHelper.canOffHand(player, false)) {
                                 var gauntlet = CasterItemHelper.getGauntlet(player);
                                 JahdooHelpers.hurtAndKeepItem(gauntlet, 5, serverLevel, player);
@@ -155,7 +163,7 @@ public class CastHelper {
     }
 
     public static InteractionResultHolder<ItemStack> use(Player player) {
-        var itemStack = JahdooHelpers.getUsedItem(player);
+        var itemStack = CastHelper.hasValidCasterItem(player);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
 
         if(canUse) executeAndCharge(player); else failedCastNotification(player);

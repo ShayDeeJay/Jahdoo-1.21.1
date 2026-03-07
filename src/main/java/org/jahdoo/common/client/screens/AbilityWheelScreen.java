@@ -22,7 +22,7 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.magic.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
@@ -32,9 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.jahdoo.common.client.Icons.COG;
-import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
-import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.isConfigAbility;
+import static org.jahdoo.trial_nexus.utils.Icons.COG;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getAugmentModificationScreenWand;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.isConfigAbility;
 import static org.jahdoo.trial_nexus.attachments.CasterData.entityHolderWithSelected;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.syncSelectedAbility;
 

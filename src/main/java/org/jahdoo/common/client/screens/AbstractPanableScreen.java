@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;

@@ -14,7 +14,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.common.client.NumberText;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.ExperienceOrb;
 import org.jahdoo.common.items.JahdooItem;
@@ -24,10 +23,11 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.common.registers.mod.SkillReg;
-import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.magic.Ability;
+import org.jahdoo.trial_nexus.utils.NumberText;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
@@ -42,13 +42,12 @@ import static com.mojang.blaze3d.systems.RenderSystem.*;
 import static java.lang.String.valueOf;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.centeredStringNoShadow;
 import static org.jahdoo.common.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.trial_nexus.attachments.CasterData.selectedAbility;
 import static org.jahdoo.trial_nexus.utils.Configuration.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.getUsedItem;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 
 public class CustomHudOverlay implements LayeredDraw.Layer {
 
@@ -197,7 +196,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
     private void setFadeGui(Player player){
         var fadeAmount = 0.07f;
-        var wandItem = getUsedItem(player).getItem();
+        var wandItem = CastHelper.hasValidCasterItem(player).getItem();
         var alwaysShow = CUSTOM_UI_SHOW_MANA.get();
 
         if (CastHelper.validCasterType(wandItem) || alwaysShow) {
@@ -413,12 +412,14 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         if(itemStack1.has(DataComponents.MAX_DAMAGE) && !itemStack1.isEmpty()) items.add(itemStack1);
 
         var curioSlotsItems = CuriosApi.getCuriosInventory(player);
-        var withSlots = curioSlotsItems.get().getEquippedCurios();
+        if(curioSlotsItems.isPresent()){
+            var withSlots = curioSlotsItems.get().getEquippedCurios();
 
-        for (int i = 0; i < withSlots.getSlots(); i++){
-            var stackInSlot = withSlots.getStackInSlot(i);
-            if(stackInSlot.getItem() instanceof JahdooItem){
-                items.add(stackInSlot);
+            for (int i = 0; i < withSlots.getSlots(); i++) {
+                var stackInSlot = withSlots.getStackInSlot(i);
+                if (stackInSlot.getItem() instanceof JahdooItem && stackInSlot.has(DataComponents.DAMAGE)) {
+                    items.add(stackInSlot);
+                }
             }
         }
 

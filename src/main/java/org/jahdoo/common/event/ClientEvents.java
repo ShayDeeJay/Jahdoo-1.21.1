@@ -7,9 +7,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
@@ -28,8 +28,10 @@ public class ClientEvents {
         var entity = event.getEntity();
         var instance = Minecraft.getInstance();
 
-        event.setCanceled(Blink.isActive(entity));
-        event.getEntity().walkAnimation.setSpeed(entity.getData(AttachmentReg.MAGE_FLIGHT).isFlying ? 0.05f : event.getEntity().walkAnimation.speed());
+        if(entity instanceof Player) {
+            event.setCanceled(Blink.isActive(entity));
+            event.getEntity().walkAnimation.setSpeed(entity.getData(AttachmentReg.MAGE_FLIGHT).isFlying ? 0.05f : event.getEntity().walkAnimation.speed());
+        }
 
         if(!entity.isAlive()) return;
         renderHealthBar(event, entity, instance, poseStack);
@@ -63,7 +65,7 @@ public class ClientEvents {
         if (event.getStage() != Stage.AFTER_BLOCK_ENTITIES) return;
 
         var player = (Player) event.getCamera().getEntity();
-        var stack = JahdooHelpers.getUsedItem(player);
+        var stack = CastHelper.hasValidCasterItem(player);
 
         renderUtilityOverlay(event, player, stack);
         renderTeleportLocationOverlay(event, player, stack);

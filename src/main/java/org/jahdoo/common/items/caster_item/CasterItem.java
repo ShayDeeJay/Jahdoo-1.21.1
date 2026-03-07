@@ -1,26 +1,13 @@
 package org.jahdoo.common.items.caster_item;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.menu.BalmMenuProvider;
-import net.blay09.mods.waystones.api.Waystone;
-import net.blay09.mods.waystones.core.PlayerWaystoneManager;
-import net.blay09.mods.waystones.menu.ModMenus;
-import net.blay09.mods.waystones.menu.WaystoneSelectionMenu;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
@@ -30,10 +17,7 @@ import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.items.BaseJahdooItem;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.CuriosApi;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static net.minecraft.world.InteractionResultHolder.fail;
@@ -125,48 +109,6 @@ public class CasterItem extends BaseJahdooItem {
         }
 
         return fail(itemStack);
-    }
-
-    public static void openTeleportMenu(Level level, Player player, ItemStack itemStack) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            final InteractionHand hand = serverPlayer.getUsedItemHand();
-
-            final Collection<Waystone> waystones = PlayerWaystoneManager.getTargetsForItem(serverPlayer, itemStack);
-            PlayerWaystoneManager.ensureSortingIndex(serverPlayer, waystones);
-            Balm.getNetworking().openGui(serverPlayer, new BalmMenuProvider<ModMenus.ItemInitiatedWaystoneMenuData>() {
-                public Component getDisplayName() {
-                    return Component.translatable("container.waystones.waystone_selection");
-                }
-
-                public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player player) {
-                    return (new WaystoneSelectionMenu(ModMenus.warpStoneSelection.get(), null, windowId, waystones, Collections.emptySet())).withWarpItem(itemStack).setPostTeleportHandler((context) -> itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand)));
-                }
-
-                public ModMenus.ItemInitiatedWaystoneMenuData getScreenOpeningData(ServerPlayer serverPlayer) {
-                    return new ModMenus.ItemInitiatedWaystoneMenuData(waystones, itemStack);
-                }
-
-                public StreamCodec<RegistryFriendlyByteBuf, ModMenus.ItemInitiatedWaystoneMenuData> getScreenStreamCodec() {
-                    return ModMenus.ItemInitiatedWaystoneMenuData.STREAM_CODEC;
-                }
-            });
-        }
-    }
-
-    public static void addSlot(LivingEntity player, String type, ResourceLocation location, int slots) {
-        CuriosApi.getCuriosInventory(player).ifPresent(
-            inventory -> {
-                inventory.addTransientSlotModifier(type, location, slots, AttributeModifier.Operation.ADD_VALUE);
-            }
-        );
-    }
-
-    public static void removeSlot(LivingEntity player, String type, ResourceLocation res){
-        CuriosApi.getCuriosInventory(player).ifPresent(
-            inventory -> {
-                inventory.removeSlotModifier(type, res);
-            }
-        );
     }
 
     public static InteractionResultHolder<ItemStack> castAbility(Player player, InteractionHand interactionHand, ItemStack item) {

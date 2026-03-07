@@ -18,8 +18,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-import static org.jahdoo.common.client.Icons.ABILITY_BACKGROUND;
-import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
+import static org.jahdoo.trial_nexus.utils.Icons.ABILITY_BACKGROUND;
+import static org.jahdoo.trial_nexus.utils.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 
 public class AbilitySlotButton extends ImageButton {

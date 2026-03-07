@@ -4,7 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import top.theillusivec4.curios.api.CuriosDataProvider;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 
@@ -49,8 +49,15 @@ public class JahdooCuriosProvider extends CuriosDataProvider {
             .icon(Icons.CURIO_SHIELD)
             .replace(true);
 
+        this.createSlot("pocket_dimension")
+            .size(1)
+            .dropRule(ICurio.DropRule.ALWAYS_DROP)
+            .icon(Icons.POCKET_DIMENSION)
+            .replace(true);
+
         this.createEntities("player")
             .addPlayer()
+            .addSlots("pocket_dimension")
             .addSlots("relic")
             .addSlots("magnet")
             .addSlots("shield")

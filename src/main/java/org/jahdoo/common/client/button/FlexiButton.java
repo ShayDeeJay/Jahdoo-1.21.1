@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.sounds.SoundManager;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;

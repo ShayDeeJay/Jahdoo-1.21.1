@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;

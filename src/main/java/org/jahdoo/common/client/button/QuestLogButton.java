@@ -6,7 +6,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.FormattedText;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.tasks.AbstractTask;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;

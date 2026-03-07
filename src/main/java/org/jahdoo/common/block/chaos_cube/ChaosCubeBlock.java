@@ -37,7 +37,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

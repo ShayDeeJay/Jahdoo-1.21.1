@@ -24,7 +24,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
-import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.RenderHelpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.entities.ITamableEntity;
@@ -33,11 +32,12 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
-import org.jahdoo.trial_nexus.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.magic.abilities_combat.arcane_shift.ArcaneShiftAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.frostbolts.FrostboltsAbility;
 import org.jahdoo.trial_nexus.utils.Configuration;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.awt.*;
@@ -49,7 +49,7 @@ import java.util.UUID;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.common.client.RenderHelpers.drawHealthBar;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
 
 public class RenderEventHelper {
 
@@ -141,7 +141,7 @@ public class RenderEventHelper {
         var player = (Player) event.getCamera().getEntity();
         var target = getEntityInRange(player, 15, 25);
         if (target == null || !player.hasLineOfSight(target)) return;
-        if (!(CastHelper.validCasterType(JahdooHelpers.getUsedItem(player).getItem()))) return;
+        if (!(CastHelper.validCasterType(CastHelper.hasValidCasterItem(player).getItem()))) return;
 
         target.addEffect(new MobEffectInstance(MobEffects.GLOWING.getDelegate(), 20, 1, false, false), player);
 

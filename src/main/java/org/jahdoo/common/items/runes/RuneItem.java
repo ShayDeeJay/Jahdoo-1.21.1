@@ -11,11 +11,9 @@ import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
-import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import java.util.ArrayList;
@@ -60,15 +58,6 @@ public class RuneItem extends BaseItem {
         InteractionHand usedHand
     ) {
         return InteractionResultHolder.fail(player.getItemInHand(usedHand));
-    }
-
-    static void randomRune(Player player, JahdooRarity tierRarity, JahdooRarity runeRarity) {
-        var stack = JahdooHelpers.getUsedItem(player);
-        if(!player.level().isClientSide){
-            var newStack = stack.copyWithCount(1);
-            stack.shrink(1);
-            ItemHelpers.throwOrAddItem(player, newStack);
-        }
     }
 
     public List<Component> hoverToolTip(ItemStack stack, TooltipContext context, List<Component> tooltips) {

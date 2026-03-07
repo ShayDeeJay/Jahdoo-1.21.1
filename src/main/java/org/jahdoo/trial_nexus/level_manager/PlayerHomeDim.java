@@ -1,14 +1,11 @@
 package org.jahdoo.trial_nexus.level_manager;
 
-import net.blay09.mods.waystones.api.WaystoneStyle;
-import net.blay09.mods.waystones.api.WaystonesAPI;
 import net.casual.arcade.dimensions.ArcadeDimensions;
 import net.casual.arcade.dimensions.level.LevelPersistence;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
@@ -19,7 +16,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.jetbrains.annotations.NotNull;
 
-import static net.blay09.mods.waystones.Waystones.id;
 import static net.minecraft.world.level.biome.Biomes.THE_VOID;
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.GLOBAL_Y;
@@ -78,12 +74,13 @@ public class PlayerHomeDim {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
         placeStructure(level, posX, new StructurePlaceSettings() , "base");
-        var pos1 = new BlockPos(0, 89, 0);
-        var waystone = WaystonesAPI.placeWaystone(level, pos1, new WaystoneStyle(id("waystone")));
 
-        if(player instanceof ServerPlayer serverPlayer && waystone.isPresent()) {
-            WaystonesAPI.activateWaystone(serverPlayer, waystone.get());
-        }
+//        var pos1 = new BlockPos(0, 89, 0);
+//        var waystone = WaystonesAPI.placeWaystone(level, pos1, new WaystoneStyle(id("waystone")));
+//
+//        if(player instanceof ServerPlayer serverPlayer && waystone.isPresent()) {
+//            WaystonesAPI.activateWaystone(serverPlayer, waystone.get());
+//        }
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
 

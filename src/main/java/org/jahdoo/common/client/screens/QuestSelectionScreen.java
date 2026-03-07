@@ -31,7 +31,7 @@ import java.util.Optional;
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;

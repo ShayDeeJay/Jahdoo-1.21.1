@@ -578,9 +578,10 @@ public class CasterData implements IAttachment {
         }
     }
 
-    public void addCooldown(String ability, int cooldown){
+    public void addCooldown(Player player, String ability, int cooldown){
         abilityCooldownsStatic.put(ability, cooldown);
         abilityCooldowns.put(ability, cooldown);
+//        if (player instanceof ServerPlayer serverPlayer) sendToPlayer(serverPlayer, new CooldownsSyncS2CP(abilityCooldowns, abilityCooldownsStatic));
     }
 
     public void removeAbilityFromCooldown(String ability){

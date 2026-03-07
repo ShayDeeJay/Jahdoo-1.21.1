@@ -3,7 +3,7 @@ package org.jahdoo.trial_nexus.tasks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.StatEntryReg;

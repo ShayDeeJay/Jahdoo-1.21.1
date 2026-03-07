@@ -19,7 +19,7 @@ import static org.jahdoo.trial_nexus.attachments.CasterData.hasSkill;
 
 public class Blink implements IAttachment {
 
-    public static final int MANA_COST = 10;
+    public static final int MANA_COST = 20;
     public static final int ANIMATION_COOLDOWN = 8;
     private int counter = 0;
 
@@ -33,6 +33,7 @@ public class Blink implements IAttachment {
 
     public static void setMovement(Player player) {
         if(!(player instanceof ServerPlayer serverPlayer)) return;
+
         var blink = serverPlayer.getData(AttachmentReg.BLINK);
         var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
         var hasSkill = hasSkill(player, SkillReg.BLINK.get().id());
@@ -41,23 +42,6 @@ public class Blink implements IAttachment {
         var isGrounded = serverPlayer.onGround();
 
         if(hasSkill && hasMana && isReset && isGrounded) {
-            casterData.subtractMana(MANA_COST, serverPlayer);
-            blink.setCounter(ANIMATION_COOLDOWN);
-
-//            var cloud = new AoeCloud(
-//                serverPlayer.level(),
-//                player,
-//                player.getBbWidth() - 0.1F,
-//                10
-//            );
-//
-//            serverPlayer.level().addFreshEntity(cloud);
-//            var usedItem = JahdooHelpers.getUsedItem(player).getItem();
-//            var element = fromWand(usedItem).orElse(ElementReg.random());
-//            cloud.setEntityType("blink");
-//            cloud.setElementId(element.id());
-//            cloud.moveTo(player.position());
-
             PacketDistributor.sendToPlayer(serverPlayer, new BlinkS2CP(serverPlayer.getAttributeValue(AttributeReg.BLINK_RANGE), 0, 0, ANIMATION_COOLDOWN));
         }
     }
@@ -100,28 +84,11 @@ public class Blink implements IAttachment {
         if(counter > 0) counter--;
 
         if(player instanceof ServerPlayer serverPlayer) {
-//            if(counter == 2) {
-//                var cloud = new AoeCloud(
-//                    serverPlayer.level(),
-//                    player,
-//                    player.getBbWidth() - 0.1F,
-//                    10
-//                );
-//
-//                serverPlayer.level().addFreshEntity(cloud);
-//                var usedItem = JahdooHelpers.getUsedItem(player).getItem();
-//                var element = fromWand(usedItem).orElse(ElementReg.random());
-//                cloud.setEntityType("blink");
-//                cloud.setElementId(element.id());
-//                cloud.moveTo(player.position());
-//            }
-
             if(counter == 1){
                 stopPlayer(serverPlayer);
                 PacketDistributor.sendToPlayer(serverPlayer, new BlinkS2CP(0, 0, 0, 1));
             }
         }
     }
-
 
 }

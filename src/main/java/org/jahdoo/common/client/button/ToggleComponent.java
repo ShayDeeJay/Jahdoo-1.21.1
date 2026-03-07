@@ -14,7 +14,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 
 public class ToggleComponent  {
 

@@ -13,8 +13,10 @@
   },
   "display": {
     "description": {
+      "bold": false,
       "color": "#E19B32",
-      "text": "Kill 1000 mobs"
+      "text": "Kill 1000 mobs",
+      "underlined": false
     },
     "frame": "challenge",
     "icon": {
@@ -22,8 +24,10 @@
       "id": "minecraft:rotten_flesh"
     },
     "title": {
+      "bold": false,
       "color": "#E6E22E",
-      "text": "Rookie Assassin"
+      "text": "Rookie Assassin",
+      "underlined": false
     }
   },
   "requirements": [

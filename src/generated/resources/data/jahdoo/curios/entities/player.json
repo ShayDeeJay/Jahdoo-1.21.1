@@ -3,6 +3,7 @@
     "minecraft:player"
   ],
   "slots": [
+    "pocket_dimension",
     "relic",
     "magnet",
     "shield",

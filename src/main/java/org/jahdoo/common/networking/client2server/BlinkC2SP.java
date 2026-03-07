@@ -6,7 +6,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
+import org.jahdoo.trial_nexus.magic.skills.BlinkSkill;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class BlinkC2SP implements CustomPacketPayload {
@@ -26,8 +28,13 @@ public class BlinkC2SP implements CustomPacketPayload {
         ctx.enqueueWork(
             () -> {
                 if(!(ctx.player() instanceof ServerPlayer player)) return;
-                Blink.setMovement(player);
+                var casterData = player.getData(AttachmentReg.CASTER_DATA);
+                var isCooldown = casterData.isAbilityOnCooldown(BlinkSkill.BLINK);
 
+                if(!isCooldown) {
+                    Blink.setMovement(player);
+                    casterData.addCooldown(player, BlinkSkill.BLINK, 20);
+                }
             }
         );
     }

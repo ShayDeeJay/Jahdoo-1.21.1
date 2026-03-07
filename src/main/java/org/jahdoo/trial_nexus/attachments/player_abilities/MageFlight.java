@@ -19,7 +19,6 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.level_manager.PlayerHomeDim;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
@@ -103,7 +102,7 @@ public class MageFlight implements IAttachment {
             casterData.subtractMana(Math.min(manaCost, 2), player);
             player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.090, getDelta.z * speedModifier));
 
-            var usedItem = JahdooHelpers.getUsedItem(player).getItem();
+            var usedItem = CastHelper.hasValidCasterItem(player).getItem();
             var element = fromWand(usedItem).orElse(ElementReg.random());
             mageFlightAnimation(element, player);
         }
@@ -134,7 +133,7 @@ public class MageFlight implements IAttachment {
     public void serverFlight(Player player){
         if(player.isCreative() || player.isSpectator()) return;
 
-        var wandItem = JahdooHelpers.getUsedItem(player);
+        var wandItem = CastHelper.hasValidCasterItem(player);
         var manaSystem = player.getData(CASTER_DATA);
         if (cancelAttempt(player)) return;
 

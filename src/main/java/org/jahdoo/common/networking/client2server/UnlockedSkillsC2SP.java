@@ -43,6 +43,7 @@ public class UnlockedSkillsC2SP implements CustomPacketPayload {
                     if(casterData.hasUnlockedSkill(skillId)){
                         casterData.decrementAbilityPoints(skillCost);
                         casterData.addNewSkill(skillId);
+                        casterData.toggleSkill(skillId);
                     } else {
                         casterData.toggleSkill(skillId);
                     }

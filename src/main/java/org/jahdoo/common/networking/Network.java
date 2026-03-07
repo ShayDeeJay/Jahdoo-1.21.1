@@ -34,9 +34,27 @@ public class Network {
         );
 
         payloadRegistrar.playToServer(
-            TripleJumpMagicCircleC2SP.TYPE,
-            TripleJumpMagicCircleC2SP.STREAM_CODEC,
-            TripleJumpMagicCircleC2SP::handle
+            RushC2SP.TYPE,
+            RushC2SP.STREAM_CODEC,
+            RushC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            BlinkManaAndCounterC2SP.TYPE,
+            BlinkManaAndCounterC2SP.STREAM_CODEC,
+            BlinkManaAndCounterC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            PocketDimensionC2SP.TYPE,
+            PocketDimensionC2SP.STREAM_CODEC,
+            PocketDimensionC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            PhantomJumpMagicCircleC2SP.TYPE,
+            PhantomJumpMagicCircleC2SP.STREAM_CODEC,
+            PhantomJumpMagicCircleC2SP::handle
         );
 
         payloadRegistrar.playToServer(
@@ -183,6 +201,12 @@ public class Network {
             CastingUnlocksSyncS2CP.TYPE,
             CastingUnlocksSyncS2CP.STREAM_CODEC,
             CastingUnlocksSyncS2CP::handle
+        );
+
+        payloadRegistrar.playToClient(
+            SyncEntityEffectValuesS2CP.TYPE,
+            SyncEntityEffectValuesS2CP.STREAM_CODEC,
+            SyncEntityEffectValuesS2CP::handle
         );
 
         payloadRegistrar.playToClient(

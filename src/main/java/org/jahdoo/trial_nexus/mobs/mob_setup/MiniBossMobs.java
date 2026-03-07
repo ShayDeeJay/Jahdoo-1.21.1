@@ -149,7 +149,7 @@ public class MiniBossMobs {
     }
 
     public static boolean onInteract(Player player, Mob mob){
-        if(mob.isNoAi()) {
+        if(mob.isNoAi() && LevelGenerator.isNexus(player.level()) && mob instanceof Animation_Monsters) {
             var pos = mob.blockPosition();
 
             if(mob.level() instanceof ServerLevel serverLevel){

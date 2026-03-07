@@ -10,7 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
@@ -101,10 +101,8 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
     }
 
     public AoeCloud(Level level, LivingEntity owner, float radius, String selectedAbility, String abilityId, int elementId) {
-
         super(EntityReg.CUSTOM_AOE_CLOUD.get(), level);
         this.setElementId(elementId);
-
 
         this.reapplyPosition();
 

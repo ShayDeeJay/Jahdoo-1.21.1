@@ -22,10 +22,11 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.magic.Ability;
+import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -39,8 +40,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import static java.lang.String.valueOf;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static net.minecraft.network.chat.Component.literal;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SET_ELEMENT_TYPE;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.SET_ELEMENT_TYPE;
 import static org.jahdoo.trial_nexus.attachments.CasterData.getXpNeededForNextLevel;
 
 public class SharedUI {

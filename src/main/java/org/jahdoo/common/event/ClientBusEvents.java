@@ -47,7 +47,7 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
-import static org.jahdoo.common.client.KeyBinding.*;
+import static org.jahdoo.trial_nexus.utils.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.getColour;
 import static org.jahdoo.common.particle.GenericParticle.*;
 import static org.jahdoo.common.registers.BlockEntityReg.*;
@@ -99,6 +99,8 @@ public class ClientBusEvents {
         event.register(WAND_SLOT_9A);
         event.register(WAND_SLOT_10A);
         event.register(BLINK);
+        event.register(RUSH);
+        event.register(POCKET_DIMENSION);
         event.register(QUICK_SELECT);
         event.register(ABILITY_SCREEN);
         event.register(STAT_SCREEN);

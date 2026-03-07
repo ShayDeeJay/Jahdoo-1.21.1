@@ -2,7 +2,7 @@ package org.jahdoo.trial_nexus.trackable.level_modifiers.positive;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.trackable.level_modifiers.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;

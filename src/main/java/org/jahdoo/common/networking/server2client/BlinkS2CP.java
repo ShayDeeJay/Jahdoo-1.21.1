@@ -6,7 +6,10 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jahdoo.common.items.caster_item.CastHelper;
+import org.jahdoo.common.networking.client2server.BlinkManaAndCounterC2SP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -19,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.ancient_golem.SummonAncientGolem.clientDiggingParticles;
+import static org.jahdoo.trial_nexus.magic.abilities_combat.ancient_golem.SummonAncientGolem.clientDiggingParticles;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class BlinkS2CP implements CustomPacketPayload {
@@ -64,11 +67,15 @@ public class BlinkS2CP implements CustomPacketPayload {
                 var player = ctx.player();
                 if (!(player instanceof LocalPlayer localPlayer)) return;
 
+                if (id == Blink.ANIMATION_COOLDOWN) {
+                    if (localPlayer.xxa == 0.0 && localPlayer.zza == 0.0) return;
+                    PacketDistributor.sendToServer(new BlinkManaAndCounterC2SP());
+                    applyHorizontalMomentum(localPlayer);
+                }
+
                 var blink = localPlayer.getData(AttachmentReg.BLINK);
+
                 blink.setCounter(id);
-
-                if (id == Blink.ANIMATION_COOLDOWN) applyHorizontalMomentum(localPlayer);
-
                 handleBlinkEffects(localPlayer, blink.getCounter());
             }
         );
@@ -105,19 +112,18 @@ public class BlinkS2CP implements CustomPacketPayload {
     }
 
     private void spawnBlinkParticle(LocalPlayer player, double yOffset, double yVelocity) {
-        var usedItem = JahdooHelpers.getUsedItem(player).getItem();
+        var usedItem = CastHelper.hasValidCasterItem(player).getItem();
         var element = fromWand(usedItem).orElse(ElementReg.random());
         var particle = getAllParticleTypes(element, 5, 1.5f);
 
+        var positions = new Vec3(
+            player.getRandomX(1.5),
+            player.getRandomY() + yOffset,
+            player.getRandomZ(1.5)
+        );
+
         ParticleHandlers.sendParticles(
-            player.level(),
-            particle,
-            new Vec3(
-                player.getRandomX(1.5),
-                player.getRandomY() + yOffset,
-                player.getRandomZ(1.5)
-            ),
-            0,
+            player.level(), particle, positions, 0,
             Random.nextDouble(0.1, 0.3) - 0.2,
             yVelocity,
             Random.nextDouble(0.1, 0.3) - 0.2,

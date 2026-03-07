@@ -16,7 +16,7 @@ import org.jahdoo.common.entities.EntityHelpers;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EntityReg;
-import org.jahdoo.trial_nexus.ability.abilities_combat.EscapeDecoyAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.EscapeDecoyAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
@@ -147,7 +147,11 @@ public class Decoy extends Mob implements ITamableEntity {
         entity.level().getNearbyEntities(
             Mob.class, TargetingConditions.DEFAULT, entity,
             entity.getBoundingBox().inflate(range)
-        ).forEach(mob -> EntityHelpers.canTarget(mob, owner));
+        ).forEach(
+            mob -> {
+                if(EntityHelpers.canTarget(mob, owner)) mob.setTarget(entity);
+            }
+        );
     }
 
     @Override

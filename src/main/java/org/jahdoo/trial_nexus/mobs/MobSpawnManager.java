@@ -19,7 +19,7 @@ import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.mobs.mob_setup.BossMobs;
 import org.jahdoo.trial_nexus.mobs.mob_setup.HordeMobs;

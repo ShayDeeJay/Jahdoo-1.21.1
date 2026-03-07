@@ -30,7 +30,7 @@ import static org.jahdoo.common.block.divine_forge.helpers.ModifierTab.onModifyC
 import static org.jahdoo.common.block.divine_forge.helpers.RepairTab.*;
 import static org.jahdoo.common.block.divine_forge.helpers.RuneTab.runeSlotTexture;
 import static org.jahdoo.common.block.divine_forge.helpers.RuneTab.runeToolTip;
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.SharedUI.augmentCoreSlots;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;

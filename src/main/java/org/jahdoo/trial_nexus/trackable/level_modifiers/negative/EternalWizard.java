@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.trial_nexus.trackable.level_modifiers.MobLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_ETERNAL_WIZARD;

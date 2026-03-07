@@ -49,7 +49,7 @@ import static net.minecraft.world.entity.ai.targeting.TargetingConditions.DEFAUL
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 import static org.jahdoo.common.entities.EntityHelpers.canTarget;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
 
 public class AncientGolem extends IronGolem implements ITamableEntity {
 

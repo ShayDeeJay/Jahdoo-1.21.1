@@ -12,7 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.level_manager.RoomData;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import org.slf4j.Logger;

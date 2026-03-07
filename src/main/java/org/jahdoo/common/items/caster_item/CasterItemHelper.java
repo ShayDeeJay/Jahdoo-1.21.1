@@ -216,11 +216,12 @@ public class CasterItemHelper {
 
             var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
             var getDura = JahdooHelpers.durabilityDamageCount(getGauntlet(entity));
-            if(isGauntletEquipped && getDura > 0) return true;
 
-            if(shouldSendMessage){
+            if(isGauntletEquipped && getDura > 0)
+                return true;
+
+            if(shouldSendMessage)
                 fromWand(offHand.getItem()).ifPresent(element -> sendCantUseMessage(entity, element));
-            }
 
             return false;
         }
@@ -230,10 +231,10 @@ public class CasterItemHelper {
 
     public static ItemStack getGauntlet(LivingEntity entity){
         var empty = ItemStack.EMPTY;
-        var curio = CuriosApi.getCuriosInventory(entity);
         var offHand = entity.getItemInHand(OFF_HAND);
 
         if(CastHelper.validCasterType(offHand.getItem())){
+            var curio = CuriosApi.getCuriosInventory(entity);
             if(curio.isEmpty()) return empty;
             var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
             if(isGauntletEquipped) {

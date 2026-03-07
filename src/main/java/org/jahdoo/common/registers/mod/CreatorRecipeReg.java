@@ -52,7 +52,7 @@ public class CreatorRecipeReg {
         registerSpell(new ChaosCubeBlockRecipe());
 
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> DEED_RECIPE =
-        registerSpell(new DeedRecipe());
+        registerSpell(new PocketDimensionRecipe());
 
     private static DeferredHolder<CreatorRecipes, CreatorRecipes> registerSpell(CreatorRecipes recipe) {
         return ABILITIES.register(recipe.recipeId(), () -> recipe);

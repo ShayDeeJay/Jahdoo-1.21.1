@@ -47,8 +47,6 @@ public abstract class ItemEntityMixin {
         }
     }
 
-
-
     @Unique
     private boolean lootBeams$hasPlayedSound = false;
 

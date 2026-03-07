@@ -9,7 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.common.client.JahdooToast;
+import org.jahdoo.trial_nexus.utils.JahdooToast;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 public class JahdooToastS2CP implements CustomPacketPayload {
@@ -44,7 +44,7 @@ public class JahdooToastS2CP implements CustomPacketPayload {
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(
             () -> {
-                if(ctx.player() instanceof LocalPlayer localPlayer) {
+                if(ctx.player() instanceof LocalPlayer) {
                     Minecraft.getInstance().getToasts().addToast(new JahdooToast(header, description, icon, AdvancementType.CHALLENGE));
                 }
             }

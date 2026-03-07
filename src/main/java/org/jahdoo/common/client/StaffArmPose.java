@@ -19,23 +19,4 @@ public class StaffArmPose {
                     )
             )
         );
-
-    public static final EnumProxy<HumanoidModel.ArmPose> STAFF_LEG_POSE =
-        new EnumProxy<>(
-            HumanoidModel.ArmPose.class,
-            false,
-            (IArmPoseTransformer) ((model, entity, arm) -> {
-                model.rightLeg.xRot = Mth.lerp(
-                    0.85F,
-                    model.rightLeg.xRot,
-                    (-(float) Math.PI / 2.5F) + model.head.xRot / 4f
-                );
-
-                model.leftLeg.xRot = Mth.lerp(
-                    0.85F,
-                    model.leftLeg.xRot,
-                    (-(float) Math.PI / 2.5F) + model.head.xRot / 4f
-                );
-            })
-        );
 }

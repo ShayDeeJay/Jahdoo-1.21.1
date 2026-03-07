@@ -18,13 +18,13 @@ import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.ability.AbilityBuilder;
+import org.jahdoo.trial_nexus.magic.AbilityBuilder;
 
 import javax.annotation.Nullable;
 
 import static net.minecraft.world.level.block.ComposterBlock.LEVEL;
 import static net.minecraft.world.level.block.ComposterBlock.getValue;
-import static org.jahdoo.trial_nexus.ability.abilities_combat.permafrost.PermafrostAbility.abilityId;
+import static org.jahdoo.trial_nexus.magic.abilities_combat.permafrost.PermafrostAbility.abilityId;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class MixinMethods {

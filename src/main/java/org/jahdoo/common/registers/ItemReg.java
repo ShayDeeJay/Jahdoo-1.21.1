@@ -83,8 +83,8 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> CHALLENGER_SOUL =
         basicItem("challenger_soul");
 
-    public static final DeferredHolder<Item, Item> DEED =
-        complexItem("deed", Deed::new);
+    public static final DeferredHolder<Item, Item> POCKET_DIMENSION =
+        complexItem("pocket_dimension", PocketDimension::new);
 
     public static final DeferredHolder<Item, Item> SEAL_OF_CHANGE =
         complexItem("seal", Seals::new);

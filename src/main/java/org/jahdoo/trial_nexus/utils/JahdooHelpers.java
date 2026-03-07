@@ -28,6 +28,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -54,6 +55,7 @@ import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -82,7 +84,6 @@ public class JahdooHelpers {
     public static void syncAbilities(){
         sendToServer(new AbilityHolderC2SP(AbilityHolder.DEFAULT, 0));
     }
-
 
     public static void syncSelectedAbility(Player player, String updateAbility) {
         player.getData(AttachmentReg.CASTER_DATA).setSelectedAbility(updateAbility);
@@ -145,7 +146,6 @@ public class JahdooHelpers {
     public static ItemStack getUsedItem(LivingEntity player){
         return player.getItemInHand(player.getUsedItemHand());
     }
-
 
     private static double getX(Vec3 position, double size, double scale) {
         return position.x + size * scale;
@@ -349,10 +349,20 @@ public class JahdooHelpers {
         return component;
     }
 
-    public static int repairDurability(ItemStack itemStack){
-        var maxDamage = itemStack.get(DataComponents.MAX_DAMAGE);
-        itemStack.set(DataComponents.DAMAGE, 0);
-        return 0;
+    public static ItemStack getCurioSlotItem(LivingEntity entity, String id){
+        var curio = CuriosApi.getCuriosInventory(entity);
+        if(curio.isEmpty()) return ItemStack.EMPTY;
+
+        var get = curio.get().findCurios(id);
+        return get.isEmpty() ? ItemStack.EMPTY : get.getFirst().stack();
+    }
+
+    public static ItemStack getCurioSlotItem(LivingEntity entity, Item id){
+        var curio = CuriosApi.getCuriosInventory(entity);
+        if(curio.isEmpty()) return ItemStack.EMPTY;
+
+        var get = curio.get().findCurios(id);
+        return get.isEmpty() ? ItemStack.EMPTY : get.getFirst().stack();
     }
 
     public static int durabilityDamageCount(ItemStack itemStack){

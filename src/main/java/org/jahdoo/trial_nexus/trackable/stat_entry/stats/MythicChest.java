@@ -1,7 +1,7 @@
 package org.jahdoo.trial_nexus.trackable.stat_entry.stats;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.trackable.stat_entry.AbstractStatEntry;
 import org.jahdoo.trial_nexus.trackable.stat_entry.StatCategory;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;

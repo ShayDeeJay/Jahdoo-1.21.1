@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
+import org.jahdoo.trial_nexus.utils.Icons;
 
 import java.awt.*;
 

@@ -11,7 +11,7 @@ import org.jahdoo.common.networking.client2server.EffectC2SP;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.RuneReg;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.shaydee.shaydeeapi.Helpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;

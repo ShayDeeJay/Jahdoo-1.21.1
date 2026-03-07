@@ -9,8 +9,8 @@ import org.jahdoo.common.networking.client2server.MagnetActiveC2SP;
 import org.jahdoo.trial_nexus.utils.Configuration;
 import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 
-import static org.jahdoo.common.client.KeyBinding.MAGNET;
-import static org.jahdoo.common.client.KeyBinding.QUICK_SELECT;
+import static org.jahdoo.trial_nexus.utils.KeyBinding.MAGNET;
+import static org.jahdoo.trial_nexus.utils.KeyBinding.QUICK_SELECT;
 
 public class KeyBindHelper {
 

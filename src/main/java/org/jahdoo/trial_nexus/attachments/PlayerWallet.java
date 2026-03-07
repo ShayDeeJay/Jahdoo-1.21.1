@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;

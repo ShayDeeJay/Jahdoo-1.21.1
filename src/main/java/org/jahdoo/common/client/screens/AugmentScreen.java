@@ -16,7 +16,7 @@ import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.magic.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
@@ -26,12 +26,12 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.common.client.screens.AbilityModificationScreen.headerWithBorder;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.COOLDOWN;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.MANA_COST;
-import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextSingle;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.COOLDOWN;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.MANA_COST;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getModifierContextSingle;
 
 public class AugmentScreen extends Screen  {
 

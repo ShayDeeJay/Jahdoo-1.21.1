@@ -3,7 +3,7 @@ package org.jahdoo.common.client.screens;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.overlay.InstanceDataOverlay;
 import org.jahdoo.common.registers.AttachmentReg;

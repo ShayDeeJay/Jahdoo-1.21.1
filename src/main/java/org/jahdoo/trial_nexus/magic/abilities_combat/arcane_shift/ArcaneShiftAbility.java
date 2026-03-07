@@ -1,0 +1,74 @@
+package org.jahdoo.trial_nexus.magic.abilities_combat.arcane_shift;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import org.jahdoo.trial_nexus.magic.Ability;
+import org.jahdoo.trial_nexus.magic.AbilityBuilder;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.registers.mod.ElementReg;
+
+public class ArcaneShiftAbility extends Ability {
+
+    public static final ResourceLocation abilityId = JahdooHelpers.res("arcane_shift");
+    public static final String distance = "Teleport Distance";
+
+    @Override
+    public int getCastType() {
+        return DISTANCE_CAST;
+    }
+
+    @Override
+    public int getCastDuration(Player player) {
+        return 0;
+    }
+
+    @Override
+    public AbstractElement getElemenType() {
+        return ElementReg.mystic();
+    }
+
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return abilityId;
+    }
+
+    @Override
+    public String getDescription() {
+        return "description.ability.jahdoo.test";
+    }
+
+    @Override
+    public void invokeAbility(Player player) {
+        new ArcaneShift(player).shift();
+    }
+
+    @Override
+    public int levelRequirement() {
+        return 25;
+    }
+
+    @Override
+    public int getAbilityCost() {
+        return 5;
+    }
+
+    @Override
+    public JahdooRarity rarity() {
+        return JahdooRarity.RARE;
+    }
+
+    @Override
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
+            .setStaticMana(80)
+            .setStaticCooldown(200)
+            .setAoe(10, 4, 2, 2)
+            .setEffectDuration(200, 50, 50, 1)
+            .setCastingDistance(50, 20, 10, 1)
+            .buildAndReturn();
+    }
+
+}

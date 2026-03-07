@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
 import static org.jahdoo.common.block.divine_forge.helpers.DivineForgeScreenShared.groupFade;
-import static org.jahdoo.common.client.Icons.GUI_RUNE_SLOT;
+import static org.jahdoo.trial_nexus.utils.Icons.GUI_RUNE_SLOT;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;

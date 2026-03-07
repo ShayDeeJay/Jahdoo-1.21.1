@@ -68,7 +68,7 @@
   "item.jahdoo.challenger_soul": "Challenger Soul",
   "item.jahdoo.rune": "Rune",
   "item.jahdoo.ancient_glaive": "Ancient Glaive",
-  "item.jahdoo.deed": "Base Deed",
+  "item.jahdoo.pocket_dimension": "%s Pocket Dimension",
 
   "item.jahdoo.mage_helmet": "Mage Hood",
   "item.jahdoo.mage_chestplate": "Mage Chest Piece",
@@ -235,6 +235,7 @@
   "info.jahdoo.enchantments": "Enchantments",
   "info.jahdoo.cost": "Cost%s",
   "info.jahdoo.skill_points": "%sSkill Points",
+  "info.jahdoo.unusable": "You cant use this here.",
 
   "description.item.jahdoo.starter_pack": "Starter Packs are tiered bundles that provide everything needed to begin your journey. Each pack includes a full armor set, a sword, and a basic wand. Available tiers include Iron, Diamond, and Netherite.",
   "description.item.jahdoo.magent": "Magnets pull nearby items toward the player from a distance. Range determines how far items can be attracted, while strength controls how quickly they are pulled in.",
@@ -251,7 +252,7 @@
   "description.item.jahdoo.dim_xp_orb": "The Dim XP Orb grants experience when right-clicked. This variant provides 20 experience points.",
   "description.item.jahdoo.glowing_xp_orb": "The Glowing XP Orb grants experience when right-clicked. This variant provides 120 experience points.",
   "description.item.jahdoo.radiant_xp_orb": "Radiant XP Orb grants experience when right-clicked. This variant provides 1200 experience points.",
-  "description.item.jahdoo.deed": "The Base Deed is an item that spawns a personal island for players to claim and enjoy — a place of calm for those seeking space away from the madness.\n(Coming soon: block render overlay previews, tooltip examples, and additional base variants.)",
+  "description.item.jahdoo.pocket_dimension": "The Pocket Dimension is a player’s personal safe haven. Using the bottle teleports you back and forth between your Pocket Dimension and the origin dimension.",
   "description.item.jahdoo.challenger_soul": "The Challenger Soul is a rare crafting item with a chance to drop from Challengers within the Nexus.",
   "description.item.jahdoo.stamp": "Stamps can be applied to Trial Tickets at the Ticket Bureau. Each stamp adds a positive modifier, increasing the amount the ticket must be filled before use. Most tickets naturally come with a high chance of having a negative modifier.",
   "description.item.jahdoo.battlemage_gauntlet": "The Battlemage Gauntlet is an arcane relic that allows wands to be wielded in the offhand, freeing the main hand for another weapon or tool while maintaining magical control.",

@@ -15,7 +15,7 @@ import org.shaydee.shaydeeapi.block.SyncedBlockEntity;
 
 import java.util.List;
 
-import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 

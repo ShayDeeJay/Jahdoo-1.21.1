@@ -10,38 +10,35 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.ability.abilities_combat.BurningSkullsAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.EscapeDecoyAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.ancient_golem.SummonAncientGolemAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.ArmageddonAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.FrostMissileAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.InfernoMissileAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.MysticMissileAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.VitalityMissileAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.fireball.FireballAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.frost_spear.IceSpearAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.hellfire.HellfireAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.ice_bomb.IceBombAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.life_siphon.LifeSiphonAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.mystical_semtex.MysticalSemtexAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.nova_smash.NovaSmashAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.permafrost.PermafrostAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.quantum_destroyer.QuantumDestroyerAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.storm_rush.StormRushAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBombAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.enchanted_fusion.EnchantedFusionAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.farmers_touch.FarmersTouchAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.fetch.FetchAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.hammer.HammerAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.light_placer.LightPlacerAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.vein_miner.VeinMinerAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.wall_placer.WallPlacerAbility;
+import org.jahdoo.trial_nexus.magic.Ability;
+import org.jahdoo.trial_nexus.magic.abilities_combat.BurningSkullsAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.EscapeDecoyAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.ancient_golem.SummonAncientGolemAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.arcane_shift.ArcaneShiftAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.armageddon.ArmageddonAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.elemental_missile.FrostMissileAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.elemental_missile.InfernoMissileAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.elemental_missile.MysticMissileAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.elemental_missile.VitalityMissileAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.eternal_wizard.SummonEternalWizardAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.fireball.FireballAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.frost_spear.IceSpearAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.frostbolts.FrostboltsAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.hellfire.HellfireAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.ice_bomb.IceBombAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.life_siphon.LifeSiphonAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.mystical_semtex.MysticalSemtexAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.nova_smash.NovaSmashAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.permafrost.PermafrostAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.quantum_destroyer.QuantumDestroyerAbility;
+import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.block_bomb.BlockBombAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.farmers_touch.FarmersTouchAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.fetch.FetchAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.hammer.HammerAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.light_placer.LightPlacerAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.vein_miner.VeinMinerAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.wall_placer.WallPlacerAbility;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 
@@ -162,8 +159,8 @@ public class AbilityReg {
     public static final DeferredHolder<Ability, Ability> NOVA_SMASH =
         registerSpell(new NovaSmashAbility());
 
-    public static final DeferredHolder<Ability, Ability> DIMENSIONAL_RECALL =
-        registerSpell(new DimensionalRecallAbility());
+//    public static final DeferredHolder<Ability, Ability> DIMENSIONAL_RECALL =
+//        registerSpell(new DimensionalRecallAbility());
 
     public static final DeferredHolder<Ability, Ability> MYSTIC_MISSILE =
         registerSpell(new MysticMissileAbility());
@@ -178,8 +175,8 @@ public class AbilityReg {
     public static final DeferredHolder<Ability, Ability> FROST_BOLTS =
         registerSpell(new FrostboltsAbility());
 
-    public static final DeferredHolder<Ability, Ability> STORM_RUSH =
-        registerSpell(new StormRushAbility());
+//    public static final DeferredHolder<Ability, Ability> STORM_RUSH =
+//        registerSpell(new StormRushAbility());
 
     public static final DeferredHolder<Ability, Ability> FROST_MISSILE =
         registerSpell(new FrostMissileAbility());
@@ -234,8 +231,8 @@ public class AbilityReg {
     public static final DeferredHolder<Ability, Ability> WALL_PLACER =
         registerSpell(new WallPlacerAbility());
 
-    public static final DeferredHolder<Ability, Ability> ENCHANTED_FUSION =
-        registerSpell(new EnchantedFusionAbility());
+//    public static final DeferredHolder<Ability, Ability> ENCHANTED_FUSION =
+//        registerSpell(new EnchantedFusionAbility());
 
     private static DeferredHolder<Ability, Ability> registerSpell(Ability spell) {
         return ABILITIES.register(spell.setAbilityId(), () -> spell);

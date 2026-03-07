@@ -16,8 +16,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.jahdoo.common.client.Icons.GUI_BUTTON_SELECTED;
-import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
+import static org.jahdoo.trial_nexus.utils.Icons.GUI_BUTTON_SELECTED;
+import static org.jahdoo.trial_nexus.utils.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 
 public class GuiButton extends ImageButton {
 
