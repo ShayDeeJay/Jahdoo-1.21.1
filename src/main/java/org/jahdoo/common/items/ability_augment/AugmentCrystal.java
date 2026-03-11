@@ -1,20 +1,16 @@
 package org.jahdoo.common.items.ability_augment;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
-
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class AugmentCrystal extends CasterItem implements ICurioItem {
 
@@ -47,7 +43,7 @@ public class AugmentCrystal extends CasterItem implements ICurioItem {
         var itemStack = player.getItemInHand(usedHand);
 //        var bouncyFoot = AttributeReg.CHAINED_SEMTEX;
 
-        itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(Random.nextInt(1, 5)));
+//        itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(JahdooHelpers.Random.nextInt(1, 5)));
 
 //        replaceOrAddAttribute(itemStack, bouncyFoot.getRegisteredName(), bouncyFoot, 1, EquipmentSlot.BODY, true, "bonus");
         return super.use(level, player, usedHand);

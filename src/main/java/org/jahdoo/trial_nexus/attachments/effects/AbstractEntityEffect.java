@@ -2,13 +2,21 @@ package org.jahdoo.trial_nexus.attachments.effects;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
@@ -20,20 +28,24 @@ public abstract class AbstractEntityEffect implements IAttachment {
     private int random;
     private float damage;
     private boolean isSecondary;
+    private String applierUUID = "";
+
+    public abstract String id();
 
     public abstract AbstractElement getElement();
 
-    public abstract void getSecondary(LivingEntity entity);
+    public abstract void greaterEffect(LivingEntity entity);
 
-    public abstract AttachmentType<?> getAttachment();
+    public abstract AttachmentType<AbstractEntityEffect> getAttachment();
 
     public abstract ResourceLocation icon();
 
-    public void createEffect(LivingEntity applier, boolean isPrimary, int maxTime, float damage) {
+    public void createEffect(LivingEntity applier, boolean greater, int maxTime, float damage) {
         setTimer(maxTime);
         setMaxTime(maxTime);
         setDamage(applier, damage);
-        setSecondary(!isPrimary);
+        setApplierUUID(applier.getStringUUID());
+        setSecondary(greater);
         setRandom(Random.nextInt(0, 2000));
     }
 
@@ -85,6 +97,26 @@ public abstract class AbstractEntityEffect implements IAttachment {
         this.random = random;
     }
 
+    public void setApplierUUID(String applierUUID) {
+        this.applierUUID = applierUUID;
+    }
+
+    public String getApplierUUID() {
+        return applierUUID;
+    }
+
+    public boolean avoidOwner(LivingEntity livingEntity) {
+        return !livingEntity.getUUID().toString().equals(applierUUID);
+    }
+
+    public @Nullable LivingEntity getOwner(ServerLevel level) {
+        var entity = level.getEntity(UUID.fromString(applierUUID));
+        if(entity instanceof ServerPlayer serverPlayer)
+            return serverPlayer;
+
+        return null;
+    }
+
     public void setDamage(LivingEntity livingEntity, float damage) {
         if(livingEntity instanceof Player player) {
             this.damage = JahdooHelpers.attributeModifierCalculator(
@@ -99,10 +131,41 @@ public abstract class AbstractEntityEffect implements IAttachment {
         }
     }
 
+    public void onStarted(LivingEntity livingEntity){};
+    public void onActive(LivingEntity livingEntity){};
+    public void onEnd(LivingEntity livingEntity){};
+    public void ownerTick(LivingEntity livingEntity){};
+
+    public static void setTypeEffect(Supplier<AbstractEntityEffect> getEffect, LivingEntity entity, LivingEntity target, boolean isSecondary, int time, float damage) {
+        if((entity.level().isClientSide)) return;
+
+        var effect = getEffect.get();
+        if(!target.hasData(effect.getAttachment())) {
+            effect.createEffect(entity, isSecondary, time, damage);
+            target.setData(effect.getAttachment(), effect);
+        }
+    }
+
+    public static void serverOnTick(LivingEntity livingEntity, AttachmentType<AbstractEntityEffect> mysticEffect) {
+        if(livingEntity.hasData(mysticEffect)) {
+            var mystic = livingEntity.getData(mysticEffect);
+            mystic.onTick(livingEntity);
+        }
+    }
+
     public void onTick(LivingEntity entity) {
-        if(ended() || !entity.isAlive()) entity.removeData(getAttachment());
+        if(!this.isActive() || !entity.isAlive()) {
+            entity.removeData(getAttachment());
+            onEnd(entity);
+        }
+        if (isSecondary()) this.greaterEffect(entity);
+        if(this.started()) onStarted(entity);
+        if(this.isActive()) onActive(entity);
+        if(entity.level() instanceof ServerLevel serverLevel) {
+            var owner = this.getOwner(serverLevel);
+            if(owner != null) ownerTick(owner);
+        }
         if (timer > 0) timer--;
-        if (isSecondary()) this.getSecondary(entity);
     }
 
     @Override
@@ -112,6 +175,7 @@ public abstract class AbstractEntityEffect implements IAttachment {
         nbt.putInt("random", random);
         nbt.putFloat("damage", damage);
         nbt.putBoolean("isSecondary", isSecondary);
+        nbt.putString("applierUUID", applierUUID);
     }
 
     @Override
@@ -121,6 +185,31 @@ public abstract class AbstractEntityEffect implements IAttachment {
         this.random = nbt.getInt("random");
         this.damage = nbt.getFloat("damage");
         this.isSecondary = nbt.getBoolean("isSecondary");
+        this.applierUUID = nbt.getString("applierUUID");
+    }
+
+    public static <T extends AbstractEntityEffect> StreamCodec<RegistryFriendlyByteBuf, T> streamCodec(java.util.function.Supplier<T> factory) {
+        return StreamCodec.of(
+            (buf, effect) -> {
+                buf.writeInt(effect.getMaxTime());
+                buf.writeInt(effect.getTimer());
+                buf.writeInt(effect.getRandom());
+                buf.writeFloat(effect.getDamage());
+                buf.writeBoolean(effect.isSecondary());
+                buf.writeUtf(effect.getApplierUUID());
+            },
+            buf -> {
+                T effect = factory.get();
+                effect.setMaxTime(buf.readInt());
+                effect.setTimer(buf.readInt());
+                effect.setRandom(buf.readInt());
+                effect.setDamage(null, buf.readFloat());
+                effect.setSecondary(buf.readBoolean());
+                String uuid = buf.readUtf();
+                effect.setApplierUUID(uuid);
+                return effect;
+            }
+        );
     }
 
 }

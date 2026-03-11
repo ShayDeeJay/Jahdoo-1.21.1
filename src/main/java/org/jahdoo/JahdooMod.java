@@ -7,6 +7,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jahdoo.common.event.ClientBusEvents;
+import org.jahdoo.common.event.ServerBusEvents;
 
 import static org.jahdoo.CommonSetup.*;
 
@@ -18,6 +20,10 @@ public class JahdooMod {
 
     public JahdooMod(IEventBus modEventBus, ModContainer container) {
         modEventBus.addListener(this::commonSetup);
+
+        modEventBus.register(new ServerBusEvents());
+        modEventBus.register(new ClientBusEvents());
+
         listeners(modEventBus);
         configs(container);
         registers(modEventBus);

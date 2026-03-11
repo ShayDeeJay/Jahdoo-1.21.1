@@ -18,19 +18,21 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.attachments.player_abilities.PhantomJump;
-import org.jahdoo.trial_nexus.utils.JahdooCommands;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.registers.mod.EntityEffectReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
+import org.jahdoo.trial_nexus.attachments.effects.FrostEffect;
+import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
+import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
+import org.jahdoo.trial_nexus.attachments.player_abilities.PhantomJump;
+import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.magic.abilities_combat.dimensional_recall.DimensionalRecall;
 import org.jahdoo.trial_nexus.magic.abilities_combat.nova_smash.NovaSmash;
 import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.attachments.effects.MysticEffect;
-import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
-import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
-import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
-import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs;
+import org.jahdoo.trial_nexus.utils.JahdooCommands;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import static org.jahdoo.common.event.TriggerEvents.triggerKillEvent;
@@ -159,8 +161,6 @@ public class ServerEvents {
         var player = event.getEntity();
         var level = player.level();
 
-//        questTracker(level, player);
-
         if(player instanceof ServerPlayer serverPlayer){
             restrictElytra(serverPlayer, level);
             CasterData.cooldownTickEvent(serverPlayer);
@@ -228,8 +228,16 @@ public class ServerEvents {
     private static void entityInteractEvent(PlayerInteractEvent.EntityInteractSpecific event){
         var entity = event.getTarget();
         var player = event.getEntity();
+        if(!player.level().isClientSide){
+            AbstractEntityEffect.setTypeEffect(FrostEffect::new, player, (LivingEntity) entity, true, 300, 1);
 
-//        MysticEffect.setMysticEffect(player, (LivingEntity) entity, true, 100, 10);
+            if(player.level() instanceof ServerLevel serverLevel){
+                var level = serverLevel.getServer();
+//                level.tickRateManager().setFrozen(false);
+//                ((LivingEntity) entity).hurtDuration = 0;
+            }
+//            System.out.println("323");
+        }
 
         rightClickInteract(event);
     }
@@ -238,7 +246,9 @@ public class ServerEvents {
     private static void entityTickEvent(EntityTickEvent.Pre event){
         var entity = event.getEntity();
         if(entity instanceof LivingEntity livingEntity && livingEntity.level() instanceof ServerLevel){
-            MysticEffect.serverOnTick(livingEntity);
+            for (var effect : EntityEffectReg.getAll()) {
+                AbstractEntityEffect.serverOnTick(livingEntity, effect.getAttachment());
+            }
         }
 
         tickDeathLootsplotion(event);

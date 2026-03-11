@@ -19,10 +19,10 @@ public class RenderHelpers {
         var poseMatrix = pose.pose();
         var consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(texture));
         var halfWidth = width * 0.5f;
-        consumer.addVertex(poseMatrix, -halfWidth, -.1f, -halfWidth).setColor(colour).setUv(0f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
-        consumer.addVertex(poseMatrix, halfWidth, -.1f, -halfWidth).setColor(colour).setUv(1f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
-        consumer.addVertex(poseMatrix, halfWidth, -.1f, halfWidth).setColor(colour).setUv(1f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
-        consumer.addVertex(poseMatrix, -halfWidth, -.1f, halfWidth).setColor(colour).setUv(0f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
+        consumer.addVertex(poseMatrix, -halfWidth, 0.05f, -halfWidth).setColor(colour).setUv(0f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
+        consumer.addVertex(poseMatrix, halfWidth, 0.05f, -halfWidth).setColor(colour).setUv(1f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
+        consumer.addVertex(poseMatrix, halfWidth, 0.05f, halfWidth).setColor(colour).setUv(1f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
+        consumer.addVertex(poseMatrix, -halfWidth, 0.05f, halfWidth).setColor(colour).setUv(0f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
     }
 
     public static void drawHealthBar(PoseStack.Pose pose, MultiBufferSource bufferSource, float health, float maxHealth, ResourceLocation holder) {

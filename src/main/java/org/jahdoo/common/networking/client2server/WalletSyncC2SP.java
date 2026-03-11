@@ -7,11 +7,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-
-import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 
 public class WalletSyncC2SP implements CustomPacketPayload {
     public static final Type<WalletSyncC2SP> TYPE = new Type<>(JahdooHelpers.res("sync_server_wallet"));
@@ -39,7 +36,6 @@ public class WalletSyncC2SP implements CustomPacketPayload {
                 public void run() {
                     if(ctx.player() instanceof ServerPlayer serverPlayer) {
                         PlayerWallet.updateWallet(serverPlayer, wallet);
-                        sendToPlayer(serverPlayer, new WalletSyncS2CP(wallet));
                     }
                 }
             }

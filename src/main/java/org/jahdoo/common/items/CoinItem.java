@@ -11,7 +11,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
@@ -22,7 +21,6 @@ import org.shaydee.loot_beams_neoforge.components.DataComponentsReg;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
-import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties;
 import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.COIN;
 
@@ -53,7 +51,7 @@ public class CoinItem extends BaseJahdooItem implements IItemEntityBehaviour {
             } else getWallet.addBronze(count);
 
             if (entity instanceof ServerPlayer player) {
-                sendToPlayer(player, new WalletSyncS2CP(getWallet.getWallet()));
+                player.syncData(AttachmentReg.PLAYER_WALLET_DATA);
             }
 
             SoundHelpers.getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), SoundSource.MASTER, 1F, 0.8F);

@@ -156,6 +156,7 @@ idea {
         downloadJavadoc = true
     }
 }
+
 kotlin {
     jvmToolchain(21)
 }

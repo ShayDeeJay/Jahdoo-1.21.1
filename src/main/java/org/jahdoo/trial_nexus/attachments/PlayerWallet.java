@@ -3,15 +3,17 @@ package org.jahdoo.trial_nexus.attachments;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
-import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
@@ -55,8 +57,10 @@ public class PlayerWallet implements IAttachment {
     }
 
     public static void updateWallet(Player player, int newWallet){
-        var getWallet = player.getData(AttachmentReg.PLAYER_WALLET_DATA);
+        var playerWalletData = AttachmentReg.PLAYER_WALLET_DATA;
+        var getWallet = player.getData(playerWalletData);
         getWallet.setWallet(newWallet);
+        player.syncData(playerWalletData);
     }
 
     public static CurrencyConverter getWalletCoins(Player player){
@@ -196,6 +200,15 @@ public class PlayerWallet implements IAttachment {
             );
         }
     }
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, PlayerWallet> WALLET_STREAM_CODEC = StreamCodec.of(
+        (buf, walletObj) -> buf.writeInt(walletObj.wallet),
+        buf -> {
+            PlayerWallet walletObj = new PlayerWallet();
+            walletObj.wallet = buf.readInt();
+            return walletObj;
+        }
+    );
 
     public enum CoinProperties implements StringRepresentable, IExtensibleEnum {
         BRONZE(Icons.BRONZE_COIN, "item.jahdoo.bronze", ColourHelpers.getBronzeCoin()),

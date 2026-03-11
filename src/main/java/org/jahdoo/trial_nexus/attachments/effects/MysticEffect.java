@@ -2,33 +2,36 @@ package org.jahdoo.trial_nexus.attachments.effects;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import org.jahdoo.trial_nexus.utils.Icons;
-import org.jahdoo.common.networking.server2client.SyncEntityEffectValuesS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
+import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.List;
 
-import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
 public class MysticEffect extends AbstractEntityEffect {
+    public static final String MYSTIC_EFFECT = "mystic_effect";
+
+    @Override
+    public String id() {
+        return MYSTIC_EFFECT;
+    }
 
     @Override
     public AbstractElement getElement() {
@@ -36,7 +39,7 @@ public class MysticEffect extends AbstractEntityEffect {
     }
 
     @Override
-    public AttachmentType<?> getAttachment() {
+    public AttachmentType<AbstractEntityEffect> getAttachment() {
         return AttachmentReg.MYSTIC_EFFECT.get();
     }
 
@@ -46,7 +49,7 @@ public class MysticEffect extends AbstractEntityEffect {
     }
 
     @Override
-    public void getSecondary(LivingEntity entity) {
+    public void greaterEffect(LivingEntity entity) {
         if(entity.level() instanceof ServerLevel serverLevel) {
             if (Random.nextInt(0, 30) == 0) {
                 PositionFinders.getOuterRingOfRadiusRandom(entity.position(), entity.getBbWidth() / 4, 40,
@@ -58,25 +61,20 @@ public class MysticEffect extends AbstractEntityEffect {
     }
 
     @Override
-    public void onTick(LivingEntity entity) {
-        if(this.started() && this.getTimer() > 0){
-            entity.playSound(SoundReg.SUSPEND.get(), 1.0F, 0.6F);
+    public void onStarted(LivingEntity livingEntity) {
+        livingEntity.playSound(SoundReg.SUSPEND.get(), 1.0F, 0.6F);
+    }
+
+    @Override
+    public void onActive(LivingEntity livingEntity) {
+        if(livingEntity.level() instanceof ServerLevel serverLevel) {
+            var getRandomChance = Random.nextInt(0, 10);
+            var sound = SoundReg.QUANTUM.get();
+            EffectHelpers.setEffectParticle(getRandomChance, livingEntity, serverLevel, ElementReg.mystic(), sound, 0.05F, Random.nextFloat(1.4F, 2F));
         }
 
-        if(this.isActive()){
-            if(entity.level() instanceof ServerLevel serverLevel) {
-                var getRandomChance = Random.nextInt(0, 10);
-                var sound = SoundReg.QUANTUM.get();
-                EffectHelpers.setEffectParticle(getRandomChance, entity, serverLevel, ElementReg.mystic(), sound, 0.05F, Random.nextFloat(1.4F, 2F));
-            }
-
-            var getMaxHeight = (double) this.getTimer() / 500;
-            entity.setDeltaMovement(0, this.getTimer() > (getMaxTime() - 10) ? getMaxHeight : 0 , 0);
-        }
-
-        if(ended()) entity.removeData(AttachmentReg.MYSTIC_EFFECT.get());
-
-        super.onTick(entity);
+        var getMaxHeight = (double) this.getTimer() / 500;
+        livingEntity.setDeltaMovement(0, this.getTimer() > (getMaxTime() - 10) ? getMaxHeight : 0 , 0);
     }
 
     private void explosionHandler(LivingEntity targetEntity, ServerLevel serverLevel) {
@@ -88,7 +86,11 @@ public class MysticEffect extends AbstractEntityEffect {
             TargetingConditions.DEFAULT,
             targetEntity,
             targetEntity.getBoundingBox().inflate(targetEntity.getBbWidth())
-        ).forEach(damage -> DamageUtils.damageWithJahdoo(damage, (double) pAmplifier /2, getElement().damageTypeResourceKey()));
+        ).forEach(
+            livingEntity -> {
+                if(avoidOwner(livingEntity)) DamageUtils.damageWithJahdoo(livingEntity, getOwner(serverLevel), (double) pAmplifier / 2, getElement().damageTypeResourceKey());
+            }
+        );
         SoundHelpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), getElement().sound(), SoundSource.NEUTRAL, 1.2F, 1F);
     }
 
@@ -110,27 +112,5 @@ public class MysticEffect extends AbstractEntityEffect {
         );
     }
 
-    public static void serverOnTick(LivingEntity livingEntity) {
-        var mysticEffect = AttachmentReg.MYSTIC_EFFECT;
-        if(livingEntity.hasData(mysticEffect)) {
-            var mystic = livingEntity.getData(mysticEffect);
-            mystic.onTick(livingEntity);
-
-            for (var player : livingEntity.level().players()) {
-                if (player instanceof ServerPlayer serverPlayer) {
-                    sendToPlayer(serverPlayer, new SyncEntityEffectValuesS2CP(livingEntity, livingEntity.getData(mysticEffect)));
-                }
-            }
-        }
-    }
-
-    public static void setMysticEffect(LivingEntity entity, LivingEntity target, boolean isSecondary, int time, float damage) {
-        if(!target.hasData(AttachmentReg.MYSTIC_EFFECT)) {
-            var mystic = new MysticEffect();
-            mystic.createEffect(entity, isSecondary, time, damage);
-
-            target.setData(AttachmentReg.MYSTIC_EFFECT, mystic);
-        }
-    }
 
 }

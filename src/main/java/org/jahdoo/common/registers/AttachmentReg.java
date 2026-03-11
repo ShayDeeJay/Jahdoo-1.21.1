@@ -1,23 +1,27 @@
 package org.jahdoo.common.registers;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.trial_nexus.attachments.*;
+import org.jahdoo.trial_nexus.attachments.effects.*;
+import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
+import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
+import org.jahdoo.trial_nexus.attachments.player_abilities.PhantomJump;
+import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.magic.abilities_combat.dimensional_recall.DimensionalRecall;
 import org.jahdoo.trial_nexus.magic.abilities_combat.nova_smash.NovaSmash;
 import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.trial_nexus.attachments.*;
-import org.jahdoo.trial_nexus.attachments.effects.MysticEffect;
-import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
-import org.jahdoo.trial_nexus.attachments.player_abilities.*;
 
 import java.util.function.Supplier;
 
-import static net.neoforged.neoforge.attachment.AttachmentType.*;
+import static net.neoforged.neoforge.attachment.AttachmentType.builder;
 
 public class AttachmentReg {
 
@@ -51,8 +55,19 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<InstanceData>> INSTANCE_DATA =
         withProvider("instance_data", InstanceData::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MysticEffect>> MYSTIC_EFFECT =
-        withProvider("mystic_effect", MysticEffect::new);
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> MYSTIC_EFFECT =
+        effectWithType(MysticEffect::new, MysticEffect.MYSTIC_EFFECT);
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> INFERNO_EFFECT =
+        effectWithType(InfernoEffect::new, InfernoEffect.INFERNO_EFFECT);
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> VITALITY_EFFECT =
+        effectWithType(VitalityEffect::new, VitalityEffect.VITALITY_EFFECT);
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> FROST_EFFECT =
+        effectWithType(FrostEffect::new, FrostEffect.FROST_EFFECT);
+
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL =
         regAttachment("bool", builder(() -> false).serialize(Codec.BOOL));
@@ -64,7 +79,7 @@ public class AttachmentReg {
         withProviderCopyDeath("save_item_data", SaveItemData::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerWallet>> PLAYER_WALLET_DATA =
-        withProviderCopyDeath("player_wallet", PlayerWallet::new);
+        withProviderCopyDeathSync("player_wallet", PlayerWallet::new, PlayerWallet.WALLET_STREAM_CODEC);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<RunData>> RUN_DATA =
         withProviderCopyDeath("run_data", RunData::new);
@@ -84,6 +99,10 @@ public class AttachmentReg {
         return ATTACHMENT_TYPES.register(name, supplier::build);
     }
 
+    public static DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> effectWithType(Supplier<AbstractEntityEffect> supplier, String id){
+        return withProviderSync(id, supplier, AbstractEntityEffect.streamCodec(supplier));
+    }
+
     public static  <T extends IAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> withProvider(
         String name,
         Supplier<T> defaultValueSupplier
@@ -99,6 +118,26 @@ public class AttachmentReg {
     ){
         var serializer = new AttachmentProvider<>(defaultValueSupplier);
         var supplier = builder(defaultValueSupplier).serialize(serializer).copyOnDeath();
+        return regAttachment(name, supplier);
+    }
+
+    public static  <T extends IAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> withProviderCopyDeathSync(
+        String name,
+        Supplier<T> defaultValueSupplier,
+        StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec
+    ){
+        var serializer = new AttachmentProvider<>(defaultValueSupplier);
+        var supplier = builder(defaultValueSupplier).sync(streamCodec).serialize(serializer).copyOnDeath();
+        return regAttachment(name, supplier);
+    }
+
+    public static  <T extends IAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> withProviderSync(
+        String name,
+        Supplier<T> defaultValueSupplier,
+        StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec
+    ){
+        var serializer = new AttachmentProvider<>(defaultValueSupplier);
+        var supplier = builder(defaultValueSupplier).sync(streamCodec).serialize(serializer);
         return regAttachment(name, supplier);
     }
 

@@ -173,6 +173,10 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         return true;
     }
 
+    public String getProjectileId(){
+        return this.projectileSelectionIndex;
+    }
+
     @Override
     public boolean mayBreak(Level level) {
         return true;

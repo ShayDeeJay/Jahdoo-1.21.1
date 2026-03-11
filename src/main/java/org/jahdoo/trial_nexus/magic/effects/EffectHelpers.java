@@ -52,8 +52,8 @@ public class EffectHelpers {
         ServerLevel serverLevel,
         AbstractElement particleGroup,
         SoundEvent soundEvents,
-        Float volume,
-        Float pitch
+        float volume,
+        float pitch
     ){
         boolean isChance = getRandomChance == 0;
         if(targetEntity.isAlive()){

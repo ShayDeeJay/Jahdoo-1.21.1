@@ -122,7 +122,7 @@ public class CastHelper {
     public static ItemStack hasValidCasterItem(Player player) {
         var wandItem = JahdooHelpers.getUsedItem(player);
         var getCurioCaster = JahdooHelpers.getCurioSlotItem(player, ItemReg.AUGMENT_CRYSTAL.get());
-        return wandItem.isEmpty() ? getCurioCaster : wandItem;
+        return wandItem.getItem() instanceof CasterItem ? wandItem : getCurioCaster;
     }
 
     public static void executeAndCharge(Player player) {

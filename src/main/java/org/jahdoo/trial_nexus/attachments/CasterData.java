@@ -12,6 +12,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -65,16 +68,16 @@ public class CasterData implements IAttachment {
     private int multiKill;
     private int loadoutIndex = -1;
     private double manaPool;
+    private String selectedAbility = "";
 
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
-    private Map<Integer, LoadoutObj> loadouts = new Int2ObjectLinkedOpenHashMap<>();
-
-    private String selectedAbility = "";
-    private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
-    public List<String> abilitySlots = new ArrayList<>();
-    private List<String> unlockedSkills = new ArrayList<>();
     private List<String> activeSkills = new ArrayList<>();
+    public List<String> abilitySlots = new ArrayList<>();
+
+    private Map<Integer, LoadoutObj> loadouts = new Int2ObjectLinkedOpenHashMap<>();
+    private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
+    private List<String> unlockedSkills = new ArrayList<>();
 
     public CasterData(
         int xp,
@@ -129,6 +132,17 @@ public class CasterData implements IAttachment {
                 Codec.STRING.fieldOf("selected").forGetter(LoadoutObj::selected)
             ).apply(instance, LoadoutObj::new)
         );
+
+        public static final StreamCodec<FriendlyByteBuf, LoadoutObj> STREAM_CODEC =
+            StreamCodec.composite(
+                AbilityHolder.STREAM_CODEC.apply(ByteBufCodecs.list()), LoadoutObj::holders,
+                ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), LoadoutObj::skills,
+                ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), LoadoutObj::activeSkills,
+                ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), LoadoutObj::abilitySlots,
+                ByteBufCodecs.INT, LoadoutObj::skillPoints,
+                ByteBufCodecs.STRING_UTF8, LoadoutObj::selected,
+                LoadoutObj::new
+            );
 
         public static CompoundTag saveNBT(LoadoutObj loadout) {
             var tag = new CompoundTag();
@@ -737,7 +751,7 @@ public class CasterData implements IAttachment {
     }
 
     public static boolean canPurchaseAbility(Player player, int cost) {
-        var available = CasterData.getAbilityPoints(player);
+        var available = CasterData.getAbilityPointData(player);
         var canPurchase = available >= cost;
         return !canPurchase;
     }
@@ -800,7 +814,7 @@ public class CasterData implements IAttachment {
         return (int)Math.floor((162.5 + Math.sqrt(26406.25 - 18 * (2220 - (xp / (double) xpScale)))) / 9);
     }
 
-    public static int getAbilityPoints(Player player){
+    public static int getAbilityPointData(Player player){
         return player.getData(CASTER_DATA).getAbilityPoints();
     }
 
@@ -815,6 +829,42 @@ public class CasterData implements IAttachment {
                     abilityCooldownsStatic.remove(ability);
                 }
             }
+        );
+    }
+
+    public static CasterData create(
+        int xp,
+        int allowedSlots,
+        int abilityPoints,
+        int refundableSkillPoints,
+        int multiKill,
+        int loadoutIndex,
+        double manaPool,
+        String selectedAbility,
+        Map<String, Integer> abilityCooldowns,
+        Map<String, Integer> abilityCooldownsStatic,
+        List<AbilityHolder> unlockedAbilities,
+        List<String> abilitySlots,
+        List<String> unlockedSkills,
+        List<String> activeSkills,
+        Map<Integer, LoadoutObj> savedLoadouts
+    ) {
+        return new CasterData(
+            xp,
+            allowedSlots,
+            abilityPoints,
+            refundableSkillPoints,
+            multiKill,
+            loadoutIndex,
+            manaPool,
+            selectedAbility,
+            abilityCooldowns,
+            abilityCooldownsStatic,
+            unlockedAbilities,
+            abilitySlots,
+            unlockedSkills,
+            activeSkills,
+            savedLoadouts
         );
     }
 
@@ -837,6 +887,137 @@ public class CasterData implements IAttachment {
             Codec.unboundedMap(Codec.STRING.xmap(Integer::parseInt, String::valueOf), LoadoutObj.CODEC).fieldOf("loadouts").forGetter(CasterData::getLoadouts)
         ).apply(instance, CasterData::new)
     );
+
+    public static final StreamCodec<FriendlyByteBuf, CasterData> STREAM_CODEC =
+        StreamCodec.of(
+            (buf, data) -> {
+                buf.writeInt(data.getExp());
+                buf.writeInt(data.getAllowedSlots());
+                buf.writeInt(data.getAbilityPoints());
+                buf.writeInt(data.getRefundableSkillPoints());
+                buf.writeInt(data.getMultiKill());
+                buf.writeInt(data.getLoadoutIndex());
+                buf.writeDouble(data.getManaPool());
+                buf.writeUtf(data.getSelectedAbility());
+
+                // Ability cooldowns
+                buf.writeInt(data.getAllCooldowns().size());
+                data.getAllCooldowns().forEach((key, value) -> {
+                    buf.writeUtf(key);
+                    buf.writeInt(value);
+                });
+
+                // Static cooldowns
+                buf.writeInt(data.getAllCooldownsStatic().size());
+                data.getAllCooldownsStatic().forEach((key, value) -> {
+                    buf.writeUtf(key);
+                    buf.writeInt(value);
+                });
+
+                // Unlocked abilities
+                buf.writeInt(data.getUnlockedAbilities().size());
+                for (AbilityHolder holder : data.getUnlockedAbilities()) {
+                    AbilityHolder.STREAM_CODEC.encode(buf, holder);
+                }
+
+                // Ability slots
+                buf.writeInt(data.getAbilitySlots().size());
+                for (String slot : data.getAbilitySlots()) {
+                    buf.writeUtf(slot);
+                }
+
+                // Unlocked skills
+                buf.writeInt(data.getUnlockedSkills().size());
+                for (String skill : data.getUnlockedSkills()) {
+                    buf.writeUtf(skill);
+                }
+
+                // Active skills
+                buf.writeInt(data.getActiveSkills().size());
+                for (String skill : data.getActiveSkills()) {
+                    buf.writeUtf(skill);
+                }
+
+                // Loadouts
+                buf.writeInt(data.getLoadouts().size());
+                data.getLoadouts().forEach((index, loadout) -> {
+                    buf.writeInt(index);
+                    LoadoutObj.STREAM_CODEC.encode(buf, loadout);
+                });
+            },
+            buf -> {
+                int xp = buf.readInt();
+                int allowedSlots = buf.readInt();
+                int abilityPoints = buf.readInt();
+                int refundableSkillPoints = buf.readInt();
+                int multiKill = buf.readInt();
+                int loadoutIndex = buf.readInt();
+                double manaPool = buf.readDouble();
+                String selectedAbility = buf.readUtf();
+
+                int cooldownSize = buf.readInt();
+                Object2IntOpenHashMap<String> abilityCooldowns = new Object2IntOpenHashMap<>();
+                for (int i = 0; i < cooldownSize; i++) {
+                    abilityCooldowns.put(buf.readUtf(), buf.readInt());
+                }
+
+                int staticCooldownSize = buf.readInt();
+                Object2IntOpenHashMap<String> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
+                for (int i = 0; i < staticCooldownSize; i++) {
+                    abilityCooldownsStatic.put(buf.readUtf(), buf.readInt());
+                }
+
+                int unlockedAbilitiesSize = buf.readInt();
+                List<AbilityHolder> unlockedAbilities = new ArrayList<>();
+                for (int i = 0; i < unlockedAbilitiesSize; i++) {
+                    unlockedAbilities.add(AbilityHolder.STREAM_CODEC.decode(buf));
+                }
+
+                int slotsSize = buf.readInt();
+                List<String> abilitySlots = new ArrayList<>();
+                for (int i = 0; i < slotsSize; i++) {
+                    abilitySlots.add(buf.readUtf());
+                }
+
+                int unlockedSkillsSize = buf.readInt();
+                List<String> unlockedSkills = new ArrayList<>();
+                for (int i = 0; i < unlockedSkillsSize; i++) {
+                    unlockedSkills.add(buf.readUtf());
+                }
+
+                int activeSkillsSize = buf.readInt();
+                List<String> activeSkills = new ArrayList<>();
+                for (int i = 0; i < activeSkillsSize; i++) {
+                    activeSkills.add(buf.readUtf());
+                }
+
+                int loadoutsSize = buf.readInt();
+                Map<Integer, LoadoutObj> loadouts = new Int2ObjectLinkedOpenHashMap<>();
+                for (int i = 0; i < loadoutsSize; i++) {
+                    int index = buf.readInt();
+                    LoadoutObj loadout = LoadoutObj.STREAM_CODEC.decode(buf);
+                    loadouts.put(index, loadout);
+                }
+
+                return new CasterData(
+                    xp,
+                    allowedSlots,
+                    abilityPoints,
+                    refundableSkillPoints,
+                    multiKill,
+                    loadoutIndex,
+                    manaPool,
+                    selectedAbility,
+                    abilityCooldowns,
+                    abilityCooldownsStatic,
+                    unlockedAbilities,
+                    abilitySlots,
+                    unlockedSkills,
+                    activeSkills,
+                    loadouts
+                );
+            }
+        );
 
     @Override
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {

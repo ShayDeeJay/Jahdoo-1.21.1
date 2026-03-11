@@ -70,7 +70,6 @@ public class FlexiButton extends ImageButton {
         var startY2 = this.getY() + 4;
         var spacer = 0;
         var newInst = new InstanceData("", new HashMap<>());
-        var getAllComponents = getComponents(newInst, pastRun, trialData).subList(0,3);
         var isSelected = !this.isSelected ? fade : color(60, uiColour());
         var borderColour = this.isSelected ? uiColour() : uiFade();
         var width = (int) this.width / 2;
@@ -78,10 +77,15 @@ public class FlexiButton extends ImageButton {
 
         graphics.pose().pushPose();
         boxMaker(graphics, this.getX(), this.getY(), width, height, borderColour, isSelected, isSelected);
-        for (var getAllComponent : getAllComponents) {
-            graphics.drawString(minecraft.font, getAllComponent.component(), getXStart, startY2 + spacer, -1, true);
-            spacer += 10;
+
+        if(this.pastRun != null) {
+            var getAllComponents = getComponents(newInst, pastRun, trialData).subList(0, 3);
+            for (var getAllComponent : getAllComponents) {
+                graphics.drawString(minecraft.font, getAllComponent.component(), getXStart, startY2 + spacer, -1, true);
+                spacer += 10;
+            }
         }
+
         graphics.pose().popPose();
     }
 

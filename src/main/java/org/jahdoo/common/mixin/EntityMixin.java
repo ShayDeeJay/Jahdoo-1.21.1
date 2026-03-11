@@ -94,7 +94,12 @@ public abstract class EntityMixin {
     private void forceGlow(CallbackInfoReturnable<Boolean> cir) {
         Entity self = (Entity)(Object)this;
 
-        cir.setReturnValue(self.hasData(AttachmentReg.MYSTIC_EFFECT));
+        var hasMystic = self.hasData(AttachmentReg.MYSTIC_EFFECT);
+        var hasInferno = self.hasData(AttachmentReg.INFERNO_EFFECT);
+        var hasFrost = self.hasData(AttachmentReg.FROST_EFFECT);
+        var hasVitality = self.hasData(AttachmentReg.VITALITY_EFFECT);
+
+        cir.setReturnValue(hasMystic || hasInferno || hasFrost || hasVitality);
     }
 
 

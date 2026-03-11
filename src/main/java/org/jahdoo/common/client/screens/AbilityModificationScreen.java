@@ -392,7 +392,7 @@ public class AbilityModificationScreen extends Screen {
      * */
     private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player) {
         var size = 24;
-        var skillPoints = CasterData.getAbilityPoints(player);
+        var skillPoints = CasterData.getAbilityPointData(player);
         var fade1 = SharedUI.fadeBlack(0.5F);
         var length = valueOf(skillPoints).length();
         var i1 = this.width / 2 + 99;

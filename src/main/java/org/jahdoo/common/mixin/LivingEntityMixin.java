@@ -9,14 +9,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static org.jahdoo.common.registers.EffectReg.*;
 import static org.jahdoo.common.registers.mod.ElementReg.*;
 
 @Mixin(LivingEntity.class)
@@ -35,14 +33,12 @@ public abstract class LivingEntityMixin extends Entity {
 
         if (this.hasData(AttachmentReg.MYSTIC_EFFECT)) {
             color = mystic().textColourA();
-        } else if (this.hasEffect(INFERNO_EFFECT)) {
+        } else if (this.hasData(AttachmentReg.INFERNO_EFFECT)) {
             color = inferno().textColourA();
-        } else if (this.hasEffect(FROST_EFFECT)) {
+        } else if (this.hasData(AttachmentReg.FROST_EFFECT)) {
             color = frost().textColourA();
-        } else if (this.hasEffect(VITALITY_EFFECT)) {
+        } else if (this.hasData(AttachmentReg.VITALITY_EFFECT)) {
             color = vitality().textColourA();
-        } else if (this.hasEffect(CHAMPION_EFFECT)) {
-            color = ColourHelpers.getChampionGold();
         }
 
         return color;

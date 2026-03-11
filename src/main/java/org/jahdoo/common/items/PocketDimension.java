@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.level_manager.PlayerHomeDim;
@@ -86,23 +85,54 @@ public class PocketDimension extends BaseJahdooItem {
     ) {
         var playerHome = PlayerHomeDim.getPlayerHome(serverPlayer);
         var findLevel = LevelGenerator.findLevel(playerHome, serverLevel);
-        var hasSpot = itemInHand.get(ComponentReg.BLOCK_POS);
+
+        var playerData = serverPlayer.getPersistentData();
+        BlockPos storedPos = null;
+
+        if (playerData.contains("origin_pos")) {
+            storedPos = BlockPos.of(playerData.getLong("origin_pos"));
+        }
 
         if(findLevel.isPresent()){
             var correctPost = HOME;
-            if(hasSpot != null) correctPost = hasSpot;
+            if(storedPos != null) correctPost = storedPos;
+
             var path = serverPlayer.level().dimension().location().toString();
 
-            itemInHand.set(ComponentReg.BLOCK_POS, serverPlayer.blockPosition());
-            itemInHand.set(ComponentReg.ID, path);
-            serverPlayer.teleportTo(findLevel.get(), correctPost.getX(), correctPost.getY(), correctPost.getZ(), serverPlayer.yRotO, serverPlayer.xRotO);
+            playerData.putLong("origin_pos", serverPlayer.blockPosition().asLong());
+            playerData.putString("origin_dimension", path);
+
+            serverPlayer.teleportTo(
+                findLevel.get(),
+                correctPost.getX(),
+                correctPost.getY(),
+                correctPost.getZ(),
+                serverPlayer.yRotO,
+                serverPlayer.xRotO
+            );
+
             return InteractionResultHolder.success(itemInHand);
+
         } else {
-            serverPlayer.sendSystemMessage(TextHelpers.withStyleComponent("Creating your dimension....", ColourHelpers.getUniqueA()));
+
+            serverPlayer.sendSystemMessage(
+                TextHelpers.withStyleComponent("Creating your dimension....", ColourHelpers.getUniqueA())
+            );
+
             var transition = PlayerHomeDim.generateNewHome(serverLevel, serverPlayer, HOME);
 
-            serverPlayer.setRespawnPosition(transition.newLevel().dimension(), HOME, 0, false, false);
-            serverPlayer.sendSystemMessage(TextHelpers.withStyleComponent("Dimension created", ColourHelpers.getUniqueA()));
+            serverPlayer.setRespawnPosition(
+                transition.newLevel().dimension(),
+                HOME,
+                0,
+                false,
+                false
+            );
+
+            serverPlayer.sendSystemMessage(
+                TextHelpers.withStyleComponent("Dimension created", ColourHelpers.getUniqueA())
+            );
+
             return InteractionResultHolder.fail(itemInHand);
         }
     }
@@ -112,10 +142,15 @@ public class PocketDimension extends BaseJahdooItem {
         ServerPlayer serverPlayer,
         ItemStack itemInHand
     ) {
-        var pos = itemInHand.get(ComponentReg.BLOCK_POS);
-        if(pos == null) return InteractionResultHolder.fail(itemInHand);
 
-        var playerHome = itemInHand.get(ComponentReg.ID);
+        var playerData = serverPlayer.getPersistentData();
+
+        if(!playerData.contains("origin_pos") || !playerData.contains("origin_dimension"))
+            return InteractionResultHolder.fail(itemInHand);
+
+        BlockPos pos = BlockPos.of(playerData.getLong("origin_pos"));
+        String playerHome = playerData.getString("origin_dimension");
+
         var levels = serverLevel.getServer().getAllLevels();
 
         ServerLevel levelGet = null;
@@ -125,13 +160,75 @@ public class PocketDimension extends BaseJahdooItem {
             if(isLevel) levelGet = level;
         }
 
-        itemInHand.set(ComponentReg.BLOCK_POS, serverPlayer.blockPosition());
+        playerData.putLong("origin_pos", serverPlayer.blockPosition().asLong());
 
         if(levelGet != null) {
-            serverPlayer.teleportTo(levelGet, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yRotO, serverPlayer.xRotO);
+            serverPlayer.teleportTo(
+                levelGet,
+                pos.getX(),
+                pos.getY(),
+                pos.getZ(),
+                serverPlayer.yRotO,
+                serverPlayer.xRotO
+            );
         }
 
         return InteractionResultHolder.success(itemInHand);
     }
+
+//    public static @NotNull InteractionResultHolder<ItemStack> findPocketDimension(
+//        ServerLevel serverLevel,
+//        ServerPlayer serverPlayer,
+//        ItemStack itemInHand
+//    ) {
+//        var playerHome = PlayerHomeDim.getPlayerHome(serverPlayer);
+//        var findLevel = LevelGenerator.findLevel(playerHome, serverLevel);
+//        var hasSpot = itemInHand.get(ComponentReg.BLOCK_POS);
+//
+//        if(findLevel.isPresent()){
+//            var correctPost = HOME;
+//            if(hasSpot != null) correctPost = hasSpot;
+//            var path = serverPlayer.level().dimension().location().toString();
+//
+//            itemInHand.set(ComponentReg.BLOCK_POS, serverPlayer.blockPosition());
+//            itemInHand.set(ComponentReg.ID, path);
+//            serverPlayer.teleportTo(findLevel.get(), correctPost.getX(), correctPost.getY(), correctPost.getZ(), serverPlayer.yRotO, serverPlayer.xRotO);
+//            return InteractionResultHolder.success(itemInHand);
+//        } else {
+//            serverPlayer.sendSystemMessage(TextHelpers.withStyleComponent("Creating your dimension....", ColourHelpers.getUniqueA()));
+//            var transition = PlayerHomeDim.generateNewHome(serverLevel, serverPlayer, HOME);
+//
+//            serverPlayer.setRespawnPosition(transition.newLevel().dimension(), HOME, 0, false, false);
+//            serverPlayer.sendSystemMessage(TextHelpers.withStyleComponent("Dimension created", ColourHelpers.getUniqueA()));
+//            return InteractionResultHolder.fail(itemInHand);
+//        }
+//    }
+//
+//    public static @NotNull InteractionResultHolder<ItemStack> findOriginDimension(
+//        ServerLevel serverLevel,
+//        ServerPlayer serverPlayer,
+//        ItemStack itemInHand
+//    ) {
+//        var pos = itemInHand.get(ComponentReg.BLOCK_POS);
+//        if(pos == null) return InteractionResultHolder.fail(itemInHand);
+//
+//        var playerHome = itemInHand.get(ComponentReg.ID);
+//        var levels = serverLevel.getServer().getAllLevels();
+//
+//        ServerLevel levelGet = null;
+//
+//        for (var level : levels) {
+//            var isLevel = level.dimension().location().toString().equals(playerHome);
+//            if(isLevel) levelGet = level;
+//        }
+//
+//        itemInHand.set(ComponentReg.BLOCK_POS, serverPlayer.blockPosition());
+//
+//        if(levelGet != null) {
+//            serverPlayer.teleportTo(levelGet, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yRotO, serverPlayer.xRotO);
+//        }
+//
+//        return InteractionResultHolder.success(itemInHand);
+//    }
 
 }

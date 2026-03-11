@@ -85,7 +85,7 @@ public class GuiButton extends ImageButton {
         if(isSelected) sizes = totalSize;
         this.setSize((int) sizes-4, (int) sizes-4);
 
-//        graphics.drawCenteredString(font, label, this.getX() + 17, this.getY()-8, -1);
+        graphics.drawCenteredString(font, label, this.getX() + 17, this.getY()-8, -1);
         graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
 
         if (this.isMouseOver(mouseX, mouseY)) {

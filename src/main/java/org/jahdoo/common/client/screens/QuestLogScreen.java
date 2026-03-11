@@ -61,7 +61,18 @@ public class QuestLogScreen extends AbstractPanableScreen {
         if(player != null && task != null){
             var claimedQuest = QuestTracker.claimedQuest(player, task.taskId());
             var isSelected = task.completionPredicate(player) && !claimedQuest;
-            this.addRenderableWidget(new SimpleButton(192, height - 45, width - 214, 22, isSelected, (button) -> claimReward(task.taskId(), task.rewards((int) getMinecraft().level.getGameTime())), claimedQuest ? "Reward Claimed" : "Claim Reward"));
+            this.addRenderableWidget(
+                new SimpleButton(
+                    192,
+                    height - 45,
+                    width - 214,
+                    22,
+                    isSelected, (button) -> claimReward(task.taskId(),
+                    task.rewards((int) getMinecraft().level.getGameTime())),
+                    claimedQuest ? "Reward Claimed" : "Claim Reward",
+                    () -> {}
+                )
+            );
         }
 
         this.addRenderableOnly(

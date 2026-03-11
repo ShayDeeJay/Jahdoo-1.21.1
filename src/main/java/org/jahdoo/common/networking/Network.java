@@ -204,12 +204,6 @@ public class Network {
         );
 
         payloadRegistrar.playToClient(
-            SyncEntityEffectValuesS2CP.TYPE,
-            SyncEntityEffectValuesS2CP.STREAM_CODEC,
-            SyncEntityEffectValuesS2CP::handle
-        );
-
-        payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,
             PlayerTrialDataS2CP.STREAM_CODEC,
             PlayerTrialDataS2CP::handle
@@ -279,12 +273,6 @@ public class Network {
             BlinkS2CP.TYPE,
             BlinkS2CP.STREAM_CODEC,
             BlinkS2CP::handle
-        );
-
-        payloadRegistrar.playToClient(
-            WalletSyncS2CP.TYPE,
-            WalletSyncS2CP.STREAM_CODEC,
-            WalletSyncS2CP::handle
         );
 
         payloadRegistrar.playToClient(

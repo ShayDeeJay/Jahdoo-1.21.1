@@ -7,36 +7,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.ExperienceOrb;
-import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
-import org.jahdoo.common.registers.mod.QuestReg;
-import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.magic.Ability;
 import org.jahdoo.trial_nexus.utils.NumberText;
-import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
-import org.shaydee.shaydeeapi.helpers.TextHelpers;
-import top.theillusivec4.curios.api.CuriosApi;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 import static com.mojang.blaze3d.systems.RenderSystem.*;
 import static java.lang.String.valueOf;
@@ -65,17 +51,74 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
     int storedSelectedIndex;
     AlignedGui alignedGui;
 
-    private static void inventoryIndex(@NotNull GuiGraphics graphics, int x, int y, int index, int textColour) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(8.2,4.2,5d);
-        centeredStringNoShadow(graphics, Minecraft.getInstance().font,  literal(valueOf(index)), x, y, textColour, false);
-        graphics.pose().popPose();
+    @Override
+    public void render(GuiGraphics graphics, DeltaTracker tracker) {
+        var minecraft = Minecraft.getInstance();
+        var player = minecraft.player;
+        if(player == null || minecraft.options.hideGui) return;
+
+        var typeId = selectedAbility(player);
+        if(typeId == null) PacketDistributor.sendToServer(new SelectAbilityC2SP(""));
+
+        var manaBarWidth = 47;
+        var abilityRegistrars = AbilityReg.getFirstSpellByTypeId(typeId);
+        var casterData = player.getData(CASTER_DATA);
+        var manaPool = casterData.getManaPool();
+        var maxMana = casterData.getMaxMana(player);
+        var manaProgress = maxMana != 0 && manaPool != 0 ? (int) (manaPool * manaBarWidth / maxMana) : 0;
+        var healthProgress = (player.getHealth() * manaBarWidth / player.getMaxHealth());
+        var absorptionProgress = (player.getAbsorptionAmount() * manaBarWidth / player.getMaxAbsorption());
+        var foodProgress = (player.getFoodData().getFoodLevel() * 46 / 20);
+        var pose = graphics.pose();
+
+        this.alignedGuiInstance(graphics);
+        this.setFadeGui(player);
+        this.setFadeInExperience(player);
+        this.setFadeInAbility(player);
+        this.setFadeInFood(player);
+        this.setFadeInHotbar(player);
+
+        pose.pushPose();
+
+        var scale = CUSTOM_UI_SCALE.get().floatValue();
+        var yOffset = CUSTOM_UI_HEIGHT.get().floatValue() + (CUSTOM_UI.get() ? 0 : 10) ;
+        var center = this.alignedGui.screenWidth / 2;
+        var centerY = this.alignedGui.screenHeight - 7;
+
+        pose.translate(center, centerY + yOffset, 0);
+        pose.scale(scale, scale, 1);
+        pose.translate(-center, -centerY + yOffset, 0);
+
+        if(CUSTOM_UI.get()){
+            foodBar(pose, foodProgress);
+            abilityBar(graphics, pose, centerY, minecraft, player, center);
+            xpBar(graphics, pose, minecraft);
+            quickSelectBar(graphics, casterData);
+            alignedGui.displayGuiLayer(-53, 29, 0, 0, 137, 29);
+
+            this.healthAndAbsorptionCount(graphics, minecraft);
+            this.progressOverlays(alignedGui, 19, (int) (healthProgress + 3));
+            this.progressOverlays(alignedGui, 27, (int) (absorptionProgress + 3));
+        }
+
+
+        if(CUSTOM_UI.get()){
+            alignedGui.displayGuiLayer(25, 18, 0, 43, manaProgress + 3, 8, MANA_LEVEL_BAR);
+            this.manaPoolCount(casterData.getManaPool(), graphics, minecraft, -5 , 0, ColourHelpers.getAetherBlue());
+            abilityRegistrars.ifPresent(
+                location -> {
+                    this.cooldownOverlay(location, casterData);
+                    this.cooldownTimer(location, casterData, graphics, minecraft);
+                }
+            );
+        }
+
+        pose.popPose();
     }
 
     public void progressOverlays(AlignedGui alignedGui, int startY, int manaProgress){
         alignedGui.displayGuiLayer(-44 + (47 - manaProgress), 18, 50 - manaProgress, startY, manaProgress, 8, MANA_LEVEL_BAR);
     }
-
 
     private void healthAndAbsorptionCount(GuiGraphics graphics, Minecraft mc){
         var height = graphics.guiHeight();
@@ -112,12 +155,12 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         pose.translate(57 + this.alignedGui.shiftGuiX + x, height - 16.2 - this.alignedGui.shiftGuiY + y, 10D);
         pose.translate(0, -0.9, 10);
 
-        sharedHUDNumber(graphics, (float) data);
+        sharedHUDNumber(graphics, data);
         pose.popPose();
     }
 
-    private void sharedHUDNumber(GuiGraphics graphics, Float value) {
-        NumberText.drawCenteredNumber(graphics, Math.round(value), 0, 0, 0.6F);
+    public static void sharedHUDNumber(GuiGraphics graphics, double value) {
+        NumberText.drawCenteredNumber(graphics, Math.round((float) value), 0, 0, 0.6F);
     }
 
     private void alignedGuiInstance(GuiGraphics graphics){
@@ -127,82 +170,8 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         if (alignedGui == null || alignedGui.getScreenWidth() != width || alignedGui.getScreenWidth() != height) {
             var alignedGui1 = new AlignedGui(graphics, height, width);
 
-            if(CUSTOM_UI.get()) alignedGui1.offsetGui(width / 2 - 16, 10);
+            alignedGui1.offsetGui(width / 2 - 16, 10);
             this.alignedGui = alignedGui1;
-        }
-    }
-
-    private void setFadeInHotbar(Player player){
-        var xp = player.getInventory().selected;
-        var alwaysShow = !AUTO_HIDE_HOTBAR.get();
-
-        if(this.storedSelectedIndex != xp) this.fadeHotbarTimer = 100;
-
-        if (this.fadeHotbarTimer > 0 || alwaysShow) {
-            if (this.fadeInHotbar < 1) this.fadeInHotbar += 1F;
-        } else {
-            if (this.fadeInHotbar > -5) this.fadeInHotbar -= 0.5F;
-        }
-
-        this.fadeHotbarTimer = Math.max(this.fadeHotbarTimer - 0.5F, 0);
-        this.storedSelectedIndex = xp;
-    }
-
-    private void setFadeInFood(Player player){
-        var food = player.getFoodData();
-        var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_HUNGER.get();
-
-        if (food.needsFood() || alwaysShow) {
-            if (this.fadeInFood < 1) this.fadeInFood += 0.3F;
-        } else {
-            if (this.fadeInFood > -14) this.fadeInFood -= 0.3F;
-        }
-
-        this.fadeFoodTimer = Math.max(this.fadeFoodTimer - 0.5F, 0);
-    }
-
-    private void setFadeInExperience(Player player){
-        var xp = player.totalExperience;
-        var holdingXp = player.getMainHandItem().getItem() instanceof ExperienceOrb;
-        boolean alwaysShow = CUSTOM_UI_ALWAYS_SHOW_XP.get();
-
-        if(this.storedExp != xp) this.fadeXpTimer = 200;
-
-        if (this.fadeXpTimer > 0 || alwaysShow || holdingXp) {
-            if (this.fadeInExperience < 1) this.fadeInExperience += 0.8F;
-        } else {
-            if (this.fadeInExperience > -5) this.fadeInExperience -= 0.5F;
-        }
-
-        this.fadeXpTimer = Math.max(this.fadeXpTimer - 0.5F, 0);
-        this.storedExp = xp;
-    }
-
-    private void setFadeInAbility(Player player){
-        var xp = player.getData(CASTER_DATA).getExp();
-        var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_ABILITY_BAR.get();
-
-        if(this.storedAbilityExp != xp) this.fadeAbilityTimer = 200;
-
-        if (this.fadeAbilityTimer > 0 || alwaysShow) {
-            if (this.fadeInAbility < 2.5) this.fadeInAbility += 0.8F;
-        } else {
-            if (this.fadeInAbility > -6) this.fadeInAbility -= 0.5F;
-        }
-
-        this.fadeAbilityTimer = Math.max(this.fadeAbilityTimer - 0.5F, 0);
-        this.storedAbilityExp = xp;
-    }
-
-    private void setFadeGui(Player player){
-        var fadeAmount = 0.07f;
-        var wandItem = CastHelper.hasValidCasterItem(player).getItem();
-        var alwaysShow = CUSTOM_UI_SHOW_MANA.get();
-
-        if (CastHelper.validCasterType(wandItem) || alwaysShow) {
-            if (this.fadeIn < 1) this.fadeIn += fadeAmount;
-        } else {
-            if (this.fadeIn > 0) this.fadeIn -= fadeAmount;
         }
     }
 
@@ -227,7 +196,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
 
     private void cooldownOverlay(Ability ability, CasterData casterData){
-        if(this.fadeIn < 0 && !CUSTOM_UI.get() || ability == null) return;
+        if(this.fadeIn < 0 || ability == null) return;
         alignedGui.displayGuiLayer(4, 26, 0, 0, 23, ability.getAbilityIconLocation());
         if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
             var cooldownCost = casterData.getStaticCooldown(ability.setAbilityId());
@@ -243,202 +212,6 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         }
     }
 
-    private static void renderSlot(GuiGraphics graphics, ItemStack next, int x, int y, ResourceLocation lit, int index, int textColour, float alpha) {
-        int size = 24;
-
-        enableBlend();
-        setShaderColor(1f, 1f, 1f, alpha);
-        graphics.blit(lit, x-4, y-4, 0, 0, size, size, size, size);
-        setShaderColor(1f, 1f, 1f, 1f);
-        disableBlend();
-
-        graphics.renderItem(next, x, y);
-        graphics.renderItemDecorations(Minecraft.getInstance().font, next, x, y);
-    }
-
-    private void inventory(GuiGraphics graphics, LocalPlayer player) {
-        var selectedIndex = player.getInventory().selected;
-        var alpha = Math.min(0.5F, fadeInHotbar);
-        var textColour = -7303024;
-        var scale = HOTBAR_SCALED.get().floatValue();
-        var baseGap = 20f;
-        var y = (int) (graphics.guiHeight() - this.fadeInAbility - 72 - this.fadeInHotbar) - (scale);
-        var scaledGap = baseGap * scale;
-        var spacing = scale + scaledGap;
-        var totalWidth = 9 * spacing - scaledGap;
-        var startX = graphics.guiWidth() / 2f - totalWidth / 2f;
-
-        if (fadeInHotbar > -2) {
-            for (int i = 0; i < 9; i++) {
-                var item = player.getInventory().getItem(i);
-                var isSelected = i == selectedIndex;
-                var slotX = startX + i * spacing - (scale * 8);
-
-                graphics.pose().pushPose();
-
-                var offset = (1 - scale)  / 2f;
-                graphics.pose().translate(slotX + offset, y + offset, 0);
-                graphics.pose().scale(scale, scale, scale);
-
-                renderSlot(graphics, item, 0, 0,
-                    isSelected ? GUI_GENERAL_SLOT : GUI_ITEM_SLOT,
-                    0, textColour, isSelected ? fadeInHotbar : alpha
-                );
-
-                graphics.pose().popPose();
-            }
-        }
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, DeltaTracker tracker) {
-        var minecraft = Minecraft.getInstance();
-        var player = minecraft.player;
-        if(player == null || minecraft.options.hideGui) return;
-
-        var typeId = selectedAbility(player);
-        if(typeId == null) PacketDistributor.sendToServer(new SelectAbilityC2SP(""));
-
-        var manaBarWidth = 47;
-        var abilityRegistrars = AbilityReg.getFirstSpellByTypeId(typeId);
-        var casterData = player.getData(CASTER_DATA);
-        var manaPool = casterData.getManaPool();
-        var maxMana = casterData.getMaxMana(player);
-        var manaProgress = maxMana != 0 && manaPool != 0 ? (int) (manaPool * manaBarWidth / maxMana) : 0;
-        var healthProgress = (player.getHealth() * manaBarWidth / player.getMaxHealth());
-        var absorptionProgress = (player.getAbsorptionAmount() * manaBarWidth / player.getMaxAbsorption());
-        var foodProgress = (player.getFoodData().getFoodLevel() * 46 / 20);
-        var pose = graphics.pose();
-
-        this.alignedGuiInstance(graphics);
-        this.setFadeGui(player);
-        this.setFadeInExperience(player);
-        this.setFadeInAbility(player);
-        this.setFadeInFood(player);
-        this.setFadeInHotbar(player);
-
-        pose.pushPose();
-        enableBlend();
-
-        var scale = CUSTOM_UI_SCALE.get().floatValue();
-        var yOffset = CUSTOM_UI_HEIGHT.get().floatValue() + (CUSTOM_UI.get() ? 0 : 10) ;
-        var center = this.alignedGui.screenWidth / 2;
-        var centerY = this.alignedGui.screenHeight - 7;
-
-        pose.translate(center, centerY + yOffset, 0);
-        pose.scale(scale, scale, 1);
-        pose.translate(-center, -centerY + yOffset, 0);
-
-        if(CUSTOM_UI.get()){
-            minecraft.gui.renderSelectedItemName(graphics, (int) (100 + this.fadeInAbility));
-            foodBar(pose, foodProgress);
-            abilityBar(graphics, pose, centerY, minecraft, player, center);
-            xpBar(graphics, pose, minecraft);
-            alignedGui.displayGuiLayer(-53, 29, 0, 0, 137, 29);
-            inventory(graphics, player);
-            quickSelectBar(graphics, casterData, minecraft);
-
-            this.healthAndAbsorptionCount(graphics, minecraft);
-            this.progressOverlays(alignedGui, 19, (int) (healthProgress + 3));
-            this.progressOverlays(alignedGui, 27, (int) (absorptionProgress + 3));
-            if(DISPLAY_DURABILITY_OVERLAY.get()) overlayDurability(graphics, player, minecraft);
-        }
-
-        if(!CUSTOM_UI.get()){
-            pose.translate(0, -fadeIn, 0);
-            setShaderColor(1f, 1f, 1f, fadeIn);
-            quickSelectBar(graphics, casterData, minecraft);
-            alignedGui.displayGuiLayer(1, 29, 0, 47, 82, 28);
-        }
-
-        alignedGui.displayGuiLayer(25, 18, 0, 43, manaProgress + 3, 8, MANA_LEVEL_BAR);
-        this.manaPoolCount(casterData.getManaPool(), graphics, minecraft, -5 , 0, ColourHelpers.getAetherBlue());
-
-        abilityRegistrars.ifPresent(
-            location -> {
-                this.cooldownOverlay(location, casterData);
-                this.cooldownTimer(location, casterData, graphics, minecraft);
-            }
-        );
-
-        var spread = 5;
-        var num = 24;
-        var skills = casterData.getActiveSkills();
-        for (var activeSkill : skills) {
-            var get = SkillReg.getAllSkills().stream().filter(abstractSkill -> Objects.equals(abstractSkill.id(), activeSkill)).findFirst();
-            var size = skills.size() - 1;
-            var iconSize = num - 6;
-            var xA = -(size * (num / 2)) + spread;
-            var spacer = 0;
-
-            if(LevelGenerator.isNexus(player.level())){
-                var runData = RunData.getRunData(player);
-                var getQuest = QuestReg.getQuestByName(runData.getCurrentQuestId());
-                if(getQuest.isPresent()) spacer = 24;
-            }
-
-            var yA = graphics.guiHeight() - 50 - spacer;
-            alignedGui.displayGuiLayer(xA, yA, 0, 0, iconSize, GUI_BUTTON_SKILL);
-            var deScale = 8;
-            var i = deScale / 2;
-
-            get.ifPresent(abstractSkill -> alignedGui.displayGuiLayer(xA + i, yA - i, 0, 0, iconSize - deScale, abstractSkill.icon()));
-            spread += num;
-        }
-
-        setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        pose.popPose();
-    }
-
-    private static void overlayDurability(GuiGraphics graphics, LocalPlayer player, Minecraft minecraft) {
-        var items = new ArrayList<ItemStack>();
-
-        var itemStack5 = player.getItemBySlot(EquipmentSlot.HEAD);
-        if(!itemStack5.isEmpty()) items.add(itemStack5);
-
-        var itemStack4 = player.getItemBySlot(EquipmentSlot.CHEST);
-        if(!itemStack4.isEmpty()) items.add(itemStack4);
-
-        var itemStack3 = player.getItemBySlot(EquipmentSlot.LEGS);
-        if(!itemStack3.isEmpty()) items.add(itemStack3);
-
-        var itemStack2 = player.getItemBySlot(EquipmentSlot.FEET);
-        if(!itemStack2.isEmpty()) items.add(itemStack2);
-
-        var itemStack = player.getItemBySlot(EquipmentSlot.OFFHAND);
-        if(itemStack.has(DataComponents.MAX_DAMAGE) && !itemStack.isEmpty()) items.add(itemStack);
-
-        var itemStack1 = player.getItemBySlot(EquipmentSlot.MAINHAND);
-        if(itemStack1.has(DataComponents.MAX_DAMAGE) && !itemStack1.isEmpty()) items.add(itemStack1);
-
-        var curioSlotsItems = CuriosApi.getCuriosInventory(player);
-        if(curioSlotsItems.isPresent()){
-            var withSlots = curioSlotsItems.get().getEquippedCurios();
-
-            for (int i = 0; i < withSlots.getSlots(); i++) {
-                var stackInSlot = withSlots.getStackInSlot(i);
-                if (stackInSlot.getItem() instanceof JahdooItem && stackInSlot.has(DataComponents.DAMAGE)) {
-                    items.add(stackInSlot);
-                }
-            }
-        }
-
-        displayItemDurability(graphics, items, graphics.guiHeight(), minecraft);
-    }
-
-    private static void displayItemDurability(GuiGraphics graphics, List<@NotNull ItemStack> listOfSlots, int y, Minecraft minecraft) {
-        int baseY = y - 20;
-        int spacer = 0;
-
-        for (ItemStack stack : listOfSlots) {
-            int drawX = 16 + spacer;
-            var cooldownWithDurability = getDurabilityWithColor(stack);
-            graphics.renderItem(stack, drawX, baseY);
-            graphics.drawCenteredString(minecraft.font, TextHelpers.withStyleComponent(cooldownWithDurability.getFirst() + "%", cooldownWithDurability.getSecond()), drawX + 8, baseY + 18, -1);
-            spacer += 27;
-        }
-
-    }
 
     public static Pair<Integer, Integer> getDurabilityWithColor(ItemStack stack) {
         var maxDurability = stack.getMaxDamage();
@@ -456,7 +229,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         return new Pair<>(percent, color);
     }
 
-    private void quickSelectBar(GuiGraphics graphics, CasterData casterData, Minecraft minecraft) {
+    private void quickSelectBar(GuiGraphics graphics, CasterData casterData) {
         var spacer = 0;
         var abilitySlots = casterData.abilitySlots.subList(0, 6);
         var counter = 0;
@@ -553,6 +326,81 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         SharedUI.renderMiniXPBar(graphics, graphics.guiWidth() / 2 - 42, graphics.guiHeight() - 5, Minecraft.getInstance());
     }
 
+
+    private void setFadeInHotbar(Player player){
+        var xp = player.getInventory().selected;
+        var alwaysShow = !AUTO_HIDE_HOTBAR.get();
+
+        if(this.storedSelectedIndex != xp) this.fadeHotbarTimer = 100;
+
+        if (this.fadeHotbarTimer > 0 || alwaysShow) {
+            if (this.fadeInHotbar < 1) this.fadeInHotbar += 1F;
+        } else {
+            if (this.fadeInHotbar > -5) this.fadeInHotbar -= 0.5F;
+        }
+
+        this.fadeHotbarTimer = Math.max(this.fadeHotbarTimer - 0.5F, 0);
+        this.storedSelectedIndex = xp;
+    }
+
+    private void setFadeInFood(Player player){
+        var food = player.getFoodData();
+        var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_HUNGER.get();
+
+        if (food.needsFood() || alwaysShow) {
+            if (this.fadeInFood < 1) this.fadeInFood += 0.3F;
+        } else {
+            if (this.fadeInFood > -14) this.fadeInFood -= 0.3F;
+        }
+
+        this.fadeFoodTimer = Math.max(this.fadeFoodTimer - 0.5F, 0);
+    }
+
+    private void setFadeInExperience(Player player){
+        var xp = player.totalExperience;
+        var holdingXp = player.getMainHandItem().getItem() instanceof ExperienceOrb;
+        boolean alwaysShow = CUSTOM_UI_ALWAYS_SHOW_XP.get();
+
+        if(this.storedExp != xp) this.fadeXpTimer = 200;
+
+        if (this.fadeXpTimer > 0 || alwaysShow || holdingXp) {
+            if (this.fadeInExperience < 1) this.fadeInExperience += 0.8F;
+        } else {
+            if (this.fadeInExperience > -5) this.fadeInExperience -= 0.5F;
+        }
+
+        this.fadeXpTimer = Math.max(this.fadeXpTimer - 0.5F, 0);
+        this.storedExp = xp;
+    }
+
+    private void setFadeInAbility(Player player){
+        var xp = player.getData(CASTER_DATA).getExp();
+        var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_ABILITY_BAR.get();
+
+        if(this.storedAbilityExp != xp) this.fadeAbilityTimer = 200;
+
+        if (this.fadeAbilityTimer > 0 || alwaysShow) {
+            if (this.fadeInAbility < 2.5) this.fadeInAbility += 0.8F;
+        } else {
+            if (this.fadeInAbility > -6) this.fadeInAbility -= 0.5F;
+        }
+
+        this.fadeAbilityTimer = Math.max(this.fadeAbilityTimer - 0.5F, 0);
+        this.storedAbilityExp = xp;
+    }
+
+    private void setFadeGui(Player player){
+        var fadeAmount = 0.07f;
+        var wandItem = CastHelper.hasValidCasterItem(player).getItem();
+        var alwaysShow = CUSTOM_UI_SHOW_MANA.get();
+
+        if (CastHelper.validCasterType(wandItem) || alwaysShow) {
+            if (this.fadeIn < 1) this.fadeIn += fadeAmount;
+        } else {
+            if (this.fadeIn > 0) this.fadeIn -= fadeAmount;
+        }
+    }
+
     public static class AlignedGui {
         GuiGraphics guiGraphics;
         private int shiftGuiX;
@@ -577,6 +425,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             int positionY = screenHeight - yA - shiftGuiY;
             guiGraphics.blit(resourceLocation, positionX, positionY, offsetX, offsetY, iconSize, iconSize, iconSize, iconSize);
         }
+
         public void displayGuiLayer(int xA, int yA, int offsetX, int offsetY, int iconSizeX, int iconSizeY, ResourceLocation resourceLocation){
             int positionX = xA + shiftGuiX;
             int positionY = screenHeight - yA - shiftGuiY;

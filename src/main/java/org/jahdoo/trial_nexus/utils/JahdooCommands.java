@@ -19,7 +19,6 @@ import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.items.Stamp;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
-import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
@@ -746,7 +745,9 @@ public class JahdooCommands {
         var player = source.getPlayer();
         if(player == null) return 0;
         PlayerWallet.updateWallet(player, 0);
-        sendToPlayer(player, new WalletSyncS2CP(PlayerWallet.getWalletValue(player)));
+        player.syncData(AttachmentReg.PLAYER_WALLET_DATA);
+
+        //        sendToPlayer(player, new WalletSyncS2CP(PlayerWallet.getWalletValue(player)));
         return 1;
     }
 

@@ -3,12 +3,9 @@ package org.jahdoo.common.event;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
 import net.minecraft.client.renderer.entity.VillagerRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.altar.AltarRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
@@ -47,47 +44,49 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
-import static org.jahdoo.trial_nexus.utils.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.getColour;
 import static org.jahdoo.common.particle.GenericParticle.*;
 import static org.jahdoo.common.registers.BlockEntityReg.*;
 import static org.jahdoo.common.registers.EntityReg.*;
 import static org.jahdoo.common.registers.MenuReg.*;
 import static org.jahdoo.common.registers.ParticleReg.*;
+import static org.jahdoo.trial_nexus.utils.KeyBinding.*;
 
-
-@EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientBusEvents {
 
     @SubscribeEvent
-    public static void registerItemColour(final RegisterColorHandlersEvent.Item event){
+    public void registerItemColour(final RegisterColorHandlersEvent.Item event){
         event.register((stack, color) -> getColour(stack), ItemReg.RUNE.get());
     }
 
     @SubscribeEvent
-    public static void tooltipEvent(RegisterClientTooltipComponentFactoriesEvent event){
+    public void tooltipEvent(RegisterClientTooltipComponentFactoriesEvent event){
         event.register(RuneTooltipRenderer.RuneComponent.class, RuneTooltipRenderer::new);
         event.register(RarityTooltipRenderer.RarityTag.class, RarityTooltipRenderer::new);
     }
 
     @SubscribeEvent
-    public static void onRegisterOverlays(RegisterGuiLayersEvent event) {
+    public void onRegisterOverlays(RegisterGuiLayersEvent event) {
         event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("mana_bar"), new CustomHudOverlay());
         event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("level_data"), new InstanceDataOverlay());
         event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("points_overlay"), new PointsOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("skills_overlay"), new SkillsOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("durability_overlay"), new DurabilityOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("standard_mana_overlay"), new StandardManaOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("inventory_overlay"), new InventoryOverlay());
         event.registerBelow(VanillaGuiLayers.AIR_LEVEL, JahdooHelpers.res("tooltip_overlay"), new BlockTooltipOverlay());
         event.registerAboveAll(JahdooHelpers.res("wallet"), new WalletOverlay());
     }
 
     @SubscribeEvent
-    public static void onClientSetup(RegisterMenuScreensEvent event) {
+    public void onClientSetup(RegisterMenuScreensEvent event) {
         event.register(MODULAR_CHAOS_CUBE_MENU.get(), ChaosCubeScreen::new);
         event.register(WAND_MANAGER_MENU.get(), WandManagerScreen::new);
         event.register(RUNE_TABLE_MENU.get(), DivineForgeScreen::new);
     }
 
     @SubscribeEvent
-    public static void onKeyRegister(RegisterKeyMappingsEvent event) {
+    public void onKeyRegister(RegisterKeyMappingsEvent event) {
         event.register(WAND_SLOT_1A);
         event.register(WAND_SLOT_2A);
         event.register(WAND_SLOT_3A);
@@ -110,7 +109,7 @@ public class ClientBusEvents {
     }
 
     @SubscribeEvent
-    public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
+    public void registerParticleFactories(final RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(SOFT.get(), GenericProvider::new);
         event.registerSpriteSet(PLUS.get(), PlusParticle::new);
         event.registerSpriteSet(HEAL.get(), BakedProvider::new);
@@ -130,7 +129,7 @@ public class ClientBusEvents {
     }
 
     @SubscribeEvent
-    public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
+    public void registerBER(EntityRenderersEvent.RegisterRenderers event) {
         //Block entities
         event.registerBlockEntityRenderer(POWER_UP_BE.get(), PowerUpStationRenderer::new);
         event.registerBlockEntityRenderer(TANK_BE.get(), TankRenderer::new);

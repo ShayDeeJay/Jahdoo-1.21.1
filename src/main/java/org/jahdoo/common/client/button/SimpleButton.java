@@ -22,6 +22,7 @@ public class SimpleButton extends ImageButton {
     private final boolean isSelected;
     private final OnPress pOnPress;
     private final String label;
+    private final Runnable onHover;
 
     public SimpleButton(
         int pX,
@@ -30,7 +31,7 @@ public class SimpleButton extends ImageButton {
         int height,
         boolean isSelected,
         OnPress pOnPress,
-        String label
+        String label, Runnable onHover
     ) {
         super(pX, pY, width, height, new WidgetSprites(Icons.BLANK,Icons.BLANK), pOnPress);
         this.width = width;
@@ -38,6 +39,7 @@ public class SimpleButton extends ImageButton {
         this.pOnPress = pOnPress;
         this.isSelected = isSelected;
         this.label = label;
+        this.onHover = onHover;
     }
 
     @Override
@@ -53,6 +55,21 @@ public class SimpleButton extends ImageButton {
     @Override
     public void onPress() {
         pOnPress.onPress(this);
+    }
+
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+//        System.out.println("fdf");
+//        onHover.run();
+        return super.isMouseOver(mouseX, mouseY);
+    }
+
+    @Override
+    public boolean isHovered() {
+//        System.out.println("sds");
+        onHover.run();
+
+        return super.isHovered();
     }
 
     @Override

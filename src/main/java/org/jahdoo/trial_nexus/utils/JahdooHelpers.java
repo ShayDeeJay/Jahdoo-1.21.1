@@ -43,7 +43,6 @@ import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.networking.server2client.QuestTrackerS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
-import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -70,7 +69,6 @@ import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
-import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.RUN_DATA;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
 
@@ -93,9 +91,8 @@ public class JahdooHelpers {
     public static void syncClientData(Entity player) {
         if(player instanceof ServerPlayer serverPlayer){
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
-            var wallet = serverPlayer.getData(PLAYER_WALLET_DATA).getWallet();
             var runData = serverPlayer.getData(RUN_DATA);
-            sendToPlayer(serverPlayer, new WalletSyncS2CP(wallet));
+            serverPlayer.syncData(AttachmentReg.PLAYER_WALLET_DATA);
             CasterData.sharedPackets(serverPlayer, casterData);
             PlayerTrialData.updateClientData(serverPlayer);
 
@@ -173,11 +170,11 @@ public class JahdooHelpers {
         return attributes != null ? attributes.getValue() : -1;
     }
 
-    public static void addTransientAttribute(Player player, double value, String id, Holder<Attribute> attributeHolder) {
+    public static void addTransientAttribute(LivingEntity livingEntity, double value, String id, Holder<Attribute> attributeHolder) {
         var modifier = new AttributeModifier(JahdooHelpers.res(id), value, AttributeModifier.Operation.ADD_VALUE);
         Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
         multiMap.put(attributeHolder, modifier);
-        player.getAttributes().addTransientAttributeModifiers(multiMap);
+        livingEntity.getAttributes().addTransientAttributeModifiers(multiMap);
     }
 
     public static List<Component> filterList(List<Component> collection, String... item){

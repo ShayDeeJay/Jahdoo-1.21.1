@@ -14,17 +14,15 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
-import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.RuneReg;
-import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.shaydee.shaydeeapi.block.AbstractBEInventory;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.DEFAULT_SLOTS;
 import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.MODIFICATION_SLOTS;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getCostFromRune;
@@ -110,7 +108,7 @@ public class RuneSlot extends SlotItemHandler {
                     if(player instanceof ServerPlayer serverPlayer){
                         var coinCost = removeCurrencyCost(getItem());
                         purchaseWithConverter(convertToCoins(coinCost), serverPlayer);
-                        sendToPlayer(serverPlayer, new WalletSyncS2CP(PlayerWallet.getWalletValue(serverPlayer)));
+                        serverPlayer.syncData(AttachmentReg.PLAYER_WALLET_DATA);
                         return super.tryRemove(count, decrement, player);
                     }
                 }

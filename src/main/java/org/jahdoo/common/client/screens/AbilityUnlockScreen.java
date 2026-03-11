@@ -575,7 +575,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
     private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player, int spacer) {
         var size = 24;
-        var skillPoints = CasterData.getAbilityPoints(player);
+        var skillPoints = CasterData.getAbilityPointData(player);
         var i1 = 20;
         var i2 = -2;
 

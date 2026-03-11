@@ -10,10 +10,10 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.magic.AbstractAbility;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.effects.MysticEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.AbstractAbility;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.minecraft.world.entity.EntitySelector.LIVING_ENTITY_STILL_ALIVE;
@@ -83,7 +83,7 @@ public class ArcaneShift extends AbstractAbility {
         for (var entity : list) {
             if (entity instanceof LivingEntity livingEntity && entity != player) {
                 launchParticle(level, livingEntity.position(), livingEntity.getBbWidth());
-                MysticEffect.setMysticEffect(player, livingEntity, true, (int) effectDuration, 0);
+                MysticEffect.setTypeEffect(MysticEffect::new, player, livingEntity, false, (int) effectDuration, 0);
             }
         }
     }

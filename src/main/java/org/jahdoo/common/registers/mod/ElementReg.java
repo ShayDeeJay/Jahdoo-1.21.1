@@ -58,10 +58,6 @@ public class ElementReg {
         return Helpers.listRandom(list);
     }
 
-    private static DeferredHolder<AbstractElement, AbstractElement> registerElement(Supplier<AbstractElement> element) {
-        return ELEMENT.register(element.get().setAbilityId(), element);
-    }
-
     public static AbstractElement frost(){
         return FROST.get();
     }
@@ -96,6 +92,10 @@ public class ElementReg {
 
     public static final DeferredHolder<AbstractElement, AbstractElement> VITALITY =
         registerElement(Vitality::new);
+
+    private static DeferredHolder<AbstractElement, AbstractElement> registerElement(Supplier<AbstractElement> element) {
+        return ELEMENT.register(element.get().setAbilityId(), element);
+    }
 
     public static void register(IEventBus eventBus) {
         ELEMENT.register(eventBus);

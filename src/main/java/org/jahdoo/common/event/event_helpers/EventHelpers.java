@@ -456,18 +456,23 @@ public class EventHelpers {
 
     public static void mysticEffectClient(RenderLivingEvent.Pre event) {
         var entity = event.getEntity();
-        var mysticEffect = event.getEntity().hasData(MYSTIC_EFFECT);
+        var mysticEffect = entity.hasData(MYSTIC_EFFECT);
+        if (!mysticEffect) return;
+
         var tick = entity.tickCount;
+        var height = entity.getBbHeight() / 2;
+        var pos = event.getPoseStack();
 
-        if(mysticEffect){
-            var height = entity.getBbHeight() / 2;
-            var anim = (tick  + event.getPartialTick()) * 2.5f;
-            var pos = event.getPoseStack();
+        // Create a unique offset for each entity so they don't move in sync
+        int entityId = entity.getId(); // unique per entity
+        float offset = (entityId * 37 % 100) / 100f * 360; // deterministic but varied
 
-            pos.rotateAround(Axis.XN.rotationDegrees(anim), 0, height, 0);
-            pos.rotateAround(Axis.YN.rotationDegrees(-anim), 0, height, 0);
-            pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
-        }
+        // Apply animation with offset
+        float anim = (tick + event.getPartialTick()) * 2.5f + offset;
+
+        pos.rotateAround(Axis.XN.rotationDegrees(anim), 0, height, 0);
+        pos.rotateAround(Axis.YN.rotationDegrees(-anim), 0, height, 0);
+        pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
     }
 
     public static void useRuneAttributesCurios(CurioAttributeModifierEvent event) {

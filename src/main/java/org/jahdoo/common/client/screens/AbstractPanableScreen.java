@@ -33,7 +33,6 @@ public abstract class AbstractPanableScreen extends Screen {
         new ScreenType(QuestLogScreen::new, "Quests", QUEST_CRATE)
     );
 
-
     public AbstractPanableScreen() { super(empty()); }
 
     @Override
@@ -42,7 +41,7 @@ public abstract class AbstractPanableScreen extends Screen {
     }
 
     public static int uiColour(){
-        return SetingsScreen.uiColourHelpers.get(UI_COLOUR.get());
+        return SettingsScreen.uiColourHelpers.get(UI_COLOUR.get());
     }
 
     public static int uiColourAlpha(){
@@ -83,7 +82,7 @@ public abstract class AbstractPanableScreen extends Screen {
             );
         }
 
-        var settings = new ScreenType(SetingsScreen::new, "Settings", COG);
+        var settings = new ScreenType(SettingsScreen::new, "Settings", COG);
         this.addRenderableWidget(
             menuButtonAbility(
                 this.width - 60,
@@ -114,6 +113,7 @@ public abstract class AbstractPanableScreen extends Screen {
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         double scaleFactor = Math.max(0.1, Math.abs(zoomX) * 0.5); // Scale dynamically
         this.zoomX = Math.min(Math.max(this.zoomX + (scrollY * scaleFactor), -0.6), 1);
+        this.rebuildWidgets();
         return true;
     }
 
@@ -126,6 +126,7 @@ public abstract class AbstractPanableScreen extends Screen {
 
         panX += Math.round(dragX / zoomScale);
         panY += Math.round(dragY / zoomScale);
+        this.rebuildWidgets();
         return true;
     }
 
