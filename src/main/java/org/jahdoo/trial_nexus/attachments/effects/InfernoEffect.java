@@ -12,7 +12,6 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
-import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
@@ -21,6 +20,7 @@ import static org.jahdoo.trial_nexus.magic.effects.EffectHelpers.setEffectPartic
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
 public class InfernoEffect extends AbstractEntityEffect {
+
     public static final String INFERNO_EFFECT = "inferno_effect";
 
     @Override
@@ -50,15 +50,10 @@ public class InfernoEffect extends AbstractEntityEffect {
     }
 
     @Override
-    public void onStarted(LivingEntity livingEntity) {
-        super.onStarted(livingEntity);
-    }
-
-    @Override
     public void onActive(LivingEntity livingEntity) {
         if(livingEntity.level() instanceof ServerLevel serverLevel) {
             var getRandomChance = EffectHelpers.getGetRandomChance(2);
-            if (getRandomChance == 0) DamageUtils.damageWithJahdoo(livingEntity, getOwner(serverLevel), getDamage(), getElement().damageTypeResourceKey());
+            if (getRandomChance == 0) doDamage(livingEntity, serverLevel);
             setEffectParticle(getRandomChance, livingEntity, serverLevel, getElement(), SoundReg.FIRE_ABILITY.get());
         }
     }
@@ -84,8 +79,8 @@ public class InfernoEffect extends AbstractEntityEffect {
         var directions = positionScrambler.subtract(livingEntity.position()).normalize();
         var lifetime = 4;
         var size = JahdooHelpers.Random.nextDouble(0.2, 0.4);
-        var col1 = element.textColourA();
-        var col2 = element.textColourB();
+        var col1 = element.partColourA();
+        var col2 = element.partColourB();
         var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, (float) (size - 0.2), col1, col2, true);
         var randomSpeed = JahdooHelpers.Random.nextDouble(0.1, 0.3);
 

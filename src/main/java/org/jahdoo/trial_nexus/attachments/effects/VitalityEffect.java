@@ -10,8 +10,8 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
-import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.Icons;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import static org.jahdoo.trial_nexus.magic.effects.EffectHelpers.getGetRandomChance;
 
@@ -31,20 +31,19 @@ public class VitalityEffect extends AbstractEntityEffect {
 
     @Override
     public void greaterEffect(LivingEntity entity) {
+        if(!MathHelpers.percentageChance(2.5)) return;
+
         var level = entity.level();
-        if(level instanceof ServerLevel serverLevel) {
-            for (var allEntity : serverLevel.getAllEntities()) {
-                if(allEntity instanceof ITamableEntity entity1){
-                    if(entity1.getOwner() == this.getOwner(serverLevel)){
-                        if(allEntity instanceof LivingEntity lEntity){
-                            if(entity.hurtMarked){
-                                lEntity.heal(22);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        if(!(level instanceof ServerLevel serverLevel)) return;
+
+        var applierMobs = serverLevel
+            .getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox())
+            .stream()
+            .filter(s -> s instanceof ITamableEntity iT && iT.getOwner() == getOwner(serverLevel))
+            .toList();
+
+        for (var tamable : applierMobs)
+            if(entity.hurtMarked) tamable.heal(0.5F);
     }
 
     @Override
@@ -68,8 +67,8 @@ public class VitalityEffect extends AbstractEntityEffect {
             int getRandomChance = getGetRandomChance(4);
             if(getRandomChance == 0) {
                 var owner = getOwner(serverLevel);
-                if(owner != null) owner.heal(1);
-                DamageUtils.damageWithJahdoo(livingEntity, getOwner(serverLevel), 1, ElementReg.vitality().damageTypeResourceKey());
+                if(owner != null) owner.heal(0.5F);
+                doDamage(livingEntity, serverLevel);
             }
             EffectHelpers.setEffectParticle(getRandomChance, livingEntity, serverLevel, ElementReg.vitality(), SoundReg.VITALITY_ABILITY.get());
         }

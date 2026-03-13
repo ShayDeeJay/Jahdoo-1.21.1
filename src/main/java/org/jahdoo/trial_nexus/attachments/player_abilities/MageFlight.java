@@ -19,6 +19,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.level_manager.PlayerHomeDim;
+import org.jahdoo.trial_nexus.magic.skills.MageFlightSkill;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
@@ -71,11 +72,13 @@ public class MageFlight implements IAttachment {
             return;
         }
 
-        var mageFlight = player.getData(MAGE_FLIGHT);
-        mageFlight.serverFlight(player);
+        if(!player.getData(CASTER_DATA).isAbilityOnCooldown(MageFlightSkill.MAGE_FLIGHT)){
+            var mageFlight = player.getData(MAGE_FLIGHT);
+            mageFlight.serverFlight(player);
 
-        if (player instanceof ServerPlayer serverPlayer)
-            PacketDistributor.sendToPlayer(serverPlayer, new MageFlightC2SP());
+            if (player instanceof ServerPlayer serverPlayer)
+                PacketDistributor.sendToPlayer(serverPlayer, new MageFlightC2SP());
+        }
     }
 
     private boolean cancelAttempt(Player player) {
@@ -96,11 +99,12 @@ public class MageFlight implements IAttachment {
             var mod = player.getAttribute(AttributeReg.MAGE_FLIGHT);
             if(mod == null) return;
 
-            var speedModifier = mod.getValue();
-
             player.getAbilities().mayfly = true;
             casterData.subtractMana(Math.min(manaCost, 2), player);
-            player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.090, getDelta.z * speedModifier));
+
+            var v = mod.getValue() + 1;
+            var min = Math.min(getDelta.y + 0.090, 0.1 * v);
+            player.setDeltaMovement(getDelta.x, min, getDelta.z);
 
             var usedItem = CastHelper.hasValidCasterItem(player).getItem();
             var element = fromWand(usedItem).orElse(ElementReg.random());

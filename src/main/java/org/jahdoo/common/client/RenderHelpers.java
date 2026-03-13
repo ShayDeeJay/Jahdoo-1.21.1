@@ -17,8 +17,11 @@ public class RenderHelpers {
 
     public static void drawTexture(PoseStack.Pose pose, MultiBufferSource bufferSource, int light, float width, ResourceLocation texture, int colour) {
         var poseMatrix = pose.pose();
-        var consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(texture));
+//        var consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(texture, false));
+        var consumer = bufferSource.getBuffer(RenderType.itemEntityTranslucentCull(texture));
+//        var consumer = bufferSource.getBuffer(RenderType.entityTranslucentCull(texture));
         var halfWidth = width * 0.5f;
+
         consumer.addVertex(poseMatrix, -halfWidth, 0.05f, -halfWidth).setColor(colour).setUv(0f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
         consumer.addVertex(poseMatrix, halfWidth, 0.05f, -halfWidth).setColor(colour).setUv(1f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
         consumer.addVertex(poseMatrix, halfWidth, 0.05f, halfWidth).setColor(colour).setUv(1f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);

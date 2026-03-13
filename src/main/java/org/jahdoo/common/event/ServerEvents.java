@@ -22,7 +22,7 @@ import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.mod.EntityEffectReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
-import org.jahdoo.trial_nexus.attachments.effects.FrostEffect;
+import org.jahdoo.trial_nexus.attachments.effects.MysticEffect;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.PhantomJump;
@@ -228,17 +228,7 @@ public class ServerEvents {
     private static void entityInteractEvent(PlayerInteractEvent.EntityInteractSpecific event){
         var entity = event.getTarget();
         var player = event.getEntity();
-        if(!player.level().isClientSide){
-            AbstractEntityEffect.setTypeEffect(FrostEffect::new, player, (LivingEntity) entity, true, 300, 1);
-
-            if(player.level() instanceof ServerLevel serverLevel){
-                var level = serverLevel.getServer();
-//                level.tickRateManager().setFrozen(false);
-//                ((LivingEntity) entity).hurtDuration = 0;
-            }
-//            System.out.println("323");
-        }
-
+        AbstractEntityEffect.setTypeEffect(MysticEffect::new, player, (LivingEntity) entity, true, 400, 1);
         rightClickInteract(event);
     }
 
@@ -250,7 +240,6 @@ public class ServerEvents {
                 AbstractEntityEffect.serverOnTick(livingEntity, effect.getAttachment());
             }
         }
-
         tickDeathLootsplotion(event);
     }
 

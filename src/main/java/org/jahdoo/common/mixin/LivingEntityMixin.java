@@ -6,9 +6,11 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.WalkAnimationState;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,6 +24,18 @@ public abstract class LivingEntityMixin extends Entity {
     @Shadow public abstract boolean hasEffect(Holder<MobEffect> effect);
 
     @Shadow public abstract void indicateDamage(double xDistance, double zDistance);
+
+    @Shadow private float speed;
+
+    @Shadow @Final public WalkAnimationState walkAnimation;
+
+    @Shadow protected int lerpSteps;
+
+    @Shadow public float xxa;
+
+    @Shadow public float yya;
+
+    @Shadow public float zza;
 
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -60,7 +74,5 @@ public abstract class LivingEntityMixin extends Entity {
             cir.setReturnValue(false);
         }
     }
-
-
 
 }

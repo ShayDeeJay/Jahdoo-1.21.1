@@ -81,15 +81,15 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.common.registers.mod.RuneReg;
-import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.trial_nexus.magic.abilities_utility.deprecated.block_placer.BlockPlacerAbility;
-import org.jahdoo.trial_nexus.magic.abilities_utility.wall_placer.WallPlacerAbility;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.trial_nexus.magic.abilities_utility.deprecated.block_placer.BlockPlacerAbility;
+import org.jahdoo.trial_nexus.magic.abilities_utility.wall_placer.WallPlacerAbility;
+import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
 import org.jetbrains.annotations.NotNull;
@@ -106,8 +106,6 @@ import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
-import static org.jahdoo.trial_nexus.utils.KeyBinding.*;
-import static org.jahdoo.trial_nexus.utils.KeyBinding.BLINK;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.getAllSlots;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
@@ -115,13 +113,15 @@ import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
-import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getAugmentModificationScreenWand;
 import static org.jahdoo.trial_nexus.attachments.RunData.EMPTY;
 import static org.jahdoo.trial_nexus.attachments.RunData.addExperienceToTotal;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.itemBehaviour;
 import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getAugmentModificationScreenWand;
 import static org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs.CHALLENGER_BOSS;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static org.jahdoo.trial_nexus.utils.KeyBinding.*;
+import static org.jahdoo.trial_nexus.utils.KeyBinding.BLINK;
 import static org.jahdoo.trial_nexus.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 
 public class EventHelpers {
@@ -437,20 +437,24 @@ public class EventHelpers {
     }
 
     public static void greaterFrostEffectDamageAmplifier(LivingDamageEvent.Pre event, LivingEntity entity) {
-        if(entity.hasEffect(EffectReg.GREATER_FROST_EFFECT)){
-            var origin = event.getOriginalDamage();
-            var modifiedDamage = origin * 2;
-            if(!entity.isAlive()){
-                SoundHelpers.getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, HOSTILE, 1F, 1F);
-                getAllParticleTypes(ElementReg.frost(), 20, 1);
+        var secondary = entity.getExistingData(FROST_EFFECT);
+        if(secondary.isPresent() && entity.level() instanceof ServerLevel serverLevel){
+            var attacker = event.getSource().getEntity();
+            if(attacker != null && attacker.getStringUUID().equals(secondary.get().getApplierUUID())){
+                var origin = event.getOriginalDamage();
+                var modifiedDamage = origin * 2;
+
+                SoundHelpers.getSoundWithPosition(entity.level(), entity.blockPosition(), SoundReg.FROST_ABILITY.get(), HOSTILE, 1.5F, 1.3F);
+
                 sendParticles(
                     entity.level(),
                     getAllParticleTypes(ElementReg.frost(), 12, 1.5f),
-                    entity.position().add(0, entity.getBbHeight()/2, 0), 30,
+                    entity.position().add(0, entity.getBbHeight() / 2, 0), 30,
                     0, 1, 0, 0.2
                 );
+
+                event.setNewDamage(modifiedDamage);
             }
-            event.setNewDamage(modifiedDamage);
         }
     }
 
@@ -458,17 +462,16 @@ public class EventHelpers {
         var entity = event.getEntity();
         var mysticEffect = entity.hasData(MYSTIC_EFFECT);
         if (!mysticEffect) return;
+        var eff = entity.getData(MYSTIC_EFFECT);
 
         var tick = entity.tickCount;
         var height = entity.getBbHeight() / 2;
         var pos = event.getPoseStack();
 
-        // Create a unique offset for each entity so they don't move in sync
-        int entityId = entity.getId(); // unique per entity
-        float offset = (entityId * 37 % 100) / 100f * 360; // deterministic but varied
+        var entityId = entity.getId();
+        var offset = (entityId * 37 % 100) / 100f * 360;
 
-        // Apply animation with offset
-        float anim = (tick + event.getPartialTick()) * 2.5f + offset;
+        var anim = (tick + event.getPartialTick()) * 2.5f + offset;
 
         pos.rotateAround(Axis.XN.rotationDegrees(anim), 0, height, 0);
         pos.rotateAround(Axis.YN.rotationDegrees(-anim), 0, height, 0);
@@ -482,7 +485,9 @@ public class EventHelpers {
             for (var itemStack : slotAttributes.runeSlots()) {
                 var mods = itemStack.getAttributeModifiers().modifiers();
                 if (mods.isEmpty()) return;
+
                 var acMod = mods.getFirst();
+
                 try {
                     event.addModifier(acMod.attribute(), acMod.modifier());
                 } catch (Exception e){

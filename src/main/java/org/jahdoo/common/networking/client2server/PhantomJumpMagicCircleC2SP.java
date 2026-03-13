@@ -8,7 +8,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.trial_nexus.magic.skills.MageFlightSkill;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+
+import static org.jahdoo.trial_nexus.attachments.player_abilities.PhantomJump.PHANTOM_JUMP;
 
 public class PhantomJumpMagicCircleC2SP implements CustomPacketPayload {
 
@@ -49,7 +53,11 @@ public class PhantomJumpMagicCircleC2SP implements CustomPacketPayload {
 
             serverLevel.addFreshEntity(cloud);
 
-            cloud.setEntityType("jump_circle");
+            //Place Mage Flight on cooldown so it doesn't cross over with movement of PhantomJump
+            player.getData(AttachmentReg.MAGE_FLIGHT.get()).setJumpKeyDown(false);
+            player.getData(AttachmentReg.CASTER_DATA).addCooldown(player, MageFlightSkill.MAGE_FLIGHT, 10);
+
+            cloud.setEntityType(PHANTOM_JUMP);
             cloud.setElementId(this.elementId);
             cloud.moveTo(player.position());
 

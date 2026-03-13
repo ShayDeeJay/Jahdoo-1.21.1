@@ -48,12 +48,12 @@ public class ClientEvents {
         renderChampionVisual(event);
 
         for (var hasEffect : EntityEffectReg.getHasEffects(entity)) {
-            getMagicCircle(entity, event.getPartialTick(), poseStack, event.getMultiBufferSource(), hasEffect);
+//            getMagicCircle(entity, event.getPartialTick(), poseStack, event.getMultiBufferSource(), hasEffect);
             return;
         }
     }
 
-    private static void getMagicCircle(Entity entity, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, AbstractEntityEffect effect) {
+    public static void getMagicCircle(Entity entity, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, AbstractEntityEffect effect) {
         pose.pushPose();
         pose.rotateAround(Axis.YN.rotationDegrees((entity.tickCount + partialTicks) * 6), 0, 0, 0);
         var colour = effect.getElement().partColourB();

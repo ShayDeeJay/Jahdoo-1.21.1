@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -13,6 +14,7 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
 import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
@@ -48,32 +50,32 @@ public class FrostEffect extends AbstractEntityEffect {
 
     @Override
     public void onStarted(LivingEntity livingEntity) {
-        super.onStarted(livingEntity);
         livingEntity.playSound(SoundReg.FROST_ABILITY.get());
-        JahdooHelpers.addTransientAttribute(livingEntity, -(livingEntity.getSpeed()/4), "slow_entity", MOVEMENT_SPEED);
         if(isSecondary()){
-            if(livingEntity instanceof Mob mob){
-
-
-            }
+            if(livingEntity instanceof Mob mob) mob.setNoAi(true);
+        } else {
+            JahdooHelpers.addTransientAttribute(livingEntity, -(livingEntity.getSpeed()/2), "slow_entity", MOVEMENT_SPEED);
         }
     }
 
     @Override
     public void onEnd(LivingEntity livingEntity) {
-        var attributes = livingEntity.getAttributes();
-        var multiMap = getHolderAttributeModifierMultimap();
-        attributes.removeAttributeModifiers(multiMap);
-        if(livingEntity instanceof Mob mob){
-            mob.setNoAi(false);
+        if(isSecondary()){
+            if (livingEntity instanceof Mob mob) {
+                mob.setNoAi(false);
+            }
+        } else {
+            var attributes = livingEntity.getAttributes();
+            var multiMap = getHolderAttributeModifierMultimap();
+            attributes.removeAttributeModifiers(multiMap);
         }
     }
 
     @Override
     public void onActive(LivingEntity livingEntity) {
-        if(isSecondary()){
-           if(livingEntity instanceof Mob mob){
-           }
+        int getRandomChance = JahdooHelpers.Random.nextInt(0,20);
+        if(livingEntity.level() instanceof  ServerLevel serverLevel){
+            EffectHelpers.setEffectParticle(getRandomChance, livingEntity, serverLevel, ElementReg.frost(), SoundReg.FROST_ABILITY.get());
         }
     }
 

@@ -10,7 +10,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
@@ -93,13 +92,13 @@ public abstract class EntityMixin {
     @Inject(method = "isCurrentlyGlowing", at = @At("HEAD"), cancellable = true)
     private void forceGlow(CallbackInfoReturnable<Boolean> cir) {
         Entity self = (Entity)(Object)this;
-
-        var hasMystic = self.hasData(AttachmentReg.MYSTIC_EFFECT);
-        var hasInferno = self.hasData(AttachmentReg.INFERNO_EFFECT);
-        var hasFrost = self.hasData(AttachmentReg.FROST_EFFECT);
-        var hasVitality = self.hasData(AttachmentReg.VITALITY_EFFECT);
-
-        cir.setReturnValue(hasMystic || hasInferno || hasFrost || hasVitality);
+//
+//        var hasMystic = self.hasData(AttachmentReg.MYSTIC_EFFECT);
+//        var hasInferno = self.hasData(AttachmentReg.INFERNO_EFFECT);
+//        var hasFrost = self.hasData(AttachmentReg.FROST_EFFECT);
+//        var hasVitality = self.hasData(AttachmentReg.VITALITY_EFFECT);
+//
+//        cir.setReturnValue(hasMystic || hasInferno || hasFrost || hasVitality);
     }
 
 

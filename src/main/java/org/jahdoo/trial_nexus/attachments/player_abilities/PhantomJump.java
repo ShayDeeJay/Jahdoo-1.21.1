@@ -23,7 +23,7 @@ import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
 public class PhantomJump implements IAttachment {
 
-    public static final int MAX_JUMPS = 2;
+    public static final String PHANTOM_JUMP = "jump_circle";
     private int clientJumpCount = 0;
     private boolean clientIsJumpHeld;
 
@@ -51,17 +51,17 @@ public class PhantomJump implements IAttachment {
             var attribute = player.getAttribute(AttributeReg.TRIPLE_JUMP);
             if(attribute == null) return;
 
-            if(!clientIsJumpHeld && clientJumpCount <= attribute.getValue()){
+            if(!clientIsJumpHeld && clientJumpCount <= 3){
                 clientJumpCount++;
                 var delta = player.getDeltaMovement();
                 var playerSpeed = player.getSpeed();
-                player.setDeltaMovement(delta.x*(1+playerSpeed), Math.max(delta.y, 0.54D), delta.z*(1+playerSpeed));
                 if(clientJumpCount > 1){
                     var usedItem = CastHelper.hasValidCasterItem(player).getItem();
                     var element = fromWand(usedItem).orElse(ElementReg.random());
                     var type = ParticleHandlers.genericParticle(GENERIC_PARTICLE, element, 2, 2f);
                     var part2 = bakedParticle(element.id(), 2, 2f, false);
 
+                    player.setDeltaMovement(delta.x * (1+playerSpeed), Math.max(delta.y, 0.8D), delta.z * (1+playerSpeed));
                     PacketDistributor.sendToServer(new PhantomJumpMagicCircleC2SP(element.id()));
                     player.playSound(SoundReg.SPELL_SOUND.get(), 1F, 1.2F);
                     PositionFinders.innerRadiusRandom(player.position(), player.getBbWidth() * 1.5, 30,

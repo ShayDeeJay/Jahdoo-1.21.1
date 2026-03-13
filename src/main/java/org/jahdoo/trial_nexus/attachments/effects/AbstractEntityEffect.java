@@ -12,8 +12,10 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -40,11 +42,19 @@ public abstract class AbstractEntityEffect implements IAttachment {
 
     public abstract ResourceLocation icon();
 
-    public void createEffect(LivingEntity applier, boolean greater, int maxTime, float damage) {
+    public void onStarted(LivingEntity livingEntity){};
+
+    public void onActive(LivingEntity livingEntity){};
+
+    public void onEnd(LivingEntity livingEntity){};
+
+    public void ownerTick(LivingEntity livingEntity){};
+
+    public void createEffect(@Nullable LivingEntity applier, boolean greater, int maxTime, float damage) {
         setTimer(maxTime);
         setMaxTime(maxTime);
         setDamage(applier, damage);
-        setApplierUUID(applier.getStringUUID());
+        if(applier != null) setApplierUUID(applier.getStringUUID());
         setSecondary(greater);
         setRandom(Random.nextInt(0, 2000));
     }
@@ -77,8 +87,8 @@ public abstract class AbstractEntityEffect implements IAttachment {
         return timer == maxTime;
     }
 
-    public boolean ended() {
-        return timer <= 1;
+    public boolean isEnding() {
+        return timer == 1;
     }
 
     public void setSecondary(boolean secondary) {
@@ -117,6 +127,14 @@ public abstract class AbstractEntityEffect implements IAttachment {
         return null;
     }
 
+    public void doDamage(LivingEntity target, ServerLevel serverLevel) {
+        DamageUtils.damageWithJahdoo(target, getOwner(serverLevel), getDamage(), getElement().damageTypeResourceKey());
+    }
+
+    public void doDamage(LivingEntity target, ServerLevel serverLevel, double damage) {
+        DamageUtils.damageWithJahdoo(target, getOwner(serverLevel), damage, getElement().damageTypeResourceKey());
+    }
+
     public void setDamage(LivingEntity livingEntity, float damage) {
         if(livingEntity instanceof Player player) {
             this.damage = JahdooHelpers.attributeModifierCalculator(
@@ -131,17 +149,22 @@ public abstract class AbstractEntityEffect implements IAttachment {
         }
     }
 
-    public void onStarted(LivingEntity livingEntity){};
-    public void onActive(LivingEntity livingEntity){};
-    public void onEnd(LivingEntity livingEntity){};
-    public void ownerTick(LivingEntity livingEntity){};
-
-    public static void setTypeEffect(Supplier<AbstractEntityEffect> getEffect, LivingEntity entity, LivingEntity target, boolean isSecondary, int time, float damage) {
-        if((entity.level().isClientSide)) return;
+    public static void setTypeEffect(Supplier<AbstractEntityEffect> getEffect, @Nullable LivingEntity applier, LivingEntity target, boolean isSecondary, int time, float damage) {
+        if(target.level().isClientSide) return;
 
         var effect = getEffect.get();
         if(!target.hasData(effect.getAttachment())) {
-            effect.createEffect(entity, isSecondary, time, damage);
+            effect.createEffect(applier, isSecondary, time, damage);
+            target.setData(effect.getAttachment(), effect);
+        }
+    }
+
+    public static void setTypeEffect(Supplier<AbstractEntityEffect> getEffect, @Nullable LivingEntity applier, LivingEntity target, boolean isSecondary, int time, float damage, double applyChance) {
+        if(!MathHelpers.percentageChance(applyChance) || target.level().isClientSide) return;
+
+        var effect = getEffect.get();
+        if(!target.hasData(effect.getAttachment())) {
+            effect.createEffect(applier, isSecondary, time, damage);
             target.setData(effect.getAttachment(), effect);
         }
     }
@@ -154,17 +177,21 @@ public abstract class AbstractEntityEffect implements IAttachment {
     }
 
     public void onTick(LivingEntity entity) {
+
         if(!this.isActive() || !entity.isAlive()) {
             entity.removeData(getAttachment());
             onEnd(entity);
         }
+
         if (isSecondary()) this.greaterEffect(entity);
         if(this.started()) onStarted(entity);
         if(this.isActive()) onActive(entity);
+
         if(entity.level() instanceof ServerLevel serverLevel) {
             var owner = this.getOwner(serverLevel);
             if(owner != null) ownerTick(owner);
         }
+
         if (timer > 0) timer--;
     }
 

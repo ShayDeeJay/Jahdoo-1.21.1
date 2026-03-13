@@ -14,7 +14,6 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
-import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
@@ -73,22 +72,20 @@ public class MysticEffect extends AbstractEntityEffect {
             EffectHelpers.setEffectParticle(getRandomChance, livingEntity, serverLevel, ElementReg.mystic(), sound, 0.05F, Random.nextFloat(1.4F, 2F));
         }
 
-        var getMaxHeight = (double) this.getTimer() / 500;
+        var getMaxHeight = ((double) this.getMaxTime() - this.getTimer()) / 8;
         livingEntity.setDeltaMovement(0, this.getTimer() > (getMaxTime() - 10) ? getMaxHeight : 0 , 0);
     }
 
     private void explosionHandler(LivingEntity targetEntity, ServerLevel serverLevel) {
-        //Damage Applied To Effected second ones For Around
-        var pAmplifier = getDamage();
-        DamageUtils.damageWithJahdoo(targetEntity, pAmplifier, getElement().damageTypeResourceKey());
+        doDamage(targetEntity, serverLevel);
         targetEntity.level().getNearbyEntities(
             LivingEntity.class,
             TargetingConditions.DEFAULT,
             targetEntity,
-            targetEntity.getBoundingBox().inflate(targetEntity.getBbWidth())
+            targetEntity.getBoundingBox().inflate(3)
         ).forEach(
             livingEntity -> {
-                if(avoidOwner(livingEntity)) DamageUtils.damageWithJahdoo(livingEntity, getOwner(serverLevel), (double) pAmplifier / 2, getElement().damageTypeResourceKey());
+                if(avoidOwner(livingEntity)) doDamage(livingEntity, serverLevel, getDamage()/2);
             }
         );
         SoundHelpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), getElement().sound(), SoundSource.NEUTRAL, 1.2F, 1F);

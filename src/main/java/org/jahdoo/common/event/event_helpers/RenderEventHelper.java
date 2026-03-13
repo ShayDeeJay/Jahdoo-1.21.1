@@ -13,9 +13,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -32,8 +30,8 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.common.registers.mod.EntityEffectReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.magic.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.trial_nexus.magic.abilities_combat.frostbolts.FrostboltsAbility;
 import org.jahdoo.trial_nexus.utils.Configuration;
@@ -49,6 +47,7 @@ import java.util.UUID;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.common.client.RenderHelpers.drawHealthBar;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
+import static org.jahdoo.common.event.ClientEvents.getMagicCircle;
 import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
 
 public class RenderEventHelper {
@@ -123,15 +122,16 @@ public class RenderEventHelper {
         var elementByWandType = SharedUI.getElementWithType(ability.get(), stack);
         if (!isCaterItem || !hitSurface || elementByWandType == null) return;
 
-        var colour = elementByWandType.textColourB();
+        var colour = elementByWandType.partColourB();
         pose.pushPose();
         pose.translate(-view.x(), -view.y(), -view.z());
         pose.pushPose();
         pose.translate(pick.getLocation().x, pick.getLocation().y, pick.getLocation().z);
         pose.translate(0, 0.12f, 0);
         pose.rotateAround(Axis.YP.rotationDegrees(event.getRenderTick() + event.getPartialTick().getRealtimeDeltaTicks()), 0, 0, 0);
+        pose.mulPose(Axis.XP.rotationDegrees(180));
         drawTexture(pose.last(), buffer, FULL_BRIGHT, (float) scale, JahdooHelpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(155, colour));
-        drawTexture(pose.last(), buffer, FULL_BRIGHT, (float) scale, JahdooHelpers.res("textures/entity/target.png"), FastColor.ARGB32.color(155, colour));
+        drawTexture(pose.last(), buffer, FULL_BRIGHT, (float) scale, JahdooHelpers.res("textures/entity/" + "a" + ".png"), FastColor.ARGB32.color(155, colour));
         pose.popPose();
         pose.popPose();
     }
@@ -172,33 +172,41 @@ public class RenderEventHelper {
     }
 
     public static void renderHealthBar(RenderLivingEvent.Pre event, LivingEntity entity, Minecraft instance, PoseStack poseStack) {
-        var getConfig = Configuration.SHOW_HOSTILE_ONLY.get();
-        var getCheck = switch (getConfig){
-            case "Hostile" -> entity instanceof Monster || entity instanceof ITamableEntity || entity instanceof NeutralMob;
-            case "Nexus Trial Only" -> LevelGenerator.isNexus(entity.level());
-            case "All" -> true;
-            default -> false;
-        };
 
-        if(getCheck){
-            var d0 = instance.getEntityRenderDispatcher().distanceToSqr(entity);
-            if (!(d0 > (double) 3096.0F)) {
-                if (entity != instance.player) {
-                    var z = Math.min(entity.getBbWidth() / 2F, 0.5F);
-                    var getByAllied = getHealthHolderIcon(entity, instance.player);
+        var d0 = instance.getEntityRenderDispatcher().distanceToSqr(entity);
+        if (!(d0 > (double) 3096.0F)) {
+            if (entity != instance.player) {
+                var z = Math.min(entity.getBbWidth() / 2F, 0.5F);
+                var getByAllied = getHealthHolderIcon(entity, instance.player);
 
+                poseStack.pushPose();
+                poseStack.translate(0, entity.getBbHeight() + 0.5, 0);
+                poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
+                poseStack.mulPose(Axis.XP.rotation(-1.5f));
+                poseStack.scale(z, z, z);
+                drawHealthBar(poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth(), getByAllied);
+                poseStack.popPose();
+
+                for (var hasEffect : EntityEffectReg.getHasEffects(entity)) {
+                    var scale = 1.5F;
                     poseStack.pushPose();
-                    poseStack.translate(0, entity.getBbHeight() + 0.5, 0);
-                    poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
-                    poseStack.mulPose(Axis.XP.rotation(-1.5f));
-                    poseStack.scale(z, z, z);
-                    drawHealthBar(poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth(), getByAllied);
+
+                    if(hasEffect.equals(EntityEffectReg.MYSTIC_EFFECT.get())){
+                        poseStack.translate(0, entity.getBbHeight() / 2, 0);
+                        poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
+                        poseStack.mulPose(Axis.XP.rotation(-1.5f));
+                    } else {
+                        poseStack.translate(0, 0.1, 0);
+                        poseStack.mulPose(Axis.XP.rotation(160.2f));
+                    }
+
+                    poseStack.scale(scale,scale,scale);
+                    getMagicCircle(entity, event.getPartialTick(), poseStack, event.getMultiBufferSource(), hasEffect);
                     poseStack.popPose();
                 }
             }
         }
     }
-
 
     public static void renderChampionVisual(RenderLivingEvent.Pre livingEvent) {
         var entity = livingEvent.getEntity();
