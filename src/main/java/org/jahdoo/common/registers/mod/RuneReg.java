@@ -10,8 +10,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.items.runes.AbstractRune;
 import org.jahdoo.common.items.runes.BlankRune;
 import org.jahdoo.common.items.runes.aether_rune.ManaPoolRune;
@@ -21,28 +19,34 @@ import org.jahdoo.common.items.runes.cosmic_rune.MagicDamageRune;
 import org.jahdoo.common.items.runes.cosmic_rune.ManaCostReductionRune;
 import org.jahdoo.common.items.runes.elemental_rune.frost_runes.FrostCooldownRune;
 import org.jahdoo.common.items.runes.elemental_rune.frost_runes.FrostDamageRune;
+import org.jahdoo.common.items.runes.elemental_rune.frost_runes.FrostEffectRune;
 import org.jahdoo.common.items.runes.elemental_rune.frost_runes.FrostManaRune;
 import org.jahdoo.common.items.runes.elemental_rune.inferno_runes.InfernoCooldownRune;
 import org.jahdoo.common.items.runes.elemental_rune.inferno_runes.InfernoDamageRune;
+import org.jahdoo.common.items.runes.elemental_rune.inferno_runes.InfernoEffectRune;
 import org.jahdoo.common.items.runes.elemental_rune.inferno_runes.InfernoManaRune;
 import org.jahdoo.common.items.runes.elemental_rune.mystic_runes.MysticCooldownRune;
 import org.jahdoo.common.items.runes.elemental_rune.mystic_runes.MysticDamageRune;
+import org.jahdoo.common.items.runes.elemental_rune.mystic_runes.MysticEffectRune;
 import org.jahdoo.common.items.runes.elemental_rune.mystic_runes.MysticManaRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityCooldownRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityDamageRune;
+import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityEffectRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityManaRune;
 import org.jahdoo.common.items.runes.perk_rune.DestinyBondRune;
 import org.jahdoo.common.items.runes.perk_rune.MaxAbsorptionRune;
 import org.jahdoo.common.items.runes.perk_rune.MaxHealthRune;
-import org.jahdoo.common.items.runes.perk_rune.MovementSpeedRune;
 import org.jahdoo.common.items.runes.resilience_rune.FlurryRune;
 import org.jahdoo.common.items.runes.resilience_rune.ResilienceRune;
 import org.jahdoo.common.items.runes.resilience_rune.StrikerRune;
 import org.jahdoo.common.items.runes.rune_data.RuneCategories;
+import org.jahdoo.common.items.runes.skill_rune.*;
 import org.jahdoo.common.items.runes.sympathiser_rune.AbsorptionHeartRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.CastHealRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.SkipCooldownRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.SkipManaRune;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.Helpers;
 
 import java.util.Arrays;
@@ -65,8 +69,24 @@ public class RuneReg {
         return RUNE.register(rune.get().runeId(), rune);
     }
 
+    public static Optional<AbstractRune> getByAttributeId(String attributeId) {
+        return REGISTRY.stream().filter(s -> s.attributeHolder().value().getDescriptionId().equals(attributeId)).findFirst();
+    }
+
+    public static List<AbstractRune> getAllAttributes() {
+        return REGISTRY.stream().toList();
+    }
+
+    public static List<AbstractRune> getAllEffectAttributes() {
+        return REGISTRY.stream().filter(s -> s.runeCategory().equals(RuneCategories.EFFECT)).toList();
+    }
+
+    public static List<AbstractRune> getAllSkillAttributes() {
+        return REGISTRY.stream().filter(s -> s.runeCategory().equals(RuneCategories.SKILL)).toList();
+    }
+
     public static List<AbstractRune> getAllRunes() {
-        return REGISTRY.stream().filter(s -> s != RuneReg.BLANK_RUNE.get()).toList();
+        return REGISTRY.stream().filter(s -> !s.runeCategory().getIsDummy()).toList();
     }
 
     public static AbstractRune getRuneFromId(String runeId) {
@@ -75,7 +95,7 @@ public class RuneReg {
     }
 
     public static AbstractRune getRuneFromAttribute(Holder<Attribute> attributeHolder) {
-        var list = getAllRunes().stream().filter(s -> s.attributeHolder().equals(attributeHolder)).toList();
+        var list = getAllAttributes().stream().filter(s -> s.attributeHolder().equals(attributeHolder)).toList();
         return list.isEmpty() ? null : Helpers.listRandom(list);
     }
 
@@ -95,7 +115,6 @@ public class RuneReg {
             .toList();
     }
 
-
     //Aether Runes
     public static final DeferredHolder<AbstractRune, AbstractRune> MANA_POOL_RUNE =
         registerRune(ManaPoolRune::new);
@@ -114,6 +133,9 @@ public class RuneReg {
         registerRune(ManaCostReductionRune::new);
 
     //Inferno Runes
+    public static final DeferredHolder<AbstractRune, AbstractRune> INFERNO_EFFECT_RUNE =
+        registerRune(InfernoEffectRune::new);
+
     public static final DeferredHolder<AbstractRune, AbstractRune> INFERNO_COOLDOWN_RUNE =
         registerRune(InfernoCooldownRune::new);
 
@@ -124,6 +146,9 @@ public class RuneReg {
         registerRune(InfernoDamageRune::new);
 
     //Frost Runes
+    public static final DeferredHolder<AbstractRune, AbstractRune> FROST_EFFECT_RUNE =
+        registerRune(FrostEffectRune::new);
+
     public static final DeferredHolder<AbstractRune, AbstractRune> FROST_COOLDOWN_RUNE =
         registerRune(FrostCooldownRune::new);
 
@@ -134,6 +159,9 @@ public class RuneReg {
         registerRune(FrostDamageRune::new);
 
     //Mystic Runes
+    public static final DeferredHolder<AbstractRune, AbstractRune> MYSTIC_EFFECT_RUNE =
+        registerRune(MysticEffectRune::new);
+
     public static final DeferredHolder<AbstractRune, AbstractRune> MYSTIC_COOLDOWN_RUNE =
         registerRune(MysticCooldownRune::new);
 
@@ -144,6 +172,9 @@ public class RuneReg {
         registerRune(MysticDamageRune::new);
 
     //Vitality Runes
+    public static final DeferredHolder<AbstractRune, AbstractRune> VITALITY_EFFECT_RUNE =
+        registerRune(VitalityEffectRune::new);
+
     public static final DeferredHolder<AbstractRune, AbstractRune> VITALITY_COOLDOWN_RUNE =
         registerRune(VitalityCooldownRune::new);
 
@@ -162,9 +193,6 @@ public class RuneReg {
 
     public static final DeferredHolder<AbstractRune, AbstractRune> MAX_HEALTH_RUNE =
         registerRune(MaxHealthRune::new);
-
-    public static final DeferredHolder<AbstractRune, AbstractRune> MOVEMENT_SPEED_RUNE =
-        registerRune(MovementSpeedRune::new);
 
     public static final DeferredHolder<AbstractRune, AbstractRune> RESILIENCE =
         registerRune(ResilienceRune::new);
@@ -190,6 +218,26 @@ public class RuneReg {
 
     public static final DeferredHolder<AbstractRune, AbstractRune> BLANK_RUNE =
         registerRune(BlankRune::new);
+
+    //Skill Rune
+    public static final DeferredHolder<AbstractRune, AbstractRune> SWIFT_RUNE =
+        registerRune(SwiftRune::new);
+
+    public static final DeferredHolder<AbstractRune, AbstractRune> CLIMBER_RUNE =
+        registerRune(ClimberRune::new);
+
+    public static final DeferredHolder<AbstractRune, AbstractRune> RUSH_RUNE =
+        registerRune(RushRune::new);
+
+    public static final DeferredHolder<AbstractRune, AbstractRune> BLINK_RUNE =
+        registerRune(BlinkRune::new);
+
+    public static final DeferredHolder<AbstractRune, AbstractRune> MAGE_FLIGHT_RUNE =
+        registerRune(MageFlightRune::new);
+
+    public static final DeferredHolder<AbstractRune, AbstractRune> PHANTOM_JUMP_RUNE =
+        registerRune(PhantomJumpRune::new);
+
 
     public static void register(IEventBus eventBus) {
         RUNE.register(eventBus);

@@ -5,27 +5,30 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.trial_nexus.utils.Icons;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.DamageTypeReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractElementEffect;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
+import org.jahdoo.trial_nexus.attachments.effects.VitalityEffect;
+import org.jahdoo.trial_nexus.utils.Icons;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.common.registers.EffectReg.VITALITY_EFFECT;
 import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_VITALITY;
+import static org.jahdoo.trial_nexus.utils.Icons.GUI_BUTTON_VITALITY_SQUARE;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public class Vitality extends AbstractElement {
 
-    ResourceLocation abilityId = res("vitality");
+    public static final String abilityId = "vitality";
 
     @Override
     public ResourceLocation abilityResource() {
-        return abilityId;
+        return res(abilityId);
     }
 
     @Override
@@ -59,6 +62,11 @@ public class Vitality extends AbstractElement {
     }
 
     @Override
+    public AttachmentType<AbstractEntityEffect> attachmentType() {
+        return AttachmentReg.VITALITY_EFFECT.get();
+    }
+
+    @Override
     public Item getWand() {
         return WAND_ITEM_VITALITY.get();
     }
@@ -69,8 +77,8 @@ public class Vitality extends AbstractElement {
     }
 
     @Override
-    public Holder<MobEffect> effect() {
-        return VITALITY_EFFECT.getDelegate();
+    public AbstractElementEffect aEffect() {
+        return new VitalityEffect();
     }
 
     @Override
@@ -105,7 +113,12 @@ public class Vitality extends AbstractElement {
     }
 
     @Override
-    public @Nullable ResourceLocation iconTexture() {
+    public ResourceLocation iconTexture() {
         return Icons.VITALITY_ICON;
+    }
+
+    @Override
+    public ResourceLocation backgroundTexture() {
+        return GUI_BUTTON_VITALITY_SQUARE;
     }
 }

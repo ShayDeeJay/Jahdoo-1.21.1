@@ -14,12 +14,10 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
@@ -167,11 +165,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         if(!this.getHitEntities.contains(hitEntity.getUUID())){
             this.getHitEntities.add(hitEntity.getUUID());
             DamageUtils.damageWithJahdoo(hitEntity, this.element.getOwner(), this.damage, getElementType().damageTypeResourceKey());
-            if (!hitEntity.hasEffect(EffectReg.FROST_EFFECT.getDelegate())) {
-                hitEntity.addEffect(
-                    new JahdooMobEffect(EffectReg.FROST_EFFECT.getDelegate(), (int) effectDuration, (int) this.effectStrength)
-                );
-            }
+            getElementType().aEffect().setEffect((LivingEntity) this.element.getOwner(), hitEntity, (int) effectDuration);
         }
     }
 

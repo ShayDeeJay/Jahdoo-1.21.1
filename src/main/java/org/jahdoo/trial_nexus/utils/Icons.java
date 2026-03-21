@@ -230,16 +230,19 @@ public class Icons {
     public static final ResourceLocation RUSH =
         texture(SKILLS + "rush");
 
+    public static final ResourceLocation SWIFT =
+        texture(SKILLS + "swift");
+
     public static final ResourceLocation CLIMBER =
         texture(SKILLS + "climber");
 
-    public static final ResourceLocation DRIP_WALK =
+    public static final ResourceLocation LIQUISTEP =
         texture(SKILLS + "drip_walk");
 
     public static final ResourceLocation REBOUND =
         texture(SKILLS + "rebound");
 
-    public static final ResourceLocation TRIPLE_JUMP =
+    public static final ResourceLocation PHANTOM_JUMP =
         texture(SKILLS + "triple_jump");
 
     public static final ResourceLocation GUI_BUTTON_MYSTIC =

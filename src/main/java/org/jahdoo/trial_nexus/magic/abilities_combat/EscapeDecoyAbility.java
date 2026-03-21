@@ -6,14 +6,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.decoy.Decoy;
-import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.Ability;
 import org.jahdoo.trial_nexus.magic.AbilityBuilder;
 import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
@@ -91,7 +90,6 @@ public class EscapeDecoyAbility extends Ability {
         decoy.setMaxLifetime((int) getTag(player, LIFETIME));
         player.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, 6));
         player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 0));
-        player.addEffect(new JahdooMobEffect(EffectReg.CLIMBER, duration, 1));
 
         JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), getElemenType().sound(), 1, 0.8f);
         JahdooHelpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 2, 0.6F);

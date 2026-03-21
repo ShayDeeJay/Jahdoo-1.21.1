@@ -11,7 +11,6 @@ import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
@@ -63,7 +62,6 @@ public class RuneItem extends BaseItem {
     public List<Component> hoverToolTip(ItemStack stack, TooltipContext context, List<Component> tooltips) {
         var tooltipComponents = new ArrayList<Component>();
         var component = standAloneAttributes(stack);
-        var description = RuneHelpers.getDescription(stack);
         var hasTier = RuneHelpers.getTier(stack);
         var componentRune = JahdooRarity.attachRuneTierTooltip(stack);
         var carriedRuneCost = String.valueOf(RuneHelpers.getCostFromRune(stack));
@@ -77,9 +75,6 @@ public class RuneItem extends BaseItem {
             tooltipComponents.add(component);
         }
 
-        if(!description.getString().isEmpty() && !AbilityComponentHelper.holdKey(tooltipComponents, false)) {
-            tooltipComponents.add(TextHelpers.withStyleComponent(description.getString(), ColourHelpers.getHeaderColour()));
-        }
 
         return tooltipComponents;
     }

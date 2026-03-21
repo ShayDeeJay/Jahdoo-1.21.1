@@ -20,11 +20,10 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.magic.SharedFireProperties;
 import org.jahdoo.trial_nexus.magic.abilities_combat.armageddon.ArmageddonModule;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
@@ -39,7 +38,6 @@ import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
@@ -133,8 +131,7 @@ public class FireBall extends DefaultEntityBehaviour {
         var chance = effectChance == 0 ? 100 : effectChance;
 
         if (Random.nextInt(0, (int) chance) == 0) {
-            var instance = new JahdooMobEffect(INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength);
-            hitEntity.addEffect(instance);
+            getElementType().aEffect().setEffect((LivingEntity) element.getOwner(), hitEntity, (int) effectDuration);
         }
 
         onHit(hitEntity);

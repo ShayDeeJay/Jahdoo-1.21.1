@@ -47,6 +47,7 @@ import java.util.*;
 
 import static java.lang.String.valueOf;
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
 import static net.minecraft.world.entity.ai.attributes.Attributes.STEP_HEIGHT;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
@@ -629,20 +630,42 @@ public class CasterData implements IAttachment {
     public static void addStep(Player player){
         var attributes = player.getAttributes();
         var stepSkill = JahdooHelpers.res("step_skill");
+        var stepHeight = STEP_HEIGHT;
         if (hasSkill(player, SkillReg.CLIMBER.get().id())) {
-            if(!attributes.hasModifier(STEP_HEIGHT, stepSkill)){
+            var value = attributes.getValue(AttributeReg.CLIMBER);
+            var current = attributes.getValue(stepHeight);
+            if(value != current){
                 var modifier = new AttributeModifier(stepSkill, 1, AttributeModifier.Operation.ADD_VALUE);
                 Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
-                multiMap.put(STEP_HEIGHT, modifier);
+                multiMap.put(stepHeight, modifier);
                 attributes.addTransientAttributeModifiers(multiMap);
-                JahdooHelpers.addTransientAttribute(player, 1, "step_skill", STEP_HEIGHT);
+                JahdooHelpers.addTransientAttribute(player, value, "step_skill", stepHeight);
             }
-        } else if (attributes.hasModifier(STEP_HEIGHT, stepSkill)) {
-            Objects.requireNonNull(player.getAttribute(STEP_HEIGHT)).removeModifiers();
+        } else if (attributes.hasModifier(stepHeight, stepSkill)) {
+            Objects.requireNonNull(player.getAttribute(stepHeight)).removeModifiers();
         }
     }
 
-    public static void removeStep(Player player){
+    public static void addSpeed(Player player){
+        var attributes = player.getAttributes();
+        var stepSkill = JahdooHelpers.res("step_skill");
+        var type = MOVEMENT_SPEED;
+        var current = attributes.getValue(type);
+
+        if (hasSkill(player, SkillReg.SWIFT.get().id())) {
+            var baseValue = attributes.getBaseValue(type);
+            var value = (baseValue/100) * attributes.getValue(AttributeReg.SWIFT);
+            var value1 = baseValue + value;
+            if(value1 != current){
+                var modifier = new AttributeModifier(stepSkill, 1, AttributeModifier.Operation.ADD_VALUE);
+                Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
+                multiMap.put(type, modifier);
+                attributes.addTransientAttributeModifiers(multiMap);
+                JahdooHelpers.addTransientAttribute(player, value, "step_skill", type);
+            }
+        } else if (attributes.hasModifier(type, stepSkill)) {
+            Objects.requireNonNull(player.getAttribute(type)).removeModifiers();
+        }
     }
 
     public static void addExperience(Player player, int exp){
@@ -653,6 +676,7 @@ public class CasterData implements IAttachment {
 
     public static void cooldownTickEvent(ServerPlayer serverPlayer){
         CasterData.addStep(serverPlayer);
+        CasterData.addSpeed(serverPlayer);
 
         var casterData = serverPlayer.getData(CASTER_DATA);
         if(!casterData.abilityCooldowns.isEmpty()){

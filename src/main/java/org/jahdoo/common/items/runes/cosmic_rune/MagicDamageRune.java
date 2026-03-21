@@ -7,7 +7,8 @@ import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 
-public class MagicDamageRune extends AbstractCosmicRune{
+public class MagicDamageRune extends AbstractCosmicRune {
+
     @Override
     public Holder<Attribute> attributeHolder() {
         return MAGIC_DAMAGE_MULTIPLIER.getDelegate();
@@ -24,12 +25,8 @@ public class MagicDamageRune extends AbstractCosmicRune{
     }
 
     @Override
-    public String runeDescription() {
-        return "";
-    }
-
-    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomDamage();
     }
+
 }

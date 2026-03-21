@@ -5,9 +5,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractElementEffect;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import javax.annotation.Nullable;
@@ -25,8 +27,9 @@ public abstract class AbstractElement {
     @Nullable
     public abstract ResourceLocation projectileTexture();
 
-    @Nullable
     public abstract ResourceLocation iconTexture();
+
+    public abstract ResourceLocation backgroundTexture();
 
     public abstract int id();
 
@@ -42,7 +45,13 @@ public abstract class AbstractElement {
 
     public abstract SoundEvent sound();
 
-    public abstract Holder<MobEffect> effect();
+    public AttachmentType<AbstractEntityEffect> attachmentType() {
+        return null;
+    };
+
+    public AbstractElementEffect aEffect(){
+        return null;
+    };
 
     public abstract ResourceLocation abilityResource();
 

@@ -17,9 +17,7 @@ public class RenderHelpers {
 
     public static void drawTexture(PoseStack.Pose pose, MultiBufferSource bufferSource, int light, float width, ResourceLocation texture, int colour) {
         var poseMatrix = pose.pose();
-//        var consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(texture, false));
         var consumer = bufferSource.getBuffer(RenderType.itemEntityTranslucentCull(texture));
-//        var consumer = bufferSource.getBuffer(RenderType.entityTranslucentCull(texture));
         var halfWidth = width * 0.5f;
 
         consumer.addVertex(poseMatrix, -halfWidth, 0.05f, -halfWidth).setColor(colour).setUv(0f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
@@ -28,10 +26,9 @@ public class RenderHelpers {
         consumer.addVertex(poseMatrix, -halfWidth, 0.05f, halfWidth).setColor(colour).setUv(0f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
     }
 
-    public static void drawHealthBar(PoseStack.Pose pose, MultiBufferSource bufferSource, float health, float maxHealth, ResourceLocation holder) {
+    public static void drawHealthBar(PoseStack poseStack, MultiBufferSource bufferSource, float health, float maxHealth, ResourceLocation holder) {
 
         var healthPercent = Mth.clamp(health / maxHealth, 0f, 1f);
-        var poseMatrix = pose.pose();
         var packedLight = FULL_BRIGHT;
 
         // --- Define logical sizes (in world units) ---
@@ -42,19 +39,20 @@ public class RenderHelpers {
 
         var containerHalfWidth = containerWidth / 2f;
         var containerHalfHeight = containerHeight / 2f;
+        var pose = poseStack.last().pose();
 
         // --- Draw container background ---
         var containerConsumer = bufferSource.getBuffer(RenderType.entityCutout(holder));
-        containerConsumer.addVertex(poseMatrix, -containerHalfWidth, -.1f, -containerHalfHeight)
+        containerConsumer.addVertex(pose, -containerHalfWidth, -.1f, -containerHalfHeight)
             .setColor(1F, 1F, 1F, 1F).setUv(0f, 1f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        containerConsumer.addVertex(poseMatrix, containerHalfWidth, -.1f, -containerHalfHeight)
+        containerConsumer.addVertex(pose, containerHalfWidth, -.1f, -containerHalfHeight)
             .setColor(1F, 1F, 1F, 1F).setUv(1f, 1f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        containerConsumer.addVertex(poseMatrix, containerHalfWidth, -.1f, containerHalfHeight)
+        containerConsumer.addVertex(pose, containerHalfWidth, -.1f, containerHalfHeight)
             .setColor(1F, 1F, 1F, 1F).setUv(1f, 0f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        containerConsumer.addVertex(poseMatrix, -containerHalfWidth, -.1f, containerHalfHeight)
+        containerConsumer.addVertex(pose, -containerHalfWidth, -.1f, containerHalfHeight)
             .setColor(1F, 1F, 1F, 1F).setUv(0f, 0f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
 
@@ -67,16 +65,16 @@ public class RenderHelpers {
         var zOffset = -0.0005f;
         var yBase = -.1f;
 
-        barConsumer.addVertex(poseMatrix, barLeft, yBase + zOffset, -barHalfHeight)
+        barConsumer.addVertex(pose, barLeft, yBase + zOffset, -barHalfHeight)
             .setColor(1F, 1F, 1F, 1F).setUv(0f, 1f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        barConsumer.addVertex(poseMatrix, barRight, yBase + zOffset, -barHalfHeight)
+        barConsumer.addVertex(pose, barRight, yBase + zOffset, -barHalfHeight)
             .setColor(1F, 1F, 1F, 1F).setUv(healthPercent, 1f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        barConsumer.addVertex(poseMatrix, barRight, yBase + zOffset, barHalfHeight)
+        barConsumer.addVertex(pose, barRight, yBase + zOffset, barHalfHeight)
             .setColor(1F, 1F, 1F, 1F).setUv(healthPercent, 0f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        barConsumer.addVertex(poseMatrix, barLeft, yBase + zOffset, barHalfHeight)
+        barConsumer.addVertex(pose, barLeft, yBase + zOffset, barHalfHeight)
             .setColor(1F, 1F, 1F, 1F).setUv(0f, 0f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
     }

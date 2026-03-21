@@ -64,8 +64,8 @@ public class CommonSetup {
         ComponentReg.register(modEventBus);
         EntityDataReg.register(modEventBus);
         AbilityReg.register(modEventBus);
-        EntityEffectReg.register(modEventBus);
         ElementReg.register(modEventBus);
+        EntityEffectReg.register(modEventBus);
         LevelBoonReg.register(modEventBus);
         PlayerBoonReg.register(modEventBus);
         SkillReg.register(modEventBus);

@@ -24,16 +24,6 @@ public class FlurryRune extends ProtectorRune {
     }
 
     @Override
-    public double baseValue() {
-        return 4;
-    }
-
-    @Override
-    public String runeDescription() {
-        return "";
-    }
-
-    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomDamage();
     }

@@ -31,11 +31,6 @@ public class BlankRune extends AbstractRune{
     }
 
     @Override
-    public String runeDescription() {
-        return "";
-    }
-
-    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return 0;
     }
@@ -44,4 +39,5 @@ public class BlankRune extends AbstractRune{
     public RuneCategories runeCategory() {
         return RuneCategories.EMPTY;
     }
+
 }

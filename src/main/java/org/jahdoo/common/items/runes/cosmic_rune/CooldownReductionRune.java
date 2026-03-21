@@ -8,6 +8,7 @@ import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 import static org.jahdoo.common.registers.AttributeReg.COOLDOWN_REDUCTION;
 
 public class CooldownReductionRune extends AbstractCosmicRune{
+
     @Override
     public Holder<Attribute> attributeHolder() {
         return COOLDOWN_REDUCTION.getDelegate();
@@ -24,12 +25,8 @@ public class CooldownReductionRune extends AbstractCosmicRune{
     }
 
     @Override
-    public String runeDescription() {
-        return "";
-    }
-
-    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomCooldown();
     }
+
 }

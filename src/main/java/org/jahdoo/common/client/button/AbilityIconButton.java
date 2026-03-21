@@ -33,18 +33,24 @@ public class AbilityIconButton extends ImageButton {
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
         var offset = (easedValue - defaultSize) / 2;
+
         iconHoverEffect(pPartialTick);
         pGuiGraphics.blit(this.sprites.enabled(), this.getX() - offset , this.getY() - offset , 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
+
         if(isSelected & sizes >= totalSize) sizes = totalSize;
     }
 
     private void iconHoverEffect(float pPartialTick) {
         var fps = Minecraft.getInstance().getFps();
         var tick = (Math.max(9 - (fps/10), 2));
+
         if (this.isFocused()) {
             if(!isSelected) this.runnable.run();
             sizes = Math.min(sizes + (tick + pPartialTick), totalSize);
-        } else sizes = Math.max(sizes - (tick + pPartialTick), defaultSize);
+            return;
+        }
+
+        sizes = Math.max(sizes - (tick + pPartialTick), defaultSize);
     }
 
 

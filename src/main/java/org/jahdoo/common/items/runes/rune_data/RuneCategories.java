@@ -5,24 +5,32 @@ import org.shaydee.shaydeeapi.helpers.ColourHelpers;
 
 public enum RuneCategories {
 
-    ELEMENTAL("elemental", 5, 1, -1),
-    PERK("perk", 10, 3, ColourHelpers.getPerkGreen()),
-    AETHER("aether", 15, 0, ColourHelpers.getAetherBlue()),
-    RESILIENCE("protector", 20, 2, ColourHelpers.getNegativeRed()),
-    COSMIC("cosmic", 25, 4, ColourHelpers.getCosmicPurple()),
-    INFINITY("infinity", 30, 5, ColourHelpers.getChampionGold()),
-    EMPTY("blank", 500, -1, ColourHelpers.getOffWhite());
+    ELEMENTAL("elemental", 5, 1, -1, false),
+    PERK("perk", 10, 3, ColourHelpers.getPerkGreen(), false),
+    AETHER("aether", 15, 0, ColourHelpers.getAetherBlue(),  false),
+    RESILIENCE("protector", 20, 2, ColourHelpers.getNegativeRed(), false),
+    COSMIC("cosmic", 25, 4, ColourHelpers.getCosmicPurple(),  false),
+    INFINITY("infinity", 30, 5, ColourHelpers.getChampionGold(), false),
+    EFFECT("effect", 500, -1, -1, true),
+    SKILL("skill", 500, -1, ColourHelpers.getUniqueA(), true),
+    EMPTY("blank", 500, -1, ColourHelpers.getOffWhite(), true);
 
     private final String name;
     private final int cost;
     private final int model;
     private final int colour;
+    private final boolean isDummy;
 
-    RuneCategories(String name, int cost, int model, int colour) {
+    RuneCategories(String name, int cost, int model, int colour, boolean isDummy) {
         this.name = name;
         this.cost = cost;
         this.model = model;
         this.colour = colour;
+        this.isDummy = isDummy;
+    }
+
+    public boolean getIsDummy() {
+        return isDummy;
     }
 
     public String getName() {

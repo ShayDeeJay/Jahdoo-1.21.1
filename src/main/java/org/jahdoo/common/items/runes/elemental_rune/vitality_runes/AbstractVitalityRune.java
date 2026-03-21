@@ -26,4 +26,5 @@ public abstract class AbstractVitalityRune extends AbstractRune {
     public int runeColour() {
         return getElement().textColourA();
     }
+
 }

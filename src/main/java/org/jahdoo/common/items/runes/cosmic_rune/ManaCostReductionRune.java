@@ -8,6 +8,7 @@ import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 import static org.jahdoo.common.registers.AttributeReg.MANA_COST_REDUCTION;
 
 public class ManaCostReductionRune extends AbstractCosmicRune{
+
     @Override
     public Holder<Attribute> attributeHolder() {
         return MANA_COST_REDUCTION.getDelegate();
@@ -24,12 +25,8 @@ public class ManaCostReductionRune extends AbstractCosmicRune{
     }
 
     @Override
-    public String runeDescription() {
-        return "";
-    }
-
-    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomManaReduction();
     }
+
 }

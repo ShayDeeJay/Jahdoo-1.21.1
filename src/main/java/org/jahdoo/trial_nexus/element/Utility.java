@@ -5,24 +5,22 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.common.registers.DamageTypeReg;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.trial_nexus.utils.Icons;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.minecraft.sounds.SoundEvents.AXE_SCRAPE;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.common.registers.EffectReg.MYSTIC_EFFECT;
+import static org.jahdoo.trial_nexus.utils.Icons.GUI_BUTTON_UTILITY_SQUARE;
 
 public class Utility extends AbstractElement {
-    ResourceLocation abilityId = JahdooHelpers.res("utility");
+    public static final String abilityId = "utility";
 
     @Override
     public ResourceLocation abilityResource() {
-        return abilityId;
+        return JahdooHelpers.res(abilityId);
     }
 
     @Override
@@ -58,11 +56,6 @@ public class Utility extends AbstractElement {
     @Override
     public SoundEvent sound() {
         return AXE_SCRAPE;
-    }
-
-    @Override
-    public Holder<MobEffect> effect() {
-        return MYSTIC_EFFECT.getDelegate();
     }
 
     @Override
@@ -102,7 +95,12 @@ public class Utility extends AbstractElement {
     }
 
     @Override
-    public @Nullable ResourceLocation iconTexture() {
+    public ResourceLocation iconTexture() {
         return Icons.UTILITY_ICON;
+    }
+
+    @Override
+    public ResourceLocation backgroundTexture() {
+        return GUI_BUTTON_UTILITY_SQUARE;
     }
 }

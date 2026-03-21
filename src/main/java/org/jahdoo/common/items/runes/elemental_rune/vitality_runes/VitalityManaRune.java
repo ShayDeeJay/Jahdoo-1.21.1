@@ -25,11 +25,6 @@ public class VitalityManaRune extends AbstractVitalityRune {
     }
 
     @Override
-    public String runeDescription() {
-        return "";
-    }
-
-    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomManaReduction();
     }

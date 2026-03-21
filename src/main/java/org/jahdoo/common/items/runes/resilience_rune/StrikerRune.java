@@ -23,12 +23,6 @@ public class StrikerRune extends ProtectorRune {
         return "striker_rune";
     }
 
-
-    @Override
-    public String runeDescription() {
-        return "";
-    }
-
     @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomHealChance();

@@ -54,7 +54,6 @@ public class PhantomJumpMagicCircleC2SP implements CustomPacketPayload {
             serverLevel.addFreshEntity(cloud);
 
             //Place Mage Flight on cooldown so it doesn't cross over with movement of PhantomJump
-            player.getData(AttachmentReg.MAGE_FLIGHT.get()).setJumpKeyDown(false);
             player.getData(AttachmentReg.CASTER_DATA).addCooldown(player, MageFlightSkill.MAGE_FLIGHT, 10);
 
             cloud.setEntityType(PHANTOM_JUMP);

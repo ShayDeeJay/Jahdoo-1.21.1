@@ -1,32 +1,22 @@
 package org.jahdoo.trial_nexus.attachments.effects;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.Inferno;
 import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
-import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.trial_nexus.magic.effects.EffectHelpers.setEffectParticle;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
-public class InfernoEffect extends AbstractEntityEffect {
-
-    public static final String INFERNO_EFFECT = "inferno_effect";
-
-    @Override
-    public String id() {
-        return INFERNO_EFFECT;
-    }
+public class InfernoEffect extends AbstractElementEffect {
 
     @Override
     public AbstractElement getElement() {
@@ -34,19 +24,24 @@ public class InfernoEffect extends AbstractEntityEffect {
     }
 
     @Override
+    public String getName() {
+        return Inferno.abilityId;
+    }
+
+    @Override
+    public void setEffect(LivingEntity applier, LivingEntity target, int time) {
+        applyInfernoEffect(applier, target, time);
+    }
+
+    @Override
+    public void setGreaterEffect(LivingEntity applier, LivingEntity target, int time) {
+        applyGreaterInfernoEffect(applier, target, time);
+    }
+
+    @Override
     public void greaterEffect(LivingEntity targetEntity) {
-        getOuterRingOfRadiusRandom(targetEntity.position(), 1.5, 10, pos -> setParticleNova(pos.add(0,0,0), targetEntity));
+        getOuterRingOfRadiusRandom(targetEntity.position(), getSecondaryValue() - 0.5, 10, pos -> setParticleNova(pos.add(0,0,0), targetEntity));
         novaDamageBehaviour(targetEntity);
-    }
-
-    @Override
-    public AttachmentType<AbstractEntityEffect> getAttachment() {
-        return AttachmentReg.INFERNO_EFFECT.get();
-    }
-
-    @Override
-    public ResourceLocation icon() {
-        return Icons.INFERNO_ICON;
     }
 
     @Override
@@ -64,11 +59,15 @@ public class InfernoEffect extends AbstractEntityEffect {
             TargetingConditions.DEFAULT,
             targetEntity,
             targetEntity.getBoundingBox()
-                .inflate(2,0,2)
-                .deflate(0,1,0)
+                .inflate(getSecondaryValue(), 0, getSecondaryValue())
+                .deflate(0, targetEntity.getBbHeight()/2 ,0)
         ).forEach(
             livingEntity -> {
-                if (avoidOwner(livingEntity)) setTypeEffect(InfernoEffect::new, livingEntity, livingEntity, false, 10, 10);
+                if (avoidOwner(livingEntity)) {
+                    if(targetEntity.level() instanceof ServerLevel serverLevel){
+                        applyInfernoEffect(getOwner(serverLevel), livingEntity, 50);
+                    }
+                }
             }
         );
     }

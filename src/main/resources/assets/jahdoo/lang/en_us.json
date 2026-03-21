@@ -191,35 +191,42 @@
   "key.assets.jahdoo.ability_screen": "Ability Selection",
   "key.assets.jahdoo.run_screen": "Run History",
 
-  "attribute.name.jahdoo.skills.mage_flight": "Mage Flight",
-  "attribute.name.jahdoo.skills.destiny_bond": "Destiny Bond",
-  "attribute.name.jahdoo.skills.triple_jump": "Triple Jump",
-
   "attribute.name.jahdoo.mana.no_mana_cost": "Ignore Mana Cost",
   "attribute.name.jahdoo.no_cooldown_cost": "Ignore Cooldown Cost",
   "attribute.name.jahdoo.cast.healer": "Heal On Cast",
   "attribute.name.jahdoo.cast.absorption": "Absorption On Cast",
   "attribute.name.jahdoo.resilience.resilience": "Resilience",
 
+  "attribute.name.jahdoo.skills.blink_range": "Blink Range",
+  "attribute.name.jahdoo.skills.mage_flight": "Mage Flight Strength",
+  "attribute.name.jahdoo.skills.phantom_jump": "Phantom Jump Multiplier",
+  "attribute.name.jahdoo.skills.rush": "Rush Distance",
+  "attribute.name.jahdoo.skills.climber": "Climber Height",
+  "attribute.name.jahdoo.skills.swift": "Swift Speed Bonus",
+
   "attribute.name.jahdoo.mana.mana_regen": "Mana Regen",
-  "attribute.name.jahdoo.fixed.mana.mana_pool": "Mana",
+  "attribute.name.jahdoo.mana.mana_pool": "Mana",
 
   "attribute.name.jahdoo.cooldown.cooldown_reduction": "All Cooldown Cost",
   "attribute.name.jahdoo.damage.damage_multiplier": "All Magic Damage",
   "attribute.name.jahdoo.mana.cost_reduction": "All Mana Cost",
 
+  "attribute.name.jahdoo.inferno.effect_burn_radius": "Burn Radius",
   "attribute.name.jahdoo.inferno_cooldown.cooldown_reduction": "Inferno Cooldown Cost",
   "attribute.name.jahdoo.inferno_damage.damage_multiplier": "Inferno Damage",
   "attribute.name.jahdoo.inferno_mana.cost_reduction": "Inferno Mana Cost",
 
+  "attribute.name.jahdoo.vitality.effect_heal_value": "Heal Value",
   "attribute.name.jahdoo.vitality_cooldown.cooldown_reduction": "Vitality Cooldown Cost",
   "attribute.name.jahdoo.vitality_damage.damage_multiplier": "Vitality Damage",
   "attribute.name.jahdoo.vitality_mana.cost_reduction": "Vitality Mana Cost",
 
+  "attribute.name.jahdoo.frost.effect_damage_chance": "Double Damage Chance",
   "attribute.name.jahdoo.frost_cooldown.cooldown_reduction": "Frost Cooldown Cost",
   "attribute.name.jahdoo.frost_damage.damage_multiplier": "Frost Damage",
   "attribute.name.jahdoo.frost_mana.cost_reduction": "Frost Mana Cost",
 
+  "attribute.name.jahdoo.mystic.effect_explosion": "Explosion Chance",
   "attribute.name.jahdoo.mystic_cooldown.cooldown_reduction": "Mystic Cooldown Cost",
   "attribute.name.jahdoo.mystic_damage.damage_multiplier": "Mystic Damage",
   "attribute.name.jahdoo.mystic_mana.cost_reduction": "Mystic Mana Cost",

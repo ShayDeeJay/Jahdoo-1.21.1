@@ -14,7 +14,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.EntityEffectReg;
-import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractElementEffect;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
@@ -53,10 +53,11 @@ public class ClientEvents {
         }
     }
 
-    public static void getMagicCircle(Entity entity, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, AbstractEntityEffect effect) {
+    public static void getMagicCircle(Entity entity, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, AbstractElementEffect effect) {
         pose.pushPose();
         pose.rotateAround(Axis.YN.rotationDegrees((entity.tickCount + partialTicks) * 6), 0, 0, 0);
         var colour = effect.getElement().partColourB();
+        pose.translate(0,-0.009,0);
 
         drawTexture(
             pose.last(),
@@ -83,6 +84,20 @@ public class ClientEvents {
         );
 
         pose.popPose();
+
+        if(effect.isSecondary()){
+            pose.pushPose();
+            pose.translate(0, -0.09, 0);
+            pose.rotateAround(Axis.YN.rotationDegrees(-(entity.tickCount + partialTicks) * 6), 0, 0, 0);
+            drawTexture(
+                pose.last(),
+                bufferSource,
+                255,
+                min(entity.getBbWidth() + 1, Minecraft.getInstance().level.getGameTime() + partialTicks),
+                JahdooHelpers.res("textures/entity/" + "c" + ".png"), colour
+            );
+            pose.popPose();
+        }
     }
 
     @SubscribeEvent

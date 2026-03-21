@@ -1,19 +1,22 @@
 package org.jahdoo.trial_nexus.magic.skills;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.trial_nexus.utils.Icons;
 
 public class PhantomJumpSkill extends AbstractSkill {
-    public static final String TRIPLE_JUMP = "phantom_jump";
+    public static final String PHANTOM_JUMP = "phantom_jump";
 
     @Override
     public String id() {
-        return TRIPLE_JUMP;
+        return PHANTOM_JUMP;
     }
 
     @Override
     public ResourceLocation icon() {
-        return Icons.TRIPLE_JUMP;
+        return Icons.PHANTOM_JUMP;
     }
 
     @Override
@@ -31,4 +34,8 @@ public class PhantomJumpSkill extends AbstractSkill {
         return "By harnessing ethereal power, you can summon brief platforms beneath your feet, allowing you to jump up to three times in midair.";
     }
 
+    @Override
+    public Holder<Attribute> attributeModifier() {
+        return AttributeReg.PHANTOM_JUMP;
+    }
 }

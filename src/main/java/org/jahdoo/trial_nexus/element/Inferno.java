@@ -5,26 +5,30 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.trial_nexus.utils.Icons;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.DamageTypeReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractElementEffect;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
+import org.jahdoo.trial_nexus.attachments.effects.InfernoEffect;
+import org.jahdoo.trial_nexus.utils.Icons;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_INFERNO;
+import static org.jahdoo.trial_nexus.utils.Icons.GUI_BUTTON_INFERNO_SQUARE;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public class Inferno extends AbstractElement {
-    private final ResourceLocation abilityId = res("inferno");
+    public static final String abilityId = "inferno";
 
     @Override
     public ResourceLocation abilityResource() {
-        return abilityId;
+        return JahdooHelpers.res(abilityId);
     }
 
     @Override
@@ -68,8 +72,13 @@ public class Inferno extends AbstractElement {
     }
 
     @Override
-    public Holder<MobEffect> effect() {
-        return INFERNO_EFFECT.getDelegate();
+    public AttachmentType<AbstractEntityEffect> attachmentType() {
+        return AttachmentReg.INFERNO_EFFECT.get();
+    }
+
+    @Override
+    public AbstractElementEffect aEffect() {
+        return new InfernoEffect();
     }
 
     @Override
@@ -103,7 +112,12 @@ public class Inferno extends AbstractElement {
     }
 
     @Override
-    public @Nullable ResourceLocation iconTexture() {
+    public ResourceLocation iconTexture() {
         return Icons.INFERNO_ICON;
+    }
+
+    @Override
+    public ResourceLocation backgroundTexture() {
+        return GUI_BUTTON_INFERNO_SQUARE;
     }
 }

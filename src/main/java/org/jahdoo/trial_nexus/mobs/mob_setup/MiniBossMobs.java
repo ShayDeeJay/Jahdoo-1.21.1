@@ -24,8 +24,10 @@ import org.jahdoo.common.components.LootCrateData;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.EntityEffectReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
@@ -97,6 +99,17 @@ public class MiniBossMobs {
                     MiniBossMobs.onDeathTick(animationMonsters, animationMonsters.deathTime);
                 }
             }
+        }
+    }
+
+    public static void AttachmentEffectTickEvents(EntityTickEvent.Pre event) {
+        var entity = event.getEntity();
+
+        if(!(entity instanceof LivingEntity livingEntity)) return;
+        if(!(livingEntity.level() instanceof ServerLevel)) return;
+
+        for (var effect : EntityEffectReg.getAll()) {
+            AbstractEntityEffect.serverOnTick(livingEntity, effect.getAttachment());
         }
     }
 

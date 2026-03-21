@@ -12,6 +12,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.attachments.effects.*;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -30,8 +31,18 @@ public class EntityEffectReg {
         return REGISTRY.stream().toList();
     }
 
-    public static List<AbstractEntityEffect> getHasEffects(LivingEntity entity) {
+    public static List<AbstractEntityEffect> getAllEffects(LivingEntity entity) {
         return getAll().stream().filter(s -> entity.hasData(s.getAttachment())).toList();
+    }
+
+    public static List<AbstractElementEffect> getHasEffects(LivingEntity entity) {
+        var list = new ArrayList<AbstractElementEffect>();
+        for (var effect : getAll()) {
+            if(entity.hasData(effect.getAttachment()) && effect instanceof AbstractElementEffect)
+                list.add((AbstractElementEffect)effect);
+        }
+
+        return list;
     }
 
     public static final DeferredHolder<AbstractEntityEffect, AbstractEntityEffect> VITALITY_EFFECT =

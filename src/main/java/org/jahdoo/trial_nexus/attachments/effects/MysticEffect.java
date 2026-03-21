@@ -1,21 +1,19 @@
 package org.jahdoo.trial_nexus.attachments.effects;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.Mystic;
 import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
-import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import java.util.List;
@@ -24,13 +22,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
 
-public class MysticEffect extends AbstractEntityEffect {
-    public static final String MYSTIC_EFFECT = "mystic_effect";
-
-    @Override
-    public String id() {
-        return MYSTIC_EFFECT;
-    }
+public class MysticEffect extends AbstractElementEffect {
 
     @Override
     public AbstractElement getElement() {
@@ -38,30 +30,35 @@ public class MysticEffect extends AbstractEntityEffect {
     }
 
     @Override
-    public AttachmentType<AbstractEntityEffect> getAttachment() {
-        return AttachmentReg.MYSTIC_EFFECT.get();
+    public String getName() {
+        return Mystic.abilityId;
     }
 
     @Override
-    public ResourceLocation icon() {
-        return Icons.MYSTIC_ICON;
+    public void setEffect(LivingEntity applier, LivingEntity target, int time) {
+        applyMysticEffect(applier, target, time);
+    }
+
+    @Override
+    public void setGreaterEffect(LivingEntity applier, LivingEntity target, int time) {
+        applyGreaterMysticEffect(applier, target, time);
+    }
+
+    @Override
+    public void onStarted(LivingEntity livingEntity) {
+        livingEntity.playSound(SoundReg.SUSPEND.get(), 1.0F, 0.6F);
     }
 
     @Override
     public void greaterEffect(LivingEntity entity) {
         if(entity.level() instanceof ServerLevel serverLevel) {
-            if (Random.nextInt(0, 30) == 0) {
+            if (MathHelpers.percentageChance(getSecondaryValue())) {
                 PositionFinders.getOuterRingOfRadiusRandom(entity.position(), entity.getBbWidth() / 4, 40,
                     worldPosition -> this.setParticleNova(entity, worldPosition, getElement())
                 );
                 explosionHandler(entity, serverLevel);
             }
         }
-    }
-
-    @Override
-    public void onStarted(LivingEntity livingEntity) {
-        livingEntity.playSound(SoundReg.SUSPEND.get(), 1.0F, 0.6F);
     }
 
     @Override

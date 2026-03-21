@@ -7,19 +7,8 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.LEGENDARY;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.NO_VALUE;
 
 public class MaxHealthRune extends AbstractPerkRune{
-
-    @Override
-    public double baseValue() {
-        return NO_VALUE;
-    }
-
-    @Override
-    public String runeDescription() {
-        return "Increase max health capacity";
-    }
 
     @Override
     public Holder<Attribute> attributeHolder() {

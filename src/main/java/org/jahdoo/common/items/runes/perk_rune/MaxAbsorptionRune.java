@@ -11,13 +11,8 @@ import static org.jahdoo.trial_nexus.rarity.JahdooRarity.RARE;
 public class MaxAbsorptionRune extends AbstractPerkRune{
 
     @Override
-    public double baseValue() {
-        return 0.1;
-    }
-
-    @Override
     public Holder<Attribute> attributeHolder() {
-        return Attributes.MOVEMENT_SPEED;
+        return Attributes.MAX_ABSORPTION;
     }
 
     @Override
@@ -27,17 +22,17 @@ public class MaxAbsorptionRune extends AbstractPerkRune{
 
     @Override
     public String runeId() {
-        return "movement_speed_rune";
-    }
-
-    @Override
-    public String runeDescription() {
-        return "";
+        return "absorption_heart_rune";
     }
 
     @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
-        return rarityAttributes.getRandomDamage();
+        return rarityAttributes.getRandomMaxAbsorption();
+    }
+
+    @Override
+    public DisplayType displayType() {
+        return DisplayType.FIXED;
     }
 
 }

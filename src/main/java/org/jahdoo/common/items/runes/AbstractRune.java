@@ -16,14 +16,18 @@ public abstract class AbstractRune {
 
     public abstract int runeColour();
 
-    public abstract String runeDescription();
-
     public abstract double getAttribute(RarityAttributes rarityAttributes);
 
     public abstract RuneCategories runeCategory();
 
-    public double baseValue(){
-        return 0.0;
+    public DisplayType displayType() {
+        return DisplayType.PERCENT;
+    }
+
+    public enum DisplayType {
+        FIXED,
+        PERCENT,
+        NON
     }
 
 }

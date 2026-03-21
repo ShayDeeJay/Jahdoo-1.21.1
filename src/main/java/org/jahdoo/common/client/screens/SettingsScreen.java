@@ -133,8 +133,13 @@ public class SettingsScreen extends AbstractPanableScreen {
             this.addRenderableOnly(
                 new Overlay() {
                     public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
+                        var pose = guiGraphics.pose();
+
+                        pose.pushPose();
+                        pose.translate(0, 0, 1);
                         SharedUI.boxMaker(guiGraphics, sharedX + 5 + finalSpacer, sharedY + 5, 5, 5, uiColour, uiColour);
                         guiGraphics.drawCenteredString(Minecraft.getInstance().font, comment, sharedX + 84, sharedY - 12, ColourHelpers.getOffWhite());
+                        pose.popPose();
                     }
                 }
             );

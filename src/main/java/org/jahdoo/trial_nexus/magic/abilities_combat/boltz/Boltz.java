@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.components.AbilityHolder;
@@ -15,9 +14,8 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
@@ -157,22 +155,22 @@ public class Boltz extends DefaultEntityBehaviour {
     private void dischargeEffect(){
         var projectile = this.element;
         var owner = projectile.getOwner();
-        var instance = new JahdooMobEffect(getElementType().effect(), (int) effectDuration, (int) effectStrength);
-        var nearbyEntities = projectile.level().getNearbyEntities(
-            LivingEntity.class,
-            TargetingConditions.DEFAULT,
-            (LivingEntity) owner,
-            projectile.getBoundingBox().inflate(dischargeRadius)
-        );
-
-        for (var nearbyEntity : nearbyEntities) {
-            if (DefaultEntityBehaviour.canDamageEntity(nearbyEntity, (LivingEntity) owner)) {
-                DamageUtils.damageWithJahdoo(nearbyEntity, owner, (float) this.damage, this.getElementType().damageTypeResourceKey());
-                if(Random.nextInt(0, (int) effectChance) == 0) {
-                    nearbyEntity.addEffect(instance);
-                }
-            }
-        }
+//        var instance = new JahdooMobEffect(getElementType().effect(), (int) effectDuration, (int) effectStrength);
+//        var nearbyEntities = projectile.level().getNearbyEntities(
+//            LivingEntity.class,
+//            TargetingConditions.DEFAULT,
+//            (LivingEntity) owner,
+//            projectile.getBoundingBox().inflate(dischargeRadius)
+//        );
+//
+//        for (var nearbyEntity : nearbyEntities) {
+//            if (DefaultEntityBehaviour.canDamageEntity(nearbyEntity, (LivingEntity) owner)) {
+//                DamageUtils.damageWithJahdoo(nearbyEntity, owner, (float) this.damage, this.getElementType().damageTypeResourceKey());
+//                if(Random.nextInt(0, (int) effectChance) == 0) {
+//                    nearbyEntity.addEffect(instance);
+//                }
+//            }
+//        }
 
         if(projectile.level() instanceof ServerLevel serverLevel){
             var particleOptions = ParticleHandlers.genericParticle(

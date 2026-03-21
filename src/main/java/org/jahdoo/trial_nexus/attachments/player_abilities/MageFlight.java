@@ -102,7 +102,7 @@ public class MageFlight implements IAttachment {
             player.getAbilities().mayfly = true;
             casterData.subtractMana(Math.min(manaCost, 2), player);
 
-            var v = mod.getValue() + 1;
+            var v = mod.getValue() - 1;
             var min = Math.min(getDelta.y + 0.090, 0.1 * v);
             player.setDeltaMovement(getDelta.x, min, getDelta.z);
 

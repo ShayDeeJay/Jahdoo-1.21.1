@@ -15,25 +15,23 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 
 import java.util.List;
 
 import static net.minecraft.sounds.SoundEvents.FIRECHARGE_USE;
 import static net.minecraft.sounds.SoundEvents.FIRE_AMBIENT;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
-import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.SoundReg.MAGIC_EXPLOSION;
+import static org.jahdoo.trial_nexus.utils.DamageUtils.damageWithJahdoo;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
 public class InfernoCreeper extends Creeper {
 
@@ -111,8 +109,9 @@ public class InfernoCreeper extends Creeper {
             livingEntity -> {
                 if(livingEntity instanceof ITamableEntity t && t.getOwner() != null || livingEntity instanceof Player){
                     var damage = this.getAttribute(Attributes.ATTACK_DAMAGE);
+
                     damageWithJahdoo(livingEntity, this, damage != null ? damage.getValue() : 25, getElementType().damageTypeResourceKey());
-                    livingEntity.addEffect(new JahdooMobEffect(EffectReg.INFERNO_EFFECT, 100, 1));
+                    getElementType().aEffect().setEffect(this, null, 100);
                 }
             }
         );

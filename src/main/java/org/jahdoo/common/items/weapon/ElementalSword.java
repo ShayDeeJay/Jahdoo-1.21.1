@@ -6,7 +6,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
@@ -49,8 +48,7 @@ public class ElementalSword extends BaseWeapon {
                 if(Random.nextInt(10) == 0){
                     if(canOffhand && isMatchingType){
                         var element = element(stack);
-                        var setEffect = new JahdooMobEffect(element.effect(), 40, 1);
-                        target.addEffect(setEffect);
+                        element.aEffect().setEffect(attacker, target, 40);
                     }
                 }
             }

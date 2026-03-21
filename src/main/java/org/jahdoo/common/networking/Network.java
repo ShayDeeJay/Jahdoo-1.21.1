@@ -258,12 +258,6 @@ public class Network {
         );
 
         payloadRegistrar.playToClient(
-            EffectSyncS2CP.TYPE,
-            EffectSyncS2CP.STREAM_CODEC,
-            EffectSyncS2CP::handle
-        );
-
-        payloadRegistrar.playToClient(
             MoveClientEntityS2CP.TYPE,
             MoveClientEntityS2CP.STREAM_CODEC,
             MoveClientEntityS2CP::handle

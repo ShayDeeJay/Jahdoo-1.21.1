@@ -14,10 +14,9 @@ import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.AbilityBuilder;
 import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
@@ -169,8 +168,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
             }
 
             if (JahdooHelpers.Random.nextInt(0, (int) Math.max(effectChance, 1)) == 0 || effectChance == -1) {
-                var effect = new JahdooMobEffect(element.effect(), (int) effectDuration, (int) effectStrength);
-                hitEntity.addEffect(effect);
+                element.aEffect().setEffect((LivingEntity) generic.getOwner(), hitEntity, (int) effectDuration);
             }
 
             DamageUtils.damageWithJahdoo(hitEntity, this.generic.getOwner(), (float) damage, ElementReg.fromId((int) this.elementType).get().damageTypeResourceKey());

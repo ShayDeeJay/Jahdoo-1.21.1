@@ -40,9 +40,9 @@ public class AugmentScreen extends Screen  {
     private final Screen previousScreen;
     private double yScroll;
 
-    public AugmentScreen(Player player, Screen previousScreen, Ability ability) {
-        super(Component.literal("Augment Menu"));
-        this.holder = CasterData.entityHolderWithSelected(player);
+    public AugmentScreen(Player player, Screen previousScreen, Ability ability, boolean selected) {
+        super(Component.empty());
+        this.holder = selected ? CasterData.entityHolderWithSelected(player) : CasterData.entityHolder(player, ability.setAbilityId());
         this.ability = ability;
         this.previousScreen = previousScreen;
     }
@@ -72,6 +72,7 @@ public class AugmentScreen extends Screen  {
     private void buttonReduce(String e, AbilityData.AbilityModifiers v) {
         var min = Math.min(v.setValue() + v.step(), v.highestValue());
         var max = Math.max(v.setValue() - v.step(), v.lowestValue());
+
         updateAugmentConfig(e, v, v.isHigherBetter() ? max : min);
         this.rebuildWidgets();
     }
@@ -79,22 +80,17 @@ public class AugmentScreen extends Screen  {
     private void buttonIncrease(String e, AbilityData.AbilityModifiers v) {
         var min = Math.max(v.setValue() - v.step(), v.actualValue());
         var max = Math.min(v.setValue() + v.step(), v.actualValue());
+
         updateAugmentConfig(e, v, v.isHigherBetter() ? max : min);
         this.rebuildWidgets();
     }
 
     private void windowMoveVertical(double dragY) {
-//        int listSize = this.getModifiableList().size();
-//        if (listSize > 4) {
-//            var maxScroll = -20;
-//            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, maxScroll * (listSize-4)));
-//            this.rebuildWidgets();
-//        }
-        int listSize = this.getModifiableList().size();
-        int entryHeight = 40;
-        int visibleEntries = 5; // You can adjust based on screen size
-        int totalHeight = listSize * entryHeight;
-        int visibleHeight = visibleEntries * entryHeight;
+        var listSize = getModifiableList(holder).size();
+        var entryHeight = 40;
+        var visibleEntries = 5;
+        var totalHeight = listSize * entryHeight;
+        var visibleHeight = visibleEntries * entryHeight;
 
         if (listSize > visibleEntries) {
             double maxScroll = totalHeight - visibleHeight;
@@ -108,6 +104,7 @@ public class AugmentScreen extends Screen  {
         var x = this.width/2 - 30;
         var y =this.height/2 - 70;
         this.menuButton(CLOSE, x - 101, y, size, (s) -> this.getMinecraft().setScreen(null));
+
         if(this.previousScreen != null){
             this.menuButton(DIRECTION_ARROW_BACK, x - 101, y + 20, size, (s) -> this.getMinecraft().setScreen(previousScreen));
         }
@@ -133,6 +130,7 @@ public class AugmentScreen extends Screen  {
     public void buildCarouselComponent(int posX, int posY, String label, Runnable onLeft, Runnable onRight, String value){
         var widget = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
         var adjustX = 2;
+
         this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll),  TextHelpers.withStyleComponent(value, ElementReg.utility().textColourB()), this.getMinecraft(), Component.literal(label), 10, true));
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 10 + adjustX, (int) (posY + yScroll), (press) -> onLeft.run(), DIRECTION_ARROW_BACK, 22, false,0, widget, true));
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 104 + adjustX, (int) (posY+ yScroll), (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  22,  false, 0, widget, true));
@@ -154,6 +152,7 @@ public class AugmentScreen extends Screen  {
         var initialVerticalOffset = this.height / 2 - 50;
         var verticalSpacing = new AtomicInteger(initialVerticalOffset);
         navigationButtons();
+
         this.addRenderableOnly(
             new Overlay() {
                 @Override
@@ -162,7 +161,9 @@ public class AugmentScreen extends Screen  {
                 }
             }
         );
-        displayButtons(getModifiableList(), verticalSpacing);
+
+        displayButtons(getModifiableList(holder), verticalSpacing);
+
         this.addRenderableOnly(
             new Overlay() {
                 @Override
@@ -173,7 +174,7 @@ public class AugmentScreen extends Screen  {
         );
     }
 
-    private LinkedHashMap<String, AbilityData.AbilityModifiers> getModifiableList() {
+    public static LinkedHashMap<String, AbilityData.AbilityModifiers> getModifiableList(AbilityHolder holder) {
         var mainHolderValues = holder.data();
         var copy = new HashMap<>(mainHolderValues.abilityProperties());
         copy.remove(MANA_COST);
@@ -208,6 +209,8 @@ public class AugmentScreen extends Screen  {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        var element = ability.getElemenType();
+        AbilityModificationScreen.backgroundWithStyle(graphics, element);
         this.renderBlurredBackground(partialTick);
         SharedUI.boxMaker(graphics, this.width/2 - 131, this.height/2 - 70, 16, this.previousScreen == null ? 16 : 25);
         SharedUI.setCustomBackground(this.height, this.width, graphics);

@@ -33,7 +33,6 @@ import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.trial_nexus.rarity.JahdooRarity.getRarity;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingArmor.enchantArmorItem;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingWeapon.getElementalSword;
@@ -158,8 +157,8 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
                 var gen = rune.getAttribute(newRarity.getAttributes());
                 var delegate = rune.attributeHolder();
                 var registeredName = delegate.getRegisteredName();
-                var isPercentage = rune.baseValue() > 0 ? (gen * rune.baseValue()) / 100 : gen;
-                replaceOrAddAttribute(itemStack, registeredName, delegate, isPercentage, equipmentSlot, true, "bonus");
+//                var isPercentage = rune.baseValue() > 0 ? (gen * rune.baseValue()) / 100 : gen;
+                replaceOrAddAttribute(itemStack, registeredName, delegate, gen, equipmentSlot, true, "bonus");
             }
         );
     }
@@ -174,8 +173,8 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var gen = rune.getAttribute(newRarity.getAttributes());
         var delegate = rune.attributeHolder();
         var registeredName = delegate.getRegisteredName();
-        var isPercentage = rune.baseValue() > 0 ? (gen * rune.baseValue()) / 100 : gen;
-        replaceOrAddAttribute(itemStack, registeredName, delegate, isPercentage, equipmentSlot, true, "bonus");
+//        var isPercentage = rune.baseValue() > 0 ? (gen * rune.baseValue()) / 100 : gen;
+        replaceOrAddAttribute(itemStack, registeredName, delegate, gen, equipmentSlot, true, "bonus");
     }
 
     public static ShoppingItems shoppingRuneItem(){
@@ -222,11 +221,26 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         if(isUnique) {
             addAttribute(itemStack, MAINHAND, null, null);
             preInsertRunes(itemStack);
+
+            if(MathHelpers.percentageChance(5)){
+                var rune = Helpers.listRandom(RuneReg.getAllSkillAttributes());
+                var attributeHolder = rune.attributeHolder();
+                var attribute = rune.getAttribute(getRarity().getAttributes());
+                replaceOrAddAttribute(itemStack, attributeHolder.getRegisteredName(), attributeHolder, attribute, MAINHAND, true, "skill");
+            }
+
+            if(MathHelpers.percentageChance(2.5)){
+                var runeA = Helpers.listRandom(RuneReg.getAllEffectAttributes());
+                var attributeHolderA = runeA.attributeHolder();
+                var attributeA = runeA.getAttribute(getRarity().getAttributes());
+                replaceOrAddAttribute(itemStack, attributeHolderA.getRegisteredName(), attributeHolderA, attributeA, MAINHAND, true, "effect");
+            }
         }
 
         if(rarityId > 0){
             var element = ElementReg.fromWand(itemStack.getItem()).orElseThrow();
             addDamageImplicit(rarity, itemStack, element, isUnique);
+
             if(rarityId > 1) addManaImplicit(rarity, itemStack, element, isUnique);
             if(rarityId > 2) addCooldownImplicit(rarity, itemStack, element, isUnique);
         }
@@ -235,6 +249,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     public static void preInsertRunes(ItemStack itemStack) {
         var addRune = new ArrayList<ItemStack>();
         var getRuneHolderSize = JahdooGearData.getGearData(itemStack).runeSlots().size();
+
         for(int i = 0; i < getRuneHolderSize; i++){
             if(MathHelpers.percentageChance(10)){
                 var getRandomRun = RuneHelpers.generateRandomTypAttribute(null, null, null);
@@ -243,6 +258,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
                 addRune.add(ItemStack.EMPTY);
             }
         }
+
         JahdooGearData.updateRuneSlots(itemStack, addRune);
     }
 

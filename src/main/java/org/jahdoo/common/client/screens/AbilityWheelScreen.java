@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.jahdoo.trial_nexus.utils.Icons.COG;
-import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getAugmentModificationScreenWand;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.abilityModificationScreen;
 import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.isConfigAbility;
 import static org.jahdoo.trial_nexus.attachments.CasterData.entityHolderWithSelected;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.syncSelectedAbility;
@@ -241,7 +241,7 @@ public class AbilityWheelScreen extends Screen  {
                         posX, posY,
                         configButton,
                         configButtonSize,
-                        pButton -> this.getMinecraft().setScreen(getAugmentModificationScreenWand(player, this)),
+                        pButton -> this.getMinecraft().setScreen(abilityModificationScreen(player, this)),
                         false,
                         () -> { }
                     )

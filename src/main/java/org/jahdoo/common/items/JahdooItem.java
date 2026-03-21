@@ -20,6 +20,7 @@ import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.jahdoo.common.event.event_helpers.EventHelpers.getOverEnchantColour;
@@ -158,11 +159,13 @@ public interface JahdooItem {
         int colourB,
         double speed,
         double duration,
-        boolean addSpace
+        boolean addSpace,
+        String...filters
     ) {
         var list = stack.getAttributeModifiers().modifiers().stream()
-            .filter(e -> e.modifier().id().getPath().contains("bonus") || e.modifier().id().getPath().contains("boon"))
+            .filter(e -> Arrays.stream(filters).anyMatch(filter -> e.modifier().id().getPath().contains(filter)))
             .toList();
+
         if(list.isEmpty()) return;
         if(addSpace) toolTip.add(Component.literal(" "));
         var comp = highlightTextComponent(context.level(), label, colourA, colourB, speed, duration);
@@ -173,7 +176,13 @@ public interface JahdooItem {
 
     default void bonusModifierTooltip(ItemStack stack, List<Component> toolTip, Item.TooltipContext context, boolean addSpace) {
         var text = "Bonus Modifiers";
-        standAloneModifiersWithLabel(stack, toolTip, context, text, ColourHelpers.getHeaderColour(), ColourHelpers.getChampionGold(), 1.5, 20, addSpace);
+        standAloneModifiersWithLabel(stack, toolTip, context, text, ColourHelpers.getHeaderColour(), ColourHelpers.getChampionGold(), 1.5, 20, addSpace, "boon", "bonus");
+
+        var text2 = "Elder Effect Enhancers";
+        standAloneModifiersWithLabel(stack, toolTip, context, text2, ColourHelpers.getHeaderColour(), ColourHelpers.getOffWhite(), 1, 10, addSpace, "effect");
+
+        var text3 = "Skill Amplifiers";
+        standAloneModifiersWithLabel(stack, toolTip, context, text3, ColourHelpers.getHeaderColour(), ColourHelpers.getChampionGold(), 1.5, 20, addSpace, "skill");
     }
 
 }

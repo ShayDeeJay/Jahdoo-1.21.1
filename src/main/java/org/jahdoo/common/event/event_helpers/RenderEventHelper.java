@@ -3,6 +3,7 @@ package org.jahdoo.common.event.event_helpers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,6 +38,8 @@ import org.jahdoo.trial_nexus.magic.abilities_combat.frostbolts.FrostboltsAbilit
 import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import java.awt.*;
 import java.util.List;
@@ -49,6 +52,7 @@ import static org.jahdoo.common.client.RenderHelpers.drawHealthBar;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 import static org.jahdoo.common.event.ClientEvents.getMagicCircle;
 import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.utils.Configuration.SHOW_HEALTH_VALUE;
 
 public class RenderEventHelper {
 
@@ -184,7 +188,41 @@ public class RenderEventHelper {
                 poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
                 poseStack.mulPose(Axis.XP.rotation(-1.5f));
                 poseStack.scale(z, z, z);
-                drawHealthBar(poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth(), getByAllied);
+                drawHealthBar(poseStack, event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth(), getByAllied);
+
+
+                if(SHOW_HEALTH_VALUE.get()){
+                    poseStack.pushPose();
+
+                    var font = instance.font;
+                    var current = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(entity.getHealth()));
+                    var max = MathHelpers.roundNonWholeString(MathHelpers.doubleFormattedDouble(entity.getMaxHealth()));
+
+                    var healthText =  current + " / " +  max;
+                    var textWidth = font.width(healthText);
+                    var xOffset = -textWidth / 2.0f;
+                    var yOffset = -10;
+                    var scales = 0.05F;
+
+                    poseStack.mulPose(Axis.XP.rotation(-1.575f));
+                    poseStack.scale(scales, scales, scales);
+                    poseStack.translate(0, 6.5, -2.1);
+                    font.drawInBatch(
+                        healthText,
+                        xOffset,
+                        yOffset,
+                        ColourHelpers.getMagnetStrengthRed(), // color
+                        false, // shadow
+                        poseStack.last().pose(),
+                        event.getMultiBufferSource(),
+                        Font.DisplayMode.NORMAL,
+                        0,
+                        FULL_BRIGHT
+                    );
+
+                    poseStack.popPose();
+                }
+
                 poseStack.popPose();
 
                 for (var hasEffect : EntityEffectReg.getHasEffects(entity)) {
@@ -200,7 +238,7 @@ public class RenderEventHelper {
                         poseStack.mulPose(Axis.XP.rotation(160.2f));
                     }
 
-                    poseStack.scale(scale,scale,scale);
+                    poseStack.scale(scale, scale, scale);
                     getMagicCircle(entity, event.getPartialTick(), poseStack, event.getMultiBufferSource(), hasEffect);
                     poseStack.popPose();
                 }

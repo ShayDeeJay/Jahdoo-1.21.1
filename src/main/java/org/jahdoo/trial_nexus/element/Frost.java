@@ -5,26 +5,29 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.trial_nexus.utils.Icons;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.DamageTypeReg;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractElementEffect;
+import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
+import org.jahdoo.trial_nexus.attachments.effects.FrostEffect;
+import org.jahdoo.trial_nexus.utils.Icons;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.common.registers.EffectReg.FROST_EFFECT;
 import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_FROST;
 import static org.jahdoo.common.registers.SoundReg.FROST_ABILITY;
+import static org.jahdoo.trial_nexus.utils.Icons.GUI_BUTTON_FROST_SQUARE;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public class Frost extends AbstractElement {
-    ResourceLocation abilityId = res("frost");
+    public static final String abilityId = "frost";
 
     @Override
     public ResourceLocation abilityResource() {
-        return abilityId;
+        return res(abilityId);
     }
 
     @Override
@@ -63,8 +66,13 @@ public class Frost extends AbstractElement {
     }
 
     @Override
-    public Holder<MobEffect> effect() {
-        return FROST_EFFECT.getDelegate();
+    public AttachmentType<AbstractEntityEffect> attachmentType() {
+        return AttachmentReg.FROST_EFFECT.get();
+    }
+
+    @Override
+    public AbstractElementEffect aEffect() {
+        return new FrostEffect();
     }
 
     @Override
@@ -103,7 +111,12 @@ public class Frost extends AbstractElement {
     }
 
     @Override
-    public @Nullable ResourceLocation iconTexture() {
+    public ResourceLocation iconTexture() {
         return Icons.FROST_ICON;
+    }
+
+    @Override
+    public ResourceLocation backgroundTexture() {
+        return GUI_BUTTON_FROST_SQUARE;
     }
 }

@@ -17,11 +17,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
+import org.jahdoo.common.registers.DamageTypeReg;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
-import org.jahdoo.common.registers.*;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -29,14 +33,13 @@ import software.bernie.geckolib.animation.AnimationController;
 
 import javax.annotation.Nullable;
 
-import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.magic.ProjectileProperties.setProjectileWithOffsets;
 import static org.jahdoo.common.entities.EntityAnimations.ICE_SPEAR;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.FROST_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.mod.ElementReg.frost;
+import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.magic.ProjectileProperties.setProjectileWithOffsets;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 public class IceSpear extends AbstractArrow implements GeoEntity {
@@ -86,6 +89,10 @@ public class IceSpear extends AbstractArrow implements GeoEntity {
         return true;
     }
 
+    public AbstractElement getElement(){
+        return ElementReg.frost();
+    }
+
     public void tick() {
         if(inGroundTime > 0 && (inGroundTime % 4 == 0)){
             this.playSound(SoundReg.TIMER.get(), 1.0F, 2.0F);
@@ -95,14 +102,14 @@ public class IceSpear extends AbstractArrow implements GeoEntity {
         if (this.inGroundTime == 24) {
             var maxPart = 10;
             this.dealtDamage = true;
-            this.playSound(SoundReg.FROST_ABILITY.get(), 1.0F, 1.0F);
+            this.playSound(getElement().sound(), 1.0F, 1.0F);
             this.playSound(SoundReg.IMPACT.get(), 1.0F, 1.0F);
             if(level() instanceof ServerLevel serverLevel){
                 var lifetime = (int) (range * 10);
                 var size = 3F;
                 var speed = (float) range/15;
-                var generic = genericParticle(MAGIC_PARTICLE, frost(), lifetime, size - 1);
-                var baked = bakedParticle(frost().id(), lifetime, size, false);
+                var generic = genericParticle(MAGIC_PARTICLE, getElement(), lifetime, size - 1);
+                var baked = bakedParticle(getElement().id(), lifetime, size, false);
                 particleBurst(serverLevel, this.position(), maxPart, generic, 0, 0, 0, speed);
                 particleBurst(serverLevel, this.position(), maxPart, baked, 0, 0, 0, speed);
             }
@@ -115,15 +122,14 @@ public class IceSpear extends AbstractArrow implements GeoEntity {
             );
 
             for (var entity : local) {
-                var instance = new JahdooMobEffect(EffectReg.FROST_EFFECT, (int) effectDuration, (int) effectStrength);
-                entity.addEffect(instance);
+                getElement().aEffect().setEffect((LivingEntity) this.getOwner(), entity, (int) effectDuration);
             }
 
             this.discard();
         }
 
         if(tickCount > 1  && !level().isClientSide){
-            var particle = genericParticle(MAGIC_PARTICLE, frost(), 3, 1);
+            var particle = genericParticle(MAGIC_PARTICLE, getElement(), 3, 1);
             particleBurst(level(), position(), 1, particle, 0.02F);
         }
 

@@ -1,32 +1,53 @@
 package org.jahdoo.trial_nexus.attachments.effects;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import org.jahdoo.common.entities.ITamableEntity;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.Vitality;
 import org.jahdoo.trial_nexus.magic.effects.EffectHelpers;
-import org.jahdoo.trial_nexus.utils.Icons;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
-import static org.jahdoo.trial_nexus.magic.effects.EffectHelpers.getGetRandomChance;
+public class VitalityEffect extends AbstractElementEffect {
 
-public class VitalityEffect extends AbstractEntityEffect {
-
-    public static final String VITALITY_EFFECT = "vitality_effect";
-
-    @Override
-    public String id() {
-        return VITALITY_EFFECT;
-    }
+    private boolean shouldSiphon;
 
     @Override
     public AbstractElement getElement() {
         return ElementReg.vitality();
+    }
+
+    @Override
+    public String getName() {
+        return Vitality.abilityId;
+    }
+
+    @Override
+    public void setEffect(LivingEntity applier, LivingEntity target, int time) {
+        applyVitalityEffect(applier, target, time);
+    }
+
+    @Override
+    public void setGreaterEffect(LivingEntity applier, LivingEntity target, int time) {
+        applyGreaterVitalityEffect(applier, target, time);
+    }
+
+    @Override
+    public void onActive(LivingEntity livingEntity) {
+        if(livingEntity.level() instanceof ServerLevel serverLevel){
+            shouldSiphon = MathHelpers.percentageChance(2.5);
+            if(shouldSiphon) {
+                var owner = getOwner(serverLevel);
+                if(owner != null) owner.heal((float) getSecondaryValue());
+
+                doDamage(livingEntity, serverLevel);
+                EffectHelpers.setEffectParticle(0, livingEntity, serverLevel, ElementReg.vitality(), SoundReg.VITALITY_ABILITY.get());
+
+                shouldSiphon = false;
+            }
+        }
     }
 
     @Override
@@ -43,35 +64,7 @@ public class VitalityEffect extends AbstractEntityEffect {
             .toList();
 
         for (var tamable : applierMobs)
-            if(entity.hurtMarked) tamable.heal(0.5F);
-    }
-
-    @Override
-    public AttachmentType<AbstractEntityEffect> getAttachment() {
-        return AttachmentReg.VITALITY_EFFECT.get();
-    }
-
-    @Override
-    public ResourceLocation icon() {
-        return Icons.VITALITY_ICON;
-    }
-
-    @Override
-    public void onStarted(LivingEntity livingEntity) {
-        super.onStarted(livingEntity);
-    }
-
-    @Override
-    public void onActive(LivingEntity livingEntity) {
-        if(livingEntity.level() instanceof ServerLevel serverLevel){
-            int getRandomChance = getGetRandomChance(4);
-            if(getRandomChance == 0) {
-                var owner = getOwner(serverLevel);
-                if(owner != null) owner.heal(0.5F);
-                doDamage(livingEntity, serverLevel);
-            }
-            EffectHelpers.setEffectParticle(getRandomChance, livingEntity, serverLevel, ElementReg.vitality(), SoundReg.VITALITY_ABILITY.get());
-        }
+            if(shouldSiphon) tamable.heal((float) getSecondaryValue());
     }
 
 }

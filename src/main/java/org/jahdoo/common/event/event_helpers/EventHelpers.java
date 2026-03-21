@@ -86,7 +86,6 @@ import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
-import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.trial_nexus.magic.abilities_utility.deprecated.block_placer.BlockPlacerAbility;
 import org.jahdoo.trial_nexus.magic.abilities_utility.wall_placer.WallPlacerAbility;
 import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
@@ -117,7 +116,7 @@ import static org.jahdoo.trial_nexus.attachments.RunData.EMPTY;
 import static org.jahdoo.trial_nexus.attachments.RunData.addExperienceToTotal;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.itemBehaviour;
 import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
-import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getAugmentModificationScreenWand;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.abilityModificationScreen;
 import static org.jahdoo.trial_nexus.mobs.mob_setup.MiniBossMobs.CHALLENGER_BOSS;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 import static org.jahdoo.trial_nexus.utils.KeyBinding.*;
@@ -212,32 +211,6 @@ public class EventHelpers {
                 }
                 RunData.endRun(serverPlayer, true);
             }
-        }
-    }
-
-    public static void greaterVitalityEffect(LivingDamageEvent.Pre event, LivingEntity entity) {
-        if(entity.hasEffect(EffectReg.GREATER_VITALITY_EFFECT)){
-            var getAttacker = event.getSource().getEntity();
-            if(Random.nextInt(4) == 0){
-                if(getAttacker instanceof LivingEntity player){
-                    VitalRejuvenation.successfulCastAnimation(player);
-                    player.heal(2);
-                }
-            }
-        }
-    }
-
-    public static void onDeathGreaterFrostEffect(LivingEntity entity) {
-        if(entity.hasEffect(EffectReg.GREATER_FROST_EFFECT)){
-            SoundHelpers.getSoundWithPosition(entity.level(), entity.position(), SoundReg.BLOCK.get(), HOSTILE);
-
-            getAllParticleTypes(ElementReg.frost(), 20, 1);
-            sendParticles(
-                  entity.level(),
-                  getAllParticleTypes(ElementReg.frost(), 12, 1.5f),
-                  entity.position().add(0, entity.getBbHeight()/2, 0), 30,
-                  0, 1, 0, 0.2
-            );
         }
     }
 
@@ -438,9 +411,12 @@ public class EventHelpers {
 
     public static void greaterFrostEffectDamageAmplifier(LivingDamageEvent.Pre event, LivingEntity entity) {
         var secondary = entity.getExistingData(FROST_EFFECT);
-        if(secondary.isPresent() && entity.level() instanceof ServerLevel serverLevel){
+        if(secondary.isPresent() && entity.level() instanceof ServerLevel){
+            var effect = secondary.get();
+            if(!MathHelpers.percentageChance(effect.getSecondaryValue())) return;
+
             var attacker = event.getSource().getEntity();
-            if(attacker != null && attacker.getStringUUID().equals(secondary.get().getApplierUUID())){
+            if(attacker != null && attacker.getStringUUID().equals(effect.getApplierUUID())){
                 var origin = event.getOriginalDamage();
                 var modifiedDamage = origin * 2;
 
@@ -462,16 +438,14 @@ public class EventHelpers {
         var entity = event.getEntity();
         var mysticEffect = entity.hasData(MYSTIC_EFFECT);
         if (!mysticEffect) return;
-        var eff = entity.getData(MYSTIC_EFFECT);
-
-        var tick = entity.tickCount;
-        var height = entity.getBbHeight() / 2;
-        var pos = event.getPoseStack();
 
         var entityId = entity.getId();
         var offset = (entityId * 37 % 100) / 100f * 360;
+        var tick = entity.tickCount;
 
         var anim = (tick + event.getPartialTick()) * 2.5f + offset;
+        var pos = event.getPoseStack();
+        var height = entity.getBbHeight() / 2;
 
         pos.rotateAround(Axis.XN.rotationDegrees(anim), 0, height, 0);
         pos.rotateAround(Axis.YN.rotationDegrees(-anim), 0, height, 0);
@@ -847,7 +821,7 @@ public class EventHelpers {
         checkKey(POCKET_DIMENSION, () -> PacketDistributor.sendToServer(new PocketDimensionC2SP()));
         checkKey(STAT_SCREEN, () -> instance.setScreen(new StatScreen()));
         checkKey(ABILITY_SCREEN, () -> instance.setScreen(new AbilityUnlockScreen()));
-        checkKey(ABILITY_MODIFICATION_SCREEN, () -> instance.setScreen(getAugmentModificationScreenWand(player, null)));
+        checkKey(ABILITY_MODIFICATION_SCREEN, () -> instance.setScreen(abilityModificationScreen(player, null)));
         checkKey(RUN_SCREEN, () -> instance.setScreen(new RunScreen()));
     }
 

@@ -44,14 +44,14 @@ public class PhantomJump implements IAttachment {
 
     private void onClientTick(Player player) {
 
-        if(!(player instanceof LocalPlayer localPlayer) || !CasterData.hasSkill(player, SkillReg.TRIPLE_JUMP.get().id()) || player.isCreative()) return;
+        if(!(player instanceof LocalPlayer localPlayer) || !CasterData.hasSkill(player, SkillReg.PHANTOM_JUMP.get().id()) || player.isCreative()) return;
         if(player.verticalCollisionBelow) {
             clientJumpCount = 0;
         } else if (localPlayer.input.jumping){
-            var attribute = player.getAttribute(AttributeReg.TRIPLE_JUMP);
+            var attribute = player.getAttribute(AttributeReg.PHANTOM_JUMP);
             if(attribute == null) return;
 
-            if(!clientIsJumpHeld && clientJumpCount <= 3){
+            if(!clientIsJumpHeld && clientJumpCount <= attribute.getValue()){
                 clientJumpCount++;
                 var delta = player.getDeltaMovement();
                 var playerSpeed = player.getSpeed();

@@ -20,10 +20,10 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.AbilityPointC2SP;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.trial_nexus.magic.Ability;
-import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.Ability;
+import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
@@ -39,12 +39,11 @@ import java.util.regex.Pattern;
 import static java.lang.String.valueOf;
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
-import static org.jahdoo.common.registers.mod.ElementReg.*;
-import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getModifierContextSingle;
+import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.*;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 
 public class AbilityModificationScreen extends Screen {
 
@@ -64,15 +63,6 @@ public class AbilityModificationScreen extends Screen {
     double scaledXOffset; // Scale X spacing
     double centerX; // Screen center
     double centerY; // Screen center
-
-    public AbilityModificationScreen(
-        AbilityHolder holder,
-        Ability ability
-    ) {
-        super(Component.empty());
-        this.holder = holder;
-        this.ability = ability;
-    }
 
     public AbilityModificationScreen(
         AbilityHolder holder,
@@ -102,6 +92,7 @@ public class AbilityModificationScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        this.navigationButtons();
 
         this.addRenderableOnly(
             new Overlay() {
@@ -112,8 +103,7 @@ public class AbilityModificationScreen extends Screen {
             }
         );
 
-        this.displayAugmentProperties();
-        this.navigationButtons();
+        this.displayAbilityProperties();
 
         this.addRenderableOnly(
             new Overlay() {
@@ -139,7 +129,7 @@ public class AbilityModificationScreen extends Screen {
         return false;
     }
 
-    public void displayAugmentProperties(){
+    public void displayAbilityProperties(){
         if(holder == null) return;
 
         var spacer = 0;
@@ -337,31 +327,18 @@ public class AbilityModificationScreen extends Screen {
         this.selectedY = 0;
     }
 
-    @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        var i = this.height / 2;
-        var i1 = this.width / 2;
-        var startX = i1 - 140;
-        var startY = i + 22;
-        var element = ability.getElemenType();
-
-        this.renderBlurredBackground(partialTick);
-
-        backgroundWithStyle(graphics, i1, i, element);
-        overlaySkillPoints(graphics, getMinecraft().player);
-        SharedUI.boxMaker(graphics, this.width/2-131, this.height/2 - 70, 16, 25);
-        selectedModifier(graphics, mouseX, mouseY);
-        container(graphics, mouseX, mouseY, partialTick, startX, startY, element);
-        headerWithBorder(graphics, element, this.width, this.height, ability, holder, getMinecraft());
-    }
-
     /**
      * Display main background with element colour and bezels
      * */
-    private void backgroundWithStyle(@NotNull GuiGraphics graphics, int i1, int i, AbstractElement element) {
+    public static void backgroundWithStyle(@NotNull GuiGraphics graphics, AbstractElement element) {
         var fade = SharedUI.fadeBlack(0.9F);
+        var width = graphics.guiWidth();
+        var height = graphics.guiHeight();
+        var i = height / 2;
+        var i1 = width / 2;
+
         boxMaker(graphics, 3, 3, i1 - 3, i - 3, element.partColourFade(), fade, FastColor.ARGB32.color(60, element.partColourFade()));
-        SharedUI.bezelMaker(graphics, -20 , -20, this.width - 20, this.height - 20, 60, null);
+        SharedUI.bezelMaker(graphics, -20 , -20, width - 20, height - 20, 60, null);
     }
 
     /**
@@ -379,12 +356,7 @@ public class AbilityModificationScreen extends Screen {
      * Display the header with box related to element
      * */
     public static void headerWithBorder(@NotNull GuiGraphics graphics, AbstractElement element, int width, int height, Ability ability, AbilityHolder holder, Minecraft minecraft) {
-        var backdrop = element == utility() ? GUI_BUTTON_UTILITY_SQUARE :
-                       element == vitality() ? GUI_BUTTON_VITALITY_SQUARE :
-                       element == mystic() ? GUI_BUTTON_MYSTIC_SQUARE :
-                       element == frost() ? GUI_BUTTON_FROST_SQUARE :
-                                            GUI_BUTTON_INFERNO_SQUARE;
-        SharedUI.header(graphics, width, height, ability, holder, minecraft.font, minecraft.player, backdrop);
+        SharedUI.header(graphics, width, height, ability, holder, minecraft.font, minecraft.player, element.backgroundTexture());
     }
 
     /**
@@ -393,12 +365,11 @@ public class AbilityModificationScreen extends Screen {
     private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player) {
         var size = 24;
         var skillPoints = CasterData.getAbilityPointData(player);
-        var fade1 = SharedUI.fadeBlack(0.5F);
         var length = valueOf(skillPoints).length();
-        var i1 = this.width / 2 + 99;
-        var i2 = this.height / 2 - 120;
-        boxMaker(guiGraphics, i1, 20 + i2, 15 + (length * length), 10, ColourHelpers.getBorderColour(), fade1, fade1);
-        guiGraphics.drawString(font, TextHelpers.withStyleComponent(skillPoints + "", ColourHelpers.getPerkGreen()), i1 + 22, 26 + i2, -1);
+        var i1 = (this.width / 2 + 74) - (6 * length);
+        var i2 = this.height / 2 - 134;
+
+        guiGraphics.drawString(font, TextHelpers.withStyleComponent(skillPoints + "", ColourHelpers.getPerkGreen()), i1 + 20, 26 + i2, -1);
         guiGraphics.blit(SKILL_POINT, i1 - 2, 18 + i2, 0, 0, size, size, size, size);
     }
 
@@ -427,12 +398,37 @@ public class AbilityModificationScreen extends Screen {
         this.addRenderableWidget(new AbilityIconButton(posX, posY, button, size, action, false, () -> {}));
     }
 
+    @Override
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        var i = this.height / 2;
+        var i1 = this.width / 2;
+        var startX = i1 - 140;
+        var startY = i + 22;
+        var mc = getMinecraft();
+
+        this.renderBlurredBackground(partialTick);
+
+        var element = ability.getElemenType();
+        backgroundWithStyle(graphics, element);
+
+        container(graphics, mouseX, mouseY, partialTick, startX, startY, element);
+        selectedModifier(graphics, mouseX, mouseY);
+        headerWithBorder(graphics, element, this.width, this.height, ability, holder, mc);
+        overlaySkillPoints(graphics, mc.player);
+    }
+
     private void navigationButtons() {
         var size = 32;
-        var x = this.width/2 - 30;
-        var y = this.height/2 - 70;
-        this.menuButton(CLOSE, x - 101, y, size, (s) -> this.getMinecraft().setScreen(null));
-        this.menuButton(DIRECTION_ARROW_BACK, x - 101, y + 20, size, (s) -> this.getMinecraft().setScreen(new AbilityUnlockScreen(size, panX, panY, zoomX, scaledSpacing, scaledXOffset, centerX, centerY)));
+        var y = this.height/2 - 120;
+        var mc = this.getMinecraft();
+
+        this.menuButton(CLOSE, this.width - 36, 4, size, (s) -> mc.setScreen(null));
+        this.menuButton(DIRECTION_ARROW_BACK, 4, 4, size, (s) -> mc.setScreen(new AbilityUnlockScreen(size, panX, panY, zoomX, scaledSpacing, scaledXOffset, centerX, centerY)));
+
+        var guiScreen = abilityModificationScreen(mc.player, this, ability);
+
+        if(isConfigAbility(mc.player, ability))
+            this.menuButton(COG, this.width/2 + 84, y + 34, 12, (s) -> mc.setScreen(guiScreen));
     }
 
 }

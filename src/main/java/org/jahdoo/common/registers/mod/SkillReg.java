@@ -36,17 +36,20 @@ public class SkillReg {
             .toList();
     }
 
+    public static final DeferredHolder<AbstractSkill, AbstractSkill> SWIFT =
+        registerElement(SwiftSkill::new);
+
     public static final DeferredHolder<AbstractSkill, AbstractSkill> CLIMBER =
         registerElement(ClimberSkill::new);
 
     public static final DeferredHolder<AbstractSkill, AbstractSkill> REBOUND =
         registerElement(ReboundSkill::new);
 
-    public static final DeferredHolder<AbstractSkill, AbstractSkill> TRIPLE_JUMP =
+    public static final DeferredHolder<AbstractSkill, AbstractSkill> PHANTOM_JUMP =
         registerElement(PhantomJumpSkill::new);
 
-    public static final DeferredHolder<AbstractSkill, AbstractSkill> DRIP_WALK =
-        registerElement(DripWalkSkill::new);
+    public static final DeferredHolder<AbstractSkill, AbstractSkill> LIQUISTEP =
+        registerElement(LiquistepSkill::new);
 
     public static final DeferredHolder<AbstractSkill, AbstractSkill> MAGE_FLIGHT =
         registerElement(MageFlightSkill::new);

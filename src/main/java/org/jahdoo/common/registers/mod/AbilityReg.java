@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.Ability;
 import org.jahdoo.trial_nexus.magic.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.trial_nexus.magic.abilities_combat.EscapeDecoyAbility;
@@ -31,7 +32,6 @@ import org.jahdoo.trial_nexus.magic.abilities_combat.mystical_semtex.MysticalSem
 import org.jahdoo.trial_nexus.magic.abilities_combat.nova_smash.NovaSmashAbility;
 import org.jahdoo.trial_nexus.magic.abilities_combat.permafrost.PermafrostAbility;
 import org.jahdoo.trial_nexus.magic.abilities_combat.quantum_destroyer.QuantumDestroyerAbility;
-import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility;
 import org.jahdoo.trial_nexus.magic.abilities_utility.block_bomb.BlockBombAbility;
 import org.jahdoo.trial_nexus.magic.abilities_utility.farmers_touch.FarmersTouchAbility;
 import org.jahdoo.trial_nexus.magic.abilities_utility.fetch.FetchAbility;
@@ -39,7 +39,6 @@ import org.jahdoo.trial_nexus.magic.abilities_utility.hammer.HammerAbility;
 import org.jahdoo.trial_nexus.magic.abilities_utility.light_placer.LightPlacerAbility;
 import org.jahdoo.trial_nexus.magic.abilities_utility.vein_miner.VeinMinerAbility;
 import org.jahdoo.trial_nexus.magic.abilities_utility.wall_placer.WallPlacerAbility;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 
 import java.util.Comparator;
@@ -191,8 +190,8 @@ public class AbilityReg {
     public static final DeferredHolder<Ability, Ability> ESCAPE_DECOY =
         registerSpell(new EscapeDecoyAbility());
 
-    public static final DeferredHolder<Ability, Ability> VITAL_REJUVENATION =
-        registerSpell(new VitalRejuvenationAbility());
+//    public static final DeferredHolder<Ability, Ability> VITAL_REJUVENATION =
+//        registerSpell(new VitalRejuvenationAbility());
 
     public static final DeferredHolder<Ability, Ability> SUMMON_ANCIENT_GOLEM =
         registerSpell(new SummonAncientGolemAbility());

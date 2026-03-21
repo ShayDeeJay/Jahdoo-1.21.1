@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.items.BaseJahdooItem;
-import org.jahdoo.common.registers.AttributeReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -89,9 +87,6 @@ public class CasterItem extends BaseJahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var itemStack = player.getItemInHand(interactionHand);
         var pic = player.pick(player.blockInteractionRange(), 1, false);
-
-//        player.getAttribute(AttributeReg.MAGE_FLIGHT).setBaseValue(0.02);
-        AttributeReg.replaceOrAddAttribute(itemStack, "test_name", AttributeReg.MAGE_FLIGHT, 0.06, EquipmentSlot.MAINHAND, false, "blink");
 
         if(level instanceof ServerLevel){
             if(pic instanceof BlockHitResult result){

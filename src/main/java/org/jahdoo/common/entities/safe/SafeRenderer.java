@@ -49,7 +49,7 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
             poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
             poseStack.mulPose(Axis.XP.rotation(-1.5f));
             poseStack.scale(z, z, z);
-            drawHealthBar(poseStack.last(), bufferSource, animatable.getDamageRequired() - animatable.getDamageCounter(), animatable.getDamageRequired(), Icons.HEALTH_HOLDER);
+            drawHealthBar(poseStack, bufferSource, animatable.getDamageRequired() - animatable.getDamageCounter(), animatable.getDamageRequired(), Icons.HEALTH_HOLDER);
             poseStack.popPose();
 
             roomData(animatable, poseStack, bufferSource, entityRenderDispatcher, partialTick);

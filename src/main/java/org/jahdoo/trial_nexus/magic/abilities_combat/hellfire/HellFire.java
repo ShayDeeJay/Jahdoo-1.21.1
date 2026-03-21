@@ -14,11 +14,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
@@ -108,10 +106,11 @@ public class HellFire extends DefaultEntityBehaviour {
         var livingEntity = this.getEntityInRange(positionsA);
         if (livingEntity == null) return;
 
-        if(!canDamageEntity(livingEntity, this.cloud.getOwner())) return;
+        var owner = this.cloud.getOwner();
+        if(!canDamageEntity(livingEntity, owner)) return;
 
-        livingEntity.addEffect(new JahdooMobEffect(EffectReg.INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
-        DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), damage, getElementType().damageTypeResourceKey());
+        getElementType().aEffect().setEffect(owner, livingEntity, (int) effectDuration);
+        DamageUtils.damageWithJahdoo(livingEntity, owner, damage, getElementType().damageTypeResourceKey());
     }
 
     private LivingEntity getEntityInRange(Vec3 positionsA){

@@ -1,12 +1,10 @@
 package org.jahdoo.trial_nexus.magic.abilities_combat.elemental_missile;
 
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -18,9 +16,8 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
@@ -85,7 +82,8 @@ public class ElementalMissile extends DefaultEntityBehaviour {
 
     private void setDamageByOwner(LivingEntity target){
         DamageUtils.damageWithJahdoo(target, this.generic.getOwner(), this.damage, getElement().damageTypeResourceKey());
-        this.applyEffect(target, getElement().effect());
+        this.applyEffect(target);
+
     }
 
     @Override
@@ -103,11 +101,9 @@ public class ElementalMissile extends DefaultEntityBehaviour {
         return ElementReg.fromId(elementId).orElseThrow();
     }
 
-    private void applyEffect(LivingEntity livingEntity, Holder<MobEffect> mobEffect){
-        if(!livingEntity.hasEffect(mobEffect)){
-            if (JahdooHelpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0) {
-                livingEntity.addEffect(new JahdooMobEffect(mobEffect, (int) effectDuration, (int) effectStrength));
-            }
+    private void applyEffect(LivingEntity livingEntity){
+        if (JahdooHelpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0) {
+            getElement().aEffect().setEffect((LivingEntity) generic.getOwner(), livingEntity, (int) effectDuration);
         }
     }
 

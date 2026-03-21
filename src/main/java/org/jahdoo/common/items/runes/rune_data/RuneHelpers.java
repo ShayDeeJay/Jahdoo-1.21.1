@@ -33,12 +33,6 @@ import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.attachLootBeamCompo
 
 public class RuneHelpers {
 
-    public static Component getDescription(ItemStack itemStack){
-        var data = getRuneData(itemStack);
-        var fromCategory = RuneReg.getRuneFromId(data.name());
-        return Component.literal(fromCategory.runeDescription());
-    }
-
     public static Component getNameWithStyle(ItemStack stack){
         var name = getRuneData(stack);
         if(!name.name().contains("blank")){
@@ -72,9 +66,9 @@ public class RuneHelpers {
 
     public static void generateFullRune(ItemStack stack, JahdooRarity tierRarity, AbstractRune rune) {
         var value = rune.getAttribute(tierRarity.getAttributes());
-        var isPercentage = rune.baseValue() > 0 ? (value * rune.baseValue()) / 100 : value;
+//        var isPercentage = rune.baseValue() > 0 ? (value * rune.baseValue()) / 100 : value;
 
-        replaceOrAddAttribute(stack, rune.attributeHolder().getRegisteredName(), rune.attributeHolder(), isPercentage, EquipmentSlot.MAINHAND, true, "rune");
+        replaceOrAddAttribute(stack, rune.attributeHolder().getRegisteredName(), rune.attributeHolder(), value, EquipmentSlot.MAINHAND, true, "rune");
         stack.set(CUSTOM_MODEL_DATA, new CustomModelData(rune.runeCategory().getModel()));
         stack.set(RUNE_DATA, new RuneData(rune.runeId(), tierRarity.getId()));
     }
@@ -102,21 +96,31 @@ public class RuneHelpers {
         return runeFromAttribute == null ? -1 : runeFromAttribute.runeColour();
     }
 
-    private static @NotNull MutableComponent getComponents(double amount, String descriptionId, boolean isAbsorption, boolean isMaxHealth, int colourPre, Component compName) {
+    public static @NotNull MutableComponent getComponents(double amount, String descriptionId, int colourPre, Component compName) {
         var number = MathHelpers.singleFormattedDouble(amount);
         var value = MathHelpers.roundNonWholeString(number);
+        var get = RuneReg.getByAttributeId(descriptionId);
 
-        if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth || descriptionId.contains("armor") || descriptionId.contains("attack_damage")) {
-            var text = "+" + value + " ";
-            return TextHelpers.withStyleComponent(text, colourPre).copy().append(compName);
+        if(get.isPresent()){
+            var attribute = get.get();
+
+            if (attribute.displayType() == AbstractRune.DisplayType.FIXED) {
+                var text = "+" + value + " ";
+                return TextHelpers.withStyleComponent(text, colourPre).copy().append(compName);
+            }
+
+            if(attribute.displayType() == AbstractRune.DisplayType.PERCENT) {
+                var prefix = number < 0 ? "" : descriptionId.contains("reduction") ? "-" : "+";
+                return TextHelpers.withStyleComponent(prefix + value + "%" + " ", colourPre).copy().append(compName);
+            }
+
+            if (attribute.displayType() == AbstractRune.DisplayType.NON) {
+                return TextHelpers.withStyleComponent("", colourPre).copy().append(compName);
+            }
+
         }
 
-        if(descriptionId.contains("skills")){
-            return TextHelpers.withStyleComponent("", colourPre).copy().append(compName);
-        }
-
-        var prefix = number < 0 ? "" : descriptionId.contains("reduction") ? "-" : "+";
-        return TextHelpers.withStyleComponent(prefix + value + "%" + " ", colourPre).copy().append(compName);
+        return Component.empty();
     }
 
     public static Component standAloneAttributes(ItemAttributeModifiers.Entry entry) {
@@ -139,18 +143,15 @@ public class RuneHelpers {
 
     private static @NotNull MutableComponent sharedAttributes(ItemAttributeModifiers.Entry entry, int colour) {
         var descriptionId = entry.attribute().value().getDescriptionId();
+
         var amount = entry.modifier().amount();
         var compName = TextHelpers.withStyleComponentTrans(descriptionId, colour);
-        var isAbsorption = descriptionId.contains("absorption");
-        var isMaxHealth = descriptionId.contains("health");
-        var isSpeed = descriptionId.contains("speed");
+
         var isAttackSpeed = descriptionId.contains("attack_speed");
 
         if(isAttackSpeed) amount = amount * 25;
-        if(isSpeed && !isAttackSpeed) amount = amount * 1000;
-//        if(isAbsorption || isMaxHealth) amount = (amount/2);
 
-        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, colour, compName);
+        return getComponents(amount, descriptionId, colour, compName);
     }
 
     public static ItemStack generateRandomTypAttribute(

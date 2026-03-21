@@ -1,6 +1,9 @@
 package org.jahdoo.trial_nexus.magic.skills;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.trial_nexus.utils.Icons;
 
 public class ClimberSkill extends AbstractSkill {
@@ -32,4 +35,8 @@ public class ClimberSkill extends AbstractSkill {
         return "Your legs can now extend further, letting you scale higher obstacles and climb multiple blocks at once.";
     }
 
+    @Override
+    public Holder<Attribute> attributeModifier() {
+        return AttributeReg.CLIMBER;
+    }
 }

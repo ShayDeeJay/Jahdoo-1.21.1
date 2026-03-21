@@ -19,7 +19,6 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.ProjectileProperties;
-import org.jahdoo.trial_nexus.magic.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,6 @@ import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour.canDamageEntity;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.Random;
@@ -276,8 +274,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         this.playSound(SoundEvents.PHANTOM_BITE, 0.4F, 0.5F);
 
         if(effectChance == 0 || Random.nextInt((int) effectChance) == 0){
-            var effectInstance = new JahdooMobEffect(INFERNO_EFFECT, (int) effectDuration, (int) effectStrength);
-            livingEntity.addEffect(effectInstance);
+            getElementType().aEffect().setEffect((LivingEntity) this.getOwner(), livingEntity, (int) effectDuration);
         }
 
         DamageUtils.damageWithJahdoo(entity, this.getOwner(), damage, getElementType().damageTypeResourceKey());

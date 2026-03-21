@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
 import static com.mojang.blaze3d.platform.InputConstants.KEY_TAB;
+import static org.jahdoo.common.client.screens.AugmentScreen.getModifiableList;
 import static org.jahdoo.common.registers.mod.ElementReg.UTILITY;
 import static org.jahdoo.trial_nexus.magic.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.magic.AbilityRating.*;
@@ -124,14 +125,17 @@ public class AbilityComponentHelper {
         return Component.empty();
     }
 
-    public static Screen getAugmentModificationScreenWand(Player player, Screen previousScreen) {
+    public static Screen abilityModificationScreen(Player player, Screen previousScreen, Ability ability) {
+        if (!isConfigAbility(player, ability)) return null;
+
+        return new AugmentScreen(player, previousScreen, ability, false);
+    }
+
+    public static Screen abilityModificationScreen(Player player, Screen previousScreen) {
         var ability = getAbility(player);
-        if(ability.isPresent()){
-            if (isConfigAbility(player)) {
-                return new AugmentScreen(player, previousScreen, ability.get());
-            }
-        }
-        return null;
+        if(ability.isEmpty() || !isConfigAbility(player)) return null;
+
+        return new AugmentScreen(player, previousScreen, ability.get(), true);
     }
 
     private static @NotNull Optional<Ability> getAbility(Player player) {
@@ -139,15 +143,21 @@ public class AbilityComponentHelper {
         return AbilityReg.getFirstSpellByTypeId(data.getSelectedAbility());
     }
 
+    public static boolean isConfigAbility(Player player, Ability ability) {
+        var abilityHolder = CasterData.entityHolder(player, ability.setAbilityId());
+        var x = getModifiableList(abilityHolder);
+
+        return ability.getElemenType().equals(UTILITY.get()) && !x.isEmpty();
+    }
+
     public static boolean isConfigAbility(Player player) {
         var ability = getAbility(player);
         if(ability.isEmpty()) return false;
 
-        var filterOutBase = CasterData.entityHolderWithSelected(player).data().abilityProperties()
-            .keySet()
-            .stream()
-            .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
-        return ability.get().getElemenType().equals(UTILITY.get()) && !filterOutBase.toList().isEmpty();
+        var abilityHolder = CasterData.entityHolderWithSelected(player);
+        var x = getModifiableList(abilityHolder);
+
+        return ability.get().getElemenType().equals(UTILITY.get()) && !x.isEmpty();
     }
 
     public static Component getCurrentModifierRating(Ability ability, AbilityHolder holder, ItemStack itemStack1, String keys) {

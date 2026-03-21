@@ -7,15 +7,13 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.trial_nexus.magic.AbilityBuilder;
-import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.magic.effects.type_effects.vitality.VitalityEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.magic.AbilityBuilder;
+import org.jahdoo.trial_nexus.magic.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.shaydee.shaydeeapi.Helpers;
-import org.shaydee.shaydeeapi.helpers.MathHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,9 +123,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
             if(canDamage && !beenTargeted){
                 targetedEntities.add(livingEntity);
                 DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), getValue(DAMAGE), getElementType().damageTypeResourceKey());
-                if(MathHelpers.percentageChance(50)){
-                    VitalityEffect.throwHeartContainer(livingEntity, getValue(HEAL_VALUE));
-                }
+                getElementType().aEffect().setEffect(cloud.getOwner(), livingEntity, 60);
             }
         }
     }

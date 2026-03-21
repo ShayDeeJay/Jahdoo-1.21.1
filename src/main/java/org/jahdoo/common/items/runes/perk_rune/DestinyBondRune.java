@@ -5,16 +5,10 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 
-import static org.jahdoo.trial_nexus.rarity.JahdooRarity.EPIC;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.NO_VALUE;
 import static org.jahdoo.common.registers.AttributeReg.DESTINY_BOND;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.EPIC;
 
 public class DestinyBondRune extends AbstractPerkRune {
-
-    @Override
-    public double baseValue() {
-        return NO_VALUE;
-    }
 
     @Override
     public Holder<Attribute> attributeHolder() {
@@ -29,11 +23,6 @@ public class DestinyBondRune extends AbstractPerkRune {
     @Override
     public String runeId() {
         return "destiny_bond_rune";
-    }
-
-    @Override
-    public String runeDescription() {
-        return "Keep your item on death.";
     }
 
     @Override

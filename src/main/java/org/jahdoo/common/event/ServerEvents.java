@@ -1,9 +1,7 @@
 package org.jahdoo.common.event;
 
 import com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.IABoss_monster;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -19,10 +17,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.mod.EntityEffectReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
-import org.jahdoo.trial_nexus.attachments.effects.MysticEffect;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.PhantomJump;
@@ -129,7 +124,6 @@ public class ServerEvents {
         championLootCalculator(event, entity);
         resilienceDamageRecalculate(event, entity);
         greaterFrostEffectDamageAmplifier(event, entity);
-        greaterVitalityEffect(event, entity);
     }
 
     @SubscribeEvent
@@ -203,12 +197,6 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void teleportEvent(EntityTeleportEvent event){
-        //Method to stop player teleporting out of dim unless using the portal
-//        if(event.)
-    }
-
-    @SubscribeEvent
     public static void leaveEvent(EntityLeaveLevelEvent event){
         removeInstanceBuffs(event);
     }
@@ -226,20 +214,12 @@ public class ServerEvents {
 
     @SubscribeEvent
     private static void entityInteractEvent(PlayerInteractEvent.EntityInteractSpecific event){
-        var entity = event.getTarget();
-        var player = event.getEntity();
-        AbstractEntityEffect.setTypeEffect(MysticEffect::new, player, (LivingEntity) entity, true, 400, 1);
         rightClickInteract(event);
     }
 
     @SubscribeEvent
     private static void entityTickEvent(EntityTickEvent.Pre event){
-        var entity = event.getEntity();
-        if(entity instanceof LivingEntity livingEntity && livingEntity.level() instanceof ServerLevel){
-            for (var effect : EntityEffectReg.getAll()) {
-                AbstractEntityEffect.serverOnTick(livingEntity, effect.getAttachment());
-            }
-        }
+        AttachmentEffectTickEvents(event);
         tickDeathLootsplotion(event);
     }
 
@@ -256,7 +236,6 @@ public class ServerEvents {
 
         triggerKillEvent(killer, entity.level());
         coinDropCalc(entity, bonus);
-        onDeathGreaterFrostEffect(entity);
         resetGameModeOnDeath(entity);
         saveDestinyBondItems(entity);
     }

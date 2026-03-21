@@ -3,18 +3,18 @@ package org.jahdoo.trial_nexus.magic.skills;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.trial_nexus.utils.Icons;
 
-public class DripWalkSkill extends AbstractSkill {
+public class LiquistepSkill extends AbstractSkill {
 
-    public static final String DRIP_WALK = "drip_walk";
+    public static final String LIQUISTEP = "liquistep";
 
     @Override
     public String id() {
-        return DRIP_WALK;
+        return LIQUISTEP;
     }
 
     @Override
     public ResourceLocation icon() {
-        return Icons.DRIP_WALK;
+        return Icons.LIQUISTEP;
     }
 
     @Override

@@ -51,7 +51,7 @@ public class Rebound implements IAttachment {
                     var volume = (float) reducedDelta - 0.2f;
                     player.playSound(SoundEvents.FROG_TONGUE, volume, 1.2f);
                     player.playSound(SoundReg.SUSPEND.get(), volume, 2f);
-                    player.setDeltaMovement(player.getDeltaMovement().add(0, MathHelpers.singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
+                    player.setDeltaMovement(player.getDeltaMovement().add(0, MathHelpers.singleFormattedDouble(Math.min(reducedDelta, 3)), 0));
                 }
             }
             

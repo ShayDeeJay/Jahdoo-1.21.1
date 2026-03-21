@@ -15,6 +15,7 @@ import org.jahdoo.trial_nexus.attachments.player_abilities.Blink;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.PhantomJump;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
+import org.jahdoo.trial_nexus.element.*;
 import org.jahdoo.trial_nexus.magic.abilities_combat.dimensional_recall.DimensionalRecall;
 import org.jahdoo.trial_nexus.magic.abilities_combat.nova_smash.NovaSmash;
 import org.jahdoo.trial_nexus.magic.abilities_combat.vital_rejuvenation.VitalRejuvenation;
@@ -57,16 +58,16 @@ public class AttachmentReg {
 
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> MYSTIC_EFFECT =
-        effectWithType(MysticEffect::new, MysticEffect.MYSTIC_EFFECT);
+        effectWithType(MysticEffect::new, Mystic::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> INFERNO_EFFECT =
-        effectWithType(InfernoEffect::new, InfernoEffect.INFERNO_EFFECT);
+        effectWithType(InfernoEffect::new, Inferno::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> VITALITY_EFFECT =
-        effectWithType(VitalityEffect::new, VitalityEffect.VITALITY_EFFECT);
+        effectWithType(VitalityEffect::new, Vitality::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> FROST_EFFECT =
-        effectWithType(FrostEffect::new, FrostEffect.FROST_EFFECT);
+        effectWithType(FrostEffect::new, Frost::new);
 
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL =
@@ -99,8 +100,8 @@ public class AttachmentReg {
         return ATTACHMENT_TYPES.register(name, supplier::build);
     }
 
-    public static DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> effectWithType(Supplier<AbstractEntityEffect> supplier, String id){
-        return withProviderSync(id, supplier, AbstractEntityEffect.streamCodec(supplier));
+    public static DeferredHolder<AttachmentType<?>, AttachmentType<AbstractEntityEffect>> effectWithType(Supplier<AbstractEntityEffect> supplier, Supplier<AbstractElement> element){
+        return withProviderSync(element.get().setAbilityId() + "_effect", supplier, AbstractEntityEffect.streamCodec(supplier));
     }
 
     public static  <T extends IAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> withProvider(

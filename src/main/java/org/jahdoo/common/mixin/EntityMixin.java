@@ -68,7 +68,7 @@ public abstract class EntityMixin {
             }
         }
 
-        if(CasterData.hasSkill(entity, SkillReg.DRIP_WALK.get().id())){
+        if(CasterData.hasSkill(entity, SkillReg.LIQUISTEP.get().id())){
             return highestFluid == null ? original : new Vec3(original.x, highestValue, original.z);
         }
 

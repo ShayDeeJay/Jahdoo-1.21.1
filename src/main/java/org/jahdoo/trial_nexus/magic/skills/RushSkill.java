@@ -1,6 +1,9 @@
 package org.jahdoo.trial_nexus.magic.skills;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.trial_nexus.utils.Icons;
 
 public class RushSkill extends AbstractSkill {
@@ -33,4 +36,8 @@ public class RushSkill extends AbstractSkill {
         return "Tap into divine energy to defy gravity itself. You can now levitate freely, gliding through the air at the cost of mana.";
     }
 
+    @Override
+    public Holder<Attribute> attributeModifier() {
+        return AttributeReg.RUSH;
+    }
 }

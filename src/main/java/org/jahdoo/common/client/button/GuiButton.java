@@ -85,6 +85,9 @@ public class GuiButton extends ImageButton {
         if(isSelected) sizes = totalSize;
         this.setSize((int) sizes-4, (int) sizes-4);
 
+        graphics.pose().pushPose();
+        graphics.pose().translate(0,0,1);
+
         graphics.drawCenteredString(font, label, this.getX() + 17, this.getY()-8, -1);
         graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
 
@@ -116,6 +119,7 @@ public class GuiButton extends ImageButton {
             var uWidth = easedValue - i;
             graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, uWidth, uWidth, uWidth, uWidth);
         }
+        graphics.pose().popPose();
     }
 
     @Override

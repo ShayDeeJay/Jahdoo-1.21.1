@@ -25,11 +25,6 @@ public class FrostDamageRune extends AbstractFrostRune {
     }
 
     @Override
-    public String runeDescription() {
-        return "";
-    }
-
-    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomDamage();
     }

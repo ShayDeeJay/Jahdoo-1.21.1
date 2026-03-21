@@ -15,18 +15,19 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.client2server.*;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.SkillReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.magic.Ability;
 import org.jahdoo.trial_nexus.magic.AbilityBuilder;
 import org.jahdoo.trial_nexus.magic.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.magic.skills.AbstractSkill;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jetbrains.annotations.NotNull;
 import org.shaydee.shaydeeapi.helpers.ClientHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
@@ -41,11 +42,11 @@ import static com.mojang.blaze3d.platform.InputConstants.KEY_LCONTROL;
 import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
 import static org.jahdoo.trial_nexus.magic.AbilityComponentHelper.getAllAbilityModifiers;
+import static org.jahdoo.trial_nexus.utils.Icons.*;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.texture;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
@@ -184,14 +185,23 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var component = new ArrayList<Component>();
         var headerColour = color(100, 116, 245);
 
-        if(AbilityComponentHelper.holdKey(component, false)){
-            component.add(component.size()-1, TextHelpers.withStyleComponent(TextHelpers.stringIdToName(skill.id()), headerColour));
-        } else {
-            component.addAll(toComponent(skill.description(), TextHelpers.stringIdToName(skill.id()), headerColour, color(161, 171, 255)));
+        if(haveSkill){
+            var skillActive = CasterData.hasSkill(player, skill.id());
+            var prefix1 = TextHelpers.withStyleComponent("Status: ", ColourHelpers.getSubHeaderColour());
+            var suffix1 = TextHelpers.withStyleComponent(skillActive ? "Active" : "Inactive", skillActive ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed()).copy();
+            component.addLast(prefix1.copy().append(suffix1));
+
+            var att = skill.attributeModifier();
+            if(att != null){
+                var val = player.getAttributeValue(att);
+                var prefix2 = TextHelpers.withStyleComponent("Value: ", ColourHelpers.getSubHeaderColour());
+                var compName = TextHelpers.withStyleComponentTrans("", color(232, 173, 255));
+                var comps = RuneHelpers.getComponents(val, att.value().getDescriptionId(), color(232, 173, 255), compName);
+                component.addLast(prefix2.copy().append(comps));
+            }
         }
 
         if(!haveSkill){
-            component.addLast(Component.empty());
             var prefix = TextHelpers.withStyleComponentTrans("info.jahdoo.cost", ColourHelpers.getSubHeaderColour(), ": ");
             var suffix = TextHelpers.withStyleComponent("◆ " + skill.unlockCost() + " Skill Points", ColourHelpers.getPerkGreen()).copy();
             component.addLast(prefix.copy().append(suffix));
@@ -203,13 +213,12 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             }
         }
 
-        if(haveSkill){
-            var skillActive = CasterData.hasSkill(player, skill.id());
-            var prefix1 = TextHelpers.withStyleComponent("Status: ", ColourHelpers.getSubHeaderColour());
-            var suffix1 = TextHelpers.withStyleComponent(skillActive ? "Active" : "Inactive", skillActive ? ColourHelpers.getMagnetRangeGreen() : ColourHelpers.getMagnetStrengthRed()).copy();
-            component.addLast(Component.empty());
-            component.addLast(prefix1.copy().append(suffix1));
+        component.addFirst(TextHelpers.withStyleComponent(TextHelpers.stringIdToName(skill.id()), headerColour));
+
+        if(!AbilityComponentHelper.holdKey(component, false)){
+            component.addAll(component.size(), toComponent(skill.description(), "", headerColour, color(161, 171, 255)));
         }
+
 
         this.addRenderableWidget(
             menuButtonSoundAbilities(
@@ -239,8 +248,8 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
         renderAbilityButton(centerX - (size * 2), centerY - (size * 2), element.iconTexture(), size * 5, withElement.getFirst(), true, BLANK, 0);
 
-        //For future implementation of tree based rewards
-//        for (Ability abilityRegistrar : withElement) {
+//        For future implementation of tree based rewards
+//        for (int i = 0; i <= 2; i++) {
 //            renderAbilityButton(centerX - (size * 1.5), centerY + spacer + (scaledSpacing * 14), passive, size * 4, withElement.getFirst(), true, BLANK, 0);
 //            spacer += (int) (scaledSpacing * 8);
 //        }
@@ -474,7 +483,8 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var maxWidth = 200;
         var formattedText = new StringSplitter((a, b) -> 10).splitLines(body, maxWidth, Style.EMPTY);
 
-        list.add(TextHelpers.withStyleComponent(name, colour1));
+        if(!name.isEmpty()) list.add(TextHelpers.withStyleComponent(name, colour1));
+
         for (var lines : formattedText) {
             list.add(TextHelpers.withStyleComponent(lines.getString(), colour2));
         }

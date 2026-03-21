@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static net.minecraft.resources.ResourceLocation.*;
-import static net.minecraft.world.entity.EntityType.*;
-import static net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.*;
-import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
+import static net.minecraft.resources.ResourceLocation.parse;
+import static net.minecraft.world.entity.EntityType.PLAYER;
+import static net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE;
+import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
 public class AttributeReg {
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, JahdooMod.MOD_ID);
@@ -32,10 +32,11 @@ public class AttributeReg {
 
     //Base attribute
     public static final DeferredHolder<Attribute, Attribute> MANA_POOL =
-        register(MOD + FIXED_VALUE + ".mana.mana_pool", 100);
+        register(MOD + ".mana.mana_pool", 100);
 
     public static final DeferredHolder<Attribute, Attribute> MANA_REGEN =
         register(MOD + ".mana.mana_regen", 0);
+
 
     //Infinity Attributes
     public static final DeferredHolder<Attribute, Attribute> SKIP_MANA =
@@ -50,6 +51,7 @@ public class AttributeReg {
     public static final DeferredHolder<Attribute, Attribute> ABSORPTION_HEARTS =
         register(MOD + ".cast.absorption", 0);
 
+
     //Ability Augments
     public static final DeferredHolder<Attribute, Attribute> ELEMENTAL_SHOTGUN =
         register(MOD + ".abilities.shot_multiplier", 0);
@@ -63,6 +65,7 @@ public class AttributeReg {
     public static final DeferredHolder<Attribute, Attribute> RESILIENCE =
         register(MOD + ".resilience.resilience", 0);
 
+
     //Cosmic attributes
     public static final DeferredHolder<Attribute, Attribute> COOLDOWN_REDUCTION =
         register(MOD + ".cooldown.cooldown_reduction", 0);
@@ -73,7 +76,12 @@ public class AttributeReg {
     public static final DeferredHolder<Attribute, Attribute> MANA_COST_REDUCTION =
         register(MOD + ".mana.cost_reduction", 0);
 
+
     //Elemental attributes
+    //Inferno
+    public static final DeferredHolder<Attribute, Attribute> INFERNO_BURN_RADIUS =
+        register(MOD + ".inferno.effect_burn_radius", 2, 8);
+
     public static final DeferredHolder<Attribute, Attribute> INFERNO_COOLDOWN_REDUCTION =
         register(MOD + ".inferno_cooldown.cooldown_reduction", 0);
 
@@ -82,6 +90,10 @@ public class AttributeReg {
 
     public static final DeferredHolder<Attribute, Attribute> INFERNO_MANA_COST_REDUCTION =
         register(MOD + ".inferno_mana.cost_reduction", 0);
+
+    //Mystic
+    public static final DeferredHolder<Attribute, Attribute> MYSTIC_EFFECT_EXPLOSION_CHANCE =
+        register(MOD + ".mystic.effect_explosion", 5, 30);
 
     public static final DeferredHolder<Attribute, Attribute> MYSTIC_COOLDOWN_REDUCTION =
         register(MOD + ".mystic_cooldown.cooldown_reduction", 0);
@@ -92,6 +104,10 @@ public class AttributeReg {
     public static final DeferredHolder<Attribute, Attribute> MYSTIC_MANA_COST_REDUCTION =
         register(MOD + ".mystic_mana.cost_reduction", 0);
 
+    //Frost
+    public static final DeferredHolder<Attribute, Attribute> FROST_DOUBLED_DAMAGE_CHANCE =
+        register(MOD + ".frost.effect_damage_chance", 5, 100);
+
     public static final DeferredHolder<Attribute, Attribute> FROST_COOLDOWN_REDUCTION =
         register(MOD + ".frost_cooldown.cooldown_reduction", 0);
 
@@ -100,6 +116,10 @@ public class AttributeReg {
 
     public static final DeferredHolder<Attribute, Attribute> FROST_MANA_COST_REDUCTION =
         register(MOD + ".frost_mana.cost_reduction", 0);
+
+    //Vitality
+    public static final DeferredHolder<Attribute, Attribute> VITALITY_EFFECT_HEAL_VALUE =
+        register(MOD + ".vitality.effect_heal_value", 0.1);
 
     public static final DeferredHolder<Attribute, Attribute> VITALITY_COOLDOWN_REDUCTION =
         register(MOD + ".vitality_cooldown.cooldown_reduction", 0);
@@ -110,21 +130,33 @@ public class AttributeReg {
     public static final DeferredHolder<Attribute, Attribute> VITALITY_MANA_COST_REDUCTION =
         register(MOD + ".vitality_mana.cost_reduction", 0);
 
+
     //Skills
     public static final DeferredHolder<Attribute, Attribute> BLINK_RANGE =
-        register(MOD + ".blink_range", 1);
+        register(MOD + ".skills.blink_range", 1, 20);
 
     public static final DeferredHolder<Attribute, Attribute> MAGE_FLIGHT =
-        register(MOD + ".skills.mage_flight", 0.02);
+        register(MOD + ".skills.mage_flight", 2, 8);
 
-    public static final DeferredHolder<Attribute, Attribute> TRIPLE_JUMP =
-        register(MOD + ".skills.triple_jump", 1);
+    public static final DeferredHolder<Attribute, Attribute> PHANTOM_JUMP =
+        register(MOD + ".skills.phantom_jump", 1, 6);
 
     public static final DeferredHolder<Attribute, Attribute> RUSH =
-        register(MOD + ".skills.rush", 1);
+        register(MOD + ".skills.rush", 1, 4);
+
+    public static final DeferredHolder<Attribute, Attribute> SWIFT =
+        register(MOD + ".skills.swift", 10, 500);
+
+    public static final DeferredHolder<Attribute, Attribute> CLIMBER =
+        register(MOD + ".skills.climber", 1, 5);
 
     public static DeferredHolder<Attribute, Attribute> register (String name, double defaultVal){
         var rangedAttribute = new RangedAttribute("attribute.name."+name, defaultVal, 0.0, 2048.0);
+        return ATTRIBUTES.register(name, () -> rangedAttribute.setSyncable(true));
+    }
+
+    public static DeferredHolder<Attribute, Attribute> register (String name, double defaultVal, double maxValue){
+        var rangedAttribute = new RangedAttribute("attribute.name."+name, defaultVal, 0.0, maxValue);
         return ATTRIBUTES.register(name, () -> rangedAttribute.setSyncable(true));
     }
 
@@ -189,7 +221,9 @@ public class AttributeReg {
 
         event.add(PLAYER, BLINK_RANGE);
         event.add(PLAYER, MAGE_FLIGHT);
-        event.add(PLAYER, TRIPLE_JUMP);
+        event.add(PLAYER, PHANTOM_JUMP);
+        event.add(PLAYER, SWIFT);
+        event.add(PLAYER, CLIMBER);
         event.add(PLAYER, RUSH);
 
         event.add(PLAYER, SKIP_MANA);
@@ -199,18 +233,22 @@ public class AttributeReg {
         event.add(PLAYER, MAGIC_DAMAGE_MULTIPLIER);
         event.add(PLAYER, MANA_COST_REDUCTION);
 
+        event.add(PLAYER, INFERNO_BURN_RADIUS);
         event.add(PLAYER, INFERNO_COOLDOWN_REDUCTION);
         event.add(PLAYER, INFERNO_MAGIC_DAMAGE_MULTIPLIER);
         event.add(PLAYER, INFERNO_MANA_COST_REDUCTION);
 
+        event.add(PLAYER, VITALITY_EFFECT_HEAL_VALUE);
         event.add(PLAYER, VITALITY_COOLDOWN_REDUCTION);
         event.add(PLAYER, VITALITY_MAGIC_DAMAGE_MULTIPLIER);
         event.add(PLAYER, VITALITY_MANA_COST_REDUCTION);
 
+        event.add(PLAYER, MYSTIC_EFFECT_EXPLOSION_CHANCE);
         event.add(PLAYER, MYSTIC_COOLDOWN_REDUCTION);
         event.add(PLAYER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
         event.add(PLAYER, MYSTIC_MANA_COST_REDUCTION);
 
+        event.add(PLAYER, FROST_DOUBLED_DAMAGE_CHANCE);
         event.add(PLAYER, FROST_COOLDOWN_REDUCTION);
         event.add(PLAYER, FROST_MAGIC_DAMAGE_MULTIPLIER);
         event.add(PLAYER, FROST_MANA_COST_REDUCTION);
