@@ -307,8 +307,8 @@ public class JahdooHelpers {
     }
 
     public static Vec3 getRandomParticleVelocity(Entity entity, double speed) {
-        var theta = Random.nextDouble() * 2 * Math.PI; // Angle around the y-axis
-        var phi = Random.nextDouble() * Math.PI; // Angle from the y-axis
+        var theta = Random.nextDouble() * 2 * Math.PI;
+        var phi = Random.nextDouble() * Math.PI;
         var x = Math.sin(phi) * Math.cos(theta);
         var y = Math.cos(phi);
         var z = Math.sin(phi) * Math.sin(theta);

@@ -166,7 +166,7 @@ public class IceSpear extends AbstractArrow implements GeoEntity {
 
     @Override
     protected ItemStack getDefaultPickupItem() {
-        return new ItemStack(ItemReg.WAND_ITEM_FROST);
+        return new ItemStack(ItemReg.WAND_FROST);
     }
 
     public ItemStack getWeaponItem() {

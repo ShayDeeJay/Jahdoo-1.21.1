@@ -31,7 +31,7 @@ public class CreativeTab {
         "jahdoo_tab",
 
         () -> CreativeModeTab.builder()
-            .icon(() -> new ItemStack(WAND_ITEM_MYSTIC.get()))
+            .icon(() -> new ItemStack(WAND_MYSTIC.get()))
             .title(Component.translatable("creative_tab.jahdoo_tab"))
             .displayItems((parameters, outPut) -> {
                 outPut.accept(NEXITE_POWDER.get());
@@ -135,10 +135,27 @@ public class CreativeTab {
 //                outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(ELEMENTAL_STAFF.get());
                 outPut.accept(STARTER_WAND.get());
-                outPut.accept(WAND_ITEM_MYSTIC.get());
-                outPut.accept(WAND_ITEM_FROST.get());
-                outPut.accept(WAND_ITEM_INFERNO.get());
-                outPut.accept(WAND_ITEM_VITALITY.get());
+
+                outPut.accept(COMMON_WAND_MYSTIC.get());
+                outPut.accept(COMMON_WAND_FROST.get());
+                outPut.accept(COMMON_WAND_INFERNO.get());
+                outPut.accept(COMMON_WAND_VITALITY.get());
+
+                outPut.accept(WAND_MYSTIC.get());
+                outPut.accept(WAND_FROST.get());
+                outPut.accept(WAND_INFERNO.get());
+                outPut.accept(WAND_VITALITY.get());
+
+                outPut.accept(UNIQUE_WAND_MYSTIC.get());
+                outPut.accept(UNIQUE_WAND_FROST.get());
+                outPut.accept(UNIQUE_WAND_INFERNO.get());
+                outPut.accept(UNIQUE_WAND_VITALITY.get());
+
+                outPut.accept(ETERNAL_WAND_MYSTIC.get());
+                outPut.accept(ETERNAL_WAND_FROST.get());
+                outPut.accept(ETERNAL_WAND_INFERNO.get());
+                outPut.accept(ETERNAL_WAND_VITALITY.get());
+
             }
        ).withTabsBefore(SPAWN_EGGS)
         .build()

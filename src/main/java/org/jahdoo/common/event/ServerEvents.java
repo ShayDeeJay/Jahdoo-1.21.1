@@ -113,6 +113,9 @@ public class ServerEvents {
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
 
+        System.out.println(player.level());
+        System.out.println(player.getStringUUID());
+
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
     }

@@ -15,10 +15,11 @@ import org.jahdoo.trial_nexus.attachments.effects.AbstractElementEffect;
 import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
 import org.jahdoo.trial_nexus.attachments.effects.MysticEffect;
 import org.jahdoo.trial_nexus.utils.Icons;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_MYSTIC;
+import static org.jahdoo.common.registers.ItemReg.*;
 import static org.jahdoo.trial_nexus.utils.Icons.GUI_BUTTON_MYSTIC_SQUARE;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
@@ -61,8 +62,23 @@ public class Mystic extends AbstractElement {
     }
 
     @Override
-    public Item getWand() {
-        return WAND_ITEM_MYSTIC.get();
+    public Item getCommonWand() {
+        return COMMON_WAND_MYSTIC.get();
+    }
+
+    @Override
+    public Item getStandardWand() {
+        return WAND_MYSTIC.get();
+    }
+
+    @Override
+    public @Nullable Item getEternalWand() {
+        return ETERNAL_WAND_MYSTIC.get();
+    }
+
+    @Override
+    public @Nullable Item getUniqueWand() {
+        return UNIQUE_WAND_MYSTIC.get();
     }
 
     @Override

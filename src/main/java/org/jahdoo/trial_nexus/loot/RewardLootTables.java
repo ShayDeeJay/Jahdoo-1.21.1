@@ -264,8 +264,8 @@ public class RewardLootTables {
     }
 
     private static LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>> getRandomWand() {
-        var randomWand = ElementReg.random().getWand();
-        var wand = randomWand != null ? randomWand : ItemReg.WAND_ITEM_FROST.get();
+        var randomWand = ElementReg.random().getStandardWand();
+        var wand = randomWand != null ? randomWand : ItemReg.WAND_FROST.get();
 
         return lootTableItem(wand);
     }

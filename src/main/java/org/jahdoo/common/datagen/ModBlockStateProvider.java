@@ -31,7 +31,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(ROSE_QUARTZ_BLOCK);
         blockWithItem(PACKED_MUD_CLAY);
         blockWithItem(RAW_NEXITE_BLOCK);
-        blockWithItem(ENCHANTED_BLOCK);
         blockWithItem(LOCK_SUPPORT);
 
         simpleBlockWithItem(
@@ -46,8 +45,13 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         simpleBlockWithItem(
             LOOT_POT.get(),
-            new UncheckedModelFile(modLoc("block/loot_pot"))
+            new UncheckedModelFile(modLoc("block/enchanted_block"))
         );
+
+//        simpleBlockWithItem(
+//            ENCHANTED_BLOCK.get(),
+//            new UncheckedModelFile(modLoc("block/loot_crate"))
+//        );
 
         simpleBlockWithItem(
             LOOT_CRATE.get(),

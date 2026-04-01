@@ -48,7 +48,7 @@ public class SpecialMobs {
     public static LivingEntity getReadyEternalWizard(ServerLevel serverLevel, InstanceData data){
         var damage = 10 + (1 * data.getAttackDamage());
         var entity = new EternalWizard(serverLevel, null, damage, 200, 2, -1, 30, 5);
-        var wand = new ItemStack(ItemReg.WAND_ITEM_VITALITY.get());
+        var wand = new ItemStack(ItemReg.WAND_VITALITY.get());
         var helm = new ItemStack(ItemReg.MAGE_HELMET.get());
         var chestplate = new ItemStack(ItemReg.MAGE_CHESTPLATE.get());
         var leggings = new ItemStack(ItemReg.MAGE_LEGGINGS.get());

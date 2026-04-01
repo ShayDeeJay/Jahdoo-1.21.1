@@ -280,7 +280,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         if (this.level() instanceof ServerLevel) {
             this.goalSelector.removeGoal(this.wandGoal);
             ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, CastHelper::validCasterType));
-            if (itemstack.is(ItemReg.WAND_ITEM_VITALITY.get())) {
+            if (itemstack.is(ItemReg.WAND_VITALITY.get())) {
                 //Set attack interval
                 int i = 10;
                 this.wandGoal.setMinAttackInterval(i);

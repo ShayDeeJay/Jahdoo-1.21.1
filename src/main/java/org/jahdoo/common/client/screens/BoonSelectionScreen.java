@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_FROST;
+import static org.jahdoo.common.registers.ItemReg.WAND_FROST;
 
 public class BoonSelectionScreen extends Screen  {
 
@@ -147,7 +147,7 @@ public class BoonSelectionScreen extends Screen  {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        var itemStack = new ItemStack(WAND_ITEM_FROST.get());
+        var itemStack = new ItemStack(WAND_FROST.get());
         var tooltip = new ArrayList<>(getTooltipFromItem(getMinecraft(), itemStack));
         var i = this.height / 2;
 

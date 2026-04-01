@@ -16,10 +16,7 @@ import org.jahdoo.common.items.armor.mage.MageArmor;
 import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import org.jahdoo.common.items.block_items.*;
 import org.jahdoo.common.items.caster_item.basic_wand.StarterWand;
-import org.jahdoo.common.items.caster_item.elemental_wand.FrostWand;
-import org.jahdoo.common.items.caster_item.elemental_wand.InfernoWand;
-import org.jahdoo.common.items.caster_item.elemental_wand.MysticWand;
-import org.jahdoo.common.items.caster_item.elemental_wand.VitalityWand;
+import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand;
 import org.jahdoo.common.items.caster_item.staff.ElementalStaff;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
@@ -36,6 +33,7 @@ import org.jahdoo.common.items.weapon.IngmasSword;
 import java.util.function.Supplier;
 
 import static net.minecraft.world.item.ArmorItem.Type.*;
+import static org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand.isBasic;
 import static org.jahdoo.common.registers.BlockReg.*;
 
 public class ItemReg {
@@ -228,17 +226,63 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> STARTER_WAND =
         complexItem("wand_basic", StarterWand::new);
 
-    public static final DeferredHolder<Item, Item> WAND_ITEM_MYSTIC =
-        complexItem("wand_mystic", MysticWand::new);
 
-    public static final DeferredHolder<Item, Item> WAND_ITEM_FROST =
-        complexItem("wand_frost", FrostWand::new);
+//    public static DeferredHolder<Item, Item> getWandWithType(String location, String type) {
+//        return complexItem(location, () -> new ElementalWand(location, type));
+//    }
 
-    public static final DeferredHolder<Item, Item> WAND_ITEM_INFERNO =
-        complexItem("wand_inferno", InfernoWand::new);
+    public static DeferredHolder<Item, Item> mysticType(String type) {
+        var wandMystic = "wand_mystic";
+        return complexItem(isBasic(type) + wandMystic, () -> new ElementalWand(wandMystic, type));
+    }
+    public static DeferredHolder<Item, Item> frostType(String type) {
+        var wandFrost = "wand_frost";
+        return complexItem(isBasic(type) + wandFrost, () -> new ElementalWand(wandFrost, type));
+    }
+    public static DeferredHolder<Item, Item> infernoType(String type) {
+        var wandInferno = "wand_inferno";
+        return complexItem(isBasic(type) + wandInferno, () -> new ElementalWand(wandInferno, type));
+    }
+    public static DeferredHolder<Item, Item> vitalityType(String type) {
+        var wandVitality = "wand_vitality";
+        return complexItem(isBasic(type) + wandVitality, () -> new ElementalWand(wandVitality, type));
+    }
 
-    public static final DeferredHolder<Item, Item> WAND_ITEM_VITALITY =
-        complexItem("wand_vitality", VitalityWand::new);
+    public static final DeferredHolder<Item, Item> COMMON_WAND_MYSTIC = mysticType(ElementalWand.COMMON_WAND);
+
+    public static final DeferredHolder<Item, Item> COMMON_WAND_FROST = frostType(ElementalWand.COMMON_WAND);
+
+    public static final DeferredHolder<Item, Item> COMMON_WAND_INFERNO = infernoType(ElementalWand.COMMON_WAND);
+
+    public static final DeferredHolder<Item, Item> COMMON_WAND_VITALITY = vitalityType(ElementalWand.COMMON_WAND);
+
+
+    public static final DeferredHolder<Item, Item> WAND_MYSTIC = mysticType("");
+
+    public static final DeferredHolder<Item, Item> WAND_FROST = frostType("");
+
+    public static final DeferredHolder<Item, Item> WAND_INFERNO = infernoType("");
+
+    public static final DeferredHolder<Item, Item> WAND_VITALITY = vitalityType("");
+
+
+    public static final DeferredHolder<Item, Item> ETERNAL_WAND_MYSTIC = mysticType(ElementalWand.ETERNAL_WAND);
+
+    public static final DeferredHolder<Item, Item> ETERNAL_WAND_FROST = frostType(ElementalWand.ETERNAL_WAND);
+
+    public static final DeferredHolder<Item, Item> ETERNAL_WAND_INFERNO = infernoType(ElementalWand.ETERNAL_WAND);
+
+    public static final DeferredHolder<Item, Item> ETERNAL_WAND_VITALITY = vitalityType(ElementalWand.ETERNAL_WAND);
+
+
+    public static final DeferredHolder<Item, Item> UNIQUE_WAND_MYSTIC = mysticType(ElementalWand.UNIQUE_WAND);
+
+    public static final DeferredHolder<Item, Item> UNIQUE_WAND_FROST = frostType(ElementalWand.UNIQUE_WAND);
+
+    public static final DeferredHolder<Item, Item> UNIQUE_WAND_INFERNO = infernoType(ElementalWand.UNIQUE_WAND);
+
+    public static final DeferredHolder<Item, Item> UNIQUE_WAND_VITALITY = vitalityType(ElementalWand.UNIQUE_WAND);
+
 
     public static final DeferredHolder<Item, Item> HEALTH_CONTAINER =
         complexItem("health_perk", HealthContainer::new);

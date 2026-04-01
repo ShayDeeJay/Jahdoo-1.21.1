@@ -6,7 +6,7 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 import org.jahdoo.common.registers.AttributeReg;
 
-public class ResilienceRune extends ProtectorRune {
+public class ResilienceRune extends AbstractProtectorRune {
 
     @Override
     public Holder<Attribute> attributeHolder() {

@@ -7,7 +7,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -16,6 +15,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 
@@ -83,7 +83,7 @@ public class BlockInteractionHandler {
 
     }
 
-    public static void RemoveItemsFromSlotToHand(
+    public static boolean RemoveItemsFromSlotToHand(
         ItemStackHandler itemStackHandler,
         int outputSlot,
         Player player,
@@ -101,8 +101,10 @@ public class BlockInteractionHandler {
                 player.setItemInHand(interactionHand, outputSlotTotal);
                 itemStackHandler.extractItem(outputSlot, outputSlotTotal.getCount(), false);
                 level.playLocalSound(blockPos, soundEvents, SoundSource.NEUTRAL, volume, pitch, false);
+                return true;
             }
         }
+        return false;
     }
 
 
@@ -133,14 +135,13 @@ public class BlockInteractionHandler {
     public static boolean stackHandlerWithFeedBack(
         ItemStackHandler itemHandler,
         ItemStack itemStack,
-        Item item,
         int inputSlotNumber,
         int maxSize,
         Player player
     ) {
         var inputSlot = itemHandler.getStackInSlot(inputSlotNumber);
 
-        if (!itemStack.isEmpty() && itemStack.is(item)) {
+        if (!itemStack.isEmpty() && itemStack.is(ItemReg.NEXITE_POWDER.get())) {
             if (inputSlot.isEmpty() || itemStack.is(inputSlot.getItem())) {
                 int remainingSpace = maxSize - inputSlot.getCount();
                 if (remainingSpace > 0) {

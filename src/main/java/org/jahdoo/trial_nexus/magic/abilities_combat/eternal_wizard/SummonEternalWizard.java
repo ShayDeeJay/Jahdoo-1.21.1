@@ -201,7 +201,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
             var spawnPosition = cloud.position().add(0, -1, 0);
             eternalWizard.setInvulnerable(true);
             eternalWizard.moveTo(spawnPosition);
-            eternalWizard.setItemSlot(MAINHAND, new ItemStack(ItemReg.WAND_ITEM_VITALITY.get()));
+            eternalWizard.setItemSlot(MAINHAND, new ItemStack(ItemReg.WAND_VITALITY.get()));
             eternalWizard.setItemSlot(HEAD, new ItemStack(ItemReg.MAGE_HELMET.get()));
             eternalWizard.setItemSlot(CHEST, new ItemStack(ItemReg.MAGE_CHESTPLATE.get()));
             eternalWizard.setItemSlot(LEGS, new ItemStack(ItemReg.MAGE_LEGGINGS.get()));

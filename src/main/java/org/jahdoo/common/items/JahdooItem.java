@@ -13,8 +13,8 @@ import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import org.shaydee.shaydeeapi.helpers.ColourHelpers;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 import org.shaydee.shaydeeapi.helpers.MathHelpers;
 import org.shaydee.shaydeeapi.helpers.TextHelpers;
 
@@ -30,11 +30,6 @@ import static org.jahdoo.trial_nexus.utils.JahdooHelpers.highlightTextComponent;
 
 public interface JahdooItem {
 
-    Pair<String, List<ItemStack>> EMPTY = new Pair<>("", List.of());
-
-//    default String descriptionId(){
-//        return null;
-//    }
 
     default String descriptionId(ItemStack stack){
         return null;
@@ -72,7 +67,7 @@ public interface JahdooItem {
     }
 
     default boolean isItemBroken(ItemStack gearItem){
-        return JahdooHelpers.durabilityDamageCount(gearItem) == 0;
+        return ItemHelpers.durabilityDamageCount(gearItem) == 0;
     }
 
     default void appendRepairSlotsComponent(List<Component> toolTips, ItemStack gearItem) {

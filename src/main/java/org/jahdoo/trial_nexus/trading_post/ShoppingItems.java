@@ -203,7 +203,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
 
     public static ItemStack getRandomWand(@Nullable JahdooRarity rarity, @Nullable ItemStack item) {
         var jahdooRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
-        var elementalWand = new ItemStack(Objects.requireNonNull(ElementReg.random().getWand()));
+        var elementalWand = new ItemStack(Objects.requireNonNull(ElementReg.random().getStandardWand()));
         var itemStack = rarity == COMMON ? new ItemStack(ItemReg.STARTER_WAND) : item == null ? elementalWand : item;
         createWandAttributes(jahdooRarity, itemStack);
         return itemStack;
@@ -317,6 +317,19 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     public static ShoppingItems soldWands(@Nullable JahdooRarity rarity){
         var randomRarity = guaranteeRarity(rarity);
         var randomWand = getRandomWand(randomRarity, null);
+        return switch (randomRarity.getId()){
+            case 1 -> new ShoppingItems(randomWand, setSilverCost(20));
+            case 2 -> new ShoppingItems(randomWand, setGoldCost(10));
+            case 3 -> new ShoppingItems(randomWand, setGoldCost(80));
+            case 4 -> new ShoppingItems(randomWand, setPlatinumCost(20));
+            case 5 -> new ShoppingItems(randomWand, setPlatinumCost(60));
+            default -> new ShoppingItems(randomWand, setBronzeCost(20));
+        };
+    }
+
+    public static ShoppingItems randomWandWithType(@Nullable JahdooRarity rarity, ItemStack itemStack){
+        var randomRarity = guaranteeRarity(rarity);
+        var randomWand = getRandomWand(randomRarity, itemStack);
         return switch (randomRarity.getId()){
             case 1 -> new ShoppingItems(randomWand, setSilverCost(20));
             case 2 -> new ShoppingItems(randomWand, setGoldCost(10));

@@ -27,12 +27,12 @@ import static org.jahdoo.trial_nexus.utils.JahdooHelpers.*;
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
-    COMMON(0, "Common", color(120, 203, 83), COMMON_ATTRIBUTES, Icons.COMMON_TAG),
-    RARE(1, "Rare", color(67, 164, 222), RARE_ATTRIBUTES, Icons.RARE_TAG),
-    EPIC(2, "Epic", color(222, 136, 255), EPIC_ATTRIBUTES, Icons.EPIC_TAG),
-    LEGENDARY(3, "Legendary", color(241, 194, 50), LEGENDARY_ATTRIBUTES, Icons.LEGENDARY_TAG),
-    MYTHIC(4, "Mythic", color(225, 92, 112), MYTHIC_ATTRIBUTES, Icons.MYTHIC_TAG),
-    UNIQUE(5, "Unique", ColourHelpers.getUniqueB(), MYTHIC_ATTRIBUTES, Icons.UNIQUE_TAG);
+    COMMON(0, "common", color(120, 203, 83), COMMON_ATTRIBUTES, Icons.COMMON_TAG),
+    RARE(1, "rare", color(67, 164, 222), RARE_ATTRIBUTES, Icons.RARE_TAG),
+    EPIC(2, "epic", color(222, 136, 255), EPIC_ATTRIBUTES, Icons.EPIC_TAG),
+    LEGENDARY(3, "legendary", color(241, 194, 50), LEGENDARY_ATTRIBUTES, Icons.LEGENDARY_TAG),
+    MYTHIC(4, "mythic", color(225, 92, 112), MYTHIC_ATTRIBUTES, Icons.MYTHIC_TAG),
+    UNIQUE(5, "unique", ColourHelpers.getUniqueB(), MYTHIC_ATTRIBUTES, Icons.UNIQUE_TAG);
 
     public static final List<Pair<JahdooRarity, Integer>> BASE_RARITY_CHANCES =
         List.of(
@@ -174,7 +174,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         "XI"   // index 10
     );
 
-    //Debug using use on item
     public static void debugRarity(Player player){
         if(!player.level().isClientSide){
             playDebugMessage(player, "NEW ROLL");

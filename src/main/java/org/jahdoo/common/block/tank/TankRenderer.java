@@ -29,12 +29,12 @@ public class TankRenderer implements BlockEntityRenderer<TankBlockEntity>{
         var mc = getInstance();
         var itemRenderer = mc.getItemRenderer();
         var itemStack1 = new ItemStack(BlockReg.NEXITE_POWDER_BLOCK.get());
-        var itemStack = entity.getRenderer();
         var number = 0.63F;
         var rotation = 0;
+        var total = entity.getMaxSlotSizeInput() * entity.setInputSlots();
 
         setGlow(entity);
-        for (var i = 0; i < itemStack.getCount(); i += entity.getMaxSlotSizeInput()/10) {
+        for (var i = 0; i < entity.getTotalItemsInTank(); i += total/10) {
             stack.pushPose();
             stack.translate(0.5f, number, 0.5f);
             stack.scale(0.9f,0.9f,0.9f);

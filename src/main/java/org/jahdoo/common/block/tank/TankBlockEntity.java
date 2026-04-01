@@ -55,7 +55,6 @@ public class TankBlockEntity extends AbstractBEInventory {
         return 0;
     }
 
-
     @Override
     public int getMaxSlotSizeInput() {
         return INIT_TANK_CAPACITY;
@@ -66,16 +65,19 @@ public class TankBlockEntity extends AbstractBEInventory {
         return 0;
     }
 
-    public void increaseTankSize(int increment){
-        maxTankSize += increment;
-    }
-
-    public int getCount(){
-        return this.getInputItemHandler().getStackInSlot(0).getCount();
-    }
-
     public ItemStack getRenderer() {
         return this.getInputItemHandler().getStackInSlot(INPUT);
+    }
+
+    public int getTotalItemsInTank(){
+        var counter = 0;
+
+        for (int i = 0; i < setInputSlots(); i++) {
+            var count = this.getInputItemHandler().getStackInSlot(i).getCount();
+            counter += count;
+        }
+
+        return counter;
     }
 
     @Override
@@ -100,7 +102,18 @@ public class TankBlockEntity extends AbstractBEInventory {
     public void chargeTankFuel(int craftingFuelCost){
         if(this.getData(AttachmentReg.BOOL)) return;
         if(this.getLevel() == null) return;
+
         this.getInputItemHandler().getStackInSlot(0).shrink(craftingFuelCost);
+        var totalCharged = 0;
+
+        for (int i = 0; i < setInputSlots(); i++) {
+            if(totalCharged < craftingFuelCost){
+                var min = Math.min(craftingFuelCost - totalCharged, getMaxSlotSizeInput());
+                this.getInputItemHandler().getStackInSlot(i).shrink(min);
+                totalCharged += min;
+            }
+        }
+
         var blockstate = getLevel().getBlockState(this.getBlockPos());
         this.getLevel().sendBlockUpdated(this.getBlockPos(), blockstate, blockstate,1);
     }

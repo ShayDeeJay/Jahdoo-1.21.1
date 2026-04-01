@@ -70,14 +70,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(RAW_NEXITE_BLOCK.get())
             .addTag(MINEABLE_NEXUS);
 
-        this.tag(RARE_BLOCKS)
-            .add(EMERALD_BLOCK)
-            .add(DIAMOND_BLOCK)
-            .add(OXIDIZED_COPPER)
-            .add(ANCIENT_DEBRIS)
-            .add(GOLD_BLOCK)
-            .add(GILDED_BLACKSTONE);
 
+        //Block values for XP;
         this.tag(CHEAP_BLOCK)
             .add(NEXITE_DEEPSLATE_ORE.get())
             .add(NEXITE_ORE.get())
@@ -89,19 +83,34 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
 
         this.tag(VALUABLE_BLOCK)
             .add(ENCHANTED_DIAMOND_ORE.get());
+        //---------------------------------------
 
         this.tag(MINEABLE_NEXUS)
             .addTag(CHEAP_BLOCK)
             .addTag(MID_RANGE_BLOCK)
             .addTag(VALUABLE_BLOCK);
 
+        //Convert block types
+        this.tag(INFINITY_BLOCKS)
+            .add(ENCHANTED_DIAMOND_BLOCK.get());
+
         this.tag(OPULENT_BLOCKS)
             .add(BEACON)
             .add(NETHERITE_BLOCK);
 
+        this.tag(RARE_BLOCKS)
+            .add(ROSE_QUARTZ_BLOCK.get())
+            .add(EMERALD_BLOCK)
+            .add(DIAMOND_BLOCK)
+            .add(OXIDIZED_COPPER)
+            .add(ANCIENT_DEBRIS)
+            .add(GOLD_BLOCK)
+            .add(GILDED_BLACKSTONE);
+
         this.tag(RARE_ORE)
             .add(NETHER_QUARTZ_ORE)
             .add(ANCIENT_DEBRIS)
+            .add(ENCHANTED_DIAMOND_ORE.get())
             .addTag(GOLD_ORES)
             .addTag(DIAMOND_ORES)
             .addTag(EMERALD_ORES);
@@ -133,5 +142,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(DRIPSTONE_BLOCK)
             .add(NETHERRACK)
             .add(GRANITE);
+        //---------------------------------------
+
     }
 }

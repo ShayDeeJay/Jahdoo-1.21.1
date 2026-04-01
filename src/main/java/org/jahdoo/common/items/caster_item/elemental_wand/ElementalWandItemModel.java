@@ -7,12 +7,12 @@ import software.bernie.geckolib.model.GeoModel;
 public class ElementalWandItemModel extends GeoModel<ElementalWand> {
     @Override
     public ResourceLocation getModelResource(ElementalWand animatable) {
-        return JahdooHelpers.res("geo/item/wand.geo.json");
+        return JahdooHelpers.res("geo/item/" + ElementalWand.isBasic(animatable.type) + "wand.geo.json");
     }
 
     @Override
     public ResourceLocation getTextureResource(ElementalWand animatable) {
-        return JahdooHelpers.res("textures/item/"+animatable.location+".png");
+        return JahdooHelpers.res("textures/item/"+ElementalWand.isBasic(animatable.type) + animatable.location+".png");
     }
 
     @Override

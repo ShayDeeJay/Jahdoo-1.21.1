@@ -16,6 +16,7 @@ import org.jahdoo.trial_nexus.utils.JahdooHelpers;
 import java.util.List;
 
 public class ModConfiguredFeatures {
+
     public static final ResourceKey<ConfiguredFeature<?, ?>> OVERWORLD_CRYSTAL_ORE_KEY = registerKey("crystal_ore");
     public static final ResourceKey<ConfiguredFeature<?, ?>> OVERWORLD_CRYSTAL_DEEPSLATE_ORE_KEY = registerKey("crystal_deepslate_ore");
 
@@ -43,4 +44,5 @@ public class ModConfiguredFeatures {
     ) {
         context.register(key, new ConfiguredFeature<>(feature, configuration));
     }
+
 }

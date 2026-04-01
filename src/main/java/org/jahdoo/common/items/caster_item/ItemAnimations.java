@@ -12,13 +12,14 @@ import java.util.List;
 import static software.bernie.geckolib.animatable.GeoItem.*;
 
 public class ItemAnimations {
+
     public static final String IDLE_ID = "idle";
     public static final String SINGLE_CAST_ID = "single_cast_1";
     public static final String CANT_CAST_ID = "cant_cast";
     public static final String HOLD_CAST_ID = "hold_cast";
     public static final String ROTATION_CAST_ID = "rotation_cast";
 
-
+    public static final RawAnimation STAFF_IDLE_ANIMATION = RawAnimation.begin().thenLoop(IDLE_ID);
     public static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop(IDLE_ID);
     public static final RawAnimation SINGLE_CAST = RawAnimation.begin().thenPlay(SINGLE_CAST_ID);
     public static final RawAnimation CANT_CAST = RawAnimation.begin().thenPlay(CANT_CAST_ID);

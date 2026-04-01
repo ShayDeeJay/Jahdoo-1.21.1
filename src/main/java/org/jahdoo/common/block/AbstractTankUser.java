@@ -110,14 +110,14 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
             .filter(
                 blockPos1 -> {
                     var entity = level.getBlockEntity(blockPos1);
-                    return entity instanceof TankBlockEntity tankEntity && tankEntity.getCount() >= craftingFuelCost;
+                    return entity instanceof TankBlockEntity tankEntity && tankEntity.getTotalItemsInTank() >= craftingFuelCost;
                 }
             )
             .sorted(
                 comparingInt(
                     blockPos1 -> {
                         var entity = level.getBlockEntity(blockPos1);
-                        return entity instanceof TankBlockEntity tankEntity ? tankEntity.getCount() : 0;
+                        return entity instanceof TankBlockEntity tankEntity ? tankEntity.getTotalItemsInTank() : 0;
                     }
                 )
             )

@@ -113,7 +113,7 @@ public class BlockTooltipOverlay extends AbstractTimedOverlay{
         if (tank == null) return;
 
         var needed = creator.neededNexite();
-        var count = tank.getCount();
+        var count = tank.getTotalItemsInTank();
         if (needed == -1 || needed <= count) return;
 
         var list = new ArrayList<Component>();
@@ -130,18 +130,16 @@ public class BlockTooltipOverlay extends AbstractTimedOverlay{
         int height,
         Font font
     ) {
-        if (!(tableEntity instanceof TankBlockEntity)) return;
+        if (!(tableEntity instanceof TankBlockEntity tEntity)) return;
 
-        var handler = tableEntity.getInputItemHandler();
+        var handler = tEntity.getInputItemHandler();
         if (handler.getSlots() == 0) return;
 
-        var stack = handler.getStackInSlot(0);
-        var slotLimit = handler.getSlotLimit(0);
-        var count = stack.getCount();
-
         var components = new ArrayList<Component>();
+        var total = tEntity.getMaxSlotSizeInput() * tEntity.setInputSlots();
+
         components.add(TextHelpers.withStyleComponentTrans("block.jahdoo.tank", utility().textColourB()));
-        components.add(TextHelpers.withStyleComponent(count + "/" + slotLimit, ColourHelpers.colourByPercent(slotLimit, count, true)));
+        components.add(TextHelpers.withStyleComponent(tEntity.getTotalItemsInTank() + "/" + (total), ColourHelpers.colourByPercent(total, tEntity.getTotalItemsInTank(), true)));
 
         renderTooltipList(graphics, font, components, width, height + 2);
     }

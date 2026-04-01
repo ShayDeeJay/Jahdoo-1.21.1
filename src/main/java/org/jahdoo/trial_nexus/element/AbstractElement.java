@@ -22,7 +22,16 @@ public abstract class AbstractElement {
     private String elementId = null;
 
     @Nullable
-    public abstract Item getWand();
+    public abstract Item getCommonWand();
+
+    @Nullable
+    public abstract Item getStandardWand();
+
+    @Nullable
+    public abstract Item getEternalWand();
+
+    @Nullable
+    public abstract Item getUniqueWand();
 
     @Nullable
     public abstract ResourceLocation projectileTexture();
@@ -74,7 +83,6 @@ public abstract class AbstractElement {
             var resourceLocation = Objects.requireNonNull(abilityResource());
             elementId = resourceLocation.getPath().intern();
         }
-
         return elementId;
     }
 

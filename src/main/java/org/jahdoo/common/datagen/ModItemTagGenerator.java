@@ -29,10 +29,10 @@ public class ModItemTagGenerator extends ItemTagsProvider {
     protected void addTags(HolderLookup.Provider pProvider) {
         this.tag(ModTags.Items.WAND_TAGS)
             .add(STARTER_WAND.get())
-            .add(WAND_ITEM_INFERNO.get())
-            .add(WAND_ITEM_MYSTIC.get())
-            .add(WAND_ITEM_FROST.get())
-            .add(WAND_ITEM_VITALITY.get());
+            .add(WAND_INFERNO.get())
+            .add(WAND_MYSTIC.get())
+            .add(WAND_FROST.get())
+            .add(WAND_VITALITY.get());
 
         this.tag(SWORDS)
             .add(ELEMENTAL_SWORD.value())

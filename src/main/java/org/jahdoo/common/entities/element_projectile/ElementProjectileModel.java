@@ -13,7 +13,6 @@ public class ElementProjectileModel extends GeoModel<ElementProjectile> {
         this.getModel = getModel;
     }
 
-
     @Override
     public ResourceLocation getModelResource(ElementProjectile animatable) {
         return JahdooHelpers.res("geo/entity/projectile.geo.json");

@@ -6,7 +6,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 
-public class FlurryRune extends ProtectorRune {
+public class FlurryRune extends AbstractProtectorRune {
 
     @Override
     public Holder<Attribute> attributeHolder() {

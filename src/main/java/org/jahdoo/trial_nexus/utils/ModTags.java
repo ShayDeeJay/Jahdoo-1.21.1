@@ -45,6 +45,7 @@ public class ModTags {
         public static final TagKey<net.minecraft.world.level.block.Block> COMMON_ORE = tag("common_ore");
         public static final TagKey<net.minecraft.world.level.block.Block> RARE_BLOCKS = tag("rare_block");
         public static final TagKey<net.minecraft.world.level.block.Block> OPULENT_BLOCKS = tag("opulent_block");
+        public static final TagKey<net.minecraft.world.level.block.Block> INFINITY_BLOCKS = tag("infinity_block");
 
         private static TagKey<net.minecraft.world.level.block.Block> tag(String name) {
             return BlockTags.create(JahdooHelpers.res(name));

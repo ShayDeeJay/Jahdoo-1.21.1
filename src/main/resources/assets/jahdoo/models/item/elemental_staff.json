@@ -1,77 +1,94 @@
 {
   "credit": "Made with Blockbench",
   "parent": "builtin/entity",
-  "textures": {
-    "particle": "jahdoo:block/elemental_staff"
-  },
   "texture_size": [
-    32,
-    32
+    64,
+    64
   ],
   "display": {
     "thirdperson_righthand": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
       "translation": [
         0,
-        -2.5,
-        0.75
+        -0.25,
+        1.25
+      ],
+      "scale": [
+        0.64,
+        0.64,
+        0.64
       ]
     },
     "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
       "translation": [
         0,
-        -2.5,
-        0.75
+        -0.25,
+        1.25
+      ],
+      "scale": [
+        0.64,
+        0.64,
+        0.64
       ]
     },
     "firstperson_righthand": {
       "rotation": [
-        12,
-        90,
-        0
+        0,
+        -72,
+        2
       ],
       "translation": [
-        3.25,
-        -2,
-        -2.5
+        1.5,
+        0.75,
+        1.75
       ],
       "scale": [
-        0.62,
-        0.62,
-        0.62
+        0.32,
+        0.32,
+        0.32
       ]
     },
     "firstperson_lefthand": {
       "rotation": [
-        12,
-        90,
-        0
+        0,
+        -72,
+        2
       ],
       "translation": [
-        3.25,
-        -2,
-        -2.5
+        1.5,
+        0.75,
+        1.75
       ],
       "scale": [
-        0.62,
-        0.62,
-        0.62
+        0.32,
+        0.32,
+        0.32
       ]
     },
     "ground": {
       "rotation": [
-        90,
+        91,
         0,
         0
       ],
       "translation": [
         0,
-        0,
-        -0.5
+        4,
+        0
       ],
       "scale": [
-        0.5,
-        0.5,
-        0.5
+        0.3,
+        0.3,
+        0.3
       ]
     },
     "gui": {
@@ -81,14 +98,26 @@
         -45
       ],
       "translation": [
-        -1.25,
-        -1.25,
+        -1.5,
+        -1.5,
+        0.75
+      ],
+      "scale": [
+        0.38,
+        0.38,
+        0.38
+      ]
+    },
+    "head": {
+      "translation": [
+        0,
+        0.75,
         0
       ],
       "scale": [
-        0.57,
-        0.57,
-        0.57
+        0.77,
+        0.77,
+        0.77
       ]
     },
     "fixed": {
@@ -98,14 +127,26 @@
         45
       ],
       "translation": [
-        1.5,
-        -1.5,
-        0
+        1.75,
+        -1.75,
+        0.75
       ],
       "scale": [
-        0.7,
-        0.7,
-        0.7
+        0.49,
+        0.49,
+        0.49
+      ]
+    },
+    "on_shelf": {
+      "translation": [
+        0,
+        0,
+        -3.5
+      ],
+      "scale": [
+        0.45,
+        0.45,
+        0.45
       ]
     }
   }

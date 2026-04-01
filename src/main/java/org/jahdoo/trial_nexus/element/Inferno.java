@@ -16,10 +16,11 @@ import org.jahdoo.trial_nexus.attachments.effects.AbstractEntityEffect;
 import org.jahdoo.trial_nexus.attachments.effects.InfernoEffect;
 import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_INFERNO;
+import static org.jahdoo.common.registers.ItemReg.*;
 import static org.jahdoo.trial_nexus.utils.Icons.GUI_BUTTON_INFERNO_SQUARE;
 import static org.jahdoo.trial_nexus.utils.JahdooHelpers.res;
 
@@ -62,8 +63,23 @@ public class Inferno extends AbstractElement {
     }
 
     @Override
-    public Item getWand() {
-        return WAND_ITEM_INFERNO.get();
+    public Item getCommonWand() {
+        return COMMON_WAND_INFERNO.get();
+    }
+
+    @Override
+    public Item getStandardWand() {
+        return WAND_INFERNO.get();
+    }
+
+    @Override
+    public @Nullable Item getEternalWand() {
+        return ETERNAL_WAND_INFERNO.get();
+    }
+
+    @Override
+    public @Nullable Item getUniqueWand() {
+        return UNIQUE_WAND_INFERNO.get();
     }
 
     @Override

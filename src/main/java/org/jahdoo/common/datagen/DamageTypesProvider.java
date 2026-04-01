@@ -22,6 +22,13 @@ public class DamageTypesProvider extends DatapackBuiltinEntriesProvider {
     public static final String VITALITY_DAMAGE = "vitality_magic";
     public static final String FROST_DAMAGE = "frost_magic";
 
+    public DamageTypesProvider(
+        PackOutput output,
+        CompletableFuture<HolderLookup.Provider> registries
+    ) {
+        super(output, registries, BUILDER, Set.of(JahdooMod.MOD_ID));
+    }
+
     private static final RegistrySetBuilder BUILDER =
         new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, DamageTypesProvider::bootstrap);
 
@@ -31,13 +38,6 @@ public class DamageTypesProvider extends DatapackBuiltinEntriesProvider {
         ctx.register(MYSTIC_SOURCE, new DamageType(MYSTIC_DAMAGE, 0.1F));
         ctx.register(VITALITY_SOURCE, new DamageType(VITALITY_DAMAGE, 0.1F));
         ctx.register(FROST_SOURCE, new DamageType(FROST_DAMAGE, 0.1F));
-    }
-
-    public DamageTypesProvider(
-        PackOutput output,
-        CompletableFuture<HolderLookup.Provider> registries
-    ) {
-        super(output, registries, BUILDER, Set.of(JahdooMod.MOD_ID));
     }
 
     @Override

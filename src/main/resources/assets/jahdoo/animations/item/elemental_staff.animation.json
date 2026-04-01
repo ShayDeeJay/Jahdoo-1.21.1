@@ -1,0 +1,34 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "idle": {
+      "animation_length": 48.9167,
+      "bones": {
+        "bone8": {
+          "rotation": {
+            "vector": [0, "-query.anim_time * 60", 0]
+          },
+          "position": {
+            "vector": [0, "math.cos(query.anim_time * 140) * 0.2 ", 0]
+          }
+        },
+        "bone9": {
+          "rotation": {
+            "vector": [0, "query.anim_time * 60", 0]
+          },
+          "position": {
+            "vector": [0, "math.cos(query.anim_time * 140) * 0.2", 0]
+          }
+        },
+        "bone2": {
+          "rotation": {
+            "vector": [0, "-query.anim_time * 20", 0]
+          },
+          "position": {
+            "vector": [0, "math.cos(query.anim_time * 140) * 0.2", 0]
+          }
+        }
+      }
+    }
+  }
+}

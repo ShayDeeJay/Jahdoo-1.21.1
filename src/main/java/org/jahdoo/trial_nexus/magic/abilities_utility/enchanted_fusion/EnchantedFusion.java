@@ -52,7 +52,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
                 level.setBlockAndUpdate(pos, BlockReg.ENCHANTED_BLOCK.get().defaultBlockState());
                 if (level.getBlockEntity(pos) instanceof EnchantedBlockEntity enchantedBlockEntity) {
                     if (!state.isAir()) {
-                        enchantedBlockEntity.setBlockType(state.getBlock(), 0);
+//                        enchantedBlockEntity.setBlockType(state.getBlock(), 0);
                     }
                 }
 

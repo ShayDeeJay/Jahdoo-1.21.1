@@ -31,7 +31,7 @@ public class ElementReg {
     public static Optional<AbstractElement> fromWand(Item wand) {
         var element = REGISTRY
             .stream()
-            .filter(a -> a.getWand() == wand)
+            .filter(a -> a.getStandardWand() == wand || a.getUniqueWand() == wand || a.getEternalWand() == wand || a.getCommonWand() == wand)
             .toList();
         return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
     }

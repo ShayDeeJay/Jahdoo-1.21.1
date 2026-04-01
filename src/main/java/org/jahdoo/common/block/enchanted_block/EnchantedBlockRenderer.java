@@ -36,9 +36,23 @@ public class EnchantedBlockRenderer implements BlockEntityRenderer<EnchantedBloc
             renderer.renderBatched(entity.block.defaultBlockState(), entity.getBlockPos(), level, poseStack, source, false, RandomSource.create());
         }
 
-        var state = entity.getBlockState().setValue(ENCHANTMENT_STAGE, Math.min(entity.stage, EnchantedBlockEntity.MAX_STAGE-1));
+        poseStack.pushPose();
+        poseStack.translate(0.5, 0.5, 0.5);
+        poseStack.mulPose(entity.facing.getRotation());
+
+        poseStack.scale(1.01F, 1.01F, 1.01F);
+        poseStack.translate(-0.5, -0.5, -0.5);
+
+        var state = entity.getBlockState().setValue(ENCHANTMENT_STAGE, Math.min(entity.stage, EnchantedBlockEntity.MAX_STAGE - 1));
+
         renderer.renderBatched(state, entity.getBlockPos(), level, poseStack, source, false, RandomSource.create());
+        poseStack.popPose();
+
         poseStack.popPose();
     }
 
+
+
 }
+
+

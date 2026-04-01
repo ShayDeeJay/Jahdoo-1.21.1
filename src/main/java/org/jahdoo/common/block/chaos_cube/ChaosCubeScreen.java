@@ -262,7 +262,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
             if(fromX && toX && fromY && toY) {
                 var tooltipLines = new ArrayList<Component>();
                 var tooltipLines2 = new ArrayList<Component>();
-                var current = tanks.getCount();
+                var current = tanks.getTotalItemsInTank();
                 var max = tanks.getMaxSlotSizeInput();
                 var tracker = current + "/" + max;
                 var colour = ColourHelpers.colourByPercent(max, current, true);

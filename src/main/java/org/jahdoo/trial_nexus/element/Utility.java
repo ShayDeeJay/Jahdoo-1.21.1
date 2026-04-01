@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import org.jahdoo.common.registers.DamageTypeReg;
 import org.jahdoo.trial_nexus.utils.Icons;
 import org.jahdoo.trial_nexus.utils.JahdooHelpers;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.AXE_SCRAPE;
 import static net.minecraft.util.FastColor.ARGB32.color;
@@ -59,7 +60,22 @@ public class Utility extends AbstractElement {
     }
 
     @Override
-    public Item getWand() {
+    public @Nullable Item getCommonWand() {
+        return null;
+    }
+
+    @Override
+    public Item getStandardWand() {
+        return null;
+    }
+
+    @Override
+    public @Nullable Item getEternalWand() {
+        return null;
+    }
+
+    @Override
+    public @Nullable Item getUniqueWand() {
         return null;
     }
 

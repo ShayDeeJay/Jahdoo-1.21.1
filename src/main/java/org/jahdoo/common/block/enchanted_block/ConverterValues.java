@@ -14,7 +14,8 @@ public enum ConverterValues {
     COMMON_ORE("common_ore", ModTags.Block.COMMON_ORE, 160, 3),
     RARE_ORES("rare_ore", ModTags.Block.RARE_ORE, 80, 2),
     RARE_BLOCKS("rare_blocks", ModTags.Block.RARE_BLOCKS, 50, 1),
-    OPULENT_BLOCKS("opulent", ModTags.Block.OPULENT_BLOCKS, 10, 0);
+    OPULENT_BLOCKS("opulent", ModTags.Block.OPULENT_BLOCKS, 10, 0),
+    INFINITY_BLOCKS("opulent", ModTags.Block.INFINITY_BLOCKS, 1, 0);
 
     private final String name;
     private final TagKey<Block> type;

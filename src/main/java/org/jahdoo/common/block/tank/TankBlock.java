@@ -25,17 +25,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.shaydeeapi.helpers.ItemHelpers;
 import org.shaydee.shaydeeapi.helpers.SoundHelpers;
 
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 import static net.minecraft.sounds.SoundEvents.SAND_PLACE;
 import static net.minecraft.sounds.SoundSource.BLOCKS;
-import static org.jahdoo.common.block.BlockInteractionHandler.RemoveItemsFromSlotToHand;
 import static org.jahdoo.common.block.BlockInteractionHandler.stackHandlerWithFeedBack;
 import static org.jahdoo.common.registers.AttachmentReg.BOOL;
 import static org.jahdoo.common.registers.BlockEntityReg.TANK_BE;
@@ -141,17 +140,6 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         var level = context.getLevel();
         var blockstate = level.getBlockState(blockpos);
 
-//        if(context.getItemInHand().has(ComponentReg.STORE_INTEGER)){
-//            System.out.println("im ere");
-//            System.out.println(level);
-//            var blockEntity = level.getBlockEntity(blockpos);
-//            System.out.println(blockEntity);
-//            if(blockEntity instanceof TankBlockEntity tankBlock){
-//                tankBlock.setData(AttachmentReg.BOOL, true);
-//                tankBlock.increaseTankSize(64);
-//            }
-//        }
-
         if (blockstate.is(this)) {
             return blockstate.setValue(WATERLOGGED, false);
         } else {
@@ -165,13 +153,9 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         var handItem = player.getItemInHand(hand);
         var entity = level.getBlockEntity(pos);
 
-
         if (entity instanceof TankBlockEntity tank) {
             var handler = tank.getInputItemHandler();
-            var itemStack = new ItemStack(AUGMENT_CORE);
-            CoreData.setFilled(itemStack);
 
-            if(CoreData.isFull(itemStack)) tank.increaseTankSize(64);
             if(handItem.is(BlockReg.NEXITE_BLOCK.get().asItem())){
                 if(handler.getStackInSlot(0).getCount() < handler.getSlotLimit(0) - 9){
                     handler.setStackInSlot(0,  new ItemStack(NEXITE_POWDER.get()).copyWithCount(handler.getStackInSlot(0).getCount() + 9));
@@ -179,15 +163,29 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
                 }
             }
 
-            if (stackHandlerWithFeedBack(handler, handItem, NEXITE_POWDER.get(), 0, tank.getMaxSlotSizeInput(), player)) {
-                level.playSound(player, player.blockPosition(), SAND_PLACE, BLOCKS);
+            if(handItem.is(NEXITE_POWDER.get().asItem())){
+                for (int i = 0; i < tank.setInputSlots(); i++) {
+                    if (stackHandlerWithFeedBack(handler, player.getItemInHand(hand), i, tank.getMaxSlotSizeInput(), player)) {
+                        level.playSound(player, player.blockPosition(), SAND_PLACE, BLOCKS);
+                        return ItemInteractionResult.SUCCESS;
+                    }
+                }
+            }
+
+            if(player.getMainHandItem().isEmpty()) {
+                for (int i = 0; i < tank.setInputSlots(); i++) {
+                    var stackInSlot = tank.getInputItemHandler().getStackInSlot(i);
+                    if(!stackInSlot.isEmpty()){
+                        ItemHelpers.throwOrAddItem(player, stackInSlot);
+                        stackInSlot.shrink(stackInSlot.getCount());
+                        return ItemInteractionResult.SUCCESS;
+                    }
+                }
                 return ItemInteractionResult.SUCCESS;
-            } else {
-                RemoveItemsFromSlotToHand(handler, 0,player,hand,level, pos, SAND_PLACE, 1, 1);
             }
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return ItemInteractionResult.FAIL;
     }
 
 

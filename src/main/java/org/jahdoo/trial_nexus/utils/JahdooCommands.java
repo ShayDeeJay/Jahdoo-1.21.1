@@ -696,8 +696,10 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
+//            ItemHelpers.throwOrAddItem(player, ShoppingItems.randomWandWithType(rarity, ItemReg.WAND_INFERNO.get().getDefaultInstance()).ShoppingItem());
             ItemHelpers.throwOrAddItem(player, ShoppingItems.soldWands(rarity).ShoppingItem());
         }
+
         return 1;
     }
 

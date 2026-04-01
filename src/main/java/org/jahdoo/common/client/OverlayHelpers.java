@@ -22,7 +22,7 @@ import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
 public class OverlayHelpers {
 
-    public static int   elementalModStat(
+    public static int elementalModStat(
         GuiGraphics graphics,
         Minecraft minecraft,
         LocalPlayer player,
@@ -53,7 +53,7 @@ public class OverlayHelpers {
 
         for (var syncableAttribute : syncableAttributes) {
             var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
-            if (syncableAttribute.getAttribute().value().getDescriptionId().contains(filterType.toLowerCase())) {
+            if (syncableAttribute.getBaseValue() == 0 && syncableAttribute.getAttribute().value().getDescriptionId().contains(filterType.toLowerCase())) {
                 if(modName.equals(getName.toLowerCase())){
                     var value = syncableAttribute.getValue();
                     var hasValue = value > 0;

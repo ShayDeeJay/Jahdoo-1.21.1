@@ -1,16 +1,7 @@
 {
   "variants": {
-    "level=0": {
-      "model": "jahdoo:block/loot_pot"
-    },
-    "level=1": {
-      "model": "jahdoo:block/loot_pot_1"
-    },
-    "level=2": {
-      "model": "jahdoo:block/loot_pot_2"
-    },
-    "level=3": {
-      "model": "jahdoo:block/loot_pot_3"
+    "": {
+      "model": "jahdoo:block/enchanted_block"
     }
   }
 }
